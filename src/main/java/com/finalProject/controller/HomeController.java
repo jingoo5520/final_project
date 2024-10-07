@@ -36,4 +36,11 @@ public class HomeController {
 		return "testIndex";
 	}
 	
+	@RequestMapping(value="/login") // "/test/login"
+	public String testLogin() {
+		
+		return "testLogin";
+	}
+	
+	
 }
