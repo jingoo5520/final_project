@@ -49,7 +49,7 @@ button:hover {
 </style>
 </head>
 <body>
-	<form action="/test/member/login" method="post">
+	<form action="/member/login" method="post">
 		<div class="loginContainer">
 			<h1>로그인 테스트</h1>
 			<div>
