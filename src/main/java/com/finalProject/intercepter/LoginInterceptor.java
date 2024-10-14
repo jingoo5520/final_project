@@ -11,7 +11,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.finalProject.model.MemberDTO;
+import com.finalProject.model.LoginDTO;
+import com.finalProject.model.LoginMemberDTO;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
 	    if (request.getMethod().toUpperCase().equals("POST")) {
 	        Map<String, Object> model = modelAndView.getModel();
-	        MemberDTO loginMember = (MemberDTO) model.get("loginMember");
+	        LoginDTO loginMember = (LoginDTO) model.get("loginMember");
 	        if (loginMember != null) {
 	            ses.setAttribute("loginMember", loginMember);
 	            System.out.println(loginMember.getMember_name() + "님 로그인");

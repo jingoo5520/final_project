@@ -5,11 +5,25 @@
 <mapper namespace="com.finalProject.mappers.memberMapper">
 	<!-- 쿼리문 -->
 
-	<!-- 로그인 테스트 -->
-
-	<select id="login" resultType="MemberDTO">
-		select * from members where 
+	<!-- 로그인 -->
+	<select id="login" resultType="LoginDTO">
+		select * from members where
 		member_id = #{member_id} and member_pwd = #{member_pwd}
+	</select>
+
+	<!-- id 중복 체크 -->
+	<select id="idDuplicate" resultType="int">
+		select count(*) from members where member_id = #{value}
+	</select>
+	
+	<!-- email 중복 체크 -->
+	<select id="emailDuplicate" resultType="int">
+		select count(*) from members where email = #{value}
+	</select>
+	
+	<!-- phone_number 중복 체크 -->
+	<select id="phoneDuplicate" resultType="int">
+		select count(*) from members where phone_number = #{value}
 	</select>
 
 </mapper>

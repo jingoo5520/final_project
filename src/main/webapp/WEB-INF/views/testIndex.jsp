@@ -25,6 +25,8 @@
 </head>
 <body>
 	<h1>testIndex.jsp</h1>
+	<a href="/member/viewLogin"><h1>login</h1></a>
+	<a href="/member/viewSignUp"><h1>signUp</h1></a>
 
 	<P>The time on the server is ${serverTime}.</P>
 
