@@ -11,19 +11,28 @@
 		member_id = #{member_id} and member_pwd = #{member_pwd}
 	</select>
 
-	<!-- id 중복 체크 -->
-	<select id="idDuplicate" resultType="int">
-		select count(*) from members where member_id = #{value}
+	<!-- id, email, phone_number 중복 체크 -->
+	<select id="autoDuplicate" resultType="int">
+		select count(*) from members
+		<choose>
+			<when test="key == 'id'">
+				where member_id = #{value}
+			</when>
+			<when test="key == 'email'">
+				where email = #{value}
+			</when>
+			<when test="key == 'phone'">
+				where phone_number = #{value}
+			</when>
+		</choose>
 	</select>
-	
-	<!-- email 중복 체크 -->
-	<select id="emailDuplicate" resultType="int">
-		select count(*) from members where email = #{value}
-	</select>
-	
-	<!-- phone_number 중복 체크 -->
-	<select id="phoneDuplicate" resultType="int">
-		select count(*) from members where phone_number = #{value}
-	</select>
+
+	<!-- 회원가입 -->
+	<insert id="signUpMember">
+		insert into members(member_id, member_name,
+		member_pwd, phone_number, birthday, gender, email, address, nickname)
+		values(#{member_id}, #{member_name}, #{member_pwd}, #{phone_number},
+		#{birthday}, #{gender}, #{email}, #{address}, #{nickname})
+	</insert>
 
 </mapper>

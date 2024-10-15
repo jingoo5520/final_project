@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.LoginMemberDTO;
 
 
 import lombok.extern.slf4j.Slf4j;

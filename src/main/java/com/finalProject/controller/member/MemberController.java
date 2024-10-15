@@ -1,5 +1,10 @@
 package com.finalProject.controller.member;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
@@ -10,12 +15,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.LoginMemberDTO;
 import com.finalProject.model.ResponseData;
+import com.finalProject.model.SignUpDTO;
 import com.finalProject.service.MemberService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -60,51 +64,59 @@ public class MemberController {
 	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST) // 회원가입 데이터 중복 체크 (ajax)
 	public ResponseEntity<ResponseData> isDuplicate(@RequestParam("key") String key,
 			@RequestParam("value") String value) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		System.out.println("key : " + key);
 		System.out.println("value : " + value);
+		
+		map.put("key", key);
+		map.put("value", value);
+		System.out.println(map.toString());
+
 		ResponseData json = null;
 		ResponseEntity<ResponseData> result = null;
 
-		if (key.equals("id")) {
-			// id 중복 체크
-			try {
-				if (!memberService.idDuplicate(value)) {
-					json = new ResponseData("notDuplicate", value);
-				} else {
-					json = new ResponseData("Duplicate", value);
-				}
-				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		try {
+			// map에 key와 value를 담아서 쿼리문을 실행
+			// key = where절에 들어갈 컬럼을 결정
+			// value = 찾을 값	
+			if (!memberService.autoDuplicate(map)) {
+				json = new ResponseData("notDuplicate", value);
+			} else {
+				json = new ResponseData("Duplicate", value);
 			}
-		} else if (key.equals("email")) {
-			// email 중복 체크
-			try {
-				if (!memberService.emailDuplicate(value)) {
-					json = new ResponseData("notDuplicate", value);
-				} else {
-					json = new ResponseData("Duplicate", value);
-				}
-				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = new ResponseEntity<>(HttpStatus.CONFLICT);
-			}
-		} else if (key.equals("phone")) {
-			// phone_number 중복 체크
-			try {
-				if (memberService.phoneDuplicate(value)) {
-					json = new ResponseData("notDuplicate", value);
-				} else {
-					json = new ResponseData("Duplicate", value);
-				}
-				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = new ResponseEntity<>(HttpStatus.CONFLICT);
-			}
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/signUp", method = RequestMethod.POST) // 회원가입 처리
+	public String signUp(SignUpDTO signUpDTO, RedirectAttributes rttr) {
+		System.out.println("회원가입 요청");
+		System.out.println(signUpDTO.toString());
+		String result = "redirect:/viewSignUp";
+        
+		String birtday = signUpDTO.getBirthday().replace("-", "");
+		signUpDTO.setBirthday(birtday);
+		
+		try {
+			if(memberService.signUp(signUpDTO)==1) {
+				System.out.println("insert성공");
+				result = "redirect:/";
+			} else {
+				System.out.println("insert실패");								
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("insert예외");
+		}
+		
+		
 		return result;
 	}
 
