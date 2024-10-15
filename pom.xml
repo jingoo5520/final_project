@@ -139,8 +139,6 @@
 			<version>${org.springframework-version}</version>
 		</dependency>
 
-
-
 		<!-- lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -148,6 +146,7 @@
 			<version>1.18.34</version>
 			<scope>provided</scope>
 		</dependency>
+
 
 		<!-- Jackson -->
 		<dependency>
@@ -161,6 +160,7 @@
 			<groupId>org.bgee.log4jdbc-log4j2</groupId>
 			<artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
 			<version>1.16</version>
+
 		</dependency>
 
 		<!-- Test -->
@@ -171,12 +171,14 @@
 			<scope>test</scope>
 		</dependency>
 
+
 		<!-- CoolSMS -->
 		<dependency>
 			<groupId>net.nurigo</groupId>
 			<artifactId>sdk</artifactId>
 			<version>4.3.0</version>
 		</dependency>
+
 
 	</dependencies>
 	<build>
