@@ -17,7 +17,7 @@ public class HomeController {
 	}
 	
 	@GetMapping("/admin")
-	public void adminPage() {
-		System.out.println("admin");
+	public String adminPage() {
+		return "/admin/index";
 	}
 }
