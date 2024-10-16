@@ -11,14 +11,14 @@
     <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/user/assets/images/logo/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
 
     <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" href="/resources/user/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/LineIcons.3.0.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/tiny-slider.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/glightbox.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/main.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 
@@ -1015,10 +1015,10 @@
     </a>
 
     <!-- ========================= JS here ========================= -->
-    <script src="/resources/user/assets/js/bootstrap.min.js"></script>
-    <script src="/resources/user/assets/js/tiny-slider.js"></script>
-    <script src="/resources/user/assets/js/glightbox.min.js"></script>
-    <script src="/resources/user/assets/js/main.js"></script>
+    <script src="/resources/assets/user/js/bootstrap.min.js"></script>
+    <script src="/resources/assets/user/js/tiny-slider.js"></script>
+    <script src="/resources/assets/user/js/glightbox.min.js"></script>
+    <script src="/resources/assets/user/js/main.js"></script>
     <script type="text/javascript">
         //========= Hero Slider 
         tns({
