@@ -35,7 +35,7 @@ public class MemberController {
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
 	public String viewLogin() {
 		System.out.println("로그인 페이지로 이동");
-		return "/member/login";
+		return "/user/member/login";
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
@@ -58,7 +58,7 @@ public class MemberController {
 	@RequestMapping(value = "/viewSignUp") // "/member/viewSignUp/"
 	public String viewSingUp() {
 		System.out.println("회원가입 페이지로 이동");
-		return "/member/signUp";
+		return "/user/member/signUp";
 	}
 
 	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST) // 회원가입 데이터 중복 체크 (ajax)
