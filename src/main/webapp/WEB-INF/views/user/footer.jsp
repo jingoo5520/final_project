@@ -11,14 +11,14 @@
     <title>Header</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/user/assets/images/favicon.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
 
     <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" href="/resources/user/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/LineIcons.3.0.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/tiny-slider.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/glightbox.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/main.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 <body>
@@ -32,7 +32,7 @@
                         <div class="col-lg-3 col-md-4 col-12">
                             <div class="footer-logo">
                                 <a href="index.html">
-                                    <img src="/resources/user/assets/images/logo/white-logo.svg" alt="#">
+                                    <img src="/resources/assets/user/images/logo/white-logo.svg" alt="#">
                                 </a>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
                         <div class="col-lg-4 col-12">
                             <div class="payment-gateway">
                                 <span>We Accept:</span>
-                                <img src="/resources/user/assets/images/footer/credit-cards-footer.png" alt="#">
+                                <img src="/resources/assets/user/images/footer/credit-cards-footer.png" alt="#">
                             </div>
                         </div>
                         <div class="col-lg-4 col-12">
