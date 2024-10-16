@@ -115,6 +115,11 @@ public class MemberController {
 		// 우편번호/주소/상세주소
 		signUpDTO.setAddress(signUpDTO.getAddress() + "/" + signUpDTO.getAddress2());
 		
+		// 성별 미선택시 null로 들어오는 데이터 처리
+		if(signUpDTO.getGender()==null) {			
+			signUpDTO.setGender("N");
+		}
+		
 		try {
 			if (memberService.signUp(signUpDTO) == 1) {
 				System.out.println("insert성공");
