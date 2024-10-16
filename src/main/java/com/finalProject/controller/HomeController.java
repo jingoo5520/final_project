@@ -21,8 +21,4 @@ public class HomeController {
 		System.out.println("admin");
 	}
 	
-	@GetMapping("/order")
-	public String orderPage(Locale locale, Model model) {
-		return "order";
-	}
 }

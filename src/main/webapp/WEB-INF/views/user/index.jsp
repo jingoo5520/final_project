@@ -8,10 +8,10 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>ShopGrids - Bootstrap 5 eCommerce HTML Template.</title>
+    <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/user/assets/images/favicon.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/user/assets/images/logo/white-logo.svg" />
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/user/assets/css/bootstrap.min.css" />

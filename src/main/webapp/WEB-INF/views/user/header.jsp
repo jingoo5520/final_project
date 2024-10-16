@@ -11,14 +11,14 @@
     <title>Header</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/user/assets/images/favicon.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
 
     <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" href="/resources/user/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/LineIcons.3.0.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/tiny-slider.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/glightbox.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/main.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 <body>
@@ -95,7 +95,7 @@
                     <div class="col-lg-3 col-md-3 col-7">
                         <!-- Start Header Logo -->
                         <a class="navbar-brand" href="index.html">
-                            <img src="/resources/user/assets/images/logo/logo.svg" alt="Logo">
+                            <img src="/resources/assets/user/images/logo/logo.svg" alt="Logo">
                         </a>
                         <!-- End Header Logo -->
                     </div>
@@ -151,7 +151,7 @@
                                     <div class="shopping-item">
                                         <div class="dropdown-cart-header">
                                             <span>2 Items</span>
-                                            <a href="cart.html">View Cart</a>
+                                            <a href="/cart">View Cart</a>
                                         </div>
                                         <ul class="shopping-list">
                                             <li>
@@ -159,7 +159,7 @@
                                                         class="lni lni-close"></i></a>
                                                 <div class="cart-img-head">
                                                     <a class="cart-img" href="product-details.html"><img
-                                                            src="/resources/user/assets/images/header/cart-items/item1.jpg" alt="#"></a>
+                                                            src="/resources/assets/user/images/header/cart-items/item1.jpg" alt="#"></a>
                                                 </div>
 
                                                 <div class="content">
@@ -173,7 +173,7 @@
                                                         class="lni lni-close"></i></a>
                                                 <div class="cart-img-head">
                                                     <a class="cart-img" href="product-details.html"><img
-                                                            src="/resources/user/assets/images/header/cart-items/item2.jpg" alt="#"></a>
+                                                            src="/resources/assets/user/images/header/cart-items/item2.jpg" alt="#"></a>
                                                 </div>
                                                 <div class="content">
                                                     <h4><a href="product-details.html">Wi-Fi Smart Camera</a></h4>
