@@ -50,17 +50,17 @@ body {
 }
 </style>
 <script type="text/javascript">
-	var idExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{8,20}$/; // 아이디 정규식(영문자, 숫자를 포함한 8자 이상 20자 이하)
+	var idExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{6,15}$/; // 아이디 정규식(영문자, 숫자를 포함한 6자 이상 15자 이하)
 	var phoneExp = /010(-\d{4}-\d{4}|\d{8})$/; // 휴대폰 번호 정규식 (010-1234-5678), 01012345678 형식만 허용
 	var emailExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 정규식(testuser@test.com)
 	var pwdExp = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/; // 비밀번호 정규식(영문자, 숫자를 포함한 8자이상 20자 이하)
-	var nameExp = /^[가-힣]{2,}$/; // 이름 정규식(한글만 가능 2글자 이상)
+	var nameExp = /^[가-힣]{2,8}$/; // 이름 정규식(한글만 가능 2글자 이상 8자 이하)
 	var birthdayExp = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/; // 생일 정규식(1900년대 또는 2000년대,  01월부터 12월, 01일부터 31일)
 	$(function() {
 		// 아이디 입력중
 		$("#member_id").keyup(function() {
 	        let tmp = $("#member_id").val();
-	        if (isCheck("member_id", tmp, idExp, "영문자, 숫자를 포함한 8자 이상 20자 이하", "red")) {
+	        if (isCheck("member_id", tmp, idExp, "영문자, 숫자를 포함한 6자 이상 15자 이하", "red")) {
 	            dbCheck("id", tmp).then(isAvailable => {
 	                if (isAvailable) {
 	                    isMsg("member_id", "사용가능한 ID 입니다.", "blue", true);
@@ -124,10 +124,10 @@ body {
 		// 이름 입력중
 		$("#member_name").keyup(function() {
 			let tmp = $("#member_name").val();
-			if(isCheck("member_name", tmp, nameExp, "한글이름을 입력하세요.", "red")){
+			if(isCheck("member_name", tmp, nameExp, "한글2자~8자", "red")){
 				isMsg("member_name", "ok", "blue", true);
 			} else {
-				isMsg("member_name", "한글이름을 입력하세요.", "red", false);
+				isMsg("member_name", "한글2자~8자", "red", false);
 			}
 		});
 		// 생일 입력
@@ -150,7 +150,8 @@ body {
 	        oncomplete: function(data) {
 	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
 	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
-	            $(obj).val(data.address);
+	            console.log(data);
+	            $(obj).val(data.zonecode + "/" + data.address);
 	        }
 	    }).open();
 	}

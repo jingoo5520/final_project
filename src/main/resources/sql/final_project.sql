@@ -7,6 +7,8 @@ select * from members where member_id = 'testuser12';
 
 select count(*) from members where member_id = 'testuser12';
 -- 회원가입처리
-insert into members(member_id, member_name, member_pwd, phone_number, birthday, gender, email, address, nickname)
-values(#{member_id}, #{member_name}, #{member_pwd}, #{phone_number}, #{birthday}, #{gender}, #{email}, #{address}, #{nickname});
+-- insert into members(member_id, member_name, member_pwd, phone_number, birthday, gender, email, address, nickname)
+-- values(#{member_id}, #{member_name}, #{member_pwd}, #{phone_number}, #{birthday}, #{gender}, #{email}, #{address}, #{nickname});
 
+-- 비밀번호는 sha256 암호화
+update members set member_pwd = sha2('xptmxm12', 256);
