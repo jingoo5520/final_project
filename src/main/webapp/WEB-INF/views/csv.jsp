@@ -53,16 +53,14 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
-</head>
-
 <body>
-	<!-- Layout wrapper -->
 	<div class="layout-wrapper layout-content-navbar">
 		<div class="layout-container">
 			<!-- Menu -->
 
 			<aside id="layout-menu"
-				class="layout-menu menu-vertical menu bg-menu-theme">
+				class="layout-menu menu-vertical menu bg-menu-theme"
+				data-bg-class="bg-menu-theme">
 				<div class="app-brand demo">
 					<a href="index.html" class="app-brand-link"> <span
 						class="app-brand-logo demo"> <svg width="25"
@@ -118,17 +116,17 @@
                 </svg>
 					</span> <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
 					</a> <a href="javascript:void(0);"
-						class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+						class="layout-menu-toggle menu-link text-large ms-auto d-xl-none">
 						<i class="bx bx-chevron-left bx-sm align-middle"></i>
 					</a>
 				</div>
 
 				<div class="menu-inner-shadow"></div>
 
-				<ul class="menu-inner py-1">
+				<ul class="menu-inner py-1 overflow-auto">
 					<!-- Dashboard -->
-					<li class="menu-item active"><a href="index.html"
-						class="menu-link menu-toggle"> <i
+					<li class="menu-item active open" style=""><a
+						href="index.html" class="menu-link menu-toggle"> <i
 							class="menu-icon tf-icons bx bx-home-circle"></i>
 							<div data-i18n="Analytics">메뉴</div>
 					</a>
@@ -163,6 +161,7 @@
 			<!-- Layout container -->
 			<div class="layout-page">
 				<!-- Navbar -->
+
 				<nav
 					class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
 					id="layout-navbar">
@@ -180,27 +179,22 @@
 							<div class="nav-item d-flex align-items-center">
 								<i class="bx bx-search fs-4 lh-0"></i> <input type="text"
 									class="form-control border-0 shadow-none"
-									placeholder="Search..." aria-label="Search..." />
+									placeholder="Search..." aria-label="Search...">
 							</div>
 						</div>
 						<!-- /Search -->
 
 						<ul class="navbar-nav flex-row align-items-center ms-auto">
 							<!-- Place this tag where you want the button to render. -->
-							<li class="nav-item lh-1 me-3"><a class="github-button"
-								href="https://github.com/themeselection/sneat-html-admin-template-free"
-								data-icon="octicon-star" data-size="large"
-								data-show-count="true"
-								aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
-							</li>
+							<li class="nav-item lh-1 me-3"><span></span></li>
 
 							<!-- User -->
 							<li class="nav-item navbar-dropdown dropdown-user dropdown">
 								<a class="nav-link dropdown-toggle hide-arrow"
 								href="javascript:void(0);" data-bs-toggle="dropdown">
 									<div class="avatar avatar-online">
-										<img src="/resources/assets/admin/img/avatars/1.png" alt
-											class="w-px-40 h-auto rounded-circle" />
+										<img src="../assets/img/avatars/1.png" alt=""
+											class="w-px-40 h-auto rounded-circle">
 									</div>
 							</a>
 								<ul class="dropdown-menu dropdown-menu-end">
@@ -208,8 +202,8 @@
 											<div class="d-flex">
 												<div class="flex-shrink-0 me-3">
 													<div class="avatar avatar-online">
-														<img src="/resources/assets/admin/img/avatars/1.png" alt
-															class="w-px-40 h-auto rounded-circle" />
+														<img src="../assets/img/avatars/1.png" alt=""
+															class="w-px-40 h-auto rounded-circle">
 													</div>
 												</div>
 												<div class="flex-grow-1">
@@ -251,40 +245,143 @@
 
 				<!-- / Navbar -->
 
+				<!-- Content wrapper -->
+				<div class="content-wrapper">
+					<!-- Content -->
 
-			</div>
-			<!-- / Layout page -->
-		</div>
+					<div class="container-xxl flex-grow-1 container-p-y">
+						<h4 class="fw-bold py-3 mb-4">
+							<span class="text-muted fw-light">Forms/</span> 상품 정보 입력
+						</h4>
 
-		<!-- Overlay -->
-		<div class="layout-overlay layout-menu-toggle"></div>
-	</div>
-	<!-- / Layout wrapper -->
+						<!-- Basic Layout & Basic with Icons -->
+						<div class="row">
+							<!-- Basic Layout -->
+							<div class="col-xxl">
+								<div class="card mb-4">
+									<div
+										class="card-header d-flex align-items-center justify-content-between">
+										<h5 class="mb-0">상품 정보 입력</h5>
+										<small class="text-muted float-end"></small>
+									</div>
+									<div class="card-body">
+										<form>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label"
+													for="basic-default-name">상품명</label>
+												<div class="col-sm-10">
+													<input type="text" class="form-control"
+														id="basic-default-name" placeholder="상품명"
+														name="product_name">
+												</div>
+											</div>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label"
+													for="basic-default-company"> 가격</label>
+												<div class="col-sm-10">
+													<input type="text" class="form-control"
+														id="basic-default-company" placeholder="상품 가격"
+														name="product_price">
+												</div>
+											</div>
+											<div class="row mb-3">
 
+												<table
+													class="table table-striped table-borderless border-bottom">
+													<thead>
+														<tr>
+															<th class="text-nowrap">할인 종류</th>
+															<th class="text-nowrap text-center">✉️ 비율 할인</th>
+															<th class="text-nowrap text-center">🖥 고정 금액 할인</th>
+															<th class="text-nowrap text-center">👩🏻‍💻 없음</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td class="text-nowrap">할인 타입</td>
+															<td>
+																<div class="form-check d-flex justify-content-center">
+																	<input class="form-check-input" type="checkbox"
+																		id="defaultCheck1" name="product_dc_type" value="P">
+																</div>
+															</td>
+															<td>
+																<div class="form-check d-flex justify-content-center">
+																	<input class="form-check-input" type="checkbox"
+																		id="defaultCheck2" name="product_dc_type" value="M">
+																</div>
+															</td>
+															<td>
+																<div class="form-check d-flex justify-content-center">
+																	<input class="form-check-input" type="checkbox"
+																		id="defaultCheck3" checked="checked"
+																		name="product_dc_type" value="N">
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label"
+													for="basic-default-email">할인타입이 선택된 값에 따라 보여지는html이
+													다르게 동적으로 설정</label>
+												<div class="col-sm-10">
+													<div class="input-group input-group-merge">
+														<input type="text" id="basic-default-email"
+															class="form-control" placeholder="">
+													</div>
 
+												</div>
+											</div>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label"
+													for="basic-default-phone">판매수량</label>
+												<div class="col-sm-10">
+													<input type="text" id="basic-default-phone"
+														class="form-control phone-mask" placeholder="판매가능한 수량을 입력"
+														aria-label="판매 가능한 수량을 입력">
+												</div>
+											</div>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label"
+													for="basic-default-message">상품 설명</label>
+												<div class="col-sm-10">
+													<textarea id="basic-default-message" class="form-control"
+														placeholder="상품 설명" aria-label="상품 설명을 입력하세요..."></textarea>
+												</div>
+											</div>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label"
+													for="basic-default-message">상품 메인 이미지</label>
+												<div class="col-sm-10">
+													<input type="file" class="form-control"
+														id="basic-default-company" placeholder="게시할 상품 메인 이미지"
+														name="product_price">
+												</div>
+											</div>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label"
+													for="basic-default-message">상품 서브 이미지 + 버튼 추가 해서 더
+													추가 할 수 있게 처리 </label>
+												<div class="col-sm-10">
 
-	<!-- Core JS -->
-	<!-- build:js assets/vendor/js/core.js -->
-	<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
-	<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
-	<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-	<script
-		src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-
-	<script src="/resources/assets/admin/vendor/js/menu.js"></script>
-	<!-- endbuild -->
-
-	<!-- Vendors JS -->
-	<script
-		src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
-
-	<!-- Main JS -->
-	<script src="/resources/assets/admin/js/main.js"></script>
-
-	<!-- Page JS -->
-	<script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
-
-	<!-- Place this tag in your head or just before your close body tag. -->
-	<script async defer src="https://buttons.github.io/buttons.js"></script>
+													<input type="file" class="form-control"
+														id="basic-default-company" placeholder="게시할 상품 서브 이미지"
+														name="product_price">
+												</div>
+											</div>
+											<div class="row justify-content-end">
+												<div class="col-sm-10">
+													<button type="submit" class="btn btn-primary">저장</button>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="layout-overlay layout-menu-toggle"></div>
+					</div>
 </body>
 </html>
