@@ -42,12 +42,33 @@ body {
 	border-radius: 5px; /* 둥근 모서리 */
 }
 
-.red {
-	color: red;
+/* 모달 */
+#modalcontainer {
+	display: none; /* 기본적으로 숨김 */
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgb(0, 0, 0);
+	background-color: rgba(0, 0, 0, 0.4); /* 배경 색상 */
 }
 
-.blue {
-	color: blue;
+.modalBody {
+	background-color: #fff;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+}
+
+.close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
 }
 </style>
 <script type="text/javascript">
@@ -209,7 +230,7 @@ body {
 	}
 
 	function checkData() {
-		let result = false;
+		let result = true;
 		let tmp = $("#address").val();
 		if(tmp == "") {
 			$("#address").next().next().val("false");
@@ -228,38 +249,47 @@ body {
 		//let check1Check = $("#check1").next().next().next().val();
 		let check1Check = $("#check1").prop("checked");
 		
-		/* console.log(idCheck);
-		console.log(pwdCheck);
-		console.log(pwd2Check);
-		console.log(nameCheck);
-		console.log(birthdayCheck);
-		//console.log(genderCheck);
-		console.log(addressCheck);
-		console.log(emailCheck);
-		console.log(phoneCheck);
-		console.log(check1Check); */
+		let text = ""; // modal의 text영역에 들어갈 내용
 		
-		if(idCheck) {
-			if(pwdCheck) {
-				if(pwd2Check) {
-					if(nameCheck) {
-						if(birthdayCheck) {
-							if(addressCheck) {
-								if(emailCheck) {
-									if(phoneCheck) {
-										if(check1Check) {
-											result = true;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+		if(!idCheck) {
+			result = false;
+			text += "<div>아이디</div>";
+		}
+		if(!pwdCheck) {
+			result = false;
+			text += "<div>비밀번호</div>";
+		}
+		if(!pwd2Check) {
+			result = false;
+			text += "<div>비밀번호 확인</div>";
+		}
+		if(!nameCheck) {
+			result = false;
+			text += "<div>이름</div>";
+		}
+		if(!birthdayCheck) {
+			result = false;
+			text += "<div>생일</div>";
+		}
+		if(!addressCheck) {
+			result = false;
+			text += "<div>주소</div>";
+		}
+		if(!emailCheck) {
+			result = false;
+			text += "<div>이메일</div>";
+		}
+		if(!phoneCheck) {
+			result = false;
+			text += "<div>휴대폰번호</div>";
+		}
+		if(!check1Check) {
+			result = false;
+			text += "<div>약관 동의</div>";
 		}
 		
 		if(!result) {
+			openModal("아래 항목들을 입력해야합니다.", text);
 			console.log(idCheck);
 			console.log(pwdCheck);
 			console.log(pwd2Check);
@@ -274,6 +304,17 @@ body {
 		
 		return result;
 	}
+	
+	function openModal(title, text) {
+		$("#modalcontainer").css("display", "block");
+		$("#modalTitle").text(title);
+		$("#modalText").html(text);
+	}
+	
+	function closeModal() {
+		$("#modalcontainer").css("display", "none");
+	}
+	
 </script>
 </head>
 <body>
@@ -365,29 +406,15 @@ body {
 			</div>
 		</div>
 
-		<!-- The Modal -->
-		<div class="modal" id="myModal">
-			<div class="modal-dialog">
-				<div class="modal-content">
-
-					<!-- Modal Header -->
-					<div class="modal-header">
-						<h4 class="modal-title">Modal Heading</h4>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-					</div>
-
-					<!-- Modal body -->
-					<div class="modal-body">Modal body..</div>
-
-					<!-- Modal footer -->
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger"
-							data-bs-dismiss="modal">Close</button>
-					</div>
-
-				</div>
+		<!-- 모달 -->
+		<div id="modalcontainer">
+			<div class="modalBody">
+				<span class="close" onclick="closeModal();">&times;</span>
+				<h2 id="modalTitle">제목</h2>
+				<p id="modalText">내용</p>
 			</div>
 		</div>
+
 	</form>
 </body>
 </html>
