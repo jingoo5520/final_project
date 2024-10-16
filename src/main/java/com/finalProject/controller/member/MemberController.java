@@ -67,7 +67,7 @@ public class MemberController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		System.out.println("key : " + key);
 		System.out.println("value : " + value);
-		
+
 		map.put("key", key);
 		map.put("value", value);
 		System.out.println(map.toString());
@@ -78,7 +78,7 @@ public class MemberController {
 		try {
 			// map에 key와 value를 담아서 쿼리문을 실행
 			// key = where절에 들어갈 컬럼을 결정
-			// value = 찾을 값	
+			// value = 찾을 값
 			if (!memberService.autoDuplicate(map)) {
 				json = new ResponseData("notDuplicate", value);
 			} else {
@@ -90,33 +90,40 @@ public class MemberController {
 			e.printStackTrace();
 			result = new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-		
+
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/signUp", method = RequestMethod.POST) // 회원가입 처리
 	public String signUp(SignUpDTO signUpDTO, RedirectAttributes rttr) {
 		System.out.println("회원가입 요청");
 		System.out.println(signUpDTO.toString());
 		String result = "redirect:/viewSignUp";
-        
+		// 입력받은 생일 형식을 DB에 저장될 형식으로 변경
 		String birtday = signUpDTO.getBirthday().replace("-", "");
 		signUpDTO.setBirthday(birtday);
-		
+
+		// 입력받은 폰번호 형식을 DB에 저장될 형식으로 변경
+		// 01012345678 의 형식(-가 없는 형식이 경우)
+		if (signUpDTO.getPhone_number().length() == 11) {
+			String phone = signUpDTO.getPhone_number().substring(0, 3) + "-"
+					+ signUpDTO.getPhone_number().substring(3, 7) + "-" + signUpDTO.getPhone_number().substring(7, 11);
+			signUpDTO.setPhone_number(phone);
+		}
+
 		try {
-			if(memberService.signUp(signUpDTO)==1) {
+			if (memberService.signUp(signUpDTO) == 1) {
 				System.out.println("insert성공");
 				result = "redirect:/";
 			} else {
-				System.out.println("insert실패");								
+				System.out.println("insert실패");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("insert예외");
 		}
-		
-		
+
 		return result;
 	}
 

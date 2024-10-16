@@ -32,8 +32,6 @@ public class MemberDAOImpl implements MemberDAO {
 	public boolean autoDuplicate(Map<String, Object> map) {
 		boolean result = false;
 		// 중복인 경우 true
-		System.out.println("[dao]" + map.toString());
-		System.out.println("[dao]" + (int) ses.selectOne(ns + "autoDuplicate", map));
 		if ((int) ses.selectOne(ns + "autoDuplicate", map) >= 1) {
 			result = true;
 			System.out.println("중복");
