@@ -187,7 +187,7 @@
                                                 <span class="total-amount">$134.00</span>
                                             </div>
                                             <div class="button">
-                                                <a href="checkout.html" class="btn animate">Checkout</a>
+                                                <a href="/order" class="btn animate">Checkout</a>
                                             </div>
                                         </div>
                                     </div>
@@ -273,7 +273,7 @@
                                             <li class="nav-item"><a href="product-list.html">Shop List</a></li>
                                             <li class="nav-item"><a href="product-details.html">shop Single</a></li>
                                             <li class="nav-item"><a href="cart.html">Cart</a></li>
-                                            <li class="nav-item"><a href="checkout.html">Checkout</a></li>
+                                            <li class="nav-item"><a href="/order">Checkout</a></li>
                                         </ul>
                                     </li>
                                     <li class="nav-item">
