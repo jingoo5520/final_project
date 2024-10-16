@@ -13,11 +13,16 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	@GetMapping("/")
 	public String homePage(Locale locale, Model model) {
-		return "index";
+		return "user/index";
 	}
 	
 	@GetMapping("/admin")
 	public void adminPage() {
 		System.out.println("admin");
+	}
+	
+	@GetMapping("/order")
+	public String orderPage(Locale locale, Model model) {
+		return "order";
 	}
 }
