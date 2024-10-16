@@ -27,9 +27,9 @@
 						<td>Albert Cook</td>
 						<td>
 							<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="/resources/assets/admin/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="/resources/assets/admin/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="/resources/assets/admin/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
 							</ul>
 						</td>
 						<td>
@@ -53,9 +53,9 @@
 						<td>Barry Hunter</td>
 						<td>
 							<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="/resources/assets/admin/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="/resources/assets/admin/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="/resources/assets/admin/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
 							</ul>
 						</td>
 						<td>
@@ -79,9 +79,9 @@
 						<td>Trevor Baker</td>
 						<td>
 							<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="/resources/assets/admin/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="/resources/assets/admin/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="/resources/assets/admin/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
 							</ul>
 						</td>
 						<td>
@@ -105,9 +105,9 @@
 						<td>Jerry Milton</td>
 						<td>
 							<ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
-								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Lilian Fuller"><img src="/resources/assets/admin/img/avatars/5.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Sophia Wilkerson"><img src="/resources/assets/admin/img/avatars/6.png" alt="Avatar" class="rounded-circle" /></li>
+								<li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar avatar-xs pull-up" title="Christina Parker"><img src="/resources/assets/admin/img/avatars/7.png" alt="Avatar" class="rounded-circle" /></li>
 							</ul>
 						</td>
 						<td>
