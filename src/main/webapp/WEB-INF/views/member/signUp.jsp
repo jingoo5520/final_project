@@ -14,7 +14,8 @@
 	rel="stylesheet">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <style type="text/css">
 body {
 	display: flex;
@@ -281,12 +282,13 @@ body {
 			<h1>회원가입</h1>
 			<div>
 				아이디<input class="box" type="text" name="member_id" id="member_id"
-					placeholder="id"> <span id="idStatus"></span>
-					<input type="hidden" value="">
+					placeholder="id"> <span id="idStatus"></span> <input
+					type="hidden" value="">
 			</div>
 			<div>
 				비밀번호<input class="box" type="password" name="member_pwd"
-					id="member_pwd" placeholder="비밀번호"><span id="pwdStatus"></span><input type="hidden" value="">
+					id="member_pwd" placeholder="비밀번호"><span id="pwdStatus"></span><input
+					type="hidden" value="">
 			</div>
 			<div>
 				비밀번호 확인<input class="box" type="password" name="member_pwd2"
@@ -295,7 +297,8 @@ body {
 			</div>
 			<div>
 				이름<input class="box" type="text" name="member_name" id="member_name"
-					placeholder="홍길동"><span id="nameStatus"></span><input type="hidden" value="">
+					placeholder="홍길동"><span id="nameStatus"></span><input
+					type="hidden" value="">
 			</div>
 			<div>
 				별명<input class="box" type="text" name="nickname" id="nickname"
@@ -318,7 +321,8 @@ body {
 			</div>
 			<div>
 				주소<input class="box" type="text" name="address" id="address"
-					readonly onclick="selectAddress(this);" ><span id="addressStatus"></span><input type="hidden" value="">
+					readonly onclick="selectAddress(this);"><span
+					id="addressStatus"></span><input type="hidden" value="">
 			</div>
 			<div>
 				상세주소<input class="box" type="text" name="address2" id="address2"
@@ -328,7 +332,8 @@ body {
 
 			<div>
 				이메일<input class="box" type="text" name="email" id="email"
-					placeholder="gildong@gmail.com"> <span id="emailStatus"></span><input type="hidden" value="">
+					placeholder="gildong@gmail.com"> <span id="emailStatus"></span><input
+					type="hidden" value="">
 			</div>
 			<div>
 				휴대폰번호<input class="box" type="text" name="phone_number"
@@ -357,6 +362,30 @@ body {
 				<button type="submit" class="btn btn-primary" value="회원가입"
 					onclick="return checkData();">회원가입</button>
 				<button type="reset" class="btn btn-danger" value="취소">취소</button>
+			</div>
+		</div>
+
+		<!-- The Modal -->
+		<div class="modal" id="myModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h4 class="modal-title">Modal Heading</h4>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+
+					<!-- Modal body -->
+					<div class="modal-body">Modal body..</div>
+
+					<!-- Modal footer -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger"
+							data-bs-dismiss="modal">Close</button>
+					</div>
+
+				</div>
 			</div>
 		</div>
 	</form>
