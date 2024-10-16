@@ -39,6 +39,25 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
+<script>
+	/* $(function(){
+		document.querySelectorAll('.menu-sub a').forEach(link => {
+		    link.addEventListener('click', function(e) {
+		        e.preventDefault(); // 기본 링크 동작 막기
+		        const page = this.getAttribute('href'); // 클릭한 링크에서 href 값 가져오기
+		        
+		        // Ajax 요청으로 컨텐츠 로드
+		        fetch(page)
+		            .then(response => response.text())
+		            .then(data => {
+		                // 오른쪽 컨텐츠 영역에 새로 받은 페이지 내용 삽입
+		                document.getElementById('contentBody').innerHTML = data;
+		            })
+		            .catch(error => console.error('Error loading page:', error));
+			    });
+			});
+		}); */
+</script>
 </head>
 
  <body>
@@ -494,6 +513,19 @@
     </div>
     <!-- / Layout wrapper -->
 
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <!-- Place this tag where you want the button to render. -->
+                <li class="nav-item lh-1 me-3">
+                  <a
+                    class="github-button"
+                    href="https://github.com/themeselection/sneat-html-admin-template-free"
+                    data-icon="octicon-star"
+                    data-size="large"
+                    data-show-count="true"
+                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
+                    >Star</a
+                  >
+                </li>
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
