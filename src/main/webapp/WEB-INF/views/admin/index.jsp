@@ -146,6 +146,65 @@
             <li class="menu-header small text-uppercase">
               <span class="menu-header-text">Pages</span>
             </li>
+            
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Amange Members">회원 관리</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/admin/coupon" class="menu-link">
+                    <div data-i18n="members">회원</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="pages-account-settings-connections.html" class="menu-link">
+                    <div data-i18n="levels">등급</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Admin Orders">주문 관리</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/admin/coupon" class="menu-link">
+                    <div data-i18n="orders">주문</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="pages-account-settings-connections.html" class="menu-link">
+                    <div data-i18n="">temp</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Admin Products">상품 관리</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/admin/coupon" class="menu-link">
+                    <div data-i18n="products">상품</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="pages-account-settings-connections.html" class="menu-link">
+                    <div data-i18n="categories">카테고리</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            
             <li class="menu-item">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
@@ -164,7 +223,72 @@
                 </li>
               </ul>
             </li>
-           
+            
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Admin Notices">공지사항 관리</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/admin/coupon" class="menu-link">
+                    <div data-i18n="notices">공지</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="pages-account-settings-connections.html" class="menu-link">
+                    <div data-i18n="events">이벤트</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Admin Inquiries, Reports">문의, 신고</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/admin/coupon" class="menu-link">
+                    <div data-i18n="inquiries">문의</div>
+                  </a>
+                </li>
+                <li class="menu-item">
+                  <a href="pages-account-settings-connections.html" class="menu-link">
+                    <div data-i18n="reports">신고</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Admin Reviews">리뷰 관리</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/admin/coupon" class="menu-link">
+                    <div data-i18n="reviews">리뷰</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Admin Homepage">홈페이지 관리</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <a href="/admin/coupon" class="menu-link">
+                    <div data-i18n="banners">배너</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </aside>
         <!-- / Menu -->
