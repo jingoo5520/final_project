@@ -1,11 +1,12 @@
 package com.finalProject.controller.member;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.ResponseData;
 import com.finalProject.model.SignUpDTO;
 import com.finalProject.service.MemberService;
+import com.finalProject.util.ReceiveMailPOP3;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +33,9 @@ public class MemberController {
 
 	@Inject
 	private MemberService memberService;
+
+	@Inject
+	private ReceiveMailPOP3 remail;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
 	public String viewLogin() {
@@ -110,16 +115,16 @@ public class MemberController {
 					+ signUpDTO.getPhone_number().substring(3, 7) + "-" + signUpDTO.getPhone_number().substring(7, 11);
 			signUpDTO.setPhone_number(phone);
 		}
-		
+
 		// 입력받은 주소+상세주소
 		// 우편번호/주소/상세주소
 		signUpDTO.setAddress(signUpDTO.getAddress() + "/" + signUpDTO.getAddress2());
-		
+
 		// 성별 미선택시 null로 들어오는 데이터 처리
-		if(signUpDTO.getGender()==null) {			
+		if (signUpDTO.getGender() == null) {
 			signUpDTO.setGender("N");
 		}
-		
+
 		try {
 			if (memberService.signUp(signUpDTO) == 1) {
 				System.out.println("insert성공");
@@ -133,6 +138,27 @@ public class MemberController {
 			System.out.println("insert예외");
 		}
 
+		return result;
+	}
+
+	@RequestMapping(value = "/verifyCheck", method = RequestMethod.POST) // 휴대폰 인증 메일 확인 (ajax)
+	public ResponseEntity<ResponseData> verifyCheck(@RequestParam("phone") String phone) {
+		System.out.println(phone);
+		// 010-1234-5678 형식의(길이가13) 번호인 경우
+		if(phone.length()==13) {
+			phone = phone.replace("-", ""); // 01012345678 형식으로 (길이 11)로 변환
+		}
+		
+		ResponseEntity<ResponseData> result = null;
+		try {
+			remail.receiveMailPOP3(phone);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 

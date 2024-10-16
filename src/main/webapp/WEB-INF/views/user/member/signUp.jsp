@@ -202,12 +202,14 @@
 		}
 	}
 	
+	// 입력값에 따라 msg출력
 	function isMsg(id, msg, color, result) {
 		$("#" + id).next().text(msg);
 		$("#" + id).next().css("color", color);
 		$("#" + id).next().next().val(result);
 	}
 
+	// id, email, phone_number를 중복인지 아닌지 체크하는 ajax
 	function dbCheck(key, value) {
 		// https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise
 		// dbCheck()를 호출한 곳에서 ajax 응답결과를 기다리지 않고 동작하기 때문에, Promise 로 ajax결과값을 받은 후에 dbCheck()가 동작하도록 함.
@@ -235,6 +237,7 @@
 	    });
 	}
 
+	// 회원가입 실행 전 값 유효성 체크
 	function checkData() {
 		let result = true;
 		let tmp = $("#address").val();
@@ -311,14 +314,48 @@
 		return result;
 	}
 	
+	// 모달 열기
 	function openModal(title, text) {
 		$("#modalcontainer").css("display", "block");
 		$("#modalTitle").text(title);
 		$("#modalText").html(text);
 	}
 	
+	// 모달 닫기
 	function closeModal() {
 		$("#modalcontainer").css("display", "none");
+	}
+	
+	// 휴대폰 인증
+	function phoneVerify() {
+		let result = $("#phone_number").next().next().val();
+		let success = `<img src="/resources/images/mobileQR.png" width="300px">`;
+		success += `<div><input type="button" onclick='verifyCheck(${phone});' value="인증요청" class="btn btn-info">`;
+		success += `<input type="button" onclick="closeModal();" value="취소" class="btn btn-danger"></div>`;		
+		let fail = "올바른 휴대폰번호를 입력하세요.";
+		if(result) {
+			openModal("휴대폰 인증", success);
+		} else {
+			openModal("에러", fail);
+		}
+	}
+	
+	// 휴대폰 인증메일 확인
+	function verifyCheck() {
+		let phone = $("#phone_number").val();
+		console.log(phone);
+		$.ajax({
+	          url: "/member/verifyCheck", // 데이터가 송수신될 서버의 주소
+	          type: "POST", // 통신 방식 (GET, POST, PUT, DELETE)
+	          dataType: "json", // 수신 받을 데이터 타입 (MIME TYPE)
+	          data: { phone: phone }, // 보낼 데이터
+	          success: function (data) {
+	            // 통신이 성공하면 수행할 함수
+	            console.log("통신 성공");
+	          },
+	          error: function () {},
+	          complete: function () {},
+	        });
 	}
 	
 </script>
@@ -390,7 +427,8 @@
 				<div class="area">
 					휴대폰번호<input class="box" type="text" name="phone_number"
 						id="phone_number" placeholder="010-1234-5678"> <span
-						id="phoneStatus"></span><input type="hidden" value="">
+						id="phoneStatus"></span><input type="hidden" value=""> <input
+						type="button" value="인증요청" onclick="phoneVerify();">
 				</div>
 
 				<div class="form-check">
