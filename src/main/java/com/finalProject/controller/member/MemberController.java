@@ -72,10 +72,16 @@ public class MemberController {
 	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST) // 회원가입 데이터 중복 체크 (ajax)
 	public ResponseEntity<ResponseData> isDuplicate(@RequestParam("key") String key,
 			@RequestParam("value") String value) {
+		// key = 중복체크를 진행할 요소(id, email, phone)
+		// value = 체크할 값
 		Map<String, Object> map = new HashMap<String, Object>();
 		System.out.println("key : " + key);
 		System.out.println("value : " + value);
-
+		// 휴대폰번호가 11자인경우(01012345678)
+		if(key.equals("phone") && value.length()==11) {
+			// 010-1234-5678 로 만듦
+			value = value.substring(0, 3) + "-" + value.substring(3, 7) + "-" + value.substring(7, 11);
+		}
 		map.put("key", key);
 		map.put("value", value);
 		System.out.println(map.toString());
