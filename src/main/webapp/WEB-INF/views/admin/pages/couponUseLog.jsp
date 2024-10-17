@@ -53,7 +53,7 @@
         <!-- Menu -->
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="pageName" value="dashboard" />
+				<jsp:param name="pageName" value="couponUseLog" />
 
 			</jsp:include>
 		<!-- / Menu -->
@@ -78,7 +78,7 @@
 
 
 						<!-- body  -->
-대시보드
+		쿠폰로그
 
 					</div>
 				</div>
