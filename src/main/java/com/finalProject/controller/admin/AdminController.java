@@ -12,10 +12,16 @@ public class AdminController {
 		System.out.println("to admin index page");
 		return "/admin/index";
 	}
-	
+
 	// 쿠폰 관리 - 쿠폰 페이지 이동
-	@GetMapping("/admin/coupon")
+	@GetMapping("/admin/coupons")
 	public String couponPage() {
-		return "/admin/pages/coupon";
+		return "/admin/pages/coupons";
+	}
+
+	// 쿠폰 관리 - 쿠폰 사용 내역 페이지 이동
+	@GetMapping("/admin/couponUseLog")
+	public String couponUseLogPage() {
+		return "/admin/pages/couponUseLog";
 	}
 }
