@@ -51,14 +51,17 @@
         <!-- Menu -->
 
         <!-- Menu -->
+
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
 				<jsp:param name="pageName" value="coupons" />
 
 			</jsp:include>
+
 		<!-- / Menu -->
 
         <!-- Layout container -->
+
 			<div class="layout-page">
 				<!-- Navbar -->
 				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
@@ -67,7 +70,9 @@
 						</a>
 					</div>
 
+
 				</nav>
+
 				<!-- / Navbar -->
 
 				<!-- Content wrapper -->
@@ -75,6 +80,7 @@
 					<!-- Content -->
 
 					<div class="container-xxl flex-grow-1 container-p-y">
+
 
 
 						<!-- body  -->
@@ -104,12 +110,14 @@
 				<div class="content-backdrop fade"></div>
 			</div>
 			<!-- Content wrapper -->
+
 		</div>
 		<!-- / Layout page -->
 	</div>
 
 	<!-- Overlay -->
 	<div class="layout-overlay layout-menu-toggle"></div>
+
 	<!-- / Layout wrapper -->
 
               
@@ -136,4 +144,5 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
   </body>
+
 </html>
