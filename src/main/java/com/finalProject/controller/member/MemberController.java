@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
@@ -124,6 +125,15 @@ public class MemberController {
 					+ signUpDTO.getPhone_number().substring(3, 7) + "-" + signUpDTO.getPhone_number().substring(7, 11);
 			signUpDTO.setPhone_number(phone);
 		}
+		
+		// 별명(nickname)을 입력하지 않았을 경우
+		if (signUpDTO.getNickname().equals("")) {
+			UUID randomuuid = UUID.randomUUID();
+			// member_name + 무작위 8글자로 닉네임 저장
+			// ex : 홍길동_44a9d39b
+			signUpDTO.setNickname(signUpDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
+		}
+
 
 		// 입력받은 주소+상세주소
 		// 우편번호/주소/상세주소
