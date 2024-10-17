@@ -11,6 +11,6 @@ public class OrderController {
 	
 	@GetMapping("/order")
 	public String homePage(Locale locale, Model model) {
-		return "user/order/order";
+		return "/user/order/order";
 	}
 }
