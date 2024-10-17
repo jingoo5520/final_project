@@ -43,9 +43,11 @@ public class ReceiveMailPOP3 {
 			Message[] messages = folder.getMessages();
 			for (Message message : messages) {
 				String tmpFrom = message.getFrom()[0].toString();
+				String tmpSubject = message.getSubject();
 //				System.out.println("Subject: " + message.getSubject());
 				// 01091647735 <01091647735@vmms.nate.com> 에서 <@사이의 값 추출하기
 				String tmpPhone = tmpFrom.substring(tmpFrom.indexOf("<")+1, tmpFrom.indexOf("@"));
+				System.out.println("Content: "+ tmpSubject);
 				System.out.println("phone: "+ tmpPhone);
 				System.out.println("---------------------------------");
 				if(phone.equals(tmpPhone)) {
