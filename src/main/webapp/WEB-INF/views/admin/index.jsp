@@ -39,6 +39,7 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
+
 </head>
 
 
@@ -49,16 +50,17 @@
 			
 			
 			<!-- Menu -->
+
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
 				<jsp:param name="pageName" value="dashboard" />
 
 			</jsp:include>
-			<!-- / Menu -->
 
+		<!-- / Menu -->
 
+        <!-- Layout container -->
 
-			<!-- Layout container -->
 			<div class="layout-page">
 				<!-- Navbar -->
 				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
@@ -77,8 +79,11 @@
 					<div class="container-xxl flex-grow-1 container-p-y">
 
 
-						<div id="contentBody"></div>
 
+						<!-- body  -->
+대시보드
+
+						
 
 					</div>
 				</div>
@@ -111,29 +116,30 @@
 	<!-- Overlay -->
 	<div class="layout-overlay layout-menu-toggle"></div>
 	<!-- / Layout wrapper -->
+              
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
+    <script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
+    <script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
+    <script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="/resources/assets/admin/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
+
+    <!-- Main JS -->
+    <script src="/resources/assets/admin/js/main.js"></script>
+
+    <!-- Page JS -->
+    <script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
 
 
-
-	<!-- Core JS -->
-	<!-- build:js assets/vendor/js/core.js -->
-	<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
-	<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
-	<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-	<script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-
-	<script src="/resources/assets/admin/vendor/js/menu.js"></script>
-	<!-- endbuild -->
-
-	<!-- Vendors JS -->
-	<script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
-
-	<!-- Main JS -->
-	<script src="/resources/assets/admin/js/main.js"></script>
-
-	<!-- Page JS -->
-	<script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
-
-	<!-- Place this tag in your head or just before your close body tag. -->
-	<script async defer src="https://buttons.github.io/buttons.js"></script>
-</body>
 </html>
