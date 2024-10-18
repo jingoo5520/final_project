@@ -4,9 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -44,13 +46,17 @@ public class MemberController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
-	public String login(LoginDTO loginDTO, RedirectAttributes rttr, Model model, HttpSession session) {
+	public String login(LoginDTO loginDTO, RedirectAttributes rttr, Model model, HttpSession session, @RequestParam(value="autologin_code", required = false)boolean autologin) {
 		System.out.println(loginDTO + "로 로그인 요청");
+		System.out.println("자동로그인 : " + autologin);
 		log.info("postLogin");
 		try {
 			LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에 조회한다.
 			if (loginMember != null) { // 입력한 아이디 비밀번호에 해당하는 member가 없다면 null
 				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장
+				if(autologin) {	// 자동로그인 체크했을경우
+					model.addAttribute("autologin", autologin); // 모델객체에 자동로그인 저장
+				}
 			}
 
 		} catch (Exception e) {
@@ -72,10 +78,16 @@ public class MemberController {
 	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST) // 회원가입 데이터 중복 체크 (ajax)
 	public ResponseEntity<ResponseData> isDuplicate(@RequestParam("key") String key,
 			@RequestParam("value") String value) {
+		// key = 중복체크를 진행할 요소(id, email, phone)
+		// value = 체크할 값
 		Map<String, Object> map = new HashMap<String, Object>();
 		System.out.println("key : " + key);
 		System.out.println("value : " + value);
-
+		// 휴대폰번호가 11자인경우(01012345678)
+		if(key.equals("phone") && value.length()==11) {
+			// 010-1234-5678 로 만듦
+			value = value.substring(0, 3) + "-" + value.substring(3, 7) + "-" + value.substring(7, 11);
+		}
 		map.put("key", key);
 		map.put("value", value);
 		System.out.println(map.toString());
@@ -118,6 +130,15 @@ public class MemberController {
 					+ signUpDTO.getPhone_number().substring(3, 7) + "-" + signUpDTO.getPhone_number().substring(7, 11);
 			signUpDTO.setPhone_number(phone);
 		}
+		
+		// 별명(nickname)을 입력하지 않았을 경우
+		if (signUpDTO.getNickname().equals("")) {
+			UUID randomuuid = UUID.randomUUID();
+			// member_name + 무작위 8글자로 닉네임 저장
+			// ex : 홍길동_44a9d39b
+			signUpDTO.setNickname(signUpDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
+		}
+
 
 		// 입력받은 주소+상세주소
 		// 우편번호/주소/상세주소
@@ -163,6 +184,15 @@ public class MemberController {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	// 로그아웃
+	@RequestMapping(value = "/logout")
+	public String logout(HttpServletRequest request) {
+		HttpSession ses = request.getSession();
+		ses.removeAttribute("loginMember");
+		System.out.println("로그아웃");
+		return "redirect:/";
 	}
 
 }
