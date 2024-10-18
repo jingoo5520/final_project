@@ -187,6 +187,13 @@
 			<artifactId>spring-batch-infrastructure</artifactId>
 			<version>4.3.7</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.5</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

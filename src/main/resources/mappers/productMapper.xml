@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.productMapper">
+
+	<insert id="saveProduct" parameterType="com.finalProject.model.ProductDTO"
+		useGeneratedKeys="true" keyProperty="product_id">
+		INSERT INTO Product (product_name,
+		product_price,
+		product_content, product_dc_type, product_dc_amount,
+		product_sell_count)
+		VALUES (#{product_name}, #{product_price},
+		#{product_content},
+		#{product_dc_type}, #{product_dc_amount},
+		#{product_sell_count});
+	</insert>
+
+	<insert id="saveMainImage" parameterType="map">
+		INSERT INTO Image (product_id, main_image_url)
+		VALUES (#{product_id}, #{mainImage})
+	</insert>
+
+	<insert id="saveSubImage" parameterType="map">
+		INSERT INTO Image (product_id, sub_image_url)
+		VALUES
+		<foreach collection="subImage" item="sub_Image"
+			separator=",">
+			(#{product_id}, #{sub_Image})
+		</foreach>
+	</insert>
+</mapper>

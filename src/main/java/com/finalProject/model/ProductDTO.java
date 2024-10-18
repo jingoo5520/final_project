@@ -15,17 +15,16 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class CSVDTO {
-	private String name;
-	private int price;
-	private String content;
-	private String fileName;
-	private String cnt;
-	private String dcType;
-	private String dcAmount;
-	private String dcRate;
-	private String sellCount;
-	private String category;
-	private String cost;
-	private MultipartFile file;
+public class ProductDTO {
+	private int product_id;
+	private String product_name;
+	private int product_price;
+	private String product_content;
+
+	private String product_dc_type;
+	private int product_dc_amount;
+	private int product_sell_count;
+
+	private MultipartFile image_main_url;
+	private MultipartFile[] image_sub_url;
 }

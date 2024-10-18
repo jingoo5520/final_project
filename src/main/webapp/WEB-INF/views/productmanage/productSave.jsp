@@ -246,7 +246,7 @@
 				<!-- / Navbar -->
 
 				<!-- Content wrapper -->
-				<div class="content-wrapper">
+				<div class="content-wrapper"></div>
 					<!-- Content -->
 
 					<div class="container-xxl flex-grow-1 container-p-y">
@@ -265,7 +265,7 @@
 										<small class="text-muted float-end"></small>
 									</div>
 									<div class="card-body">
-										<form>
+										<form action="uploadProduct" enctype="multipart/form-data" method="post">
 											<div class="row mb-3">
 												<label class="col-sm-2 col-form-label"
 													for="basic-default-name">상품명</label>
@@ -279,7 +279,7 @@
 												<label class="col-sm-2 col-form-label"
 													for="basic-default-company"> 가격</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control"
+													<input type="number" class="form-control"
 														id="basic-default-company" placeholder="상품 가격"
 														name="product_price">
 												</div>
@@ -301,19 +301,19 @@
 															<td class="text-nowrap">할인 타입</td>
 															<td>
 																<div class="form-check d-flex justify-content-center">
-																	<input class="form-check-input" type="checkbox"
+																	<input class="form-check-input" type="radio"
 																		id="defaultCheck1" name="product_dc_type" value="P">
 																</div>
 															</td>
 															<td>
 																<div class="form-check d-flex justify-content-center">
-																	<input class="form-check-input" type="checkbox"
+																	<input class="form-check-input" type="radio"
 																		id="defaultCheck2" name="product_dc_type" value="M">
 																</div>
 															</td>
 															<td>
 																<div class="form-check d-flex justify-content-center">
-																	<input class="form-check-input" type="checkbox"
+																	<input class="form-check-input" type="radio"
 																		id="defaultCheck3" checked="checked"
 																		name="product_dc_type" value="N">
 																</div>
@@ -328,8 +328,8 @@
 													다르게 동적으로 설정</label>
 												<div class="col-sm-10">
 													<div class="input-group input-group-merge">
-														<input type="text" id="basic-default-email"
-															class="form-control" placeholder="">
+														<input type="number" id="basic-default-email"
+															class="form-control" placeholder="" name = "product_dc_amount">
 													</div>
 
 												</div>
@@ -338,9 +338,9 @@
 												<label class="col-sm-2 col-form-label"
 													for="basic-default-phone">판매수량</label>
 												<div class="col-sm-10">
-													<input type="text" id="basic-default-phone"
+													<input type="number" id="basic-default-phone"
 														class="form-control phone-mask" placeholder="판매가능한 수량을 입력"
-														aria-label="판매 가능한 수량을 입력">
+														aria-label="판매 가능한 수량을 입력" name="product_sell_count">
 												</div>
 											</div>
 											<div class="row mb-3">
@@ -348,7 +348,7 @@
 													for="basic-default-message">상품 설명</label>
 												<div class="col-sm-10">
 													<textarea id="basic-default-message" class="form-control"
-														placeholder="상품 설명" aria-label="상품 설명을 입력하세요..."></textarea>
+														placeholder="상품 설명" aria-label="상품 설명을 입력하세요..." name="product_content"></textarea>
 												</div>
 											</div>
 											<div class="row mb-3">
@@ -357,7 +357,7 @@
 												<div class="col-sm-10">
 													<input type="file" class="form-control"
 														id="basic-default-company" placeholder="게시할 상품 메인 이미지"
-														name="product_price">
+														name="image_main_url">
 												</div>
 											</div>
 											<div class="row mb-3">
@@ -368,7 +368,7 @@
 
 													<input type="file" class="form-control"
 														id="basic-default-company" placeholder="게시할 상품 서브 이미지"
-														name="product_price">
+														name="image_sub_url" multiple>
 												</div>
 											</div>
 											<div class="row justify-content-end">
