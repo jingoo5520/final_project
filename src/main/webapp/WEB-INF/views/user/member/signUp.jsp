@@ -328,6 +328,8 @@
 	
 	// 휴대폰 인증
 	function phoneVerify() {
+		let randNum = Math.floor(Math.random()*8)+1;
+		let authCode = 0;
 		let result = $("#phone_number").next().next().val();
 		let success = `<img src="/resources/images/mobileQR.png" width="300px">`;
 		success += `<div><input type="button" onclick='verifyCheck(${phone});' value="인증요청" class="btn btn-info">`;

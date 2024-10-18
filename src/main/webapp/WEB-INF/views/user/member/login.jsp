@@ -72,7 +72,7 @@ button:hover {
 	</div>
 
 	<jsp:include page="../footer.jsp"></jsp:include>
-
+	<script src="/resources/assets/user/js/main.js"></script>
 </body>
 
 </html>

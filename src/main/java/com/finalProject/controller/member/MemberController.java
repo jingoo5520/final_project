@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -179,6 +180,15 @@ public class MemberController {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	// 로그아웃
+	@RequestMapping(value = "/logout")
+	public String logout(HttpServletRequest request) {
+		HttpSession ses = request.getSession();
+		ses.removeAttribute("loginMember");
+		System.out.println("로그아웃");
+		return "redirect:/";
 	}
 
 }
