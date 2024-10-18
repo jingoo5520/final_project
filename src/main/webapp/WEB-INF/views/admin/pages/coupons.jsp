@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -39,29 +40,103 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
+
 <script>
-	
+	// 쿠폰 리스트 출력
+	function showCouponList() {
+		$.ajax({
+			url : '/admin/coupons/getCouponList',
+			type : 'POST',
+			dataType: 'json',
+			success : function(data) {
+				console.log(data);
+
+				let output = '';				
+				
+				$.each(data, function(index, coupon) {
+					output += '<tr>' +
+	                    '<td>' + coupon.coupon_no + '</td>' +
+	                    '<td>' + coupon.coupon_name + '</td>' +
+	                    '<td>' + coupon.coupon_dc_type + '</td>' +
+	                    '<td>' + coupon.coupon_dc_amount + '</td>' +
+	                    '<td>' + coupon.coupon_dc_rate + '</td>'
+	            	+ '</tr>';        
+	            });
+				
+				$('#couponTableBody').html(output);
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+
+	// 쿠폰 타입 설정
+	function setCouponType(type) {
+		document.getElementById('couponTypeBtn').textContent = type.textContent;
+	}
+
+	// 쿠폰 생성
+	function createCoupon() {
+		let couponName = document.getElementById('couponName').value;
+		let couponType;
+		let couponDcAmount = 0;
+		let couponDcRate = 0;
+
+		if (document.getElementById('couponTypeBtn').textContent == '할인률') {
+			couponType = 'R';
+			couponDcRate = parseFloat(document.getElementById('couponDc').value) / 100;
+		} else if (document.getElementById('couponTypeBtn').textContent == '할인 금액') {
+			couponType = 'A';
+			couponDcAmount = parseInt(document.getElementById('couponDc').value);
+		}
+
+		$.ajax({
+			url : '/admin/coupons/createCoupon',
+			type : 'POST',
+			data : {
+				"couponName" : couponName,
+				"couponType" : couponType,
+				"couponDcAmount" : couponDcAmount,
+				"couponDcRate" : couponDcRate
+			},
+			success : function(data) {
+				console.log(data);
+				showCouponList();
+				$('#createCouponModal').modal('hide');
+				$('#couponName').val('');
+			    $('#couponTypeBtn').text('쿠폰 타입'); 
+			    $('#couponDc').val('');
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
 </script>
 </head>
 
- <body>
-    <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
-        <!-- Menu -->
+<style>
+#createCouponBtnSapce {
+	display: flex;
+	flex-direction: row;
+	justify-content: right;
+}
+</style>
 
-        <!-- Menu -->
-
+<body>
+	<!-- Layout wrapper -->
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<!-- Menu -->
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
 				<jsp:param name="pageName" value="coupons" />
 
 			</jsp:include>
+			<!-- / Menu -->
 
-		<!-- / Menu -->
-
-        <!-- Layout container -->
-
+			<!-- Layout container -->
 			<div class="layout-page">
 				<!-- Navbar -->
 				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
@@ -69,22 +144,90 @@
 						<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
-
-
 				</nav>
-
 				<!-- / Navbar -->
 
 				<!-- Content wrapper -->
 				<div class="content-wrapper">
 					<!-- Content -->
-
 					<div class="container-xxl flex-grow-1 container-p-y">
-
-
-
 						<!-- body  -->
-쿠폰
+						<div class="card">
+							<h5 class="card-header">쿠폰 목록</h5>
+							<div class="table-responsive text-nowrap">
+								<table class="table">
+									<thead class="table-light">
+										<tr>
+											<th>번호</th>
+											<th>쿠폰 이름</th>
+											<th>할인 타입</th>
+											<th>할인 금액</th>
+											<th>할인률</th>
+										</tr>
+									</thead>
+									<tbody id="couponTableBody" class="table-border-bottom-0">
+
+										<c:forEach var="coupon" items="${couponList}">
+											<!-- couponList에서 쿠폰 반복 -->
+
+											<tr>
+												<td>${coupon.coupon_no}</td>
+												<td>${coupon.coupon_name}</td>
+												<td>${coupon.coupon_dc_type}</td>
+												<td>${coupon.coupon_dc_amount}</td>
+												<td>${coupon.coupon_dc_rate}</td>
+											</tr>
+										</c:forEach>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- 쿠폰 생성 버튼 -->
+						<div id="createCouponBtnSapce">
+							<button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#createCouponModal">쿠폰 생성</button>
+						</div>
+
+						<!-- 쿠폰 생성 모달 -->
+						<div id="createCouponModal" class="modal fade" id="createCouponModal" tabindex="-1" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel1">쿠폰 생성</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<div class="row">
+											<div class="col mb-3">
+												<label for="nameBasic" class="form-label">쿠폰 이름</label> <input type="text" id="couponName" class="form-control" placeholder="Enter Name" name="couponName" />
+											</div>
+										</div>
+
+
+										<div class="row g-2">
+											<div class="col mb-0">
+												<button id="couponTypeBtn" type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">쿠폰 타입</button>
+												<ul class="dropdown-menu">
+													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인률</a></li>
+													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인 금액</a></li>
+												</ul>
+											</div>
+											<div class="col-8 mb-0">
+												<input type="text" id="couponDc" class="form-control" placeholder="Enter Number" name="couponDc" />
+											</div>
+										</div>
+									</div>
+
+
+									<div class="modal-footer">
+										<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+										<button type="button" class="btn btn-primary" onclick="createCoupon()">Create</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
 
 					</div>
 				</div>
@@ -120,29 +263,29 @@
 
 	<!-- / Layout wrapper -->
 
-              
 
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-    <script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
-    <script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
-    <script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-    <script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <script src="/resources/assets/admin/vendor/js/menu.js"></script>
-    <!-- endbuild -->
+	<!-- Core JS -->
+	<!-- build:js assets/vendor/js/core.js -->
+	<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
+	<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
+	<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
+	<script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <!-- Vendors JS -->
-    <script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
+	<script src="/resources/assets/admin/vendor/js/menu.js"></script>
+	<!-- endbuild -->
 
-    <!-- Main JS -->
-    <script src="/resources/assets/admin/js/main.js"></script>
+	<!-- Vendors JS -->
+	<script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
 
-    <!-- Page JS -->
-    <script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
+	<!-- Main JS -->
+	<script src="/resources/assets/admin/js/main.js"></script>
 
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-  </body>
+	<!-- Page JS -->
+	<script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
+
+	<!-- Place this tag in your head or just before your close body tag. -->
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
+</body>
 
 </html>

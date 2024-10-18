@@ -4,8 +4,12 @@
   "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<typeAlias type="com.finalProject.model.TestVO" alias="TestVO" />
-		<typeAlias type="com.finalProject.model.LoginDTO" alias="LoginDTO" />
+		<typeAlias type="com.finalProject.model.TestVO"
+			alias="TestVO" />
+		<typeAlias type="com.finalProject.model.LoginDTO"
+			alias="LoginDTO" />
+		<typeAlias type="com.finalProject.model.CouponDTO"
+			alias="CouponDTO" />
 
 	</typeAliases>
 </configuration>
