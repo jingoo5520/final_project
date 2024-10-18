@@ -12,4 +12,6 @@ public interface ProductDAO {
 
 	int insertSubImage(List<String> subImages, int productId);
 
+	List<ProductDTO> getAllProducts();
+
 }

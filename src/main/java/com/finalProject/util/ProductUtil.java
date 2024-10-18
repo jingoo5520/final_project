@@ -1,6 +1,7 @@
 package com.finalProject.util;
 
 import java.io.File;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,4 +21,13 @@ public class ProductUtil {
 		}
 	}
 
+	public void removeFile(List<String> list) {
+		// TODO Auto-generated method stub
+		for (String filePath : list) {
+			File file = new File(filePath);
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+	}
 }

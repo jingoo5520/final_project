@@ -44,4 +44,10 @@ public class ProductServiceImpl implements ProductService {
 		return result;
 	}
 
+	@Override
+	public List<ProductDTO> getAllProducts() {
+
+		return pDAO.getAllProducts();
+	}
+
 }

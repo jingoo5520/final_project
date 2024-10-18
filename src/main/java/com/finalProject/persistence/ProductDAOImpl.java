@@ -49,4 +49,11 @@ public class ProductDAOImpl implements ProductDAO {
 		params.put("product_id", productId);
 		return ses.insert(ns + "saveSubImage", params);
 	}
+
+	@Override
+	public List<ProductDTO> getAllProducts() {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns + "getAllBoard");
+
+	}
 }

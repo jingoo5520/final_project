@@ -8,4 +8,6 @@ public interface ProductService {
 
 	int saveProduct(ProductDTO productDTO, List<String> list);
 
+	List<ProductDTO> getAllProducts();
+
 }

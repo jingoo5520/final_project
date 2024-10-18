@@ -4,7 +4,8 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.finalProject.mappers.productMapper">
 
-	<insert id="saveProduct" parameterType="com.finalProject.model.ProductDTO"
+	<insert id="saveProduct"
+		parameterType="com.finalProject.model.ProductDTO"
 		useGeneratedKeys="true" keyProperty="product_id">
 		INSERT INTO Product (product_name,
 		product_price,
@@ -17,16 +18,55 @@
 	</insert>
 
 	<insert id="saveMainImage" parameterType="map">
-		INSERT INTO Image (product_id, main_image_url)
-		VALUES (#{product_id}, #{mainImage})
+		INSERT INTO Image
+		(product_id, image_url,image_type)
+		VALUES (#{product_id},
+		#{mainImage},'M')
 	</insert>
 
 	<insert id="saveSubImage" parameterType="map">
-		INSERT INTO Image (product_id, sub_image_url)
+		INSERT INTO Image (product_id, image_url, image_type)
 		VALUES
-		<foreach collection="subImage" item="sub_Image"
-			separator=",">
-			(#{product_id}, #{sub_Image})
+		<foreach collection="subImage" item="sub_Image" separator=",">
+			(#{product_id}, #{sub_Image},'S')
 		</foreach>
 	</insert>
+
+	<resultMap type="com.finalProject.model.ProductVO"
+		id="productResultMap">
+		<id column="product_id" property="product_id" javaType="int" />
+		<result column="product_name" property="product_name"
+			javaType="String" />
+		<result column="product_price" property="product_price"
+			javaType="int" />
+		<result column="product_content" property="product_content"
+			javaType="String" />
+		<result column="product_dc_type" property="product_dc_type"
+			javaType="String" />
+		<result column="product_dc_amount" property="product_dc_amount"
+			javaType="int" />
+		<result column="product_sell_count"
+			property="product_sell_count" javaType="int" />
+
+		<collection column="product_id" property="list"
+			ofType="com.finalProject.model.ProductImg" javaType="java.util.List"
+			select="getAllImg" />
+	</resultMap>
+
+	<select id="getAllBoard" resultMap="productResultMap">
+		SELECT product_id,
+		product_name, product_price, product_dc_type,
+		product_dc_amount,
+		product_sell_count
+		FROM product
+	</select>
+
+	<select id="getAllImg"
+		resultType="com.finalProject.model.ProductImg">
+		SELECT image_url, image_type FROM image WHERE product_id =
+		#{product_id}
+	</select>
+
+
+
 </mapper>

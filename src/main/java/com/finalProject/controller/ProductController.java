@@ -29,7 +29,12 @@ public class ProductController {
 	@Autowired
 	private ProductUtil pu;
 
-	@RequestMapping("/productSave")
+	@RequestMapping("/productList")
+	public String productList() {
+		return "productmanage/productView";
+	}
+
+	@RequestMapping(value = "/productSave")
 	public String productSave() {
 		return "productmanage/productSave";
 	}
@@ -69,39 +74,47 @@ public class ProductController {
 		List<String> list = new ArrayList<>();
 		pu.makeDirectory(request, realPath);
 
-		if (productDTO.getImage_main_url() != null) {
-			fileName = "Main_" + UUID.randomUUID() + productDTO.getImage_main_url().getOriginalFilename();
-			route = realPath + File.separator + fileName;
-			File Directory = new File(realPath + File.separator + fileName);
-
-			list.add(route);
-			try {
-				productDTO.getImage_main_url().transferTo(Directory);
-			} catch (IllegalStateException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		if (productDTO.getImage_sub_url() != null) {
-			for (MultipartFile file : productDTO.getImage_sub_url()) {
-				fileName = "Sub_" + UUID.randomUUID() + file.getOriginalFilename();
+		try {
+			if (productDTO.getImage_main_url() != null) {
+				fileName = "Main_" + UUID.randomUUID() + productDTO.getImage_main_url().getOriginalFilename();
 				route = realPath + File.separator + fileName;
-
 				File Directory = new File(realPath + File.separator + fileName);
+
 				list.add(route);
 				try {
-					file.transferTo(Directory);
+					productDTO.getImage_main_url().transferTo(Directory);
 				} catch (IllegalStateException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-		}
 
-		if (ps.saveProduct(productDTO, list) == 1) {
-			System.out.println("저장 성공");
-		}
+			if (productDTO.getImage_sub_url() != null) {
+				for (MultipartFile file : productDTO.getImage_sub_url()) {
+					fileName = "Sub_" + UUID.randomUUID() + file.getOriginalFilename();
+					route = realPath + File.separator + fileName;
 
+					File Directory = new File(realPath + File.separator + fileName);
+					list.add(route);
+					try {
+						file.transferTo(Directory);
+					} catch (IllegalStateException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+
+			if (ps.saveProduct(productDTO, list) == 1) {
+				System.out.println("저장 성공");
+			} else {
+				pu.removeFile(list); // 실패 시 파일 삭제
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			log.error("파일 업로드 중 오류 발생: {}", e.getMessage());
+			pu.removeFile(list); // 오류 발생 시 파일 삭제
+		}
 	}
+
 }
