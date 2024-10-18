@@ -218,11 +218,6 @@
                                 <a href="javascript:void(0)" class="btn btn-alt">(총 1개) 498,000원 결제하기</a>
                             </div>
                         </div>
-                        <div class="checkout-sidebar-banner mt-30">
-                            <a href="product-grids.html">
-                                <img src="https://via.placeholder.com/400x330" alt="#">
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>

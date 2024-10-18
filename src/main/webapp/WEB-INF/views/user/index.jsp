@@ -11,7 +11,7 @@
     <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.png" />
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -1061,7 +1061,7 @@
 
     </script>
     <script>
-        const finaleDate = new Date("February 15, 2023 00:00:00").getTime();
+        const finaleDate = new Date("November 21, 2024 00:00:00").getTime();
 
         const timer = () => {
             const now = new Date().getTime();

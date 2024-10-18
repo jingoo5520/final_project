@@ -215,513 +215,74 @@
                                         <h3 class="total-show-product">Showing: <span>1 - 12 items</span></h3>
                                     </div>
                                 </div>
-                                <div class="col-lg-5 col-md-4 col-12">
-                                    <nav>
-                                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                            <button class="nav-link " id="nav-grid-tab" data-bs-toggle="tab"
-                                                data-bs-target="#nav-grid" type="button" role="tab"
-                                                aria-controls="nav-grid" aria-selected="true"><i
-                                                    class="lni lni-grid-alt"></i></button>
-                                            <button class="nav-link active" id="nav-list-tab" data-bs-toggle="tab"
-                                                data-bs-target="#nav-list" type="button" role="tab"
-                                                aria-controls="nav-list" aria-selected="false"><i
-                                                    class="lni lni-list"></i></button>
-                                        </div>
-                                    </nav>
-                                </div>
                             </div>
                         </div>
                         <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+                            <div class="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
                                 <div class="row">
                                     <div class="col-lg-4 col-md-6 col-12">
                                         <!-- Start Single Product -->
-                                        <div class="single-product">
+                                        <div class="single-product" id="1">
                                             <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <div class="button">
-                                                    <a href="/cart" class="btn"><i
-                                                            class="lni lni-cart"></i>장바구니넣기</a>
-                                                    <a href="/order" class="btn"><i
-                                                            class="lni lni-cart"></i>구매하기</a>
+                                                <img src="https://webimg.jestina.co.kr/UpData2/item/G2000024045/20210304143541ZM.png" alt="#">
+                                                <div class="button row" style="width:100%; display:flex; justify-content:space-between">
+                                                    <a href="/cart" class="btn" style="width:40%;"><i
+                                                            class="lni lni-cart"></i></a>
+                                                    <a href="/cart" class="btn" style="width:40%;"><i
+                                                            class="lni lni-cart"></i></a>
                                                 </div>
                                             </div>
                                             <div class="product-info">
-                                                <span class="category">Watches</span>
+                                                <span class="category">etc</span>
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">Xiaomi Mi Band 5</a>
+                                                    <a href="product-grids.html">14K 보조체인 3cm (JJZ1N01BS571R4030)</a>
                                                 </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star"></i></li>
-                                                    <li><span>4.0 Review(s)</span></li>
-                                                </ul>
                                                 <div class="price">
-                                                    <span>$199.00</span>
+                                                    <span>85500 원</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- End Single Product -->
                                     </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
+									<div class="col-lg-4 col-md-6 col-12">
                                         <!-- Start Single Product -->
-                                        <div class="single-product">
+                                        <div class="single-product" id="2">
                                             <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <span class="sale-tag">-25%</span>
+                                                <img src="https://webimg.jestina.co.kr/UpData2/item/G2000024044/20210304143521ZM.png" alt="#">
                                                 <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
+                                                    <a href="/cart" class="btn" style="width:100%;"><i
+                                                            class="lni lni-cart"></i>장바구니</a>
                                                 </div>
                                             </div>
                                             <div class="product-info">
-                                                <span class="category">Speaker</span>
+                                                <span class="category">etc</span>
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">Bluetooth Speaker</a>
+                                                    <a href="product-grids.html">14K 보조체인 3cm (JJZ1N01BS570R4030)</a>
                                                 </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><span>5.0 Review(s)</span></li>
-                                                </ul>
                                                 <div class="price">
-                                                    <span>$275.00</span>
-                                                    <span class="discount-price">$300.00</span>
+                                                    <span>85500 원</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- End Single Product -->
                                     </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
+									<div class="col-lg-4 col-md-6 col-12">
                                         <!-- Start Single Product -->
-                                        <div class="single-product">
+                                        <div class="single-product" id="3">
                                             <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
+                                                <img src="https://webimg.jestina.co.kr/UpData2/item/G2000023811/20210119164247ZM.png" alt="#">
                                                 <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
+                                                    <a href="/cart" class="btn" style="width:100%;"><i
+                                                            class="lni lni-cart"></i>장바구니</a>
                                                 </div>
                                             </div>
                                             <div class="product-info">
-                                                <span class="category">Camera</span>
+                                                <span class="category">etc</span>
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">WiFi Security Camera</a>
+                                                    <a href="product-grids.html">실버 보조체인 7cm (JJZ1N07AS076SR070)</a>
                                                 </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><span>5.0 Review(s)</span></li>
-                                                </ul>
                                                 <div class="price">
-                                                    <span>$399.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <span class="new-tag">New</span>
-                                                <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
-                                                </div>
-                                            </div>
-                                            <div class="product-info">
-                                                <span class="category">Phones</span>
-                                                <h4 class="title">
-                                                    <a href="product-grids.html">iphone 6x plus</a>
-                                                </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><span>5.0 Review(s)</span></li>
-                                                </ul>
-                                                <div class="price">
-                                                    <span>$400.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
-                                                </div>
-                                            </div>
-                                            <div class="product-info">
-                                                <span class="category">Headphones</span>
-                                                <h4 class="title">
-                                                    <a href="product-grids.html">Wireless Headphones</a>
-                                                </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><span>5.0 Review(s)</span></li>
-                                                </ul>
-                                                <div class="price">
-                                                    <span>$350.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
-                                                </div>
-                                            </div>
-                                            <div class="product-info">
-                                                <span class="category">Speaker</span>
-                                                <h4 class="title">
-                                                    <a href="product-grids.html">Mini Bluetooth Speaker</a>
-                                                </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star"></i></li>
-                                                    <li><span>4.0 Review(s)</span></li>
-                                                </ul>
-                                                <div class="price">
-                                                    <span>$70.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <span class="sale-tag">-50%</span>
-                                                <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
-                                                </div>
-                                            </div>
-                                            <div class="product-info">
-                                                <span class="category">Headphones</span>
-                                                <h4 class="title">
-                                                    <a href="product-grids.html">Wireless Headphones</a>
-                                                </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star"></i></li>
-                                                    <li><span>4.0 Review(s)</span></li>
-                                                </ul>
-                                                <div class="price">
-                                                    <span>$100.00</span>
-                                                    <span class="discount-price">$200.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
-                                                </div>
-                                            </div>
-                                            <div class="product-info">
-                                                <span class="category">Laptop</span>
-                                                <h4 class="title">
-                                                    <a href="product-grids.html">Apple MacBook Air</a>
-                                                </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><span>5.0 Review(s)</span></li>
-                                                </ul>
-                                                <div class="price">
-                                                    <span>$899.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="product-image">
-                                                <img src="https://via.placeholder.com/335x335" alt="#">
-                                                <span class="sale-tag">-25%</span>
-                                                <div class="button">
-                                                    <a href="product-details.html" class="btn"><i
-                                                            class="lni lni-cart"></i> Add to Cart</a>
-                                                </div>
-                                            </div>
-                                            <div class="product-info">
-                                                <span class="category">Speaker</span>
-                                                <h4 class="title">
-                                                    <a href="product-grids.html">Bluetooth Speaker</a>
-                                                </h4>
-                                                <ul class="review">
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><i class="lni lni-star-filled"></i></li>
-                                                    <li><span>5.0 Review(s)</span></li>
-                                                </ul>
-                                                <div class="price">
-                                                    <span>$275.00</span>
-                                                    <span class="discount-price">$300.00</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <!-- Pagination -->
-                                        <div class="pagination left">
-                                            <ul class="pagination-list">
-                                                <li><a href="javascript:void(0)">1</a></li>
-                                                <li class="active"><a href="javascript:void(0)">2</a></li>
-                                                <li><a href="javascript:void(0)">3</a></li>
-                                                <li><a href="javascript:void(0)">4</a></li>
-                                                <li><a href="javascript:void(0)"><i
-                                                            class="lni lni-chevron-right"></i></a></li>
-                                            </ul>
-                                        </div>
-                                        <!--/ End Pagination -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane show active fade" id="nav-list" role="tabpanel"
-                                aria-labelledby="nav-list-tab">
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="row align-items-center">
-                                                <div class="col-lg-4 col-md-4 col-12">
-                                                    <div class="product-image">
-                                                        <img src="https://via.placeholder.com/335x335" alt="#">
-                                                        <div class="button">
-                                                            <a href="/cart" class="btn"><i
-                                                                    class="lni lni-cart"></i> 장바구니 넣기</a>
-                                                        </div>
-                                                        <div class="button">
-                                                            <a href="/order" class="btn"><i
-                                                                    class="lni lni-cart"></i> 구매 하기</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-8 col-md-8 col-12">
-                                                    <div class="product-info">
-                                                        <span class="category">Watches</span>
-                                                        <h4 class="title">
-                                                            <a href="product-grids.html">Xiaomi Mi Band 5</a>
-                                                        </h4>
-                                                        <ul class="review">
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star"></i></li>
-                                                            <li><span>4.0 Review(s)</span></li>
-                                                        </ul>
-                                                        <div class="price">
-                                                            <span>$199.00</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="row align-items-center">
-                                                <div class="col-lg-4 col-md-4 col-12">
-                                                    <div class="product-image">
-                                                        <img src="https://via.placeholder.com/335x335" alt="#">
-                                                        <span class="sale-tag">-25%</span>
-                                                        <div class="button">
-                                                            <a href="product-details.html" class="btn"><i
-                                                                    class="lni lni-cart"></i> Add to
-                                                                Cart</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-8 col-md-8 col-12">
-                                                    <div class="product-info">
-                                                        <span class="category">Speaker</span>
-                                                        <h4 class="title">
-                                                            <a href="product-grids.html">Big Power Sound Speaker</a>
-                                                        </h4>
-                                                        <ul class="review">
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><span>5.0 Review(s)</span></li>
-                                                        </ul>
-                                                        <div class="price">
-                                                            <span>$275.00</span>
-                                                            <span class="discount-price">$300.00</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="row align-items-center">
-                                                <div class="col-lg-4 col-md-4 col-12">
-                                                    <div class="product-image">
-                                                        <img src="https://via.placeholder.com/335x335" alt="#">
-                                                        <div class="button">
-                                                            <a href="product-details.html" class="btn"><i
-                                                                    class="lni lni-cart"></i> Add to
-                                                                Cart</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-8 col-md-8 col-12">
-                                                    <div class="product-info">
-                                                        <span class="category">Camera</span>
-                                                        <h4 class="title">
-                                                            <a href="product-grids.html">WiFi Security Camera</a>
-                                                        </h4>
-                                                        <ul class="review">
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><span>5.0 Review(s)</span></li>
-                                                        </ul>
-                                                        <div class="price">
-                                                            <span>$399.00</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="row align-items-center">
-                                                <div class="col-lg-4 col-md-4 col-12">
-                                                    <div class="product-image">
-                                                        <img src="https://via.placeholder.com/335x335" alt="#">
-                                                        <span class="new-tag">New</span>
-                                                        <div class="button">
-                                                            <a href="product-details.html" class="btn"><i
-                                                                    class="lni lni-cart"></i> Add to
-                                                                Cart</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-8 col-md-8 col-12">
-                                                    <div class="product-info">
-                                                        <span class="category">Phones</span>
-                                                        <h4 class="title">
-                                                            <a href="product-grids.html">iphone 6x plus</a>
-                                                        </h4>
-                                                        <ul class="review">
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><span>5.0 Review(s)</span></li>
-                                                        </ul>
-                                                        <div class="price">
-                                                            <span>$400.00</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Single Product -->
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-12">
-                                        <!-- Start Single Product -->
-                                        <div class="single-product">
-                                            <div class="row align-items-center">
-                                                <div class="col-lg-4 col-md-4 col-12">
-                                                    <div class="product-image">
-                                                        <img src="https://via.placeholder.com/335x335" alt="#">
-                                                        <span class="sale-tag">-50%</span>
-                                                        <div class="button">
-                                                            <a href="product-details.html" class="btn"><i
-                                                                    class="lni lni-cart"></i> Add to
-                                                                Cart</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-8 col-md-8 col-12">
-                                                    <div class="product-info">
-                                                        <span class="category">Headphones</span>
-                                                        <h4 class="title">
-                                                            <a href="product-grids.html">PX7 Wireless Headphones</a>
-                                                        </h4>
-                                                        <ul class="review">
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star-filled"></i></li>
-                                                            <li><i class="lni lni-star"></i></li>
-                                                            <li><span>4.0 Review(s)</span></li>
-                                                        </ul>
-                                                        <div class="price">
-                                                            <span>$100.00</span>
-                                                            <span class="discount-price">$200.00</span>
-                                                        </div>
-                                                    </div>
+                                                    <span>12750 원</span>
                                                 </div>
                                             </div>
                                         </div>
