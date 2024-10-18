@@ -28,6 +28,8 @@ public class TestController {
 	@RequestMapping(value = "/uuid")
 	public String uuid() {
 		UUID randomuuid = UUID.randomUUID();
+		System.out.println(randomuuid);
+		System.out.println(randomuuid.toString().length());
 		System.out.println(randomuuid.toString().substring(0, 8));
 		return "/testIndex";
 	}

@@ -20,8 +20,10 @@
 .loginContainer {
 	background: white; /* 배경색 설정 */
 	padding: 20px 50px 20px 50px; /* 안쪽 여백 */
-	/* border-radius: 10px; /* 둥근 모서리 */ */
-	/* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */ */
+	/* border-radius: 10px; /* 둥근 모서리 */
+	*/
+	/* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	*/
 }
 
 input {
@@ -63,6 +65,10 @@ button:hover {
 				<div>
 					pwd<input type="password" name="member_pwd" id="member_pwd"
 						placeholder="pwd를 입력">
+					<div>
+						자동 로그인<input type="checkbox" name="autologin_code"
+							id="autologin_code">
+					</div>
 				</div>
 				<div>
 					<button type="submit">로그인</button>

@@ -46,13 +46,17 @@ public class MemberController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
-	public String login(LoginDTO loginDTO, RedirectAttributes rttr, Model model, HttpSession session) {
+	public String login(LoginDTO loginDTO, RedirectAttributes rttr, Model model, HttpSession session, @RequestParam(value="autologin_code", required = false)boolean autologin) {
 		System.out.println(loginDTO + "로 로그인 요청");
+		System.out.println("자동로그인 : " + autologin);
 		log.info("postLogin");
 		try {
 			LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에 조회한다.
 			if (loginMember != null) { // 입력한 아이디 비밀번호에 해당하는 member가 없다면 null
 				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장
+				if(autologin) {	// 자동로그인 체크했을경우
+					model.addAttribute("autologin", autologin); // 모델객체에 자동로그인 저장
+				}
 			}
 
 		} catch (Exception e) {
