@@ -30,6 +30,20 @@
 		<beans:property name="maxUploadSize" value="10485760">
 		</beans:property>
 	</beans:bean>
+
+	<!-- loginInterceptor 객체 설정 -->
+	<beans:bean id="loginInterceptor"
+		class="com.finalProject.intercepter.LoginInterceptor">
+	</beans:bean>
+
+	<!-- loginInterceptor의 동작 매핑 주소 설정 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/member/login" />
+			<beans:ref bean="loginInterceptor" />
+		</interceptor>
+	</interceptors>
+
 	<context:component-scan
 		base-package="com.finalProject.controller" />
 

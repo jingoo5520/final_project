@@ -2,6 +2,37 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.springbasic.mappers.memberMapper">
-   <!-- 쿼리문 -->
+<mapper namespace="com.finalProject.mappers.memberMapper">
+	<!-- 쿼리문 -->
+
+	<!-- 로그인 -->
+	<select id="login" resultType="LoginDTO">
+		select * from members where
+		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256)
+	</select>
+
+	<!-- id, email, phone_number 중복 체크 -->
+	<select id="autoDuplicate" resultType="int">
+		select count(*) from members
+		<choose>
+			<when test="key == 'id'">
+				where member_id = #{value}
+			</when>
+			<when test="key == 'email'">
+				where email = #{value}
+			</when>
+			<when test="key == 'phone'">
+				where phone_number = #{value}
+			</when>
+		</choose>
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="signUpMember">
+		insert into members(member_id, member_name,
+		member_pwd, phone_number, birthday, gender, email, address, nickname)
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256), #{phone_number},
+		#{birthday}, #{gender}, #{email}, #{address}, #{nickname})
+	</insert>
+
 </mapper>
