@@ -22,6 +22,21 @@
 
 </head>
 
+<script type="text/javascript">
+
+	function orderProduct() {
+		let quantity = document.getElementById("orderQuantity").value;
+		
+		let productNo = document.getElementById("productNo").innerText;
+		
+		console.log(quantity, productNo);
+		
+		window.location.href = "/order?quantity=" + quantity + "&productNo=" + productNo;
+		
+	}
+
+</script>
+
 <body>
 
     <!-- Preloader -->
@@ -43,18 +58,13 @@
                     <div class="col-lg-6 col-md-12 col-12">
                         <div class="product-info">
                             <h2 class="title">GoPro Karma Camera Drone</h2>
+                            <h3>Product No : <span id="productNo">${productNo }</span></h3>
                             <h3 class="price">$850<span>$945</span></h3>
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="form-group quantity">
-                                        <label for="color">Quantity</label>
-                                        <select class="form-control">
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
-                                        </select>
+                                        <label for="color">수량</label>
+                                        <input type="text" placeholder="수량" id="orderQuantity">
                                     </div>
                                 </div>
                             </div>
@@ -62,7 +72,7 @@
                                 <div class="row align-items-end">
                                     <div class="col-lg-4 col-md-4 col-12">
                                         <div class="button cart-button">
-                                            <button class="btn" style="width: 100%;" onclick="location.href='/order';">주문하기</button>
+                                            <button class="btn" style="width: 100%;" onclick="orderProduct()">주문하기</button>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-4 col-12">

@@ -20,8 +20,11 @@ public class CartController {
 	@GetMapping("/cart")
 	public String cartPage(HttpSession session) {
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
-		
-		System.out.println("cartcartacaratacatacat" + loginMember.getMember_id());
+		if (loginMember != null) {
+			System.out.println("cart : 로그인 했음, 회원아이디 : " + loginMember.getMember_id());
+		} else {
+			System.out.println("cart : 로그인 안했음");
+		}
 		
 		return "user/cart/cart";
 	}

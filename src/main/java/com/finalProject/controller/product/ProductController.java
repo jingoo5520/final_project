@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/product")
@@ -17,7 +18,10 @@ public class ProductController {
 	}
 	
 	@GetMapping("/productDetail")
-	public String productDetailPage(Locale locale, Model model) {
+	public String productDetailPage(@RequestParam("productNo") int productNo, Model model) {
+		
+		model.addAttribute("productNo", productNo);
+		
 		return "/user/product/productDetail";
 	}
 	

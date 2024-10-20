@@ -28,7 +28,7 @@ CREATE TABLE members (
     address VARCHAR(255),                                 -- 회원 주소
     member_point INT DEFAULT 0,                          -- 회원 포인트
     member_level INT,                                     -- 회원 등급
-    reg_date DATETIME DEFAULT NOW(),                      -- 회원 가입일
+    reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,                      -- 회원 가입일
     member_status VARCHAR(15) DEFAULT 'active',          -- 회원 상태
     nickname VARCHAR(15),                                 -- 회원 닉네임
     member_image VARCHAR(255) DEFAULT 'no_image.png',   -- 회원 이미지
@@ -54,7 +54,7 @@ CREATE TABLE products (
     product_sell_count INT NOT NULL DEFAULT 0,
     product_content VARCHAR(1000),
     product_like INT NOT NULL DEFAULT 0,
-    product_reg_date DATETIME NOT NULL DEFAULT now(),
+    product_reg_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     product_category INT NOT NULL,
     product_cost INT NOT NULL DEFAULT 0,
     product_delete CHAR(1) NOT NULL DEFAULT 'N',

@@ -225,17 +225,15 @@
                                         <div class="single-product" id="1">
                                             <div class="product-image">
                                                 <img src="https://webimg.jestina.co.kr/UpData2/item/G2000024045/20210304143541ZM.png" alt="#">
-                                                <div class="button row" style="width:100%; display:flex; justify-content:space-between">
-                                                    <a href="/cart" class="btn" style="width:40%;"><i
-                                                            class="lni lni-cart"></i></a>
-                                                    <a href="/cart" class="btn" style="width:40%;"><i
-                                                            class="lni lni-cart"></i></a>
+                                                <div class="button">
+                                                    <a href="/cart" class="btn" style="width:100%;"><i
+                                                            class="lni lni-cart"></i>장바구니</a>
                                                 </div>
                                             </div>
                                             <div class="product-info">
                                                 <span class="category">etc</span>
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">14K 보조체인 3cm (JJZ1N01BS571R4030)</a>
+                                                    <a href="/product/productDetail?productNo=1">14K 보조체인 3cm (JJZ1N01BS571R4030)</a>
                                                 </h4>
                                                 <div class="price">
                                                     <span>85500 원</span>
@@ -257,7 +255,7 @@
                                             <div class="product-info">
                                                 <span class="category">etc</span>
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">14K 보조체인 3cm (JJZ1N01BS570R4030)</a>
+                                                    <a href="/product/productDetail?productNo=2">14K 보조체인 3cm (JJZ1N01BS570R4030)</a>
                                                 </h4>
                                                 <div class="price">
                                                     <span>85500 원</span>
@@ -279,7 +277,7 @@
                                             <div class="product-info">
                                                 <span class="category">etc</span>
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">실버 보조체인 7cm (JJZ1N07AS076SR070)</a>
+                                                    <a href="/product/productDetail?productNo=3">실버 보조체인 7cm (JJZ1N07AS076SR070)</a>
                                                 </h4>
                                                 <div class="price">
                                                     <span>12750 원</span>

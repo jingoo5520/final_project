@@ -11,14 +11,14 @@
     <title>주문 결제</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/user/assets/images/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
 
     <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" href="/resources/user/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/LineIcons.3.0.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/tiny-slider.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/glightbox.min.css" />
-    <link rel="stylesheet" href="/resources/user/assets/css/main.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 
@@ -71,6 +71,29 @@
                                     aria-expanded="false" aria-controls="collapseThree">주문 상품</h5>
                                 <section class="checkout-steps-form-content collapse" id="collapseThree"
                                     aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    <div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>상품 이름</label>
+												<h3>${orderProduct.orderProductName }</h3>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<img alt="productImg" src="${orderProduct.orderProductImg }">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>상품 가격</label>
+												<h3>${String.format('%,d', orderProduct.orderProductPrice) } 원</h3>
+											</div>
+										</div>
+									</div>
                                 </section>
                             </li>
                             <li>
@@ -78,6 +101,7 @@
                                     aria-expanded="false" aria-controls="collapseFour">주문자 정보</h5>
                                 <section class="checkout-steps-form-content collapse" id="collapseFour"
                                     aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                    <c:if test="${empty orderMember}">
                                         <div class="col-md-6">
                                             <div class="single-form form-default">
                                                 <div class="form-input form">
@@ -102,6 +126,33 @@
                                                 </div>
                                             </div>
                                         </div>
+									</c:if>
+                                    <c:if test="${not empty orderMember }">
+                                        <div class="col-md-6">
+                                            <div class="single-form form-default">
+                                                <div class="form-input form">
+                                                	<label>이름</label>
+                                                    <input type="text" placeholder="Name" value="${orderMember.name }" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="single-form form-default">
+                                                <div class="form-input form">
+                                                	<label>휴대폰 번호</label>
+                                                    <input type="text" placeholder="Phone Number" value="${orderMember.phoneNumber }" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="single-form form-default">
+                                                <div class="form-input form">
+                                                	<label>이메일</label>
+                                                    <input type="text" placeholder="Email Address" value="${orderMember.email }" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+									</c:if>
                                 </section>
                             </li>
                             <li>
@@ -109,6 +160,27 @@
                                     aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
                                 <section class="checkout-steps-form-content collapse" id="collapsefive"
                                     aria-labelledby="headingfive" data-bs-parent="#accordionExample">
+                                    <c:if test="${not empty orderMember }">
+	                                    <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>배송지</label>
+	                                                    <input type="text" placeholder="Email Address" value="${orderMember.address }" readonly>
+	                                                </div>
+	                                            </div>
+	                                    </div>
+	                                </c:if>
+	                                <c:if test="${empty orderMember }">
+	                                
+	                                    <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>배송지</label>
+	                                                    <input type="text" placeholder="Address">
+	                                                </div>
+	                                            </div>
+	                                    </div>
+	                                </c:if>
                                 </section>
                             </li>
                             <li>
@@ -116,6 +188,33 @@
                                     aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
                                 <section class="checkout-steps-form-content collapse" id="collapseSix"
                                     aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+                                    <c:if test="${empty orderMember }">
+	                                    <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>회원만 포인트 사용이 가능합니다.</label>
+	                                                </div>
+	                                            </div>
+	                                    </div>
+	                                </c:if>
+	                                <c:if test="${not empty orderMember }">
+	                                    <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>포인트</label>
+	                                                    <div class="button">
+	                                                    	<input type="text" placeholder="point" name="pointUse">
+                                        					<button class="btn">사용</button>
+                                    					</div>
+	                                                    <div>
+	                                                		<label>포인트 모두 사용</label>
+	                                                		<label>(${orderMember.point }P 보유)<input type="checkbox" name="pointAllUse" /></label>
+	                                                	</div>
+	                                                </div>
+	                                            </div>
+	                                    </div>
+	                                </c:if>
+                                    
                                 </section>
                             </li>
                             <li>
@@ -137,7 +236,7 @@
                                                     <div class="form-input form">
                                                         <input id="credit-input" type="text"
                                                             placeholder="0000 0000 0000 0000">
-                                                        <img src="/resources/user/assets/images/payment/card.png" alt="card">
+                                                        <img src="/resources/assets/user/images/payment/card.png" alt="card">
                                                     </div>
                                                 </div>
                                                 <div class="payment-card-info">
@@ -178,7 +277,7 @@
                             <form action="#">
                                 <div class="single-form form-default">
                                     <div class="form-input form">
-                                        <input type="text" placeholder="쿠폰 번호를 입력하세요">
+                                        <input type="text" placeholder="쿠폰 번호를 입력하세요" name="couponUse">
                                     </div>
                                     <div class="button">
                                         <button class="btn">쿠폰 적용</button>
@@ -190,7 +289,7 @@
                             <div class="sub-total-price" style="color: black;">
                                 <div class="total-price">
                                     <p class="value">총 상품금액</p>
-                                    <p class="price">498,000원</p>
+                                    <p class="price">${String.format('%,d', orderProduct.orderProductPrice) } 원</p>
                                 </div>
                                  <div class="total-price discount">
                                     <p class="value">총 할인금액</p>
@@ -205,17 +304,27 @@
                             <div class="total-payable">
                                 <div class="payable-price">
                                     <h6 class="value bold" style="color: black;">총 결제금액</h6>
-                                    <h6 class="price" style="color: red;">498,000원</h6>
+                                    <h6 class="price" style="color: red;">${String.format('%,d', orderProduct.orderProductPrice) } 원</h6>
                                 </div>
-                                <div class="sub-total-price">
-                                	<div class="total-price point mb-30">
-                                    	<p class="value">총 적립예정 포인트</p>
-                                    	<p class="price">14,940P</p>
-                                    </div>
-                                </div>
+                                <c:if test="${empty orderMember }">
+	                                <div class="sub-total-price">
+	                                	<div class="total-price point mb-30">
+	                                    	<p class="value">총 적립예정 포인트</p>
+	                                    	<p class="price">0 P</p>
+	                                    </div>
+	                                </div>
+                                </c:if>
+                                <c:if test="${not empty orderMember }">
+	                                <div class="sub-total-price">
+	                                	<div class="total-price point mb-30">
+	                                    	<p class="value">총 적립예정 포인트</p>
+	                                    	<p class="price">${(orderProduct.orderProductPrice * orderMember.levelPoint) } P</p>
+	                                    </div>
+	                                </div>
+                                </c:if>
                             </div>
                             <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) 498,000원 결제하기</a>
+                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) ${String.format('%,d', orderProduct.orderProductPrice) } 원 결제하기</a>
                             </div>
                         </div>
                     </div>
@@ -233,10 +342,10 @@
     </a>
 
     <!-- ========================= JS here ========================= -->
-    <script src="/resources/user/assets/js/bootstrap.min.js"></script>
-    <script src="/resources/user/assets/js/tiny-slider.js"></script>
-    <script src="/resources/user/assets/js/glightbox.min.js"></script>
-    <script src="/resources/user/assets/js/main.js"></script>
+    <script src="/resources/assets/user/js/bootstrap.min.js"></script>
+    <script src="/resources/assets/user/js/tiny-slider.js"></script>
+    <script src="/resources/assets/user/js/glightbox.min.js"></script>
+    <script src="/resources/assets/user/js/main.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.orderMapper">
+	<!-- 쿼리문 -->
+	<select id="selectOrderProduct" resultType="com.finalProject.model.OrderProductDTO">
+		select product_no, product_name, product_price, product_dc_type, dc_amount, dc_rate from products where product_no = #{productNo}
+	</select>
+	
+	<select id="selectOrderProductImg" resultType="String">
+		select image_main_url from product_images where product_no = #{productNo}
+	</select>
+	
+	<select id="selectOrderMember" resultType="com.finalProject.model.OrderMemberDTO">
+		select member_name, phone_number, email, address, member_point, member_level from members where member_id = #{memberId}
+	</select>
+	
+	<select id="selectMemberLevel" resultType="com.finalProject.model.OrderLevelDTO">
+		select level_name, level_dc, level_point from levels where level_no = #{memberLevel}	
+	</select>
+
+</mapper>
