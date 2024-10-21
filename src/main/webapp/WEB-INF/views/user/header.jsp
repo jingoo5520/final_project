@@ -55,8 +55,8 @@
 
 								</div>
 								<ul class="user-login">
-									<li><a href="member/viewLogin">로그인</a></li>
-									<li><a href="member/viewSignUp">회원가입</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->
@@ -67,7 +67,7 @@
 								</div>
 								<ul class="user-login">
 									<li><a href="#">내 정보</a></li>
-									<li><a href="member/logout">로그아웃</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
 								</ul>
 							</c:if>
 						</div>
@@ -82,7 +82,7 @@
 				<div class="row align-items-center">
 					<div class="col-lg-3 col-md-3 col-7">
 						<!-- Start Header Logo -->
-						<a class="navbar-brand" href="index.html"> <img
+						<a class="navbar-brand" href="${pageContext.request.contextPath}/"> <img
 							src="/resources/assets/user/images/logo/logo.svg" alt="Logo">
 						</a>
 						<!-- End Header Logo -->
@@ -254,12 +254,12 @@
 													Us</a></li>
 											<li class="nav-item"><a href="faq.html">Faq</a></li>
 											<c:if test="${empty sessionScope.loginMember }">
-											<li class="nav-item"><a href="member/viewLogin">로그인</a></li>
-											<li class="nav-item"><a href="member/viewSignUp">회원가입</a></li>
+											<li class="nav-item"><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+											<li class="nav-item"><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
 											</c:if>
 											<c:if test="${not empty sessionScope.loginMember }">
 											<li class="nav-item"><a href="#">내 정보</a></li>
-											<li class="nav-item"><a href="member/logout">로그아웃</a></li>
+											<li class="nav-item"><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
 											</c:if>
 											<li class="nav-item"><a href="mail-success.html">Mail
 													Success</a></li>

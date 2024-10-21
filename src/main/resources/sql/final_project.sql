@@ -18,3 +18,5 @@ update members set autologin_code = 'uuid', autologin_date = date_add(now(), int
 
 -- 자동 로그인 정보 조회
 select count(*) from members where autologin_code = '536c7e52-f089-41f2-ad7b-393e7e3ead58' and autologin_date > now();
+
+
