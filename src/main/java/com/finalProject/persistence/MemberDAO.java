@@ -16,4 +16,10 @@ public interface MemberDAO {
 	// 회원가입
 	int signUp(SignUpDTO signUpDTO) throws Exception;
 
+	// 자동 로그인 정보 저장
+	void setAutoLogin(String member_id, String code, int AUTOLOGIN_DATE) throws Exception;
+
+	// 자동 로그인 정보 조회
+	LoginDTO getAutoLogin(String autologin_code) throws Exception;
+
 }
