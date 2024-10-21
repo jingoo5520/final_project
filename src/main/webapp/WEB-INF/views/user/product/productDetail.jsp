@@ -64,7 +64,7 @@
                                 <div class="col-lg-4 col-md-4 col-12">
                                     <div class="form-group quantity">
                                         <label for="color">수량</label>
-                                        <input type="text" placeholder="수량" id="orderQuantity">
+                                        <input type="hidden" placeholder="수량" id="orderQuantity">
                                     </div>
                                 </div>
                             </div>

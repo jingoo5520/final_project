@@ -65,6 +65,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="checkout-steps-form-style-1">
+                     <form action="/order" method="post">
                         <ul id="accordionExample">
                             <li>
                                <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree"
@@ -74,15 +75,16 @@
                                     <div class="col-md-6">
 										<div class="single-form form-default">
 											<div class="form-input form">
-												<label>상품 이름</label>
-												<h3>${orderProduct.orderProductName }</h3>
+												<label>상품 수량</label>
+												<input type="text" placeholder="quantity" name="orderProductQuantity">
 											</div>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="single-form form-default">
 											<div class="form-input form">
-												<img alt="productImg" src="${orderProduct.orderProductImg }">
+												<img alt="productImg" src="" width="67px;" height="67px;">
+												<label>상품 이름</label>
 											</div>
 										</div>
 									</div>
@@ -90,7 +92,7 @@
 										<div class="single-form form-default">
 											<div class="form-input form">
 												<label>상품 가격</label>
-												<h3>${String.format('%,d', orderProduct.orderProductPrice) } 원</h3>
+												<h3>0 원</h3>
 											</div>
 										</div>
 									</div>
@@ -101,12 +103,11 @@
                                     aria-expanded="false" aria-controls="collapseFour">주문자 정보</h5>
                                 <section class="checkout-steps-form-content collapse" id="collapseFour"
                                     aria-labelledby="headingFour" data-bs-parent="#accordionExample">
-                                    <c:if test="${empty orderMember}">
                                         <div class="col-md-6">
                                             <div class="single-form form-default">
                                                 <div class="form-input form">
                                                 	<label>이름</label>
-                                                    <input type="text" placeholder="Name">
+                                                    <input type="text" placeholder="Name" name="name">
                                                 </div>
                                             </div>
                                         </div>
@@ -114,7 +115,7 @@
                                             <div class="single-form form-default">
                                                 <div class="form-input form">
                                                 	<label>휴대폰 번호</label>
-                                                    <input type="text" placeholder="Phone Number">
+                                                    <input type="text" placeholder="Phone Number" name="phoneNumber">
                                                 </div>
                                             </div>
                                         </div>
@@ -122,37 +123,10 @@
                                             <div class="single-form form-default">
                                                 <div class="form-input form">
                                                 	<label>이메일</label>
-                                                    <input type="text" placeholder="Email Address">
+                                                    <input type="text" placeholder="Email Address" name="email">
                                                 </div>
                                             </div>
                                         </div>
-									</c:if>
-                                    <c:if test="${not empty orderMember }">
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="form-input form">
-                                                	<label>이름</label>
-                                                    <input type="text" placeholder="Name" value="${orderMember.name }" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="form-input form">
-                                                	<label>휴대폰 번호</label>
-                                                    <input type="text" placeholder="Phone Number" value="${orderMember.phoneNumber }" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="form-input form">
-                                                	<label>이메일</label>
-                                                    <input type="text" placeholder="Email Address" value="${orderMember.email }" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
-									</c:if>
                                 </section>
                             </li>
                             <li>
@@ -160,27 +134,14 @@
                                     aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
                                 <section class="checkout-steps-form-content collapse" id="collapsefive"
                                     aria-labelledby="headingfive" data-bs-parent="#accordionExample">
-                                    <c:if test="${not empty orderMember }">
 	                                    <div class="col-md-6">
 	                                            <div class="single-form form-default">
 	                                                <div class="form-input form">
 	                                                	<label>배송지</label>
-	                                                    <input type="text" placeholder="Email Address" value="${orderMember.address }" readonly>
+	                                                    <input type="text" placeholder="Address" name="address">
 	                                                </div>
 	                                            </div>
 	                                    </div>
-	                                </c:if>
-	                                <c:if test="${empty orderMember }">
-	                                
-	                                    <div class="col-md-6">
-	                                            <div class="single-form form-default">
-	                                                <div class="form-input form">
-	                                                	<label>배송지</label>
-	                                                    <input type="text" placeholder="Address">
-	                                                </div>
-	                                            </div>
-	                                    </div>
-	                                </c:if>
                                 </section>
                             </li>
                             <li>
@@ -188,7 +149,6 @@
                                     aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
                                 <section class="checkout-steps-form-content collapse" id="collapseSix"
                                     aria-labelledby="headingSix" data-bs-parent="#accordionExample">
-                                    <c:if test="${empty orderMember }">
 	                                    <div class="col-md-6">
 	                                            <div class="single-form form-default">
 	                                                <div class="form-input form">
@@ -196,25 +156,13 @@
 	                                                </div>
 	                                            </div>
 	                                    </div>
-	                                </c:if>
-	                                <c:if test="${not empty orderMember }">
-	                                    <div class="col-md-6">
-	                                            <div class="single-form form-default">
-	                                                <div class="form-input form">
-	                                                	<label>포인트</label>
-	                                                    <div class="button">
-	                                                    	<input type="text" placeholder="point" name="pointUse">
-                                        					<button class="btn">사용</button>
-                                    					</div>
-	                                                    <div>
-	                                                		<label>포인트 모두 사용</label>
-	                                                		<label>(${orderMember.point }P 보유)<input type="checkbox" name="pointAllUse" /></label>
-	                                                	</div>
-	                                                </div>
-	                                            </div>
-	                                    </div>
-	                                </c:if>
-                                    
+                                </section>
+                                <section>
+                                	<div>
+                                		<div class="single-form form-default button">
+                                        	<button class="btn" type="submit">정보 적용</button>
+                                        </div>
+                                	</div>
                                 </section>
                             </li>
                             <li>
@@ -268,6 +216,7 @@
                                 </section>
                             </li>
                         </ul>
+                        </form>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -289,7 +238,7 @@
                             <div class="sub-total-price" style="color: black;">
                                 <div class="total-price">
                                     <p class="value">총 상품금액</p>
-                                    <p class="price">${String.format('%,d', orderProduct.orderProductPrice) } 원</p>
+                                    <p class="price">0 원</p>
                                 </div>
                                  <div class="total-price discount">
                                     <p class="value">총 할인금액</p>
@@ -304,27 +253,17 @@
                             <div class="total-payable">
                                 <div class="payable-price">
                                     <h6 class="value bold" style="color: black;">총 결제금액</h6>
-                                    <h6 class="price" style="color: red;">${String.format('%,d', orderProduct.orderProductPrice) } 원</h6>
+                                    <h6 class="price" style="color: red;">0 원</h6>
                                 </div>
-                                <c:if test="${empty orderMember }">
 	                                <div class="sub-total-price">
 	                                	<div class="total-price point mb-30">
 	                                    	<p class="value">총 적립예정 포인트</p>
 	                                    	<p class="price">0 P</p>
 	                                    </div>
 	                                </div>
-                                </c:if>
-                                <c:if test="${not empty orderMember }">
-	                                <div class="sub-total-price">
-	                                	<div class="total-price point mb-30">
-	                                    	<p class="value">총 적립예정 포인트</p>
-	                                    	<p class="price">${(orderProduct.orderProductPrice * orderMember.levelPoint) } P</p>
-	                                    </div>
-	                                </div>
-                                </c:if>
                             </div>
                             <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) ${String.format('%,d', orderProduct.orderProductPrice) } 원 결제하기</a>
+                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) 0 원 결제하기</a>
                             </div>
                         </div>
                     </div>
