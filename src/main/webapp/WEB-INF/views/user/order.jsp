@@ -172,82 +172,6 @@
                                     aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="single-form form-default">
-                                                <label>User Name</label>
-                                                <div class="row">
-                                                    <div class="col-md-6 form-input form">
-                                                        <input type="text" placeholder="First Name">
-                                                    </div>
-                                                    <div class="col-md-6 form-input form">
-                                                        <input type="text" placeholder="Last Name">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Email Address</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Email Address">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Phone Number</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Phone Number">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="single-form form-default">
-                                                <label>Mailing Address</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Mailing Address">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>City</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="City">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Post Code</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Post Code">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Country</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Country">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Region/State</label>
-                                                <div class="select-items">
-                                                    <select class="form-control">
-                                                        <option value="0">select</option>
-                                                        <option value="1">select option 01</option>
-                                                        <option value="2">select option 02</option>
-                                                        <option value="3">select option 03</option>
-                                                        <option value="4">select option 04</option>
-                                                        <option value="5">select option 05</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
                                             <div class="checkout-payment-option">
                                                 <h6 class="heading-6 font-weight-400 payment-title">Select Delivery
                                                     Option</h6>
@@ -280,6 +204,13 @@
                                                         onclick="selectPaymentMethod('TRANSFER')">
                                                         <label for="paymentMethod-3">
                                                             <p>계좌 이체</p>
+                                                        </label>
+                                                    </div>
+                                                    <div class="single-payment-option">
+                                                        <input type="radio" name="paymentMethod" id="paymentMethod-4"
+                                                        onclick="selectPaymentMethod('NAVER_PAY')">
+                                                        <label for="paymentMethod-4">
+                                                            <p>네이버 페이</p><!--TODO : 네이버 페이 로고로 바꾸기-->
                                                         </label>
                                                     </div>
                                                 </div>
@@ -402,6 +333,37 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- 모달 (네이버페이 용)-->
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Launch demo modal
+        </button>
+    
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="https://www.naver.com"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    
+
+
+
+
     </section>
     <!--====== Checkout Form Steps Part Ends ======-->
 
@@ -565,7 +527,7 @@
     <!--toss 결제 API-->
     <script src="https://js.tosspayments.com/v2/standard"></script>
 
-    <!-- 결제 처리 -->
+    <!-- 결제 처리(toss) -->
     <script>
         // ------  SDK 초기화 ------
         // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
@@ -574,14 +536,28 @@
         const tossPayments = TossPayments(clientKey);
         // 결제창 초기화
         const payment = tossPayments.payment({ customerKey });
-        // TODO : 현재 페이지에서 총 결제금액 읽어서 갱신하기, 지금은 10원 결제
+        // TODO : 현재 페이지에서 총 결제금액 읽어서 갱신하기, 지금은 100원 결제
         const amount = {
             currency: "KRW",
             value: 100,
         };
+    </script>
 
+    <!-- 네이버페이 결제 API -->
+    <script src="https://nsp.pay.naver.com/sdk/js/naverpay.min.js"></script>    
 
+    <!-- 결제 처리(네이버페이) -->
+    <script>
+        var oPay = Naver.Pay.create({
+             "mode" : "development", // development or production
+             "clientId": "HN3GGCMDdTgGUfl0kFCo", // clientId
+             "chainId": "S2VnY2NSaHlhb3V", // chainId
+             // "openType" : "popup",
+        });
+    </script>
 
+    <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
+    <script>
         let selectedPaymentMethod = null;
 
         function selectPaymentMethod(method) {
@@ -649,7 +625,24 @@
                         validHours: 24,
                     },
                 });
-            } // switch end
+            }
+
+            // 네이버페이
+            // SDK 이용하는 방법하고 SDK 이용하지 않는 방법이 있는데
+            // SDK 이용시 별도의 창을 띄울 수 없고 바로 네이버페이 결제창으로 이동하므로 'SDK를 이용하지 않는 방식'으로 시도하겠다.
+            // 레퍼런스 : https://developers.pay.naver.com/docs/v2/api#etc-etc_pay_reserve
+            if (selectedPaymentMethod == "NAVER_PAY") {
+                console.log("네이버 페이 선택")
+                oPay.open({
+                    "merchantPayKey": "202410179U6ds9",
+                    "productName": "머플러 외",
+                    "productCount": "0",
+                    "totalPayAmount": "100",
+                    "taxScopeAmount": "100",
+                    "taxExScopeAmount": "0",
+                    "returnUrl": window.location.origin + "/user/approveNaverPay"
+                });
+            }
         }
 
         function generateRandomString() {

@@ -54,12 +54,26 @@ public class OrderController {
 		// TODO : 결제 끝나고 리다이렉트 하는 페이지 재지정할 듯
 		System.out.println("응답 : " + result);
 		if (responseCode != HttpURLConnection.HTTP_OK) {
+			
 			return "/user/temp_02"; // 결제 실패
 		}
 		return "/user/temp_01"; // 결제 성공
 	}
 	
-	
+	@GetMapping("/user/approveNaverPay")
+	public String approveNaverPay(
+			@RequestParam("resultCode") String resultCode,
+			@RequestParam("paymentId") String paymentId,
+			@RequestParam(value = "resultMessage", required = false) String resultMessage // resultCode가 Success이면 reaultMessage가 안옴
+			) {
+		System.out.println("네이버페이 resultCode : " + resultCode);
+		if (resultCode.equals("Success")) {
+			return "/user/temp_01"; // 결제 성공
+		} else {
+			// 결제 실패시
+			return "/user/temp_02"; // 결제 실패
+		}
+	}
 	
 	// 레퍼런스 : https://akku-dev.tistory.com/2
 	// 토스에서 예제코드로 쓰는 HttpClient는 java11 버전부터 사용가능하다.
