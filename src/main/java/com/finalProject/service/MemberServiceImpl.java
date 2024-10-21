@@ -29,9 +29,22 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.autoDuplicate(map);
 	}
 
+	// 회원가입
 	@Override
 	public int signUp(SignUpDTO signUpDTO) throws Exception {
 		return memberDAO.signUp(signUpDTO);
+	}
+
+	// 자동 로그인 정보 저장
+	@Override
+	public void setAutoLogin(String member_id, String code, int AUTOLOGIN_DATE) throws Exception {
+		memberDAO.setAutoLogin(member_id, code, AUTOLOGIN_DATE);
+	}
+
+	// 자동 로그인 정보 조회
+	@Override
+	public LoginDTO getAutoLogin(String autologin_code) throws Exception {
+		return memberDAO.getAutoLogin(autologin_code);
 	}
 
 }
