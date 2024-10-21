@@ -55,12 +55,53 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
+$(function(){
+	   $("#update").click(function() {
 
+		   $("#modalToggle").show();
+	   })
+$('#modalToggle2').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // 클릭한 버튼
+            var productId = button.val(); // 버튼의 value 속성 값
+            var modalTitle = '상품 ID: ' + productId; // 제목 설정
+
+            var modal = $(this);
+            modal.find('.modal-title').text(modalTitle); // 모달 제목 업데이트
+        });
+
+        // 삭제 확인 버튼 클릭 시 처리
+        $('#confirmDeleteBtn').click(function() {
+            var productId = $('#modalToggle2 .modal-title').text().split(': ')[1]; // 제목에서 상품 ID 추출
+            console.log('삭제할 상품 ID:', productId);
+            // 추가적인 삭제 로직을 여기에 추가
+        });
+	   function deleteBtn() {
+	    	
+           // Ajax 요청으로 삭제
+           $.ajax({
+               url: '/productDelete', // 삭제 요청을 보낼 URL
+               type: 'DELETE', // HTTP 메소드
+               data: { productId: productId }, // 제품 ID 데이터 전송
+               success: function(response) {
+                   alert('상품이 삭제되었습니다.');
+                   // 페이지를 새로고침하여 삭제된 제품 목록을 업데이트
+                   window.location.reload();
+               },
+               error: function(xhr, status, error) {
+                   console.error('Error:', error);
+                   alert('삭제 중 오류가 발생했습니다.');
+               }
+           });
+       
+   }
+});
 function toggleSelectAll(source) {
     const checkboxes = document.getElementsByName('productCheckbox');
     checkboxes.forEach(checkbox => {
         checkbox.checked = source.checked;
     });
+    
+ 
 }
 
 </script>
@@ -181,12 +222,19 @@ function toggleSelectAll(source) {
 															<!-- 서브 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
-												<td><button type="button"
-														class="btn rounded-pill btn-outline-primary" id="update"
-														value="${product.product_id }">수정</button></td>
-												<td><button type="button"
-														class="btn rounded-pill btn-outline-danger" id="delete"
-														value="${product.product_id }">삭제</button></td>
+												<td><div class="mt-3">
+														<button type="button"
+															class="btn rounded-pill btn-outline-primary"
+															value="${product.product_id}" data-bs-toggle="modal"
+															data-bs-target="#modalToggle">수정</button>
+													</div></td>
+												<td><div class="mt-3">
+														<button type="button"
+															class="btn rounded-pill btn-outline-danger"
+															data-bs-toggle="modal" data-bs-target="#modalToggle2"
+															value="${product.product_id}">삭제</button>
+													</div></td>
+
 											</tr>
 										</c:forEach>
 									</tbody>
@@ -267,6 +315,45 @@ function toggleSelectAll(source) {
 
 	<!-- Place this tag in your head or just before your close body tag. -->
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+	<!-- Modal 1-->
+	<div class="modal fade" id="modalToggle"
+		aria-labelledby="modalToggleLabel" tabindex="-1"
+		style="display: none;" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalToggleLabel">Modal 1</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">Show a second modal and hide this one
+					with the button below.</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary">확인</button>
+					<button class="btn btn-danger">취소</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modalToggle2"
+		aria-labelledby="modalToggleLabel" tabindex="-1"
+		style="display: none;" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalToggleLabel"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">정말로 삭제하시겠습니까</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" id="confirmDeleteBtn">확인</button>
+					<button class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 
 </html>
