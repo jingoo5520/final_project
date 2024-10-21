@@ -13,7 +13,7 @@ import com.finalProject.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestController("/rest/product")
+@RestController("/rest/productGet")
 public class ProductRestController {
 	@Autowired
 	private ProductService ps;

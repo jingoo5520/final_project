@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
+@RequestMapping("/productmanage")
 public class ProductController {
 
 	@Autowired
@@ -29,10 +33,10 @@ public class ProductController {
 	@Autowired
 	private ProductUtil pu;
 
-	@RequestMapping("/productList")
-	public String productList() {
-		return "productmanage/productView";
-	}
+//	@RequestMapping("/productView")
+//	public void productList() {
+//
+//	}
 
 	@RequestMapping(value = "/productSave")
 	public String productSave() {
@@ -64,10 +68,13 @@ public class ProductController {
 //	}
 
 	@RequestMapping(value = "/uploadProduct", method = RequestMethod.POST)
-	public void UploadProduct(ProductDTO productDTO, HttpServletRequest request) {
+	public void UploadProduct(ProductDTO productDTO, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println(productDTO.toString());
-		String url = "/Product";
-		String realPath = request.getSession().getServletContext().getRealPath(url);
+		String url = "/resources/product";
+		ServletContext sc = request.getSession().getServletContext();
+
+		String realPath = sc.getRealPath(url);
+
 		String fileName = "";
 		String route = "";
 		System.out.println(realPath);
@@ -80,7 +87,7 @@ public class ProductController {
 				route = realPath + File.separator + fileName;
 				File Directory = new File(realPath + File.separator + fileName);
 
-				list.add(route);
+				list.add(File.separator + fileName);
 				try {
 					productDTO.getImage_main_url().transferTo(Directory);
 				} catch (IllegalStateException | IOException e) {
@@ -95,7 +102,7 @@ public class ProductController {
 					route = realPath + File.separator + fileName;
 
 					File Directory = new File(realPath + File.separator + fileName);
-					list.add(route);
+					list.add(File.separator + fileName);
 					try {
 						file.transferTo(Directory);
 					} catch (IllegalStateException | IOException e) {
@@ -107,14 +114,21 @@ public class ProductController {
 
 			if (ps.saveProduct(productDTO, list) == 1) {
 				System.out.println("저장 성공");
+				response.sendRedirect("/productmanage/productSave");
 			} else {
 				pu.removeFile(list); // 실패 시 파일 삭제
+				response.sendRedirect("/productmanage/productSave");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			log.error("파일 업로드 중 오류 발생: {}", e.getMessage());
 			pu.removeFile(list); // 오류 발생 시 파일 삭제
+
 		}
 	}
 
+	@RequestMapping("/productView")
+	public void GetALlProduct(Model model) {
+		model.addAttribute("productList", ps.getAllProducts());
+	}
 }

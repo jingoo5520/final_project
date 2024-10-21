@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr"
 	data-theme="theme-default" data-assets-path="/resources/assets/admin/"
 	data-template="vertical-menu-template-free">
@@ -16,7 +17,7 @@
 
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon"
-	href="${pageContext.request.contextPath}/assets/admin/img/favicon/favicon.ico" />
+	href="/resources/assets/admin/img/favicon/favicon.ico" />
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,40 +28,43 @@
 
 <!-- Icons. Uncomment required icon fonts -->
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/assets/admin/vendor/fonts/boxicons.css" />
+	href="/resources/assets/admin/vendor/fonts/boxicons.css" />
 
 <!-- Core CSS -->
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/assets/admin/vendor/css/core.css"
+	href="/resources/assets/admin/vendor/css/core.css"
 	class="template-customizer-core-css" />
 <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/assets/admin/vendor/css/theme-default.css"
+	href="/resources/assets/admin/vendor/css/theme-default.css"
 	class="template-customizer-theme-css" />
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/assets/admin/css/demo.css" />
+<link rel="stylesheet" href="/resources/assets/admin/css/demo.css" />
 
 <!-- Vendors CSS -->
 <link rel="stylesheet"
-	href="/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+	href="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
 <link rel="stylesheet"
-	href="/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
+	href="/resources/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
 
 <!-- Page CSS -->
 
 <!-- Helpers -->
-<script src="/assets/admin/vendor/js/helpers.js"></script>
+<script src="/resources/assets/admin/vendor/js/helpers.js"></script>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-<script src="/assets/admin/js/config.js"></script>
+<script src="/resources/assets/admin/js/config.js"></script>
 <script>
-	
+
+function toggleSelectAll(source) {
+    const checkboxes = document.getElementsByName('productCheckbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = source.checked;
+    });
+}
+
 </script>
 </head>
-<script>
-	
-</script>
 
 <body>
 	<!-- Layout wrapper -->
@@ -72,7 +76,7 @@
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="pageName" value="coupons" />
+				<jsp:param name="pageName" value="productView" />
 
 			</jsp:include>
 
@@ -106,20 +110,85 @@
 
 
 						<div class="card">
-							<h5 class="card-header">Light Table head</h5>
+							<h5 class="card-header">
+								상품 목록
+								<div class="btn-group" style="float: right;">
+									<button type="button"
+										class="btn btn-outline-primary dropdown-toggle"
+										data-bs-toggle="dropdown" aria-expanded="false">정렬</button>
+									<ul class="dropdown-menu" style="">
+										<li><a class="dropdown-item" href="javascript:void(0);">가격
+												높은 순으로 정렬</a></li>
+										<li><a class="dropdown-item" href="javascript:void(0);">가격
+												낮은 순으로 정렬</a></li>
+										<li><a class="dropdown-item" href="javascript:void(0);">번호순으로
+												정렬 </a></li>
+										<li><a class="dropdown-item" href="javascript:void(0);">할인
+												금액 순</a></li>
+										<li><a class="dropdown-item" href="javascript:void(0);">할인
+												퍼센트 순 </a></li>
+									</ul>
+								</div>
+							</h5>
+							<div
+								class="d-flex justify-content-between align-items-center mb-3">
+
+
+
+
+							</div>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
 									<thead class="table-light">
 										<tr>
-											<th>Project</th>
-											<th>Client</th>
-											<th>Users</th>
-											<th>Status</th>
-											<th>Actions</th>
+											<th><input type="checkbox" id="selectAll"
+												onclick="toggleSelectAll(this)"> 전체 선택</th>
+											<th>상품 번호</th>
+											<th>상품 이름</th>
+											<th>상품 가격</th>
+											<th>상품 설명</th>
+											<th>상품 할인 타입</th>
+											<th>상품 할인 금액</th>
+											<th>상품 메인 이미지</th>
+											<th>상품 서브 이미지</th>
+
 										</tr>
 									</thead>
 									<tbody id="productTableBody" class="table-border-bottom-0">
+										<c:forEach var="product" items="${productList}">
+											<tr>
+												<td><input type="checkbox" name="productCheckbox"
+													value="${product.product_id}"></td>
+												<!-- 체크박스 추가 -->
+												<td>${product.product_id}</td>
+												<td>${product.product_name}</td>
+												<td>${product.product_price}</td>
+												<td>${product.product_content}</td>
+												<td>${product.product_dc_type}</td>
+												<td>${product.product_dc_amount}</td>
 
+												<td><c:forEach var="img" items="${product.list}">
+														<c:if test="${img.image_type == 'M'}">
+															<img src='/resources/product/${img.image_url}'
+																alt="Main Image">
+															<!-- 메인 이미지 URL 출력 -->
+														</c:if>
+													</c:forEach></td>
+												<td><c:forEach var="img" items="${product.list}">
+														<c:if test="${img.image_type == 'S'}">
+															<img src='/resources/product/${img.image_url}'
+																alt="Sub Image">
+															<!-- 서브 이미지 URL 출력 -->
+														</c:if>
+													</c:forEach></td>
+												<td><button type="button"
+														class="btn rounded-pill btn-outline-primary" id="update"
+														value="${product.product_id }">수정</button></td>
+												<td><button type="button"
+														class="btn rounded-pill btn-outline-danger" id="delete"
+														value="${product.product_id }">삭제</button></td>
+											</tr>
+										</c:forEach>
 									</tbody>
 								</table>
 							</div>

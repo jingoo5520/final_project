@@ -55,7 +55,7 @@
 
 	<select id="getAllBoard" resultMap="productResultMap">
 		SELECT product_id,
-		product_name, product_price, product_dc_type,
+		product_name, product_price, product_content, product_dc_type,
 		product_dc_amount,
 		product_sell_count
 		FROM product
