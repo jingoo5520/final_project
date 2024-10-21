@@ -42,5 +42,15 @@ public class TestController {
 
 		return "/testIndex";
 	}
+	
+	@RequestMapping(value = "/login")
+	public String login() {
+		return "/user/member/login2";
+	}
+	
+	@RequestMapping(value = "/signUp")
+	public String signUp() {
+		return "/user/member/signUp2";
+	}
 
 }
