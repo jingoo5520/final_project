@@ -15,14 +15,14 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener
 		</listener-class>
 	</listener>
-	<mime-mapping>
+	<!-- <mime-mapping>
 		<extension>js</extension>
 		<mime-type>application/javascript</mime-type>
 	</mime-mapping>
 	<mime-mapping>
 		<extension>css</extension>
 		<mime-type>text/css</mime-type>
-	</mime-mapping>
+	</mime-mapping> -->
 
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>

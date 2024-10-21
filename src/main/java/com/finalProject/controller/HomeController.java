@@ -20,6 +20,6 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String homePage(Locale locale, Model model, HttpServletRequest request) {
-		return "index";
+		return "/user/index";
 	}
 }

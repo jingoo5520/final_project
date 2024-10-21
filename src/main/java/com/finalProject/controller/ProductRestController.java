@@ -1,3 +1,4 @@
+
 package com.finalProject.controller;
 
 import java.util.List;
@@ -13,8 +14,10 @@ import com.finalProject.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+
 @RestController("/rest/productGet")
 public class ProductRestController {
+
 	@Autowired
 	private ProductService ps;
 
