@@ -31,8 +31,27 @@
 	<insert id="signUpMember">
 		insert into members(member_id, member_name,
 		member_pwd, phone_number, birthday, gender, email, address, nickname)
-		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256), #{phone_number},
-		#{birthday}, #{gender}, #{email}, #{address}, #{nickname})
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256),
+		#{phone_number},
+		#{birthday}, #{gender}, #{email}, #{address},
+		#{nickname})
 	</insert>
+
+	<!-- 자동 로그인 정보 저장 -->
+	<update id="updateAutoLoginData">
+		update members
+		set autologin_code = #{autologin_code},
+		autologin_date = DATE_ADD(NOW(), INTERVAL #{autologin_date} DAY)
+		where
+		member_id = #{member_id}
+	</update>
+
+	<!-- 자동 로그인 정보 조회 -->
+	<select id="selectAutoLoginData" resultType="LoginDTO">
+		select * from
+		members where autologin_code = #{autologin_code} and autologin_date >
+		now()
+	</select>
+
 
 </mapper>
