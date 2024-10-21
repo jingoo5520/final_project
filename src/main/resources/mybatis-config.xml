@@ -6,6 +6,7 @@
 	<typeAliases>
 		<typeAlias type="com.finalProject.model.TestVO" alias="TestVO" />
 		<typeAlias type="com.finalProject.model.LoginDTO" alias="LoginDTO" />
+		<typeAlias type="com.finalProject.model.NoticeDTO" alias="NoticeDTO" />
 
 	</typeAliases>
 </configuration>

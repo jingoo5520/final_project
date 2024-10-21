@@ -24,4 +24,10 @@ public class AdminController {
 	public String couponUseLogPage() {
 		return "/admin/pages/couponUseLog";
 	}
+	
+	// 공지사항 관리 - 공지 페이지 이동
+	@GetMapping("/admin/notice")
+	public String noticePage() {
+		return "/admin/pages/notice";
+	}
 }
