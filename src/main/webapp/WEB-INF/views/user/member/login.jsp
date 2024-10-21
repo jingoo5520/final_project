@@ -114,7 +114,7 @@
 								<button class="btn" type="submit">로그인</button>
 							</div>
 							<p class="outer-link">
-								아직 회원이 아니신가요? <a href="register.html">회원가입 하기 </a>
+								아직 회원이 아니신가요? <a href="${pageContext.request.contextPath}/member/viewSignUp"">회원가입 하기 </a>
 							</p>
 						</div>
 					</form>

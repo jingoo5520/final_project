@@ -191,6 +191,7 @@ public class MemberController {
 	public String logout(HttpServletRequest request) {
 		HttpSession ses = request.getSession();
 		ses.removeAttribute("loginMember");
+		ses.removeAttribute("rememberPath");
 		System.out.println("로그아웃");
 		return "redirect:/";
 	}

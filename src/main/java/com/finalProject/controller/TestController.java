@@ -43,14 +43,26 @@ public class TestController {
 		return "/testIndex";
 	}
 	
-	@RequestMapping(value = "/login")
-	public String login() {
-		return "/user/member/login2";
+	@RequestMapping(value = "/")
+	public String index() {
+		return "/testIndex";
 	}
 	
 	@RequestMapping(value = "/signUp")
 	public String signUp() {
 		return "/user/member/signUp2";
+	}
+	
+	@RequestMapping(value = "/getUri")
+	public String getUri(HttpServletRequest request) {
+		String uri = request.getRequestURI()+"";
+		System.out.println(uri);
+		return "/testIndex";
+	}
+	
+	@RequestMapping(value = "/auth")
+	public String auth() {
+		return "/testIndex";
 	}
 
 }
