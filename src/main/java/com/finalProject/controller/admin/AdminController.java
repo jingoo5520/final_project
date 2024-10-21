@@ -30,6 +30,7 @@ public class AdminController {
 	// 쿠폰 관리 - 쿠폰 페이지 이동
 	@GetMapping("/coupons")
 	public String couponPage(Model model) {
+		// 이동시 쿠폰 리스트를 가져오며
 		String result = "";
 		List<CouponDTO> list = null;
 
@@ -52,4 +53,10 @@ public class AdminController {
 	public String couponUseLogPage() {
 		return "/admin/pages/couponUseLog";
 	}
+	
+	// 쿠폰 관리 - 쿠폰 지급 페이지 이동
+		@GetMapping("/couponPay")
+		public String couponPayPage() {
+			return "/admin/pages/couponPay";
+		}
 }

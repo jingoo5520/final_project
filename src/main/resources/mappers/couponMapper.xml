@@ -19,4 +19,11 @@
 		#{coupon_dc_type}, #{coupon_dc_amount}, #{coupon_dc_rate})
 	</insert>
 
+	<!-- 쿠폰 수정 -->
+	<update id="updateCoupon">
+		update coupons 
+		set coupon_name = #{coupon_name}, coupon_dc_type = #{coupon_dc_type}, coupon_dc_amount = #{coupon_dc_amount}, coupon_dc_rate = #{coupon_dc_rate}
+		where coupon_no = #{coupon_no}
+	</update>
+
 </mapper>

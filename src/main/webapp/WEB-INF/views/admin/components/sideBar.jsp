@@ -97,7 +97,7 @@
 				</ul></li>
 
 
-			<li class="menu-item <%= "coupons".equals(request.getParameter("pageName")) || "couponUseLog".equals(request.getParameter("pageName")) ? "active open" : "" %>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%= "coupons".equals(request.getParameter("pageName")) || "couponUseLog".equals(request.getParameter("pageName")) || "couponPay".equals(request.getParameter("pageName")) ? "active open" : "" %>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Amange Coupons">쿠폰 관리</div>
 			</a>
 				<ul class="menu-sub">
@@ -105,8 +105,10 @@
 					<li class="menu-item <%= "coupons".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/coupons" class="menu-link">
 							<div data-i18n="Coupons">쿠폰</div>
 					</a></li>
+					<li class="menu-item <%= "couponPay".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/couponPay" class="menu-link">
+							<div data-i18n="Coupon Pay">쿠폰 지급</div>
+					</a></li>
 					<li class="menu-item <%= "couponUseLog".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/couponUseLog" class="menu-link">
-
 							<div data-i18n="Coupon use log">쿠폰 사용 내역</div>
 					</a></li>
 				</ul></li>

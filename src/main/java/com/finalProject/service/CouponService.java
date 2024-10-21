@@ -11,4 +11,7 @@ public interface CouponService {
 	
 	// 쿠폰 생성
 	int createCoupon(CouponDTO couponDTO) throws Exception;
+	
+	// 쿠폰 수정
+	int updateCoupon(CouponDTO couponDTO) throws Exception;
 }

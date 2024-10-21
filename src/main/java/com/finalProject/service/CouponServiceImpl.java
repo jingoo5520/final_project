@@ -17,14 +17,17 @@ public class CouponServiceImpl implements CouponService {
 	
 	@Override
 	public List<CouponDTO> getCouponList() throws Exception {
-		
-		
 		return cDao.selectCouponList();
 	}
 
 	@Override
 	public int createCoupon(CouponDTO couponDTO) throws Exception {
 		return cDao.insertCoupon(couponDTO);
+	}
+
+	@Override
+	public int updateCoupon(CouponDTO couponDTO) throws Exception {
+		return cDao.updateCoupon(couponDTO);
 	}
 
 }

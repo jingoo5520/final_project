@@ -42,27 +42,163 @@
 <script src="/resources/assets/admin/js/config.js"></script>
 
 <script>
+	let couponEditType = 'create';
+	let selectedCouponNo = 0;
+
+	$(function() {
+		$('#couponName').on('input', function() {
+			$('#couponNameErrorTag').html("");
+			$('#couponNameErrorTag').css("color", "#697a8d");
+			$('#couponName').css("border-color", "#d9dee3");
+			checkFormCompletion();
+		});
+
+		$('#couponDc').on('input', function() {
+			$('#couponDcErrorTag').html("");
+			$('#couponDcErrorTag').css("color", "#697a8d");
+			$('#couponDc').css("border-color", "#d9dee3");
+			checkFormCompletion();
+		});
+
+		// 쿠폰 생성 취소(Close 버튼 클릭)
+		$('#couponCreateCloseBtn').on('click', function() {
+			$('#editCouponModal').modal('hide');
+			resetCouponEditModal();
+		})
+	})
+
+	// 모달 초기화
+	function resetCouponEditModal(){
+		$('#couponName').val('');
+		$('#couponTypeBtn').text('쿠폰 타입');
+		$('#couponTypeBtn').removeData('selected');
+		$('#couponDc').val('');
+		$("#couponCreateBtn").prop('disabled', true);
+	}
+	
+	
+	// 생성 버튼 클릭(쿠폰 생성 모달 open)
+	function openCreateCouponModal(coupon) {
+		couponEditType = "create"
+		resetCouponEditModal();
+		$('#editModalTitle').html("쿠폰 생성");
+		$('#couponCreateBtn').html("Create");
+	}
+	
+	
+	// 수정 버튼 클릭(쿠폰 수정 모달 open)
+	function openUpdateCouponModal(coupon) {
+		couponEditType = "update"
+		let parentTd = $(coupon).closest('td');
+		selectedCouponNo = parentTd.siblings('.couponNoCell').html();
+		
+		console.log("update");
+		console.log(selectedCouponNo);
+		
+		let couponName = parentTd.siblings('.couponNameCell').html();
+		let couponType = parentTd.siblings('.couponTypeCell').html();
+		let couponDc = couponType == 'A' ? parentTd.siblings('.couponDcAmountCell').html() : parentTd.siblings('.couponDcRateCell').html()
+		
+		console.log(couponName);
+		console.log(couponType);
+		console.log(couponDc);
+		
+		$('#couponCreateBtn').html("Update");
+		$('#editModalTitle').html("쿠폰 수정");
+		$('#couponName').val(couponName);
+		
+		if(couponType == 'A'){
+			$('#couponTypeBtn').text("할인 금액"); 
+		    $('#couponTypeBtn').data('selected', "할인 금액");
+		    $('#couponDc').val(couponDc);
+		} else {
+			$('#couponTypeBtn').text("할인률"); 
+		    $('#couponTypeBtn').data('selected', "할인률");
+		    $('#couponDc').val(couponDc * 100);
+		}
+	}
+	
+
+	// 모든 폼에 입력값이 있는지 체크
+	function checkFormCompletion() {
+		let couponNameCheck = couponNameValid();
+		let couponTypeCheck = couponTypeValid();
+		let couponDcValueCheck = couponDcValueValud();
+
+		if (couponNameCheck && couponTypeCheck && couponDcValueCheck) {
+			$("#couponCreateBtn").prop('disabled', false);
+		} else {
+			$("#couponCreateBtn").prop('disabled', true);
+		}
+	}
+
+	// 쿠폰 이름 검사
+	function couponNameValid() {
+		let valid = false;
+
+		if ($('#couponName').val().length > 0) {
+			valid = true;
+		}
+
+		console.log(valid);
+		return valid;
+	}
+
+	// 쿠폰 타입 선택 검사
+	function couponTypeValid() {
+		let valid = false;
+
+		if ($('#couponTypeBtn').text() != "쿠폰 타입") {
+			valid = true;
+		}
+		console.log(valid);
+		return valid;
+	}
+
+	// 쿠폰 할인률/할인 금액 검사
+	function couponDcValueValud() {
+		let valid = false;
+
+		if ($('#couponDc').val() > 0) {
+			valid = true;
+		}
+
+		if ($('#couponTypeBtn').text() == '할인률' && $('#couponDc').val() > 99) {
+			valid = false;
+			$('#couponDcErrorTag').html("할인률은 99를 넘길 수 없습니다.");
+			$('#couponDcErrorTag').css("color", "red");
+			$('#couponDc').css("border-color", "red");
+		}
+
+		console.log(valid);
+		return valid;
+	}
+
 	// 쿠폰 리스트 출력
 	function showCouponList() {
 		$.ajax({
 			url : '/admin/coupons/getCouponList',
 			type : 'POST',
-			dataType: 'json',
+			dataType : 'json',
 			success : function(data) {
 				console.log(data);
 
-				let output = '';				
-				
+				let output = '';
+
 				$.each(data, function(index, coupon) {
-					output += '<tr>' +
-	                    '<td>' + coupon.coupon_no + '</td>' +
-	                    '<td>' + coupon.coupon_name + '</td>' +
-	                    '<td>' + coupon.coupon_dc_type + '</td>' +
-	                    '<td>' + coupon.coupon_dc_amount + '</td>' +
-	                    '<td>' + coupon.coupon_dc_rate + '</td>'
-	            	+ '</tr>';        
-	            });
-				
+					output += '<tr>' 
+							+ '<td class="couponNoCell">' + coupon.coupon_no + '</td>'
+							+ '<td class="couponNameCell">' + coupon.coupon_name + '</td>' 
+							+ '<td class="couponTypeCell">' + coupon.coupon_dc_type + '</td>' 
+							+ '<td class="couponDcAmountCell">' + coupon.coupon_dc_amount + '</td>' 
+							+ '<td class="couponDcRateCell">' + coupon.coupon_dc_rate + '</td>'
+							+ `<td>
+								<button id="couponUpdateBtn" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openUpdateCouponModal(this)">수정</button>
+								<button id="couponDeleteBtn" type="button" class="btn btn-danger">삭제</button>
+								</td>`
+							+ '</tr>';
+				});
+
 				$('#couponTableBody').html(output);
 			},
 			error : function(error) {
@@ -74,10 +210,14 @@
 	// 쿠폰 타입 설정
 	function setCouponType(type) {
 		document.getElementById('couponTypeBtn').textContent = type.textContent;
+		$('#couponDcErrorTag').html("");
+		$('#couponDcErrorTag').css("color", "#697a8d");
+		$('#couponDc').css("border-color", "#d9dee3");
+		checkFormCompletion();
 	}
 
-	// 쿠폰 생성
-	function createCoupon() {
+	// 쿠폰 생성, 수정
+	function editCoupon() {
 		let couponName = document.getElementById('couponName').value;
 		let couponType;
 		let couponDcAmount = 0;
@@ -91,27 +231,70 @@
 			couponDcAmount = parseInt(document.getElementById('couponDc').value);
 		}
 
-		$.ajax({
-			url : '/admin/coupons/createCoupon',
-			type : 'POST',
-			data : {
-				"couponName" : couponName,
-				"couponType" : couponType,
-				"couponDcAmount" : couponDcAmount,
-				"couponDcRate" : couponDcRate
-			},
-			success : function(data) {
-				console.log(data);
-				showCouponList();
-				$('#createCouponModal').modal('hide');
-				$('#couponName').val('');
-			    $('#couponTypeBtn').text('쿠폰 타입'); 
-			    $('#couponDc').val('');
-			},
-			error : function(error) {
-				console.log(error);
-			}
-		});
+		console.log(couponEditType);
+		
+		if(couponEditType == "create"){
+			$.ajax({
+				url : '/admin/coupons/createCoupon',
+				type : 'POST',
+				data : {
+					"couponName" : couponName,
+					"couponType" : couponType,
+					"couponDcAmount" : couponDcAmount,
+					"couponDcRate" : couponDcRate
+				},
+				success : function(data) {
+					if (data == 'duplicated') {
+						$('#couponNameErrorTag').html("중복된 쿠폰 이름입니다.");
+						$('#couponNameErrorTag').css("color", "red");
+						$('#couponName').css("border-color", "red");
+					} else if (data == 'success') {
+						$('#editCouponModal').modal('hide');
+						$('#couponTypeBtn').text('쿠폰 타입');
+						$('#couponDc').val('');
+						showCouponList();
+					}
+
+					$('#couponName').val('');
+					$("#couponCreateBtn").prop('disabled', true);
+				},
+				error : function(error) {
+					console.log(error);
+				}
+			});
+		} else if(couponEditType == "update"){
+			let coupon_no = document.getElementById('couponName')
+			
+			$.ajax({
+				url : '/admin/coupons/updateCoupon',
+				type : 'POST',
+				data : {
+					"couponNo" : selectedCouponNo,
+					"couponName" : couponName,
+					"couponType" : couponType,
+					"couponDcAmount" : couponDcAmount,
+					"couponDcRate" : couponDcRate
+				},
+				success : function(data) {
+					if (data == 'duplicated') {
+						$('#couponNameErrorTag').html("중복된 쿠폰 이름입니다.");
+						$('#couponNameErrorTag').css("color", "red");
+						$('#couponName').css("border-color", "red");
+					} else if (data == 'success') {
+						$('#editCouponModal').modal('hide');
+						$('#couponTypeBtn').text('쿠폰 타입');
+						$('#couponDc').val('');
+						showCouponList();
+					}
+
+					$('#couponName').val('');
+					$("#couponCreateBtn").prop('disabled', true);
+				},
+				error : function(error) {
+					console.log(error);
+				}
+			});
+		}
 	}
 </script>
 </head>
@@ -163,19 +346,23 @@
 											<th>할인 타입</th>
 											<th>할인 금액</th>
 											<th>할인률</th>
+											<th>수정 및 삭제</th>
 										</tr>
 									</thead>
 									<tbody id="couponTableBody" class="table-border-bottom-0">
 
 										<c:forEach var="coupon" items="${couponList}">
 											<!-- couponList에서 쿠폰 반복 -->
-
 											<tr>
-												<td>${coupon.coupon_no}</td>
-												<td>${coupon.coupon_name}</td>
-												<td>${coupon.coupon_dc_type}</td>
-												<td>${coupon.coupon_dc_amount}</td>
-												<td>${coupon.coupon_dc_rate}</td>
+												<td class="couponNoCell">${coupon.coupon_no}</td>
+												<td class="couponNameCell">${coupon.coupon_name}</td>
+												<td class="couponTypeCell">${coupon.coupon_dc_type}</td>
+												<td class="couponDcAmountCell">${coupon.coupon_dc_amount}</td>
+												<td class="couponDcRateCell">${coupon.coupon_dc_rate}</td>
+												<td>
+													<button id="couponUpdateBtn" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openUpdateCouponModal(this)">수정</button>
+													<button id="couponDeleteBtn" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCouponModal" onclick="">삭제</button>
+												</td>
 											</tr>
 										</c:forEach>
 
@@ -186,21 +373,22 @@
 
 						<!-- 쿠폰 생성 버튼 -->
 						<div id="createCouponBtnSapce">
-							<button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#createCouponModal">쿠폰 생성</button>
+							<button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openCreateCouponModal()">쿠폰 생성</button>
 						</div>
 
 						<!-- 쿠폰 생성 모달 -->
-						<div id="createCouponModal" class="modal fade" id="createCouponModal" tabindex="-1" aria-hidden="true">
+						<div id="editCouponModal" class="modal fade" tabindex="-1" aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
-										<h5 class="modal-title" id="exampleModalLabel1">쿠폰 생성</h5>
+										<h5 class="modal-title" id="editModalTitle">쿠폰 생성</h5>
 										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
 										<div class="row">
 											<div class="col mb-3">
-												<label for="nameBasic" class="form-label">쿠폰 이름</label> <input type="text" id="couponName" class="form-control" placeholder="Enter Name" name="couponName" />
+												<label id="couponNameLabel" for="nameBasic" class="form-label">쿠폰 이름</label> <input type="text" id="couponName" class="form-control" placeholder="Enter Name" name="couponName" />
+												<div id="couponNameErrorTag"></div>
 											</div>
 										</div>
 
@@ -214,20 +402,21 @@
 												</ul>
 											</div>
 											<div class="col-8 mb-0">
-												<input type="text" id="couponDc" class="form-control" placeholder="Enter Number" name="couponDc" />
+												<input type="number" id="couponDc" class="form-control" placeholder="Enter Number" name="couponDc" />
+												<div id="couponDcErrorTag"></div>
 											</div>
 										</div>
 									</div>
 
 
 									<div class="modal-footer">
-										<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-										<button type="button" class="btn btn-primary" onclick="createCoupon()">Create</button>
+										<button id="couponCreateCloseBtn" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="">Close</button>
+										<button id="couponCreateBtn" type="button" class="btn btn-primary" onclick="editCoupon()" disabled>Create</button>
 									</div>
 								</div>
 							</div>
 						</div>
-
+						<!-- / 쿠폰 생성 모달 -->
 
 					</div>
 				</div>

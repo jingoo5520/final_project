@@ -24,8 +24,13 @@ public class CouponDAOImpl implements CouponDAO {
 	
 	@Override
 	public int insertCoupon(CouponDTO couponDTO) throws Exception {
-		System.out.println("dao: insertCoupon");
 		return ses.insert(ns + "insertCoupon", couponDTO);
+	}
+
+	@Override
+	public int updateCoupon(CouponDTO couponDTO) throws Exception {
+		System.out.println(couponDTO);
+		return ses.update(ns + "updateCoupon", couponDTO);
 	}
 
 }
