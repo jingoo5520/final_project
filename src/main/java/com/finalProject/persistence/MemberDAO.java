@@ -22,4 +22,7 @@ public interface MemberDAO {
 	// 자동 로그인 정보 조회
 	LoginDTO getAutoLogin(String autologin_code) throws Exception;
 
+	// 마이 페이지 비밀번호 인증
+	boolean auth(String member_id, String member_pwd) throws Exception;
+
 }

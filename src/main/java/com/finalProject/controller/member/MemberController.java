@@ -1,5 +1,7 @@
 package com.finalProject.controller.member;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -192,8 +194,35 @@ public class MemberController {
 		HttpSession ses = request.getSession();
 		ses.removeAttribute("loginMember");
 		ses.removeAttribute("rememberPath");
+		ses.removeAttribute("auth");
 		System.out.println("로그아웃");
 		return "redirect:/";
 	}
 
+	// 마이페이지 (내정보수정 페이지)
+	@RequestMapping(value = "/myPage/modiInfo")
+	public String myPage() {
+		System.out.println("마이페이지로 이동");
+		return "/user/member/myPage_modiInfo";
+	}
+	
+	// 마이페이지 인증(정보 수정시 비밀번호를 확인함.)
+	@RequestMapping(value = "/auth", method = RequestMethod.POST)
+	public String auth(HttpServletRequest request, @RequestParam("pwd")String member_pwd) {
+		HttpSession ses = request.getSession();
+		LoginDTO loginMember = (LoginDTO) ses.getAttribute("loginMember");
+		String member_id = loginMember.getMember_id(); // 세션에 저장된 member_id 저장
+		try {
+			// 로그인된 아이디와 입력한 비밀번호가 일치하는지 DB조회
+			if(memberService.auth(member_id, member_pwd)) {
+				System.out.println("인증 성공");
+				ses.setAttribute("auth", member_id); // 인증 세션 생성
+			} else {
+				System.out.println("인증 실패");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "/user/member/myPage_modiInfo"; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
+	}
 }

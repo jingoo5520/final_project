@@ -66,7 +66,7 @@
 									${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">
-									<li><a href="#">내 정보</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/myPage/modiInfo">내 정보</a></li>
 									<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
 								</ul>
 							</c:if>

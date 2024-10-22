@@ -62,4 +62,19 @@ public class MemberDAOImpl implements MemberDAO {
 		return ses.selectOne(ns + "selectAutoLoginData", autologin_code);
 	}
 
+	// 마이 페이지 비밀번호 인증
+	@Override
+	public boolean auth(String member_id, String member_pwd) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		LoginDTO loginDTO = ses.selectOne(ns+"login", map);
+		if(loginDTO != null) {
+			result = true;
+		}
+		
+		return result;
+	}
+
 }

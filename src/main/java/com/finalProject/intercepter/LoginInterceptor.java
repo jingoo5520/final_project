@@ -16,6 +16,7 @@ import org.springframework.web.util.WebUtils;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.service.MemberService;
+import com.finalProject.util.RememberPath;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,10 +53,14 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					System.out.println("자동 로그인할 유저 정보 확인");
 					loginDTO = memberService.getAutoLogin(autologin_code); // DB에서 자동로그인 정보가 쿠키값과 일치하는 유저 데이터 받아옴
 					ses.setAttribute("loginMember", loginDTO); // 로그인 세션 생성(로그인 처리)
-					result = false; // postHandle과 컨트롤러 서블릿 동작을 하지 않도록 false반환
 					String rememberPath = ses.getAttribute("rememberPath") + "";
-					if (rememberPath != null) { // rememberPath가 있다면
+					result = false; // postHandle과 컨트롤러 서블릿 동작을 하지 않도록 false반환
+					if (!rememberPath.equals("null")) { // rememberPath가 있다면
+						System.out.println("rememberPath있음 : " + rememberPath);
 						response.sendRedirect(rememberPath); // rememberPath로 보냄
+					} else {
+						System.out.println("rememeberPath없음");
+						response.sendRedirect("/"); // 인덱스로 보냄
 					}
 				} else {
 					System.out.println("자동 로그인 만료");
@@ -96,9 +101,11 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
 				}
 				String rememberPath = ses.getAttribute("rememberPath") + "";
-				if (rememberPath != null) { // rememberPath가 있다면
+				if (!rememberPath.equals("null")) { // rememberPath가 있다면
 					response.sendRedirect(rememberPath); // rememberPath로 보냄
+					System.out.println("rememberPath있음 : " + rememberPath);
 				} else {
+					System.out.println("rememeberPath없음");
 					response.sendRedirect("/"); // 인덱스로 보냄
 				}
 			} else {

@@ -47,4 +47,10 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.getAutoLogin(autologin_code);
 	}
 
+	// 마이 페이지 비밀번호 인증
+	@Override
+	public boolean auth(String member_id, String member_pwd) throws Exception {
+		return memberDAO.auth(member_id, member_pwd);
+	}
+
 }
