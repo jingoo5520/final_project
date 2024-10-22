@@ -39,8 +39,14 @@ public class ProductController {
 //	}
 
 	@RequestMapping(value = "/productSave")
-	public String productSave() {
+	public String productSave(HttpServletRequest request) {
+		System.out.println(request.getSession().getServletContext().getRealPath("product"));
 		return "productmanage/productSave";
+	}
+
+	@RequestMapping(value = "/productUpdate", method = RequestMethod.POST)
+	public void productUpdate(ProductDTO updateProduct) {
+		System.out.println(updateProduct.toString());
 	}
 //
 //	@RequestMapping("/test")
@@ -61,7 +67,7 @@ public class ProductController {
 //				"attachment; filename=\"" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1") + "\"");
 //
 //		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), "MS949"))) {
-//			out.println("상품 이름,가격,할인타입");
+//			out.println("�긽�뭹 �씠由�,媛�寃�,�븷�씤���엯");
 //			out.println(productDTO.getProduct_name() + "," + productDTO.getProduct_dc_type());
 //			out.flush();
 //		}
@@ -113,16 +119,16 @@ public class ProductController {
 			}
 
 			if (ps.saveProduct(productDTO, list) == 1) {
-				System.out.println("저장 성공");
+				System.out.println("���옣 �꽦怨�");
 				response.sendRedirect("/productmanage/productSave");
 			} else {
-				pu.removeFile(list); // 실패 시 파일 삭제
+				pu.removeFile(list); // �떎�뙣 �떆 �뙆�씪 �궘�젣
 				response.sendRedirect("/productmanage/productSave");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			log.error("파일 업로드 중 오류 발생: {}", e.getMessage());
-			pu.removeFile(list); // 오류 발생 시 파일 삭제
+			log.error("�뙆�씪 �뾽濡쒕뱶 以� �삤瑜� 諛쒖깮: {}", e.getMessage());
+			pu.removeFile(list); // �삤瑜� 諛쒖깮 �떆 �뙆�씪 �궘�젣
 
 		}
 	}

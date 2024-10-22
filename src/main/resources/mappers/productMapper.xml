@@ -6,7 +6,7 @@
 
 	<insert id="saveProduct"
 		parameterType="com.finalProject.model.ProductDTO"
-		useGeneratedKeys="true" keyProperty="product_id">
+		useGeneratedKeys="true" keyProperty="product_no">
 		INSERT INTO Product (product_name,
 		product_price,
 		product_content, product_dc_type, product_dc_amount,
@@ -19,22 +19,22 @@
 
 	<insert id="saveMainImage" parameterType="map">
 		INSERT INTO Image
-		(product_id, image_url,image_type)
-		VALUES (#{product_id},
+		(product_no, image_url,image_type)
+		VALUES (#{product_no},
 		#{mainImage},'M')
 	</insert>
 
 	<insert id="saveSubImage" parameterType="map">
-		INSERT INTO Image (product_id, image_url, image_type)
+		INSERT INTO Image (product_no, image_url, image_type)
 		VALUES
 		<foreach collection="subImage" item="sub_Image" separator=",">
-			(#{product_id}, #{sub_Image},'S')
+			(#{product_no}, #{sub_Image},'S')
 		</foreach>
 	</insert>
 
 	<resultMap type="com.finalProject.model.ProductVO"
 		id="productResultMap">
-		<id column="product_id" property="product_id" javaType="int" />
+		<id column="product_no" property="product_no" javaType="int" />
 		<result column="product_name" property="product_name"
 			javaType="String" />
 		<result column="product_price" property="product_price"
@@ -48,13 +48,13 @@
 		<result column="product_sell_count"
 			property="product_sell_count" javaType="int" />
 
-		<collection column="product_id" property="list"
+		<collection column="product_no" property="list"
 			ofType="com.finalProject.model.ProductImg" javaType="java.util.List"
 			select="getAllImg" />
 	</resultMap>
 
 	<select id="getAllBoard" resultMap="productResultMap">
-		SELECT product_id,
+		SELECT product_no,
 		product_name, product_price, product_content, product_dc_type,
 		product_dc_amount,
 		product_sell_count
@@ -63,8 +63,8 @@
 
 	<select id="getAllImg"
 		resultType="com.finalProject.model.ProductImg">
-		SELECT image_url, image_type FROM image WHERE product_id =
-		#{product_id}
+		SELECT image_url, image_type FROM image WHERE product_no =
+		#{product_no}
 	</select>
 
 

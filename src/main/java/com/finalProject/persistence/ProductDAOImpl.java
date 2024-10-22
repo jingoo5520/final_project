@@ -29,7 +29,7 @@ public class ProductDAOImpl implements ProductDAO {
 
 		ses.insert(ns + "saveProduct", productDTO);
 
-		return productDTO.getProduct_id();
+		return productDTO.getProduct_no();
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class ProductDAOImpl implements ProductDAO {
 		// TODO Auto-generated method stub
 		Map<String, Object> params = new HashMap<>();
 		params.put("mainImage", mainImage);
-		params.put("product_id", productId);
+		params.put("product_no", productId);
 		return ses.insert(ns + "saveMainImage", params);
 	}
 
@@ -46,7 +46,7 @@ public class ProductDAOImpl implements ProductDAO {
 		// TODO Auto-generated method stub
 		Map<String, Object> params = new HashMap<>();
 		params.put("subImage", subImages);
-		params.put("product_id", productId);
+		params.put("product_no", productId);
 		return ses.insert(ns + "saveSubImage", params);
 	}
 

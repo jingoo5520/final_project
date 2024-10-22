@@ -55,55 +55,198 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
-$(function(){
-	   $("#update").click(function() {
+	$(function() {
+		$('#modalToggle').on('show.bs.modal', function(event) {
+			var button = $(event.relatedTarget); // 클릭한 버튼
+			var row = button.closest('tr'); // 버튼이 있는 행을 찾음
 
-		   $("#modalToggle").show();
-	   })
-$('#modalToggle2').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // 클릭한 버튼
-            var productId = button.val(); // 버튼의 value 속성 값
-            var modalTitle = '상품 ID: ' + productId; // 제목 설정
+			// 테이블에서 데이터 가져오기
+			var productId = button.val(); // 제품 ID
+			var productName = row.find('td:eq(2)').text(); // 제품 이름 (3번째 열)
+			var productPrice = row.find('td:eq(3)').text(); // 제품 가격 (4번째 열)
+			var productContent = row.find('td:eq(4)').text(); // 제품 설명 (5번째 열)
+			var productDcType = row.find('td:eq(5)').text();
+			var productDcAmount = row.find('td:eq(6)').text();
+			var mainImageUrl =row.find('td:eq(7)').find('img').attr('src');
+			console.log(mainImageUrl);
+			var subImageUrl =  [];
+			  row.find('td:eq(8)').find('img').each(function() {
+		            subImageUrl.push($(this).attr('src'));
+		        });
+			var modal = $(this);
+			modal.find('#productNo').val(productId); // 제품 ID 입력란
+			modal.find('#productName').val(productName); // 제품 이름 입력란
+			modal.find('#productPrice').val(productPrice); // 제품 가격 입력란
+			modal.find('#productContent').val(productContent); // 제품 설명 입력란
+			// 할인 타입 라디오 버튼 설정
+			if (productDcType === "고정할인") {
+				modal.find('#fixedDiscount').prop('checked', true);
+			} else if (productDcType === "퍼센트할인") {
+				modal.find('#percentDiscount').prop('checked', true);
+			} else {
+				modal.find('#noDiscount').prop('checked', true);
+			}
 
-            var modal = $(this);
-            modal.find('.modal-title').text(modalTitle); // 모달 제목 업데이트
-        });
+			modal.find('#productDcAmount').val(productDcAmount); // 할인 금액 입력란
+			
+			 updateDiscountAmountInput();
+			
+			  if (mainImageUrl) {
+			        $('#mainImagePreview').attr('src',mainImageUrl).show();
+			        $('#deleteMainImage').show();
+			    } else {
+			        $('#mainImagePreview').hide();
+			        $('#deleteMainImage').hide();
+			    }
+			  $('#subImagePreview').empty(); // 기존 미리보기 초기화
+			    if (subImageUrl.length > 0) {
+			        subImageUrl.forEach(function(url) {
+			            $('#subImagePreview').append( '<div style="position: relative; display: inline-block;">' +
+			                    '<img src="' + url + '" alt="Sub Image" width="50" height="50">' +
+			                    '<button type="button" class="btn btn-danger btn-sm" style="position: absolute; top: 0; right: 0;">X</button>' +
+			                    '</div>');
+			        });
+			        $('#subImagePreviewContainer').show(); // 미리보기 영역 보이기
+			    } else {
+			        $('#subImagePreviewContainer').hide(); // 선택된 파일이 없으면 미리보기 숨기기
+			    }
+		});
 
-        // 삭제 확인 버튼 클릭 시 처리
-        $('#confirmDeleteBtn').click(function() {
-            var productId = $('#modalToggle2 .modal-title').text().split(': ')[1]; // 제목에서 상품 ID 추출
-            console.log('삭제할 상품 ID:', productId);
-            // 추가적인 삭제 로직을 여기에 추가
-        });
-	   function deleteBtn() {
-	    	
-           // Ajax 요청으로 삭제
-           $.ajax({
-               url: '/productDelete', // 삭제 요청을 보낼 URL
-               type: 'DELETE', // HTTP 메소드
-               data: { productId: productId }, // 제품 ID 데이터 전송
-               success: function(response) {
-                   alert('상품이 삭제되었습니다.');
-                   // 페이지를 새로고침하여 삭제된 제품 목록을 업데이트
-                   window.location.reload();
-               },
-               error: function(xhr, status, error) {
-                   console.error('Error:', error);
-                   alert('삭제 중 오류가 발생했습니다.');
-               }
-           });
-       
-   }
-});
-function toggleSelectAll(source) {
-    const checkboxes = document.getElementsByName('productCheckbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = source.checked;
-    });
-    
- 
-}
+		// 할인 타입 라디오 버튼의 상태에 따라 입력을 조절
+		 $('input[name="discountType"]').change(updateDiscountAmountInput);
 
+    function updateDiscountAmountInput() {
+        var selectedType = $("input[name='discountType']:checked").val();
+
+        if (selectedType === "fixed") {
+            $('#productDcAmount').attr('type', 'number').attr('min', '0').removeAttr('max');
+            $('#productDcAmount').removeAttr('disabled');
+            $('#discountMessage').text(''); // 메시지 초기화
+        } else if (selectedType === "percent") {
+            $('#productDcAmount').attr('type', 'number').attr('min', '1').attr('max', '100');
+            $('#productDcAmount').removeAttr('disabled');
+            $('#discountMessage').text(''); // 메시지 초기화
+        } else {
+            $('#productDcAmount').val(0).attr('type', 'hidden').attr('disabled', true);
+            $('#discountMessage').text(''); // 메시지 초기화
+        }
+        validateDiscountAmount(); // 유효성 검사 호출
+    }
+
+    // 할인 금액 유효성 검사
+    $('#productDcAmount').on('input', validateDiscountAmount);
+
+    function validateDiscountAmount() {
+        var selectedType = $("input[name='discountType']:checked").val();
+        var discountAmount = parseFloat($('#productDcAmount').val());
+        var isValid = true;
+
+        if (selectedType === "fixed") {
+            if (discountAmount < 0) {
+                isValid = false;
+            }
+        } else if (selectedType === "percent") {
+            if (discountAmount < 1 || discountAmount > 100) {
+                isValid = false;
+            }
+        }
+
+        if (!isValid) {
+            $('#discountMessage').text('유효하지 않은 범위의 숫자입니다.').css('color', 'red');
+            $('#saveChangesBtn').attr('disabled', true); // 수정 버튼 비활성화
+        } else {
+            $('#discountMessage').text(''); // 메시지 초기화
+            $('#saveChangesBtn').attr('disabled', false); // 수정 버튼 활성화
+        }
+    }
+
+		$('#modalToggle2').on('show.bs.modal', function(event) {
+			var button = $(event.relatedTarget); // 클릭한 버튼
+			var productId = button.val(); // 버튼의 value 속성 값
+			var modalTitle = '상품 ID: ' + productId; // 제목 설정
+			var modal = $(this);
+			modal.find('.modal-title').text(modalTitle); // 모달 제목 업데이트
+		});
+
+		// 삭제 확인 버튼 클릭 시 처리
+		$('#confirmDeleteBtn').click(
+				function() {
+					var productId = $('#modalToggle2 .modal-title').text()
+							.split(': ')[1]; // 제목에서 상품 ID 추출
+
+					// Ajax 요청으로 삭제
+					$.ajax({
+						url : '/productDelete', // 삭제 요청을 보낼 URL
+						type : 'DELETE', // HTTP 메소드
+						data : {
+							productId : productId
+						}, // 제품 ID 데이터 전송
+						success : function(response) {
+							alert('상품이 삭제되었습니다.');
+							window.location.reload(); // 페이지 새로고침
+						},
+						error : function(xhr, status, error) {
+							console.error('Error:', error);
+							alert('삭제 중 오류가 발생했습니다.');
+						}
+					});
+				});
+
+		
+		// 수정 버튼 클릭 시 저장 처리
+		 $('#saveChangesBtn').click(function() {
+		        var productId = $('#productNo').val();
+		        var productName = $('#productName').val();
+		        var productPrice = $('#productPrice').val();
+		        var productContent = $('#productContent').val();
+		        
+		        // 할인 타입 설정
+		        var discountType = $("input[name='discountType']:checked").val();
+		        if (discountType === "fixed") {
+		            discountType = "M"; // 고정할인
+		        } else if (discountType === "percent") {
+		            discountType = "P"; // 퍼센트할인
+		        } else {
+		            discountType = "N"; // 없음
+		        }
+
+		        var discountAmount = discountType === "N" ? 0 : $('#productDcAmount').val();
+		        var formData = new FormData();
+		        formData.append('product_no', productId);
+		        formData.append('product_name', productName);
+		        formData.append('product_price', productPrice);
+		        formData.append('product_content', productContent);
+		        formData.append('product_dc_type', discountType);
+		        formData.append('product_dc_amount', discountAmount);
+
+		        // 메인 이미지
+		        var mainImage = $('#image_main_url')[0].files[0];
+		        if (mainImage) {
+		            formData.append('image_main_url', mainImage);
+		        }
+
+		        // 서브 이미지들
+		        var subImages = $('#image_sub_url')[0].files;
+		        for (var i = 0; i < subImages.length; i++) {
+		            formData.append('image_sub_url', subImages[i]);
+		        }
+		        $.ajax({
+		            url: '/productmanage/productUpdate', // 수정 요청을 보낼 URL
+		            type: 'POST',
+		            data: formData,
+		            processData: false, // 자동으로 데이터 처리하지 않도록 설정
+		            contentType: false, // 컨텐츠 타입을 설정하지 않도록 설정
+		            success: function(response) {
+		                alert('상품이 수정되었습니다.');
+		                window.location.reload(); // 페이지 새로고침
+		            },
+		            error: function(xhr, status, error) {
+		                console.error('Error:', error);
+		                alert('수정 중 오류가 발생했습니다.');
+		            }
+		        });
+		    });
+	});
 </script>
 </head>
 
@@ -133,8 +276,7 @@ function toggleSelectAll(source) {
 					<div
 						class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
 						<a class="nav-item nav-link px-0 me-xl-4"
-							href="javascript:void(0)">
-							<i class="bx bx-menu bx-sm"></i>
+							href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
 
@@ -199,9 +341,9 @@ function toggleSelectAll(source) {
 										<c:forEach var="product" items="${productList}">
 											<tr>
 												<td><input type="checkbox" name="productCheckbox"
-													value="${product.product_id}"></td>
+													value="${product.product_no}"></td>
 												<!-- 체크박스 추가 -->
-												<td>${product.product_id}</td>
+												<td>${product.product_no}</td>
 												<td>${product.product_name}</td>
 												<td>${product.product_price}</td>
 												<td>${product.product_content}</td>
@@ -210,29 +352,29 @@ function toggleSelectAll(source) {
 
 												<td><c:forEach var="img" items="${product.list}">
 														<c:if test="${img.image_type == 'M'}">
-															<img src='/resources/product/${img.image_url}'
-																alt="Main Image">
+															<img src='/resources/product${img.image_url}'
+																alt="Main Image" width="50" height="50">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
 												<td><c:forEach var="img" items="${product.list}">
 														<c:if test="${img.image_type == 'S'}">
-															<img src='/resources/product/${img.image_url}'
-																alt="Sub Image">
+															<img src='/resources/product${img.image_url}'
+																alt="Sub Image" width="50" height="50">
 															<!-- 서브 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
 												<td><div class="mt-3">
 														<button type="button"
 															class="btn rounded-pill btn-outline-primary"
-															value="${product.product_id}" data-bs-toggle="modal"
+															value="${product.product_no}" data-bs-toggle="modal"
 															data-bs-target="#modalToggle">수정</button>
 													</div></td>
 												<td><div class="mt-3">
 														<button type="button"
 															class="btn rounded-pill btn-outline-danger"
 															data-bs-toggle="modal" data-bs-target="#modalToggle2"
-															value="${product.product_id}">삭제</button>
+															value="${product.product_no}">삭제</button>
 													</div></td>
 
 											</tr>
@@ -257,19 +399,16 @@ function toggleSelectAll(source) {
 							<script>
 								document.write(new Date().getFullYear());
 							</script>
-							, made with ❤️ by
-							<a href="https://themeselection.com" target="_blank"
-								class="footer-link fw-bolder">ThemeSelection</a>
+							, made with ❤️ by <a href="https://themeselection.com"
+								target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
 						</div>
 						<div>
 							<a href="https://themeselection.com/license/"
-								class="footer-link me-4" target="_blank">License</a>
-							<a href="https://themeselection.com/" target="_blank"
-								class="footer-link me-4">More Themes</a>
-							<a
+								class="footer-link me-4" target="_blank">License</a> <a
+								href="https://themeselection.com/" target="_blank"
+								class="footer-link me-4">More Themes</a> <a
 								href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-								target="_blank" class="footer-link me-4">Documentation</a>
-							<a
+								target="_blank" class="footer-link me-4">Documentation</a> <a
 								href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
 								target="_blank" class="footer-link me-4">Support</a>
 						</div>
@@ -323,15 +462,63 @@ function toggleSelectAll(source) {
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modalToggleLabel">Modal 1</h5>
+					<h5 class="modal-title" id="modalToggleLabel">수정하기</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal"
 						aria-label="Close"></button>
 				</div>
-				<div class="modal-body">Show a second modal and hide this one
-					with the button below.</div>
+				<div class="modal-body">
+					<input type="hidden" id="productNo" value="">
+					<div class="mb-3">
+						<label for="productName" class="form-label">상품 이름</label> <input
+							type="text" class="form-control" id="productName">
+					</div>
+					<div class="mb-3">
+						<label for="productPrice" class="form-label">상품 가격</label> <input
+							type="text" class="form-control" id="productPrice">
+					</div>
+					<div class="mb-3">
+						<label for="productContent" class="form-label">상품 설명</label>
+						<textarea class="form-control" id="productContent"></textarea>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">상품 할인 타입</label><br> <input
+							type="radio" id="fixedDiscount" name="discountType" value="fixed">
+						고정할인 <input type="radio" id="percentDiscount" name="discountType"
+							value="percent"> 퍼센트할인 <input type="radio"
+							id="noDiscount" name="discountType" value="none" checked>
+						없음
+					</div>
+
+					<div class="mb-3">
+						<label for="productDcAmount" class="form-label">상품 할인 금액</label> <input
+							type="number" class="form-control" id="productDcAmount" min="0">
+						<div id="discountMessage" style="color: red;"></div>
+					</div>
+					<div class="mb-3">
+						<label for="image_main_url" class="form-label">상품 메인 이미지</label>
+						<div style="position: relative;">
+							<img id="mainImagePreview" src="" alt="메인 이미지 미리보기"
+								style="max-width: 100%; display: none;">
+							<button type="button" id="deleteMainImage" class="btn btn-danger"
+								style="display: none; position: absolute; top: 0; right: 0;">X</button>
+						</div>
+						<input type="file" class="form-control" id="image_main_url"
+							accept="image/*">
+					</div>
+					<div class="mb-3">
+						<label for="image_sub_url" class="form-label">상품 서브 이미지</label>
+						<div id="subImagePreviewContainer" style="display: none;">
+							<div id="subImagePreview"></div>
+							<!-- 서브 이미지 미리보기 영역 -->
+						</div>
+						<input type="file" class="form-control" id="image_sub_url"
+							accept="image/*" multiple>
+					</div>
+
+				</div>
 				<div class="modal-footer">
-					<button class="btn btn-primary">확인</button>
-					<button class="btn btn-danger">취소</button>
+					<button class="btn btn-primary" id="saveChangesBtn">저장</button>
+					<button class="btn btn-danger" data-bs-dismiss="modal">취소</button>
 				</div>
 			</div>
 		</div>
