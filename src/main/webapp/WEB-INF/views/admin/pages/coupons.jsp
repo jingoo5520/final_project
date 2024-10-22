@@ -44,6 +44,9 @@
 <script>
 	let couponEditType = 'create';
 	let selectedCouponNo = 0;
+	let pageNo = 1;
+	let pagingSize = 5;
+	
 
 	$(function() {
 		$('#couponName').on('input', function() {
@@ -65,6 +68,17 @@
 			$('#editCouponModal').modal('hide');
 			resetCouponEditModal();
 		})
+		
+		let createCouponBtn = document.getElementById('createCouponBtn');
+	    
+	    // 모달이 닫힐 때 이벤트를 처리
+	    $('#editCouponModal').on('hidden.bs.modal', function () {
+	    	console.log("open");
+	    	console.log(createCouponBtn);
+	    	document.getElementById('createCouponBtn').blur();  // 모달을 열었던 버튼의 focus 해제
+	    	$(':focus').blur(); 
+	    });
+		
 	})
 
 	// 모달 초기화
@@ -87,9 +101,10 @@
 	
 	
 	// 수정 버튼 클릭(쿠폰 수정 모달 open)
-	function openUpdateCouponModal(coupon) {
+	function openUpdateCouponModal(element) {
+		
 		couponEditType = "update"
-		let parentTd = $(coupon).closest('td');
+		let parentTd = $(element).closest('td');
 		selectedCouponNo = parentTd.siblings('.couponNoCell').html();
 		
 		console.log("update");
@@ -175,31 +190,64 @@
 	}
 
 	// 쿠폰 리스트 출력
-	function showCouponList() {
+	function showCouponList(pageNo, pagingSize) {
+		console.log("pageNo: " + pageNo);
+		console.log("pagingSize: " + pagingSize);
+		
+		
 		$.ajax({
 			url : '/admin/coupons/getCouponList',
-			type : 'POST',
+			type : 'GET',
 			dataType : 'json',
+			data : {
+				"pageNo" : pageNo,
+				"pagingSize" : pagingSize
+			},
 			success : function(data) {
 				console.log(data);
 
-				let output = '';
+				let listOutput = '';
+				let paginationOutput = '';
 
-				$.each(data, function(index, coupon) {
-					output += '<tr>' 
+				$.each(data.list, function(index, coupon) {
+					listOutput += '<tr>' 
 							+ '<td class="couponNoCell">' + coupon.coupon_no + '</td>'
 							+ '<td class="couponNameCell">' + coupon.coupon_name + '</td>' 
 							+ '<td class="couponTypeCell">' + coupon.coupon_dc_type + '</td>' 
 							+ '<td class="couponDcAmountCell">' + coupon.coupon_dc_amount + '</td>' 
 							+ '<td class="couponDcRateCell">' + coupon.coupon_dc_rate + '</td>'
 							+ `<td>
-								<button id="couponUpdateBtn" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openUpdateCouponModal(this)">수정</button>
-								<button id="couponDeleteBtn" type="button" class="btn btn-danger">삭제</button>
+								<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openUpdateCouponModal(this)">수정</button>
+								<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCouponModal" onclick="openDeleteCouponModal(this)">삭제</button>
 								</td>`
 							+ '</tr>';
 				});
 
-				$('#couponTableBody').html(output);
+				$('#couponTableBody').html(listOutput);
+				
+				if(data.pi.pageNo == 1){
+					paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
+				} else {
+					paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(\${data.pi.pageNo} - 1, \${pagingSize})"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
+				}
+				
+				
+				for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
+					if(i == data.pi.pageNo) {
+						paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(\${i}, \${pagingSize})">\${i}</a></li>`;
+					} else {
+						paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(\${i}, \${pagingSize})">\${i}</a></li>`;	
+					}
+				}
+				
+				
+				if(data.pi.pageNo == data.pi.totalPageCnt){
+					paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+				} else {
+					paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(\${data.pi.pageNo} + 1, \${pagingSize})"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+				}
+				
+				$('.pagination').html(paginationOutput);
 			},
 			error : function(error) {
 				console.log(error);
@@ -252,7 +300,7 @@
 						$('#editCouponModal').modal('hide');
 						$('#couponTypeBtn').text('쿠폰 타입');
 						$('#couponDc').val('');
-						showCouponList();
+						showCouponList(pageNo, pagingSize);
 					}
 
 					$('#couponName').val('');
@@ -284,7 +332,7 @@
 						$('#editCouponModal').modal('hide');
 						$('#couponTypeBtn').text('쿠폰 타입');
 						$('#couponDc').val('');
-						showCouponList();
+						showCouponList(pageNo, pagingSize);
 					}
 
 					$('#couponName').val('');
@@ -296,6 +344,33 @@
 			});
 		}
 	}
+	
+	// 쿠폰 삭제 모달 열기
+	function openDeleteCouponModal(element){
+		console.log(element);
+		let parentTd = $(element).closest('td');
+		selectedCouponNo = parentTd.siblings('.couponNoCell').html();
+	}
+	
+	
+	// 쿠폰 삭제
+	function deleteCoupon(){
+		$.ajax({
+			url : '/admin/coupons/deleteCoupon',
+			type : 'POST',
+			data : {
+				"couponNo" : selectedCouponNo,
+			},
+			success : function(data) {
+				console.log(data);
+				$('#deleteCouponModal').modal('hide');
+				showCouponList(pageNo, pagingSize);
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
 </script>
 </head>
 
@@ -305,6 +380,14 @@
 	flex-direction: row;
 	justify-content: right;
 }
+
+.table > thead {
+    vertical-align: middle;
+}
+
+
+
+
 </style>
 
 <body>
@@ -343,7 +426,7 @@
 										<tr>
 											<th>번호</th>
 											<th>쿠폰 이름</th>
-											<th>할인 타입</th>
+											<th>할인 타입<br>(Amount: A, Rate: R)</th>
 											<th>할인 금액</th>
 											<th>할인률</th>
 											<th>수정 및 삭제</th>
@@ -351,7 +434,7 @@
 									</thead>
 									<tbody id="couponTableBody" class="table-border-bottom-0">
 
-										<c:forEach var="coupon" items="${couponList}">
+										<c:forEach var="coupon" items="${couponData.list}">
 											<!-- couponList에서 쿠폰 반복 -->
 											<tr>
 												<td class="couponNoCell">${coupon.coupon_no}</td>
@@ -360,8 +443,8 @@
 												<td class="couponDcAmountCell">${coupon.coupon_dc_amount}</td>
 												<td class="couponDcRateCell">${coupon.coupon_dc_rate}</td>
 												<td>
-													<button id="couponUpdateBtn" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openUpdateCouponModal(this)">수정</button>
-													<button id="couponDeleteBtn" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCouponModal" onclick="">삭제</button>
+													<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openUpdateCouponModal(this)">수정</button>
+													<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCouponModal" onclick="openDeleteCouponModal(this)">삭제</button>
 												</td>
 											</tr>
 										</c:forEach>
@@ -369,11 +452,53 @@
 									</tbody>
 								</table>
 							</div>
+
+							<!-- 페이지 네이션 -->
+							<div class="mt-4">
+								<nav aria-label="Page navigation">
+									<ul class="pagination justify-content-center">
+										<c:choose>
+											<c:when test="${couponData.pi.pageNo == 1}">
+												<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
+											</c:when>
+											<c:otherwise>
+												<li class="page-item prev"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
+											</c:otherwise>
+										</c:choose>
+
+										<c:forEach var="i" begin="${couponData.pi.startPageNoCurBloack}" end="${couponData.pi.endPageNoCurBlock}">
+											<c:choose>
+												<c:when test="${couponData.pi.pageNo == i}">
+													<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(${couponData.pi.pageNo}, ${couponData.pi.viewDataCntPerPage})">${i}</a></li>
+												</c:when>
+												<c:otherwise>
+													<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(${i}, ${couponData.pi.viewDataCntPerPage})">${i}</a></li>
+												</c:otherwise>
+											</c:choose>
+
+										</c:forEach>
+
+										<c:choose>
+											<c:when test="${couponData.pi.pageNo == couponData.pi.totalPageCnt}">
+												<li class="page-item disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
+											</c:when>
+											<c:otherwise>
+												<li class="page-item next"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
+											</c:otherwise>
+										</c:choose>
+										
+									</ul>
+								</nav>
+							</div>
+							<!-- / 페이지 네이션 -->
+
 						</div>
+
+
 
 						<!-- 쿠폰 생성 버튼 -->
 						<div id="createCouponBtnSapce">
-							<button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openCreateCouponModal()">쿠폰 생성</button>
+							<button id="createCouponBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="openCreateCouponModal()">쿠폰 생성</button>
 						</div>
 
 						<!-- 쿠폰 생성 모달 -->
@@ -395,7 +520,7 @@
 
 										<div class="row g-2">
 											<div class="col mb-0">
-												<button id="couponTypeBtn" type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">쿠폰 타입</button>
+												<button id="couponTypeBtn" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">쿠폰 타입</button>
 												<ul class="dropdown-menu">
 													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인률</a></li>
 													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인 금액</a></li>
@@ -410,13 +535,33 @@
 
 
 									<div class="modal-footer">
-										<button id="couponCreateCloseBtn" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="">Close</button>
+										<button id="couponCreateCloseBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Close</button>
 										<button id="couponCreateBtn" type="button" class="btn btn-primary" onclick="editCoupon()" disabled>Create</button>
 									</div>
 								</div>
 							</div>
 						</div>
 						<!-- / 쿠폰 생성 모달 -->
+
+						<!-- 쿠폰 삭제 모달 -->
+						<div id="deleteCouponModal" class="modal fade" tabindex="-1" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="editModalTitle">쿠폰 삭제</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">쿠폰을 삭제하시겠습니까?</div>
+
+
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Close</button>
+										<button type="button" class="btn btn-danger" onclick="deleteCoupon()">Delete</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- / 쿠폰 삭제 모달 -->
 
 					</div>
 				</div>

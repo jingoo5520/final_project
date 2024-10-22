@@ -1,6 +1,8 @@
 package com.finalProject.controller.admin;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -8,12 +10,14 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.CouponDTO;
+import com.finalProject.model.PagingInfoDTO;
 import com.finalProject.service.CouponService;
 
 @Controller
@@ -24,22 +28,24 @@ public class CouponController {
 	CouponService cService;
 	
 	// 쿠폰 리스트 가져오기
-	@PostMapping("/getCouponList")
+	@GetMapping("/getCouponList")
 	@ResponseBody
-	public List<CouponDTO> getCouponList() {
+	public Map<String, Object> getCouponList(@RequestParam int pageNo, @RequestParam int pagingSize) {
+		
 		String result = "";
-		List<CouponDTO> list = null;
-
+		Map<String, Object> data = new HashMap<String, Object>();
+		
 		try {
-			list = cService.getCouponList();
+			data = cService.getCouponList(new PagingInfoDTO(pageNo, pagingSize));
 			result = "success";
 		} catch (Exception e) {
 			result = "fail";
 			e.printStackTrace();
 		}
 
+		System.out.println(data);
 		
-		return list;
+		return data;
 	}
 
 	// 쿠폰 생성
@@ -101,4 +107,19 @@ public class CouponController {
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 	
+	@PostMapping("/deleteCoupon")
+	@ResponseBody
+	public ResponseEntity<String> deleteCoupon(@RequestParam int couponNo) {
+		String result = "";
+
+		try {
+			cService.deleteCoupon(couponNo);
+			result = "success";
+		}  catch (Exception e) {
+			result = "fail";
+			e.printStackTrace();
+		}
+
+		return new ResponseEntity<String>(result, HttpStatus.OK);
+	}
 }

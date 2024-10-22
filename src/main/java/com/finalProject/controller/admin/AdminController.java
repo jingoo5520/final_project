@@ -1,6 +1,8 @@
 package com.finalProject.controller.admin;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.finalProject.model.CouponDTO;
+import com.finalProject.model.PagingInfoDTO;
 import com.finalProject.service.CouponService;
 
 
@@ -32,19 +35,20 @@ public class AdminController {
 	public String couponPage(Model model) {
 		// 이동시 쿠폰 리스트를 가져오며
 		String result = "";
+		Map<String, Object> data = new HashMap<String, Object>();
 		List<CouponDTO> list = null;
 
 		try {
-			list = cService.getCouponList();
+			data = cService.getCouponList(new PagingInfoDTO(1, 5));
 			result = "success";
 		} catch (Exception e) {
 			result = "fail";
 			e.printStackTrace();
 		}
 
-		System.out.println(list);
+		System.out.println(data);
 		
-		model.addAttribute("couponList", list);
+		model.addAttribute("couponData", data);
 		return "/admin/pages/coupons";
 	}
 
