@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.ProductDTO;
+import com.finalProject.model.ProductUpdateDTO;
 import com.finalProject.persistence.ProductDAO;
 
 @Service
@@ -48,6 +49,12 @@ public class ProductServiceImpl implements ProductService {
 	public List<ProductDTO> getAllProducts() {
 
 		return pDAO.getAllProducts();
+	}
+
+	@Override
+	public int updateProduct(ProductUpdateDTO updateProduct) {
+
+		return pDAO.updateProduct(updateProduct);
 	}
 
 }

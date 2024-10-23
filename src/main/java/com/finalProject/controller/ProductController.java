@@ -15,9 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finalProject.model.ProductDTO;
+import com.finalProject.model.ProductUpdateDTO;
 import com.finalProject.service.ProductService;
 import com.finalProject.util.ProductUtil;
 
@@ -45,8 +47,28 @@ public class ProductController {
 	}
 
 	@RequestMapping(value = "/productUpdate", method = RequestMethod.POST)
-	public void productUpdate(ProductDTO updateProduct) {
+	public void productUpdate(ProductUpdateDTO updateProduct, HttpServletRequest request) {
 		System.out.println(updateProduct.toString());
+		List<String> subArr = new ArrayList<String>();
+		ServletContext sc = request.getSession().getServletContext();
+		if (ps.updateProduct(updateProduct) == 1) {
+
+			if (!(updateProduct.getProduct_main_image().equals("true"))) {
+
+				String realPath = sc.getRealPath(updateProduct.getProduct_main_image());
+
+				pu.removeFile(realPath);
+			}
+			if (updateProduct.getProduct_sub_image() != null) {
+				for (String a : updateProduct.getProduct_sub_image()) {
+					subArr.add(sc.getRealPath(a));
+
+				}
+				pu.removeFile(subArr);
+			}
+			// 파일 db 삭제 처리 하기
+		}
+
 	}
 //
 //	@RequestMapping("/test")
@@ -134,7 +156,15 @@ public class ProductController {
 	}
 
 	@RequestMapping("/productView")
-	public void GetALlProduct(Model model) {
+	public void GetAllProduct(Model model) {
 		model.addAttribute("productList", ps.getAllProducts());
+	}
+
+	@RequestMapping("/productSearch")
+	public String getSearchProduct(@RequestParam("product_dc_type") String product_dc_type,
+			@RequestParam("product_name") String product_name, @RequestParam("reg_date_start") String time) {
+		System.out.println(product_name + " , " + product_dc_type + " , " + time);
+		return "/productmanage/productView";
+
 	}
 }

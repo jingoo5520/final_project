@@ -30,4 +30,14 @@ public class ProductUtil {
 			}
 		}
 	}
+
+	public void removeFile(String path) {
+		// TODO Auto-generated method stub
+
+		File file = new File(path);
+		if (file.exists()) {
+			file.delete();
+		}
+	}
+
 }

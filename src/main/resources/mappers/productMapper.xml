@@ -67,6 +67,13 @@
 		#{product_no}
 	</select>
 
-
+	<update id="updateProduct">
+		update product set product_name = #{product_name} ,
+		product_price = #{product_price},
+		product_content = #{product_content}
+		, product_dc_type = #{product_dc_type}, product_dc_amount =
+		#{product_dc_amount}, product_sell_count = #{product_sell_count} where
+		product_no =#{product_no};
+	</update>
 
 </mapper>

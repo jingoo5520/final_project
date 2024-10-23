@@ -67,10 +67,11 @@
 			var productContent = row.find('td:eq(4)').text(); // 제품 설명 (5번째 열)
 			var productDcType = row.find('td:eq(5)').text();
 			var productDcAmount = row.find('td:eq(6)').text();
-			var mainImageUrl =row.find('td:eq(7)').find('img').attr('src');
+			var productSellCount = row.find('td:eq(7)').text();
+			var mainImageUrl =row.find('td:eq(8)').find('img').attr('src');
 			console.log(mainImageUrl);
 			var subImageUrl =  [];
-			  row.find('td:eq(8)').find('img').each(function() {
+			  row.find('td:eq(9)').find('img').each(function() {
 		            subImageUrl.push($(this).attr('src'));
 		        });
 			var modal = $(this);
@@ -78,6 +79,7 @@
 			modal.find('#productName').val(productName); // 제품 이름 입력란
 			modal.find('#productPrice').val(productPrice); // 제품 가격 입력란
 			modal.find('#productContent').val(productContent); // 제품 설명 입력란
+			modal.find('#productSellCount').val(productSellCount);
 			// 할인 타입 라디오 버튼 설정
 			if (productDcType === "고정할인") {
 				modal.find('#fixedDiscount').prop('checked', true);
@@ -93,17 +95,17 @@
 			
 			  if (mainImageUrl) {
 			        $('#mainImagePreview').attr('src',mainImageUrl).show();
-			        $('#deleteMainImage').show();
+			        $('#deleteImage').show();
 			    } else {
 			        $('#mainImagePreview').hide();
-			        $('#deleteMainImage').hide();
+			        $('#deleteImage').hide();
 			    }
 			  $('#subImagePreview').empty(); // 기존 미리보기 초기화
 			    if (subImageUrl.length > 0) {
-			        subImageUrl.forEach(function(url) {
+			        subImageUrl.forEach(function(url, index) {
 			            $('#subImagePreview').append( '<div style="position: relative; display: inline-block;">' +
 			                    '<img src="' + url + '" alt="Sub Image" width="50" height="50">' +
-			                    '<button type="button" class="btn btn-danger btn-sm" style="position: absolute; top: 0; right: 0;">X</button>' +
+			                    '<button type="button" class="deleteSubImage btn btn-danger btn-sm " style="position: absolute; top: 0; right: 0;" data-index="' + index + '">X</button>' +
 			                    '</div>');
 			        });
 			        $('#subImagePreviewContainer').show(); // 미리보기 영역 보이기
@@ -114,7 +116,15 @@
 
 		// 할인 타입 라디오 버튼의 상태에 따라 입력을 조절
 		 $('input[name="discountType"]').change(updateDiscountAmountInput);
+	$("#deleteImage").on('click' , function() {
+		console.log("메인이미지 삭제하기");
+		$(this).parent().hide();
+	})
 
+	$('#subImagePreview').on('click', '.deleteSubImage', function() {
+        $(this).parent().hide();
+        // 필요하면 서버에 이미지 삭제 요청을 할 수 있음
+    });
     function updateDiscountAmountInput() {
         var selectedType = $("input[name='discountType']:checked").val();
 
@@ -199,9 +209,12 @@
 		        var productName = $('#productName').val();
 		        var productPrice = $('#productPrice').val();
 		        var productContent = $('#productContent').val();
-		        
+		        var productSellCount = $("#productSellCount").val();
 		        // 할인 타입 설정
 		        var discountType = $("input[name='discountType']:checked").val();
+		        var existingMainImageUrl = $('#mainImagePreview').attr('src');
+		        var deleteMainImage = $('#deleteImage').is(':visible') ? 'true' : existingMainImageUrl; // 삭제 버튼이 보이면 이미지가 삭제되지 않음
+
 		        if (discountType === "fixed") {
 		            discountType = "M"; // 고정할인
 		        } else if (discountType === "percent") {
@@ -218,13 +231,23 @@
 		        formData.append('product_content', productContent);
 		        formData.append('product_dc_type', discountType);
 		        formData.append('product_dc_amount', discountAmount);
-
+				formData.append('product_sell_count' , productSellCount);
+				formData.append('product_main_image' , deleteMainImage);
 		        // 메인 이미지
 		        var mainImage = $('#image_main_url')[0].files[0];
 		        if (mainImage) {
 		            formData.append('image_main_url', mainImage);
 		        }
+		        var deleteSubImage = []; // 삭제할 서브 이미지의 인덱스를 추적
+		        
+		        $('#subImagePreview div').each(function(index) {
+		            if ($(this).is(':hidden')) {  // 삭제 버튼이 눌린 이미지
+		            	var subImageUrl = $(this).find('img').attr('src'); // 이미지의 경로를 가져옴
+		                deleteSubImage.push(subImageUrl)
+		            }
+		        });
 
+		        formData.append('product_sub_image', deleteSubImage);
 		        // 서브 이미지들
 		        var subImages = $('#image_sub_url')[0].files;
 		        for (var i = 0; i < subImages.length; i++) {
@@ -276,7 +299,8 @@
 					<div
 						class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
 						<a class="nav-item nav-link px-0 me-xl-4"
-							href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
+							href="javascript:void(0)">
+							<i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
 
@@ -289,13 +313,84 @@
 				<div class="content-wrapper">
 					<!-- Content -->
 
-					<div class="container-xxl flex-grow-1 container-p-y">
+					<div class="container-xxl flex-grow-1 container-p-y ">
+						<div class="card accordion-item active row mb-3">
+							<h2 class="accordion-header" id="headingOne">
+								<button type="button" class="accordion-button"
+									data-bs-toggle="collapse" data-bs-target="#accordionOne"
+									aria-expanded="true" aria-controls="accordionOne">
+									<h5>상품 검색 필터</h5>
+								</button>
+							</h2>
 
+							<div id="accordionOne" class="accordion-collapse collapse show"
+								data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<form id="searchFilter" action = "/productmanage/productSearch">
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label"
+												for="basic-default-name">할인 타입</label>
+											<div class="col-sm-10 d-flex align-items-center">
+												<div class="form-check-inline">
+													<input name="product_dc_type" class="form-check-input"
+														type="checkbox" value="M" id="product_dc_m" checked /> <label
+														class="form-check-label" for="product_m"> 고정 금액 할인
+													</label>
+												</div>
+												<div class="form-check-inline">
+													<input name="product_dc_type" class="form-check-input"
+														type="checkbox" value="P" id="product_dc_p" checked /> <label
+														class="form-check-label" for="product_p"> 비율 할인 </label>
+												</div>
+												<div class="form-check-inline">
+													<input name="product_dc_type" class="form-check-input"
+														type="checkbox" value="N" id="product_dc_n" checked /> <label
+														class="form-check-label" for="product_n"> 없음 </label>
+												</div>
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="product_name">상품
+												이름</label>
+											<div class="col-sm-10">
+												<input type="text" name="product_name" id=""
+													class="form-control" placeholder="상품 이름 검색 .."
+													aria-label="" aria-describedby="" />
+											</div>
+										</div>
+
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label"
+												for="basic-default-name">상품 등록일</label>
+											<div class="col-sm-10 d-flex align-items-center">
+												<div class="form-check-inline">
+													<input name="reg_date_start" class="form-control"
+														type="date" value="" id="html5-date-input">
+												</div>
+												<div class="form-check-inline">
+													<span class="mx-2">-</span>
+												</div>
+												<div class="form-check-inline">
+													<input name="reg_date_end" class="form-control" type="date"
+														value="" id="html5-date-input">
+												</div>
+											</div>
+										</div>
+										<div class="row justify-content-end">
+											<div class="col-sm-10">
+												<button type="submit" class="btn btn-primary">Search</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
 
 						<div class="card">
 							<h5 class="card-header">
 								상품 목록
 								<div class="btn-group" style="float: right;">
+
 									<button type="button"
 										class="btn btn-outline-primary dropdown-toggle"
 										data-bs-toggle="dropdown" aria-expanded="false">정렬</button>
@@ -313,6 +408,7 @@
 									</ul>
 								</div>
 							</h5>
+
 							<div
 								class="d-flex justify-content-between align-items-center mb-3">
 
@@ -332,6 +428,7 @@
 											<th>상품 설명</th>
 											<th>상품 할인 타입</th>
 											<th>상품 할인 금액</th>
+											<th>상품 수량</th>
 											<th>상품 메인 이미지</th>
 											<th>상품 서브 이미지</th>
 
@@ -349,7 +446,7 @@
 												<td>${product.product_content}</td>
 												<td>${product.product_dc_type}</td>
 												<td>${product.product_dc_amount}</td>
-
+												<td>${product.product_sell_count}</td>
 												<td><c:forEach var="img" items="${product.list}">
 														<c:if test="${img.image_type == 'M'}">
 															<img src='/resources/product${img.image_url}'
@@ -399,16 +496,19 @@
 							<script>
 								document.write(new Date().getFullYear());
 							</script>
-							, made with ❤️ by <a href="https://themeselection.com"
-								target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+							, made with ❤️ by
+							<a href="https://themeselection.com" target="_blank"
+								class="footer-link fw-bolder">ThemeSelection</a>
 						</div>
 						<div>
 							<a href="https://themeselection.com/license/"
-								class="footer-link me-4" target="_blank">License</a> <a
-								href="https://themeselection.com/" target="_blank"
-								class="footer-link me-4">More Themes</a> <a
+								class="footer-link me-4" target="_blank">License</a>
+							<a href="https://themeselection.com/" target="_blank"
+								class="footer-link me-4">More Themes</a>
+							<a
 								href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-								target="_blank" class="footer-link me-4">Documentation</a> <a
+								target="_blank" class="footer-link me-4">Documentation</a>
+							<a
 								href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
 								target="_blank" class="footer-link me-4">Support</a>
 						</div>
@@ -495,12 +595,22 @@
 						<div id="discountMessage" style="color: red;"></div>
 					</div>
 					<div class="mb-3">
+						<label for="productDcAmount" class="form-label">상품 수량</label> <input
+							type="number" class="form-control" id="productSellCount" min="0">
+						<div id="discountMessage" style="color: red;"></div>
+					</div>
+					<div class="mb-3">
 						<label for="image_main_url" class="form-label">상품 메인 이미지</label>
-						<div style="position: relative;">
-							<img id="mainImagePreview" src="" alt="메인 이미지 미리보기"
-								style="max-width: 100%; display: none;">
-							<button type="button" id="deleteMainImage" class="btn btn-danger"
-								style="display: none; position: absolute; top: 0; right: 0;">X</button>
+						<div id="mainImage">
+
+							<div style="position: relative; display: inline-block;">
+								<img id="mainImagePreview" src="" alt="Main Image" width="100"
+									height="100">
+								<button id="deleteImage" type="button"
+									class="btn btn-danger btn-sm"
+									style="position: absolute; top: 0; right: 0;">X</button>
+							</div>
+
 						</div>
 						<input type="file" class="form-control" id="image_main_url"
 							accept="image/*">
@@ -511,7 +621,8 @@
 							<div id="subImagePreview"></div>
 							<!-- 서브 이미지 미리보기 영역 -->
 						</div>
-						<input type="file" class="form-control" id="image_sub_url"
+						<label for="udpate image" class="form-label">변경할 서브 이미지</label> <input
+							type="file" class="form-control" id="image_sub_url"
 							accept="image/*" multiple>
 					</div>
 

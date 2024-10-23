@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.ProductDTO;
+import com.finalProject.model.ProductUpdateDTO;
 
 @Repository
 public class ProductDAOImpl implements ProductDAO {
@@ -55,5 +56,18 @@ public class ProductDAOImpl implements ProductDAO {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns + "getAllBoard");
 
+	}
+
+	@Override
+	public int updateProduct(ProductUpdateDTO updateProduct) {
+		Map<String, Object> prams = new HashMap<>();
+		prams.put("product_name", updateProduct.getProduct_name());
+		prams.put("product_price", updateProduct.getProduct_price());
+		prams.put("product_content", updateProduct.getProduct_content());
+		prams.put("product_dc_type", updateProduct.getProduct_dc_type());
+		prams.put("product_dc_amount", updateProduct.getProduct_dc_amount());
+		prams.put("product_sell_count", updateProduct.getProduct_sell_count());
+		prams.put("product_no", updateProduct.getProduct_no());
+		return ses.update(ns + "updateProduct", prams);
 	}
 }
