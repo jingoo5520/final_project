@@ -14,6 +14,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
 
     <!-- ========================= CSS here ========================= -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
@@ -21,6 +22,45 @@
     <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
+
+<script type="text/javascript">
+	
+	let productPrice = parseInt("${orderProduct.price }");
+	let productQuantity = parseInt("${orderProduct.quantity }");
+	let dcPrice = 0;
+	let memberPoint = 0;
+	let productDCType = null;
+	if ("${orderProduct.dcType }" !== "" ) {
+		productDCType = "${orderProduct.dcType }";
+		if (productDCType == "M") {
+			dcPrice = parseInt("${orderProduct.dcAmount }");
+		} else if (productDCType == 'P') {
+			dcPrice = Math.floor(productPrice * parseFloat("${orderProduct.dcRate }"));
+		}
+	}
+	
+	if ()
+	console.log(productPrice, productQuantity, dcPrice);
+	
+	$(function() {
+		
+		console.log(productPrice, productQuantity);
+		
+		if ($("#orderProductDC").text() !== "") {
+			let productDC = $("#orderProductDC").text().trim();
+			dcPrice = parseInt(productDC.replace(" 원", ""));
+			
+		}
+		$("#orderProductQuantity").keyup(function () {
+			productQuantity = parseInt($("#orderProductQuantity").val(), 10);
+			$(".allProductPrice").text((productPrice - dcPrice) * productQuantity);
+		});
+		
+		$(".allProductPrice").text((productPrice - dcPrice) * productQuantity);
+		$("#point").text((productPrice * productQuantity) * )
+	});
+
+</script>
 
 <body>
 
@@ -76,15 +116,16 @@
 										<div class="single-form form-default">
 											<div class="form-input form">
 												<label>상품 수량</label>
-												<input type="text" placeholder="quantity" name="orderProductQuantity">
+												<input type="number" placeholder="quantity" id="orderProductQuantity" name="orderProductQuantity" value="${orderProduct.quantity }">
 											</div>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="single-form form-default">
 											<div class="form-input form">
-												<img alt="productImg" src="" width="67px;" height="67px;">
+												<img alt="productImg" src="${orderProduct.productImg }" width="67px;" height="67px;">
 												<label>상품 이름</label>
+												<label>${orderProduct.productName }</label>
 											</div>
 										</div>
 									</div>
@@ -92,57 +133,73 @@
 										<div class="single-form form-default">
 											<div class="form-input form">
 												<label>상품 가격</label>
-												<h3>0 원</h3>
+												<h3 id="orderProductPrice">${orderProduct.price } 원</h3>
 											</div>
 										</div>
 									</div>
+									<c:if test="${not empty orderProduct.dcType }">
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>할인</label>
+												<c:if test="${orderProduct.dcType == 'P' }">
+													<h3>${(orderProduct.price) * (orderProduct.dcRate) } 원</h3>
+												</c:if>
+												<c:if test="${orderProduct.dcType == 'M' }">
+													<h3>${orderProduct.dcAmount } 원</h3>
+												</c:if>
+											</div>
+										</div>
+									</div>
+									</c:if>
                                 </section>
                             </li>
-                            <li>
-                                <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
-                                    aria-expanded="false" aria-controls="collapseFour">주문자 정보</h5>
-                                <section class="checkout-steps-form-content collapse" id="collapseFour"
-                                    aria-labelledby="headingFour" data-bs-parent="#accordionExample">
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="form-input form">
-                                                	<label>이름</label>
-                                                    <input type="text" placeholder="Name" name="name">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="form-input form">
-                                                	<label>휴대폰 번호</label>
-                                                    <input type="text" placeholder="Phone Number" name="phoneNumber">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="form-input form">
-                                                	<label>이메일</label>
-                                                    <input type="text" placeholder="Email Address" name="email">
-                                                </div>
-                                            </div>
-                                        </div>
-                                </section>
-                            </li>
-                            <li>
-                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
-                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
-                                <section class="checkout-steps-form-content collapse" id="collapsefive"
-                                    aria-labelledby="headingfive" data-bs-parent="#accordionExample">
-	                                    <div class="col-md-6">
+                           	<c:if test="${empty orderMember }">
+                            	<li>
+                                	<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                    	aria-expanded="false" aria-controls="collapseFour">주문자 정보</h5>
+	                                	<section class="checkout-steps-form-content collapse" id="collapseFour"
+	                                    		aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+	                                        <div class="col-md-6">
 	                                            <div class="single-form form-default">
 	                                                <div class="form-input form">
-	                                                	<label>배송지</label>
-	                                                    <input type="text" placeholder="Address" name="address">
+	                                                	<label>이름</label>
+	                                                    <input type="text" placeholder="Name" name="name">
 	                                                </div>
 	                                            </div>
-	                                    </div>
-                                </section>
+	                                        </div>
+	                                        <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>휴대폰 번호</label>
+	                                                    <input type="text" placeholder="Phone Number" name="phoneNumber">
+	                                                </div>
+	                                            </div>
+	                                        </div>
+	                                        <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>이메일</label>
+	                                                    <input type="text" placeholder="Email Address" name="email">
+	                                                </div>
+	                                            </div>
+	                                        </div>
+	                                	</section>
+	                            </li>
+	                            <li>
+	                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
+	                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
+	                                <section class="checkout-steps-form-content collapse" id="collapsefive"
+	                                    aria-labelledby="headingfive" data-bs-parent="#accordionExample">
+		                                    <div class="col-md-6">
+		                                            <div class="single-form form-default">
+		                                                <div class="form-input form">
+		                                                	<label>배송지</label>
+		                                                    <input type="text" placeholder="Address" name="address">
+		                                                </div>
+		                                            </div>
+		                                    </div>
+	                                </section>
                             </li>
                             <li>
                                <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSix"
@@ -157,6 +214,68 @@
 	                                            </div>
 	                                    </div>
                                 </section>
+							</c:if>
+                            <c:if test="${not empty orderMember }">
+                                <li>
+                                	<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                    	aria-expanded="false" aria-controls="collapseFour">주문자 정보</h5>
+	                                	<section class="checkout-steps-form-content collapse" id="collapseFour"
+	                                    		aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                        <div class="col-md-6">
+                                            <div class="single-form form-default">
+                                                <div class="form-input form">
+                                                	<label>이름</label>
+                                                    <input type="text" placeholder="Name" name="name" value="${orderMember.member_name }" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="single-form form-default">
+                                                <div class="form-input form">
+                                                	<label>휴대폰 번호</label>
+                                                    <input type="text" placeholder="Phone Number" name="phoneNumber" value="${orderMember.phone_number }" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="single-form form-default">
+                                                <div class="form-input form">
+                                                	<label>이메일</label>
+                                                    <input type="text" placeholder="Email Address" name="email" value="${orderMember.email }" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+	                            </li>
+	                            <li>
+	                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
+	                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
+	                                <section class="checkout-steps-form-content collapse" id="collapsefive"
+	                                    aria-labelledby="headingfive" data-bs-parent="#accordionExample">
+		                                    <div class="col-md-6">
+		                                            <div class="single-form form-default">
+		                                                <div class="form-input form">
+		                                                	<label>배송지</label>
+		                                                    <input type="text" placeholder="Address" name="address" value="${orderMember.address }" readonly>
+		                                                </div>
+		                                            </div>
+		                                    </div>
+	                                </section>
+                            </li>
+                            <li>
+                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSix"
+                                    aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
+                                <section class="checkout-steps-form-content collapse" id="collapseSix"
+                                    aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+	                                    <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>보유 포인트 : ${orderMember.member_point }</label>
+	                                                </div>
+	                                            </div>
+	                                    </div>
+                                </section>
+                                 	</c:if>
                                 <section>
                                 	<div>
                                 		<div class="single-form form-default button">
@@ -238,11 +357,11 @@
                             <div class="sub-total-price" style="color: black;">
                                 <div class="total-price">
                                     <p class="value">총 상품금액</p>
-                                    <p class="price">0 원</p>
+                                    <p class="price allProductPrice">${orderProduct.price } 원</p>
                                 </div>
                                  <div class="total-price discount">
                                     <p class="value">총 할인금액</p>
-                                    <p class="price">-0원</p>
+                                    <p class="price">- ${orderProduct.dcAmount }원</p>
                                 </div>
                                 <div class="total-price shipping">
                                     <p class="value">총 배송비</p>
@@ -253,17 +372,22 @@
                             <div class="total-payable">
                                 <div class="payable-price">
                                     <h6 class="value bold" style="color: black;">총 결제금액</h6>
-                                    <h6 class="price" style="color: red;">0 원</h6>
+                                    <h6 class="price allProductPrice" style="color: red;">${orderProduct.price } 원</h6>
                                 </div>
 	                                <div class="sub-total-price">
 	                                	<div class="total-price point mb-30">
 	                                    	<p class="value">총 적립예정 포인트</p>
-	                                    	<p class="price">0 P</p>
+	                                    	<c:if test="${not empty orderMember }">
+	                                    		<p class="price" id="point">${orderProduct.price * orderProduct.quantity * orderMember.level_point } P</p>
+	                                    	</c:if>
+	                                    	<c:if test="${empty orderMember }">
+	                                    		<p class="price">0 P</p>
+	                                    	</c:if>
 	                                    </div>
 	                                </div>
                             </div>
                             <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) 0 원 결제하기</a>
+                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) <span class="price allProductPrice">${orderProduct.price }</span> 원 결제하기</a>
                             </div>
                         </div>
                     </div>

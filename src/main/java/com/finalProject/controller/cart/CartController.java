@@ -1,9 +1,8 @@
 package com.finalProject.controller.cart;
 
-import java.util.Locale;
-import java.util.Map;
+import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -11,19 +10,32 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.finalProject.model.LoginDTO;
+import com.finalProject.model.cart.CartDTO;
+import com.finalProject.service.cart.CartService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 public class CartController {
+	
+	@Inject
+	CartService cService;
+	
 	@GetMapping("/cart")
-	public String cartPage(HttpSession session) {
+	public String cartPage(HttpSession session, Model model) {
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		List<CartDTO> cartItems = null;
+		
 		if (loginMember != null) {
-			System.out.println("cart : ·Î±×ÀÎ ÇßÀ½, È¸¿ø¾ÆÀÌµğ : " + loginMember.getMember_id());
+			System.out.println("cart : ë¡œê·¸ì¸ í–ˆìŒ, id : " + loginMember.getMember_id());
+			
+			// íšŒì›ì˜ ì¹´íŠ¸ì •ë³´ ê°€ì ¸ì˜¤ê¸°
+			cartItems = cService.getCartList(loginMember.getMember_id());
+			
+			model.addAttribute("cartItems", cartItems);
 		} else {
-			System.out.println("cart : ·Î±×ÀÎ ¾ÈÇßÀ½");
+			System.out.println("cart : ë¡œê·¸ì¸ ì•ˆí•¨");
 		}
 		
 		return "user/cart/cart";

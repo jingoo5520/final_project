@@ -24,17 +24,6 @@
 
 <script type="text/javascript">
 
-	function orderProduct() {
-		let quantity = document.getElementById("orderQuantity").value;
-		
-		let productNo = document.getElementById("productNo").innerText;
-		
-		console.log(quantity, productNo);
-		
-		window.location.href = "/order?quantity=" + quantity + "&productNo=" + productNo;
-		
-	}
-
 </script>
 
 <body>
@@ -60,28 +49,31 @@
                             <h2 class="title">GoPro Karma Camera Drone</h2>
                             <h3>Product No : <span id="productNo">${productNo }</span></h3>
                             <h3 class="price">$850<span>$945</span></h3>
-                            <div class="row">
-                                <div class="col-lg-4 col-md-4 col-12">
-                                    <div class="form-group quantity">
-                                        <label for="color">수량</label>
-                                        <input type="hidden" placeholder="수량" id="orderQuantity">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="bottom-content">
-                                <div class="row align-items-end">
-                                    <div class="col-lg-4 col-md-4 col-12">
-                                        <div class="button cart-button">
-                                            <button class="btn" style="width: 100%;" onclick="orderProduct()">주문하기</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-12">
-                                        <div class="wish-button">
-                                            <button class="btn" onclick="location.href='/cart';"><i class="lni lni-heart"></i>장바구니 넣기</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <form action="/order" method="post">
+	                            <div class="row">
+	                                <div class="col-lg-4 col-md-4 col-12">
+	                                    <div class="form-group quantity">
+	                                        <label for="color">수량</label>
+	                                        <input type="hidden" name="productNo" value="${productNo }">
+	                                        <input type="text" placeholder="수량" id="quantity" name="quantity" value="1">
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div class="bottom-content">
+	                                <div class="row align-items-end">
+	                                    <div class="col-lg-4 col-md-4 col-12">
+	                                        <div class="button cart-button">
+	                                            <button type="submit" class="btn" style="width: 100%;">주문하기</button>
+	                                        </div>
+	                                    </div>
+	                                    <div class="col-lg-4 col-md-4 col-12">
+	                                        <div class="wish-button">
+	                                            <button class="btn" onclick="location.href='/cart';"><i class="lni lni-heart"></i>장바구니 넣기</button>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
