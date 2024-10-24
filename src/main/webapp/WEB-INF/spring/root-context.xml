@@ -24,7 +24,7 @@
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy">
 		</property>
-		<property name="url" value="jdbc:log4jdbc:mysql://localhost:3306/final_project?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false">
+		<property name="url" value="jdbc:log4jdbc:mysql://localhost:3306/finalproject?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false">
 		</property>
 		<property name="username" value="root"></property>
 		<property name="password" value="1234"></property>
@@ -46,4 +46,9 @@
 	<context:component-scan base-package="com.finalProject.model" />
 	<context:component-scan base-package="com.finalProject.service" />
 	<context:component-scan base-package="com.finalProject.util" />
+	
+	<context:component-scan base-package="com.finalProject.persistence.product" />
+	<context:component-scan base-package="com.finalProject.model.product" />
+	<context:component-scan base-package="com.finalProject.service.product" />
+	<context:component-scan base-package="com.finalProject.util.product" />
 </beans>
