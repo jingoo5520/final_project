@@ -12,6 +12,7 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -23,6 +24,39 @@
 </head>
 
 <script type="text/javascript">
+
+function addCart(productNo) {
+	let quantity = $("#quantity").val();
+	
+	$.ajax({
+	    url: '/addCartItem',
+	    type: 'POST',
+	    data: {
+	    	productNo : productNo,
+	    	quantity : quantity
+	    	},
+	    dataType: 'json',
+	    success: function(data) {
+	        console.log(data);
+	    },
+	    error: function() {
+	    },
+	    complete: function(data) {
+	    	if (data.status == 200) {
+	    		let isConfirmed = confirm("장바구니 페이지로 가시겠습니까?");
+	    		
+	    		if (isConfirmed) {
+	    			location.href="/cart";
+	    		}
+	        } else if (data.responseText == 401){
+	        	alert("로그인 안했는데요?");
+	        }
+	    }
+	});
+	
+	
+	
+}
 
 </script>
 
@@ -68,7 +102,7 @@
 	                                    </div>
 	                                    <div class="col-lg-4 col-md-4 col-12">
 	                                        <div class="wish-button">
-	                                            <button class="btn" onclick="location.href='/cart';"><i class="lni lni-heart"></i>장바구니 넣기</button>
+	                                            <button class="btn" onclick="addCart(${productNo })"><i class="lni lni-heart"></i>장바구니 넣기</button>
 	                                        </div>
 	                                    </div>
 	                                </div>

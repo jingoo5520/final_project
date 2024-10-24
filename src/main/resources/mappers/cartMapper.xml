@@ -16,6 +16,37 @@
 		from product_images i, products p 
 		inner join cart_items c 
 		on p.product_no = c.product_no 
-		where p.product_no = i.product_no &amp;&amp; c.cart_no = #{cartNo}
+		where p.product_no = i.product_no and c.cart_no = #{cartNo}
 	</select>
+	
+	<update id="updateQuantity">
+		update cart_items set product_count = #{quantity} 
+		where product_no = #{productNo} 
+		and cart_no = 
+		(select cart_no from carts
+		 where member_id = #{memberId})
+	</update>
+	
+	<delete id="deleteCartItem">
+		delete from cart_items 
+		where product_no = #{productNo} 
+		and cart_no = 
+		(select cart_no from carts
+		 where member_id = #{memberId})
+	</delete>
+	
+	<insert id="insertCartItem">
+		insert into cart_items (cart_no, product_no, product_count) values (#{cartNo}, #{productNo}, #{quantity})
+	</insert>
+	
+	<select id="selectCountItemByProductNo" resultType="Integer">
+		select count(*) from cart_items where product_no = #{productNo} and cart_no = #{cartNo}
+	</select>
+	
+	<update id="updateQuantityFromAddItem">
+		update cart_items set product_count = product_count + #{quantity} 
+		where product_no = #{productNo} 
+		and cart_no = 
+		#{cartNo}
+	</update>
 </mapper>

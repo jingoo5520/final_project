@@ -12,6 +12,7 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -21,6 +22,36 @@
     <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
+
+<script type="text/javascript">
+	function addCart(productNo) {
+		
+		$.ajax({
+		    url: '/addCartItem',
+		    type: 'POST',
+		    data: {
+		    	productNo : productNo
+		    	},
+		    dataType: 'json',
+		    success: function(data) {
+		        console.log(data);
+		    },
+		    error: function() {
+		    },
+		    complete: function(data) {
+		    	if (data.status == 200) {
+		    		let isConfirmed = confirm("장바구니 페이지로 가시겠습니까?");
+		    		
+		    		if (isConfirmed) {
+		    			location.href="/cart";
+		    		}
+		        } else if (data.responseText == 401){
+		        	alert("로그인 안했는데요?");
+		        }
+		    }
+		});
+	}
+</script>
 
 <body>
     <!-- Preloader -->
@@ -226,7 +257,7 @@
                                             <div class="product-image">
                                                 <img src="https://webimg.jestina.co.kr/UpData2/item/G2000024045/20210304143541ZM.png" alt="#">
                                                 <div class="button">
-                                                    <a href="/cart" class="btn" style="width:100%;"><i
+                                                    <a onclick="addCart(this);" class="btn" style="width:100%;"><i
                                                             class="lni lni-cart"></i>장바구니</a>
                                                 </div>
                                             </div>
@@ -248,7 +279,7 @@
                                             <div class="product-image">
                                                 <img src="https://webimg.jestina.co.kr/UpData2/item/G2000024044/20210304143521ZM.png" alt="#">
                                                 <div class="button">
-                                                    <a href="/cart" class="btn" style="width:100%;"><i
+                                                    <a onclick="addCart(this);" class="btn" style="width:100%;"><i
                                                             class="lni lni-cart"></i>장바구니</a>
                                                 </div>
                                             </div>
@@ -270,7 +301,7 @@
                                             <div class="product-image">
                                                 <img src="https://webimg.jestina.co.kr/UpData2/item/G2000023811/20210119164247ZM.png" alt="#">
                                                 <div class="button">
-                                                    <a href="/cart" class="btn" style="width:100%;"><i
+                                                    <a onclick="addCart(this);" class="btn" style="width:100%;"><i
                                                             class="lni lni-cart"></i>장바구니</a>
                                                 </div>
                                             </div>
