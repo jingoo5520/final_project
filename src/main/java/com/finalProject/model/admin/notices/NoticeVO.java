@@ -1,4 +1,4 @@
-package com.finalProject.model;
+package com.finalProject.model.admin.notices;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

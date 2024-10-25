@@ -1,9 +1,9 @@
-package com.finalProject.model;
+package com.finalProject.model.admin.notices;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.finalProject.model.NoticeTypeStatus.NoticeType;
+import com.finalProject.model.admin.notices.NoticeTypeStatus.NoticeType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

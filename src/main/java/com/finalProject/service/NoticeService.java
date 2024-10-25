@@ -3,10 +3,10 @@ package com.finalProject.service;
 import java.util.List;
 import java.util.Map;
 
-import com.finalProject.model.NoticeDTO;
-import com.finalProject.model.NoticeVO;
-import com.finalProject.model.PagingInfoDTO;
-import com.finalProject.model.SearchCriteriaDTO;
+import com.finalProject.model.admin.notices.NoticeDTO;
+import com.finalProject.model.admin.notices.NoticeVO;
+import com.finalProject.model.admin.notices.PagingInfoDTO;
+import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 
 public interface NoticeService {
 	

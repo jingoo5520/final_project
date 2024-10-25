@@ -1,4 +1,4 @@
-package com.finalProject.controller.admin;
+package com.finalProject.controller.admin.notices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.finalProject.model.NoticeDTO;
-import com.finalProject.model.NoticeTypeStatus;
-import com.finalProject.model.NoticeVO;
+import com.finalProject.model.admin.notices.NoticeDTO;
+import com.finalProject.model.admin.notices.NoticeTypeStatus;
+import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.service.NoticeService;
 
 import lombok.extern.slf4j.Slf4j;

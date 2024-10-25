@@ -1,4 +1,4 @@
-package com.finalProject.controller.admin;
+package com.finalProject.controller.admin.notices;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.finalProject.model.NoticeTypeStatus;
+import com.finalProject.model.admin.notices.NoticeTypeStatus;
 
 @RestController
 @RequestMapping("/post")

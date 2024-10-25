@@ -1,12 +1,12 @@
-package com.finalProject.persistence;
+package com.finalProject.persistence.admin.notices;
 
 import java.util.List;
 
-import com.finalProject.model.NoticeDTO;
-import com.finalProject.model.NoticeVO;
-import com.finalProject.model.PagingInfo;
-import com.finalProject.model.PagingInfoDTO;
-import com.finalProject.model.SearchCriteriaDTO;
+import com.finalProject.model.admin.notices.NoticeDTO;
+import com.finalProject.model.admin.notices.NoticeVO;
+import com.finalProject.model.admin.notices.PagingInfo;
+import com.finalProject.model.admin.notices.PagingInfoDTO;
+import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 
 public interface NoticeDAO {
 

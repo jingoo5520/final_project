@@ -1,4 +1,4 @@
-package com.finalProject.persistence;
+package com.finalProject.persistence.admin.notices;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +9,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.NoticeDTO;
-import com.finalProject.model.NoticeVO;
+import com.finalProject.model.admin.notices.NoticeDTO;
+import com.finalProject.model.admin.notices.NoticeVO;
 
 import lombok.extern.slf4j.Slf4j;
 
