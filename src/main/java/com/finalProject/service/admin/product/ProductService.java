@@ -21,4 +21,6 @@ public interface ProductService {
 
 	int deleteProduct(int productId);
 
+	void updateProductImg(int product_no, List<String> list);
+
 }

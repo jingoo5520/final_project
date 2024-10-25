@@ -57,8 +57,39 @@ public class ProductController {
 	public ResponseEntity<String> productUpdate(ProductUpdateDTO updateProduct, HttpServletRequest request) {
 		System.out.println(updateProduct.toString());
 		List<String> subArr = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		ServletContext sc = request.getSession().getServletContext();
+		String path = sc.getRealPath("/resources/product");
+		if (null != updateProduct.getImage_main_url()) {
+			String fileName = "Main_" + UUID.randomUUID() + updateProduct.getImage_main_url().getOriginalFilename();
+			File Directory = new File(path + File.separator + fileName);
+			list.add(File.separator + fileName);
+			try {
+				updateProduct.getImage_main_url().transferTo(Directory);
+			} catch (IllegalStateException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
+			}
+		}
+		if (null != updateProduct.getImage_sub_url()) {
+			for (MultipartFile file : updateProduct.getImage_sub_url()) {
+				if (file.getOriginalFilename() != "") {
+					String fileName = "Sub_" + UUID.randomUUID() + file.getOriginalFilename();
+
+					File Directory = new File(path + File.separator + fileName);
+					list.add(File.separator + fileName);
+					try {
+						file.transferTo(Directory);
+					} catch (IllegalStateException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
+					}
+				}
+			}
+		}
 		if (ps.updateProduct(updateProduct)) {
 
 			if (!(updateProduct.getProduct_main_image().equals("true"))) {
@@ -74,7 +105,10 @@ public class ProductController {
 				}
 				pu.removeFile(subArr);
 			}
-			return ResponseEntity.ok("수정 성공");
+
+		}
+		if (list != null) {
+			ps.updateProductImg(updateProduct.getProduct_no(), list);
 		}
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
 	}

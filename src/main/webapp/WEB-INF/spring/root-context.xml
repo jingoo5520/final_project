@@ -31,7 +31,7 @@
 		<property name="driverClassName"
 			value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy">
 		</property>
-		<property name="url" value="jdbc:log4jdbc:mysql://localhost:3306/final_project?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true">
+		<property name="url" value="jdbc:log4jdbc:mysql://localhost:3306/kjb?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true">
 		</property>
 		<property name="username" value="root"></property>
 		<property name="password" value="1234"></property>

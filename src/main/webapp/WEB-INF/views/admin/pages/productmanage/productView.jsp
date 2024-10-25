@@ -41,6 +41,7 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
+let selectedValues = [];
 	$(function() {
 
 		$('#modalToggle').on('show.bs.modal', function(event) {
@@ -276,7 +277,7 @@
 	   });
 	
 			 checkedtype();
-			 let selectedValues = [];
+			
 			 $(".productCheckbox").on('click' , function() {
 				let value = $(this).val();
 				if($(this).is(':checked')) {
@@ -289,8 +290,17 @@
 			        });
 				}
 				console.log(selectedValues); 
-			 })
+		})
+	
 	});
+	function allUpdate() {
+	    
+	    console.log(selectedValues);
+	}
+	function allDelete() {
+	    
+	    alert("모든 업데이트가 삭제되었습니다!");
+	}
 	function showProductList(i, e) {
 	    // URL 파라미터로 사용할 값들을 가져옴
 	    let selectVal = new URLSearchParams(window.location.search).get("searchType") || '';
@@ -579,9 +589,9 @@
 								<small class="text-light fw-semibold" style="display: flex; justify-content: center; align-items: center;">체크한 상품</small>
 							</div>
 							<div class="demo-inline-spacing" style="display: flex; justify-content: center; align-items: center;">
-								<button type="button" class="btn rounded-pill btn-primary">일괄 수정</button>
+								<button type="button" class="btn rounded-pill btn-primary" onclick="allUpdate();">일괄 수정</button>
 
-								<button type="button" class="btn rounded-pill btn-danger">일괄 삭제</button>
+								<button type="button" class="btn rounded-pill btn-danger" onclick="allDelete();">일괄 삭제</button>
 
 							</div>
 						</div>
@@ -671,8 +681,7 @@
 						<textarea class="form-control" id="productContent"></textarea>
 					</div>
 					<div class="mb-3">
-						<label class="form-label">상품 할인 타입</label><br>
-						<input type="radio" id="percentDiscount" name="discountType" value="percent"> 퍼센트할인 <input type="radio" id="noDiscount" name="discountType" value="none" checked> 없음
+						<label class="form-label">상품 할인 타입</label><br> <input type="radio" id="percentDiscount" name="discountType" value="percent"> 퍼센트할인 <input type="radio" id="noDiscount" name="discountType" value="none" checked> 없음
 					</div>
 
 					<div class="mb-3">

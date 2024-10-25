@@ -143,4 +143,27 @@ public class ProductServiceImpl implements ProductService {
 		// TODO Auto-generated method stub
 		return pDAO.deleteProduct(productId);
 	}
+
+	@Override
+	public void updateProductImg(int product_no, List<String> list) {
+		String mainImage = null;
+		List<String> subImages = new ArrayList<>();
+
+		for (String imageUrl : list) {
+			if (imageUrl.contains("Main_")) {
+				mainImage = imageUrl; // "main"이 포함된 이미지는 메인 이미지로 처리
+			} else if (imageUrl.contains("Sub_")) {
+				subImages.add(imageUrl); // "sub"이 포함된 이미지는 서브 이미지로 처리
+			}
+		}
+		if (mainImage != null) {
+			pDAO.insertMainImage(mainImage, product_no);
+			System.out.println(mainImage);
+		}
+		if (!subImages.isEmpty()) {
+			pDAO.insertSubImage(subImages, product_no);
+			System.out.println(subImages.toArray().toString());
+		}
+
+	}
 }
