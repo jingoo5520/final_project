@@ -16,38 +16,18 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script
 	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<style type="text/css">
-.body {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 70vh; /* 화면 전체 높이 */
-	margin: 0; /* 기본 여백 제거 */
-	background-color: white; /* 배경색 설정 */
-}
+<!-- ========================= CSS here ========================= -->
+<link rel="stylesheet"
+	href="/resources/assets/user/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/LineIcons.3.0.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/glightbox.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
-.signUpContainer {
-	background: white; /* 배경색 설정 */
-	padding: 20px 100px 20px 50px; /* 안쪽 여백 */
-	/* border-radius: 10px; /* 둥근 모서리 */
-	*/
-	/* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-	*/
-}
-
-.box {
-	/* display: block; /* 입력 요소를 블록으로 설정 */ */
-	margin-bottom: 10px; /* 아래쪽 여백 */
-	/* width: 100%; /* 너비 100% */ */
-	padding: 10px; /* 안쪽 여백 */
-	border: 1px solid #ccc; /* 테두리 */
-	border-radius: 5px; /* 둥근 모서리 */
-}
-
-.area {
-	padding: 5px; /* 안쪽 여백 */
-}
-
+</head>
+<style>
 /* 모달 */
 #modalcontainer {
 	display: none; /* 기본적으로 숨김 */
@@ -77,6 +57,206 @@
 	font-weight: bold;
 }
 </style>
+
+<body>
+	<!--[if lte IE 9]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+        your experience and security.
+      </p>
+    <![endif]-->
+
+	<!-- Preloader -->
+	<div class="preloader">
+		<div class="preloader-inner">
+			<div class="preloader-icon">
+				<span></span> <span></span>
+			</div>
+		</div>
+	</div>
+	<!-- /End Preloader -->
+
+	<jsp:include page="../header.jsp"></jsp:include>
+
+	<!-- Start Breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-md-6 col-12">
+					<div class="breadcrumbs-content">
+						<h1 class="page-title">Registration</h1>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-12">
+					<ul class="breadcrumb-nav">
+						<li><a href="index.html"><i class="lni lni-home"></i>
+								Home</a></li>
+						<li>Registration</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Breadcrumbs -->
+
+	<!-- Start Account Register Area -->
+	<div class="account-login section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 offset-lg-3 col-md-10 offset-md-1 col-12">
+					<div class="register-form">
+						<div class="title">
+							<h3>ELOLIA회원가입</h3>
+							<p>쉽고 빠르게 회원가입을 할수있습니다.</p>
+						</div>
+						<form class="row" action="/member/signUp" method="post">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-id">*아이디</label> <input class="form-control"
+										type="text" name="member_id" id="member_id" required><span
+										id="idStatus"></span> <input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-pw">*비밀번호</label> <input class="form-control"
+										type="password" name="member_pwd" id="member_pwd" required><span
+										id="pwdStatus"></span><input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-pw2">*비밀번호 확인</label> <input
+										class="form-control" type="password" name="member_pwd2"
+										id="member_pwd2" required><span id="pwd2Status"></span><input
+										type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-n">*이름</label> <input class="form-control"
+										type="text" name="member_name" id="member_name" required><span
+										id="nameStatus"></span> <input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-nn">별명</label> <input class="form-control"
+										type="text" name="nickname" id="nickname" required><span
+										id="nicknameStatus"></span> <input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-bd">생일</label> <input class="form-control"
+										type="date" name="birthday" id="birthday" required><span
+										id="birthdayStatus"></span> <input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div id="gender" class="area">
+									성별<span id="genderStatus"></span><input type="hidden" value="">
+								</div>
+								<div class="form-check">
+									<input type="radio" class="form-check-input" id="M"
+										name="gender" value="M"> <label
+										class="form-check-label" for="M">남자</label>
+								</div>
+								<div class="form-check">
+									<input type="radio" class="form-check-input" id="F"
+										name="gender" value="F"> <label
+										class="form-check-label" for="F">여자</label>
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-ad">*주소</label> <input class="form-control"
+										type="text" name="address" id="address" readonly
+										onclick="selectAddress(this);"><span
+										id="addressStatus"></span> <input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-ad2">상세 주소</label> <input class="form-control"
+										type="text" name="address2" id="address2" required><span
+										id="address2Status"></span> <input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-em">*이메일</label> <input class="form-control"
+										type="text" name="email" id="email" required><span
+										id="emailStatus"></span> <input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="reg-ph">*휴대폰</label> <input class="form-control"
+										type="text" name="phone_number" id="phone_number" required><span
+										id="phoneStatus"></span> <input type="hidden" value=""><input
+										type="button" value="인증요청" onclick="phoneVerify();">
+								</div>
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="check1"
+											name="option1" value="something"> <label
+											class="form-check-label" for="check1">약관 동의(필수)<span
+											id="checkboxStatus"></span><input type="hidden" value=""></label>
+									</div>
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="check2"
+											name="option2" value="something"> <label
+											class="form-check-label" for="check2">이메일 수신 동의(선택)</label>
+									</div>
+									<div class="form-check">
+										<input type="checkbox" class="form-check-input" id="check3"
+											name="option3" value="something"> <label
+											class="form-check-label" for="check3">문자 수신 동의(선택)</label>
+									</div>
+								</div>
+							</div>
+
+							<div class="button">
+								<button class="btn" type="submit" value="회원가입"
+									onclick="return checkData();">회원 가입</button>
+							</div>
+							<p class="outer-link">
+								이미 ELOLIA의 회원이신가요? <a href="${pageContext.request.contextPath}/member/viewLogin">로그인 하기</a>
+							</p>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 모달 -->
+	<div id="modalcontainer">
+		<div class="modalBody">
+			<span class="close" onclick="closeModal();">&times;</span>
+			<h2 id="modalTitle">제목</h2>
+			<p id="modalText">내용</p>
+		</div>
+	</div>
+
+	<!-- End Account Register Area -->
+
+	<jsp:include page="../footer.jsp"></jsp:include>
+
+	<!-- ========================= scroll-top ========================= -->
+	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
+	</a>
+
+	<!-- ========================= JS here ========================= -->
+	<script src="/resources/assets/user/js/bootstrap.min.js"></script>
+	<script src="/resources/assets/user/js/tiny-slider.js"></script>
+	<script src="/resources/assets/user/js/glightbox.min.js"></script>
+	<script src="/resources/assets/user/js/main.js"></script>
+</body>
 <script type="text/javascript">
 	var idExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{6,15}$/; // 아이디 정규식(영문자, 숫자를 포함한 6자 이상 15자 이하)
 	var phoneExp = /010(-\d{4}-\d{4}|\d{8})$/; // 휴대폰 번호 정규식 (010-1234-5678), 01012345678 형식만 허용
@@ -252,7 +432,7 @@
 		let nameCheck = $("#member_name").next().next().val();
 		let birthdayCheck = $("#birthday").next().next().val();
 		//let genderCheck = $("#gender").next().next().val();
-		let addressCheck = $("#address").next().next().val();
+		let addressCheck = $("#address").next().next().val() === "true";
 		let emailCheck = $("#email").next().next().val();
 		let phoneCheck = $("#phone_number").next().next().val();
 		//let check1Check = $("#check1").next().next().next().val();
@@ -299,16 +479,16 @@
 		
 		if(!result) {
 			openModal("아래 항목들을 입력해야합니다.", text);
-			console.log(idCheck);
-			console.log(pwdCheck);
-			console.log(pwd2Check);
-			console.log(nameCheck);
-			console.log(birthdayCheck);
+			console.log("id : ",idCheck);
+			console.log("pwd : ",pwdCheck);
+			console.log("pwd2 : ",pwd2Check);
+			console.log("name : ",nameCheck);
+			console.log("birthday : ",birthdayCheck);
 			//console.log(genderCheck);
-			console.log(addressCheck);
-			console.log(emailCheck);
-			console.log(phoneCheck);
-			console.log(check1Check);
+			console.log("address : ",addressCheck);
+			console.log("email : ",emailCheck);
+			console.log("phone : ",phoneCheck);
+			console.log("check1 : ",check1Check);
 		}
 		
 		return result;
@@ -361,115 +541,5 @@
 	}
 	
 </script>
-</head>
-<body>
 
-	<jsp:include page="../header.jsp"></jsp:include>
-
-	<div class="body">
-
-		<form action="/member/signUp" method="post">
-			<div class="signUpContainer container mt-3">
-				<h1>회원가입</h1>
-				<div class="area">
-					아이디<input class="box" type="text" name="member_id" id="member_id"
-						placeholder="id"> <span id="idStatus"></span> <input
-						type="hidden" value="">
-				</div>
-				<div class="area">
-					비밀번호<input class="box" type="password" name="member_pwd"
-						id="member_pwd" placeholder="비밀번호"><span id="pwdStatus"></span><input
-						type="hidden" value="">
-				</div>
-				<div class="area">
-					비밀번호 확인<input class="box" type="password" name="member_pwd2"
-						id="member_pwd2" placeholder="비밀번호 확인"><span
-						id="pwd2Status"></span><input type="hidden" value="">
-				</div>
-				<div class="area">
-					이름<input class="box" type="text" name="member_name"
-						id="member_name" placeholder="홍길동"><span id="nameStatus"></span><input
-						type="hidden" value="">
-				</div>
-				<div class="area">
-					별명<input class="box" type="text" name="nickname" id="nickname"
-						placeholder="강원감자14"><span id="nicknameStatus"></span>
-				</div>
-				<div class="area">
-					생일<input class="box" type="date" name="birthday" id="birthday">
-					<span id="birthdayStatus"></span><input type="hidden" value="">
-				</div>
-				<div id="gender" class="area">
-					성별<span id="genderStatus"></span><input type="hidden" value="">
-				</div>
-				<div class="form-check">
-					<input type="radio" class="form-check-input" id="M" name="gender"
-						value="M"> <label class="form-check-label" for="M">남자</label>
-				</div>
-				<div class="form-check">
-					<input type="radio" class="form-check-input" id="F" name="gender"
-						value="F"> <label class="form-check-label" for="F">여자</label>
-				</div>
-				<div class="area">
-					주소<input class="box" type="text" name="address" id="address"
-						readonly onclick="selectAddress(this);"><span
-						id="addressStatus"></span><input type="hidden" value="">
-				</div>
-				<div class="area">
-					상세주소<input class="box" type="text" name="address2" id="address2"
-						placeholder="201호">
-				</div>
-
-
-				<div class="area">
-					이메일<input class="box" type="text" name="email" id="email"
-						placeholder="gildong@gmail.com"> <span id="emailStatus"></span><input
-						type="hidden" value="">
-				</div>
-				<div class="area">
-					휴대폰번호<input class="box" type="text" name="phone_number"
-						id="phone_number" placeholder="010-1234-5678"> <span
-						id="phoneStatus"></span><input type="hidden" value=""> <input
-						type="button" value="인증요청" onclick="phoneVerify();">
-				</div>
-
-				<div class="form-check">
-					<input type="checkbox" class="form-check-input" id="check1"
-						name="option1" value="something"> <label
-						class="form-check-label" for="check1">약관 동의(필수)</label><span
-						id="checkboxStatus"></span><input type="hidden" value="">
-				</div>
-				<div class="form-check">
-					<input type="checkbox" class="form-check-input" id="check2"
-						name="option2" value="something"> <label
-						class="form-check-label" for="check2">이메일 수신 동의(선택)</label>
-				</div>
-				<div class="form-check">
-					<input type="checkbox" class="form-check-input" id="check3"
-						name="option3" value="something"> <label
-						class="form-check-label" for="check3">문자 수신 동의(선택)</label>
-				</div>
-
-				<div class="container mt-3">
-					<button type="submit" class="btn btn-primary" value="회원가입"
-						onclick="return checkData();">회원가입</button>
-					<button type="reset" class="btn btn-danger" value="취소">취소</button>
-				</div>
-			</div>
-		</form>
-
-		<!-- 모달 -->
-		<div id="modalcontainer">
-			<div class="modalBody">
-				<span class="close" onclick="closeModal();">&times;</span>
-				<h2 id="modalTitle">제목</h2>
-				<p id="modalText">내용</p>
-			</div>
-		</div>
-
-	</div>
-
-	<jsp:include page="../footer.jsp"></jsp:include>
-
-</body>
 </html>
