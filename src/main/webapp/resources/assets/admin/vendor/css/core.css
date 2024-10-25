@@ -6390,6 +6390,7 @@ label.btn {
   border-color: #66c732;
   transform: translateY(-1px);
 }
+
 .btn-check:focus + .btn-success, .btn-success:focus, .btn-success.focus {
   color: #fff;
   background-color: #66c732;
@@ -6397,6 +6398,7 @@ label.btn {
   transform: translateY(0);
   box-shadow: none;
 }
+
 .btn-check:checked + .btn-success, .btn-check:active + .btn-success, .btn-success:active, .btn-success.active, .show > .btn-success.dropdown-toggle {
   color: #fff;
   background-color: #60bc2f;
