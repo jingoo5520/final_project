@@ -10,20 +10,38 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.finalProject.service.order.OrderService;
+import com.google.gson.Gson;
+
 @Controller
+@RequestMapping("/user")
 public class OrderController {
-	@GetMapping("/user/order")
-	public void order() {
+	@Inject
+	private OrderService orderService;
+	
+	@GetMapping("/pages/order")
+	public String order() {
 		System.out.println("주문 페이지 접속");
+		return "/user/pages/order/order";
 	}
 	
 	// NOTE : 결제가 성공하면 토스 결제 모듈이 쿼리스트링을 달고 페이지로 보낸다. 
 	// 보내주는 페이지의 주소는 자바스크립트에서 successUrl: window.location.origin + "/payment/success.html" 이런 식으로 설정할 수 있다.
-	@GetMapping("/user/payment/success")
+	@GetMapping("/payment/success")
 	public String payAuthSuccess(
 			@RequestParam("orderId") String orderId,
 			@RequestParam("paymentKey") String paymentKey,
@@ -48,19 +66,20 @@ public class OrderController {
 		String encodedSecretKey = Base64.getEncoder().encodeToString((secretKey + ":").getBytes());
 		
 		Map<String, String> result;
-		result = approvePay(encodedSecretKey, paymentKey, amount, orderId);
+		result = orderService.requestApproval(encodedSecretKey, paymentKey, amount, orderId);
+		// working...
+		// result = approvePay(encodedSecretKey, paymentKey, amount, orderId);
 		String response = result.get("response");
 		int responseCode = Integer.valueOf(result.get("httpResponseCode"));
-		// TODO : 결제 끝나고 리다이렉트 하는 페이지 재지정할 듯
+		// TODO : 결제 끝나고 이동하는 페이지 재지정할 듯
 		System.out.println("응답 : " + result);
 		if (responseCode != HttpURLConnection.HTTP_OK) {
-			
-			return "/user/temp_02"; // 결제 실패
+			return "/user/pages/order/temp_02"; // 결제 실패
 		}
-		return "/user/temp_01"; // 결제 성공
+		return "/user/pages/order/temp_01"; // 결제 성공
 	}
 	
-	@GetMapping("/user/approveNaverPay")
+	@GetMapping("/approveNaverPay")
 	public String approveNaverPay(
 			@RequestParam("resultCode") String resultCode,
 			@RequestParam("paymentId") String paymentId,
@@ -68,137 +87,102 @@ public class OrderController {
 			) {
 		System.out.println("네이버페이 resultCode : " + resultCode);
 		if (resultCode.equals("Success")) {
-			return "/user/temp_01"; // 결제 성공
+			return "/user/pages/order/temp_01"; // 결제 성공
 		} else {
 			// 결제 실패시
-			return "/user/temp_02"; // 결제 실패
+			return "/user/pages/order/temp_02"; // 결제 실패
 		}
 	}
 	
-	// 레퍼런스 : https://akku-dev.tistory.com/2
-	// 토스에서 예제코드로 쓰는 HttpClient는 java11 버전부터 사용가능하다.
-	// java8은 HttpURLConnection을 쓰거나 Apache HttpClient, okHttp등의 외부 라이브러리를 사용할 수 있다.
-	// 여기서는 라이브러리 사용 안하고 HttpURLConnection를 쓰겠다.
-	private Map<String, String> approvePay(String base64SecretKey, String paymentKey, int amount, String orderId) {
-		Map<String, String> resultMap = new HashMap<>();
+	// 레퍼런스 : https://velog.io/@ryuneng2/%EC%B9%B4%EC%B9%B4%EC%98%A4%ED%8E%98%EC%9D%B4-API-%EC%97%B0%EB%8F%99-%ED%8C%9D%EC%97%85%EC%B0%BD%EB%9D%84%EC%9A%B0%EA%B8%B0-%EA%B2%B0%EC%A0%9C%EC%8A%B9%EC%9D%B8-%EA%B5%AC%ED%98%84
+	@PostMapping("/kakaoPay/ready")
+	public ResponseEntity<Map<String, String>> readyKakaoPay(
+			@RequestParam("orderId") String orderId,
+			@RequestParam("amount") int amount,
+			HttpServletRequest request,
+			HttpSession session
+	) {
+		System.out.println("카카오페이 결제창 요청");
+		// TODO : 주문의 상품들 이름 요약해서 (예 : 티셔츠 외) 받기
+		Map<String, String> responseMap = orderService.readyKakaoPay("목걸이 외", amount, request);
+		String jsonString = responseMap.get("response");
+		Gson gson = new Gson();
+		Map<String, Object> jsonMap = gson.fromJson(jsonString, Map.class);
+		// NOTE : 무조건 PC로부터 사이트를 접속한다고 가정
+		String paymentURL = (String) jsonMap.get("next_redirect_pc_url");
+		// 카카오페이 개발자센터 예제 코드 참조 : https://developers.kakaopay.com/docs/payment/online/reference#sample-source
+		System.out.println("paymentURL : " + paymentURL);
+		String tid = (String) jsonMap.get("tid"); // tid는 카카오페이가 발급하는 고유 주문번호이다.
+		System.out.println("tid : " + tid);
+		// *****TODO : 중요!! tid를 DB에다가 넣어야 함. 지금은 그냥 세션에 넣는데 나중에 결제 취소하려면 주문마다 았는 tid로 취소해야 함.
+		session.setAttribute("tid", tid);
 		
-		try {
-		    // Create a URL object for the desired URL
-		    URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
-		    // Open a connection to the URL using the HttpURLConnection class
-		    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		    // Set the request method to GET
-		    connection.setRequestMethod("POST");
-		    // Add any headers you want to send with the request
-		    connection.setRequestProperty("Authorization", "Basic " + base64SecretKey);
-		    connection.setRequestProperty("Content-Type", "application/json");
-		    // OutputStream으로 POST 데이터를 넘겨주겠다는 옵션.
-		    connection.setDoOutput(true);
-		    // InputStream으로 서버로 부터 응답을 받겠다는 옵션.
-		    connection.setDoInput(true);
-		    // Connect to the server
-		    connection.connect();
-		    // Make JsonInputString
-		    String jsonInputString = String.format(
-		    			"{\"paymentKey\":\"%s\",\"amount\":%d,\"orderId\":\"%s\"}", paymentKey, amount, orderId
-		    		);
-		    System.out.println("결제 승인 API 요청에 들어갈 json : " + jsonInputString);
-		    OutputStream os = connection.getOutputStream();
-		    byte[] input = jsonInputString.getBytes();
-		    os.write(input, 0, input.length);
-		    
-		    
-		    
-		    // 응답 코드 확인
-	        int responseCode = connection.getResponseCode();
-	        resultMap.put("httpResponseCode", String.valueOf(responseCode));
-	        StringBuilder response = new StringBuilder();
-	        if (responseCode == HttpURLConnection.HTTP_OK) {
-			    // Read the response from the server
-			    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			    String line;
-			    while ((line = reader.readLine()) != null) {
-			        response.append(line);
-			    }
-			    reader.close();
-	        } else { 
-	        	// 서버로부터 에러 읽기
-	        	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8")); 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line.trim());
-                }
-                reader.close();
-	        }
-	        
-
-		    
-		    // 응답 결과
-		    System.out.println("응답 결과 : " + response.toString());
-		    // 성공했을 때 응답 예시
-//		    {
-//		    	  "mId": "tvivarepublica",
-//		    	  "lastTransactionKey": "24F04542A0CEB53E3CB52D90EE8FDB59",
-//		    	  "paymentKey": "tviva20241016203037f8Ij9",
-//		    	  "orderId": "MC4wMzkzNjkwMzA2MDAy",
-//		    	  "orderName": "토스 티셔츠 외 2건",
-//		    	  "taxExemptionAmount": 0,
-//		    	  "status": "DONE",
-//		    	  "requestedAt": "2024-10-16T20:30:37+09:00",
-//		    	  "approvedAt": "2024-10-16T20:31:17+09:00",
-//		    	  "useEscrow": false,
-//		    	  "cultureExpense": false,
-//		    	  "card": {
-//		    	    "issuerCode": "21",
-//		    	    "acquirerCode": "21",
-//		    	    "number": "55213300****079*",
-//		    	    "installmentPlanMonths": 0,
-//		    	    "isInterestFree": false,
-//		    	    "interestPayer": null,
-//		    	    "approveNo": "00000000",
-//		    	    "useCardPoint": false,
-//		    	    "cardType": "신용",
-//		    	    "ownerType": "개인",
-//		    	    "acquireStatus": "READY",
-//		    	    "amount": 100
-//		    	  },
-//		    	  "virtualAccount": null,
-//		    	  "transfer": null,
-//		    	  "mobilePhone": null,
-//		    	  "giftCertificate": null,
-//		    	  "cashReceipt": null,
-//		    	  "cashReceipts": null,
-//		    	  "discount": null,
-//		    	  "cancels": null,
-//		    	  "secret": "ps_jExPeJWYVQOqJ161ew0v849R5gvN",
-//		    	  "type": "NORMAL",
-//		    	  "easyPay": null,
-//		    	  "country": "KR",
-//		    	  "failure": null,
-//		    	  "isPartialCancelable": true,
-//		    	  "receipt": {
-//		    	    "url": "https://dashboard.tosspayments.com/receipt/redirection?transactionId=tviva20241016203037f8Ij9&ref=PX"
-//		    	  },
-//		    	  "checkout": {
-//		    	    "url": "https://api.tosspayments.com/v1/payments/tviva20241016203037f8Ij9/checkout"
-//		    	  },
-//		    	  "currency": "KRW",
-//		    	  "totalAmount": 100,
-//		    	  "balanceAmount": 100,
-//		    	  "suppliedAmount": 91,
-//		    	  "vat": 9,
-//		    	  "taxFreeAmount": 0,
-//		    	  "method": "카드",
-//		    	  "version": "2022-11-16",
-//		    	  "metadata": null
-//		    	}
-		    // Disconnect from the server
-		    connection.disconnect();
-		    resultMap.put("response", response.toString());
-		} catch (IOException e) {
-			System.out.println("결제 승인 실패");
-			e.printStackTrace();
+		Map<String, String> outputResponseMap = new HashMap<>();
+		outputResponseMap.put("paymentURL", paymentURL);
+		outputResponseMap.put("tid", tid);
+		
+		return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.OK);
+	}
+	
+	// NOTE : ajax로 "/user/kakaoPay/ready" 요청을 보내기 때문에 pc_kakaopay_ready.jsp를 바로 못 보여준다. 따라서 이 방법을 썼다.
+	// TODO : 이 메소드 삭제해도 될 듯
+	@GetMapping("/pc_kakaopay_ready")
+	public String showKakaoPayReadyPage() {
+		return "/user/pages/order/pc_kakaopay_ready"; // TODO 쿼리스트링으로 URL 붙이면 될 듯?
+	}
+	
+	@GetMapping("/kakaopay_payRequest")
+	public String showKakaoPayApprovalPage(
+			@RequestParam("pg_token") String pg_token,
+			HttpSession session,
+			Model model
+			) {
+		model.addAttribute("pg_token", pg_token);
+		// TODO ; 지금은 세션에 tid가 있지만 DB에서 조회하도록 바꿔야 함
+		model.addAttribute("tid", session.getAttribute("tid"));
+		return "/user/pages/order/kakaopay_payRequest"; // jsp 페이지 보여줌
+	}
+	
+	@PostMapping("/kakaopay_payRequest")
+	public ResponseEntity<Map<String, String>> payRequestForKakaopay(
+			@RequestBody Map<String, Object> requestData
+			) {
+		System.out.println("payRequestForKakaopay에서 requestData : " + requestData);
+		
+		// 카카오서버에 결제 승인 요청
+		Map<String, String> responseMap = 
+			orderService.requestApprovalKakaopayPayment(
+				(String) requestData.get("tid"), 
+				(String) requestData.get("pg_token")
+			);
+		
+		Map<String, String> outputResponseMap = new HashMap<>();
+		
+		
+		if (responseMap.get("httpResponseCode").equals("200")) {
+			outputResponseMap.put("result", "success");
+			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.OK);
+		} else {
+			outputResponseMap.put("result", "fail");
+			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.BAD_REQUEST);
 		}
-	    return resultMap;
+	}
+	
+	// 임시 성공 페이지
+	@GetMapping("/pages/order/temp_01")
+	public String showSuccessPage() {
+		return "/user/pages/order/temp_01";
+	}
+	
+	// 임시 실패 페이지
+	@GetMapping("/pages/order/temp_02")
+	public String showFailPage() {
+		return "/user/pages/order/temp_02";
+	}
+	
+	// 임시 취소 페이지
+	@GetMapping("/pages/order/temp_03")
+	public String showCancelPage() {
+		return "/user/pages/order/temp_03";
 	}
 }

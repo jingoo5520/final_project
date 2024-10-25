@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.ResponseData;
 import com.finalProject.model.SignUpDTO;
-import com.finalProject.service.MemberService;
+import com.finalProject.service.member.MemberService;
 import com.finalProject.util.ReceiveMailPOP3;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +58,6 @@ public class MemberController {
 					model.addAttribute("autologin", autologin); // 모델객체에 자동로그인 저장
 				}
 			}
-
 		} catch (Exception e) {
 
 			e.printStackTrace();

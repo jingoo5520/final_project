@@ -15,6 +15,21 @@
     <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <style>
+    #overlay {
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    width: 100%;
+	    height: 100%;
+	    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 */
+	    z-index: 99999999; /* 다른 요소들보다 위에 표시되도록 설정 */
+	    display: none; /* 기본적으로 숨김 */
+	}
+    </style>
 </head>
 <body>
     <!--[if lte IE 9]>
@@ -213,6 +228,13 @@
                                                             <p>네이버 페이</p><!--TODO : 네이버 페이 로고로 바꾸기-->
                                                         </label>
                                                     </div>
+                                                    <div class="single-payment-option">
+                                                        <input type="radio" name="paymentMethod" id="paymentMethod-5"
+                                                        onclick="selectPaymentMethod('KAKAO_PAY')">
+                                                        <label for="paymentMethod-5">
+                                                            <p>카카오 페이</p><!--TODO : 카카오 페이 로고로 바꾸기-->
+                                                        </label>
+                                                    </div>                        
                                                 </div>
                                             </div>
                                         </div>
@@ -339,6 +361,12 @@
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Launch demo modal
+        </button>
+        
+        <!-- 임시 실험-->
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" onclick="myTest()">
+            다른 페이지로 이동하기
         </button>
     
         <!-- Modal -->
@@ -513,6 +541,8 @@
         <!-- End Footer Bottom -->
     </footer>
     <!--/ End Footer Area -->
+    
+    <div id="overlay" style="display: none;"></div>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">
@@ -555,13 +585,47 @@
              // "openType" : "popup",
         });
     </script>
-
-    <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
+    
+    <!-- 결제 처리(카카오페이) -->
     <script>
+	var kakaopay = {
+        ref: null,
+    };
+	
+	function showKakaopayPaymentWindow(url) {
+		kakaopay.ref = window.open('', 'paypopup', 'width=426,height=510,toolbar=no');
+		const overlay = document.getElementById("overlay");
+		
+	    if (kakaopay.ref) {
+	        // 팝업 창이 열렸을 때, 배경을 반투명 검은색으로 변경하고 입력을 막는다.
+			overlay.style.display = "block"; 
+	        // NOTE : 왠지는 모르겠는데 이걸로 입력 차단 안됨
+        	// overlay.style.pointerEvents = 'none';
+	        $(".container").css("pointerEvents", "none")
+	        
+	        setTimeout(function(){
+	            kakaopay.ref.location.href=url
+	        }, 0);
+	    } else {
+	    	throw new Error("popup을 열 수 없습니다!(cannot open popup)");
+	    }
+	    // TODO : 창이 띄워진 동안에는 배경 반투명 검은색으로 가리고 입력 막아야 할 것 같음
+	}
+	
+	function releaseInputBlock() {
+		const overlay = document.getElementById("overlay");
+		overlay.style.display = "none"
+		$(".container").css("pointerEvents", "auto")
+	}
+	</script>
+    
+    <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
+	<script>
         let selectedPaymentMethod = null;
 
         function selectPaymentMethod(method) {
             selectedPaymentMethod = method;
+            console.log(method + "방법 선택")
         }
 
         // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
@@ -573,14 +637,14 @@
             case "CARD":
                 await payment.requestPayment({
                     method: "CARD", // 카드 및 간편결제
-                    amount,
+                    amount: {
+                        currency: "KRW",
+                        value: 100,
+                    },
                     orderId: generateRandomString(),
                     orderName: "토스 티셔츠 외 2건",
                     successUrl: window.location.origin + "/user/payment/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
                     failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
-                    customerEmail: "customer123@gmail.com",
-                    customerName: "김토스",
-                    customerMobilePhone: "01012341234",
                     card: {
                         useEscrow: false,
                         flowMode: "DEFAULT",
@@ -591,14 +655,14 @@
             case "TRANSFER":
                 await payment.requestPayment({
                     method: "TRANSFER", // 계좌이체 결제
-                    amount,
+                    amount: {
+                        currency: "KRW",
+                        value: 1000,
+                    },
                     orderId: generateRandomString(),
                     orderName: "토스 티셔츠 외 2건",
                     successUrl: window.location.origin + "/user/payment/success.html",
                     failUrl: window.location.origin + "/fail.html",
-                    customerEmail: "customer123@gmail.com",
-                    customerName: "김토스",
-                    customerMobilePhone: "01012341234",
                     transfer: {
                         cashReceipt: {
                         type: "소득공제",
@@ -609,14 +673,14 @@
             case "VIRTUAL_ACCOUNT":
                 await payment.requestPayment({
                     method: "VIRTUAL_ACCOUNT", // 가상계좌 결제
-                    amount,
+                    amount: {
+                        currency: "KRW",
+                        value: 100,
+                    },
                     orderId: generateRandomString(),
                     orderName: "토스 티셔츠 외 2건",
                     successUrl: window.location.origin + "/user/payment/success.html",
                     failUrl: window.location.origin + "/fail.html",
-                    customerEmail: "customer123@gmail.com",
-                    customerName: "김토스",
-                    customerMobilePhone: "01012341234",
                     virtualAccount: {
                         cashReceipt: {
                         type: "소득공제",
@@ -628,8 +692,6 @@
             }
 
             // 네이버페이
-            // SDK 이용하는 방법하고 SDK 이용하지 않는 방법이 있는데
-            // SDK 이용시 별도의 창을 띄울 수 없고 바로 네이버페이 결제창으로 이동하므로 'SDK를 이용하지 않는 방식'으로 시도하겠다.
             // 레퍼런스 : https://developers.pay.naver.com/docs/v2/api#etc-etc_pay_reserve
             if (selectedPaymentMethod == "NAVER_PAY") {
                 console.log("네이버 페이 선택")
@@ -643,10 +705,49 @@
                     "returnUrl": window.location.origin + "/user/approveNaverPay"
                 });
             }
+
+            // TODO : 카카오페이
+            // 레퍼런스 : https://developers.kakaopay.com/docs/payment/online/single-payment#payment-ready-sample-request
+            if (selectedPaymentMethod == "KAKAO_PAY") {
+                console.log("카카오 페이 선택")
+                // NOTE : http 요청으로 카카오페이 서버에 직접 보내면 유저가 브라우저의 개발자 도구를 통해 cid, partner_order_id 같은 중요한 정보를 직접 확인 가능
+                // 그러므로 여기서는 POST 요청으로 서버의 컨트롤러에게 대신 요청을 보내도록 함.
+                // TODO : 보낼 겍체에 필요한 정보 별도로 채워넣기 (주문번호, 가격)
+                let item = {
+                    orderId: 1,
+                    amount: 100
+                }
+                
+                // NOTE : ajax 요청은 컨트롤러로부터 응답을 받아도 페이지를 이동시켜주지 않는다. 그래서 success 메서드를 붙어야 함 
+                $.ajax({
+                  type : 'POST',
+                  url : "/user/kakaoPay/ready",
+                  data: item,
+                  contentType : 'application/x-www-form-urlencoded',
+                  // NOTE : cotentType을 application/json으로 지정하고 스프링 서버에서 @Requestbody + DTO 객체로 받아올 수도 있지만 DTO 만들기 싫어서 이렇게 함
+                  success : function(response) {
+                      // console.log("response : " + response)
+                      // NOTE : 성공하면 페이지 이동해서 그 페이지에서 자바스크립트를 호출하여 카카오페이 결제 팝업을 바꾸는 방식에서
+                      // 페이지 이동하지 않고 그냥 주문 페이지에서 팝업 띄우는 방식으로 변경하였다.
+                      console.log("카카오페이 결제 팝업 호출")
+                      console.log("response : " + JSON.stringify(response))
+                	  showKakaopayPaymentWindow(response.paymentURL)
+                  }
+                })
+            }
         }
 
         function generateRandomString() {
             return window.btoa(Math.random()).slice(0, 20);
+        }
+        
+        // TODO : 실험용 임시 function, 삭제 요망 
+        function myTest() {
+        	alert("테스트 중")
+        	$.ajax({
+        		url : "/myTest",
+        		type: "GET"
+        	})
         }
     </script>
 </body>
