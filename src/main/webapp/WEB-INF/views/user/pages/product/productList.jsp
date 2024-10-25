@@ -162,38 +162,29 @@ function submitSortingForm() {
                                                     <a href="/product/jewelry/detail?productNo=${product.product_no}">${product.product_name }</a>
                                                 </h4>
                                                 
-                                                <div class="price">
-<!--                                                 할인 전 가격 -->
-                                                <span>
-	                                                <c:if test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
-										            	<fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###"/>원
-										    		</c:if>
-                                                </span>
-                                                
-<!--                                                 할인률 -->
-                                                <span class="sale-tag">${product.dc_rate }%</span>
-                                                
-<!--                                                 할인 된 가격 -->
-                                                <span><fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###"/> 원</span>
-                                                </div>
-									    <!-- 원래 가격 표시 (할인이 있는 경우만 표시) -->
+<div class="price">
+    <!-- dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
+    <c:if test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
+        <span style="text-decoration: line-through; color: #999;">
+            <fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###"/>원
+        </span>
+    </c:if>
 
-									
-									    <!-- 할인율 및 할인 적용된 가격 표시 -->
-<!-- 									    <div style="display: flex; align-items: baseline; gap: 10px;"> -->
-									        <c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
-									            <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-									                ${product.dc_rate}%
-									            </span>
-									        </c:if>
-									
-<!-- 									        <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;"> -->
-<%-- 									            <fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###"/>원 --%>
-<!-- 									        </span> -->
-<!-- 									    </div> -->
+    <!-- 할인율 (dc 타입이 P일 때만 표시) -->
+    <c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
+        <span class="sale-tag" style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+            -${product.dc_rate}%
+        </span>
+    </c:if>
+    
+    <!-- 최종 계산된 가격 표시 -->
+    <span>
+        <fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###"/> 원
+    </span>
+</div>
+
                                                 
                                             </div>
-                                            
                                         </div>
                                         <!-- End Single Product -->
                                     </div>
