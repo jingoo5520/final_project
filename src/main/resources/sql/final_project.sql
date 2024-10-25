@@ -27,3 +27,8 @@ update members
 set nickname = '업데이트xmxm', gender = 'M', phone_number = '010-1212-3434'
 , address = '05237/서울 강동구 아리수로 46/102호', email = 'lch1999@naver.com'
 where member_id = '1';
+
+-- 비밀번호 변경(마이페이지)
+update members
+set member_pwd = sha2('xptmxm12', 256)
+where member_id = '1';

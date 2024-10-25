@@ -288,12 +288,49 @@ public class MemberController {
 				System.out.println("변경 실패");
 				json = new ResponseData("fail", "변경 실패");
 			}
-			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);				
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			json = new ResponseData("fail", "예외 발생");
 			result = new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+		return result;
+	}
+
+	// 마이페이지 (비밀번호 변경 페이지)
+	@RequestMapping(value = "/myPage/modiPwd")
+	public String myPage_pwd() {
+		System.out.println("마이페이지로 이동");
+		return "/user/pages/member/myPage_modiPwd";
+	}
+
+	// 비밀번호 변경하기
+	@RequestMapping(value = "/modiPwd", method = RequestMethod.POST)
+	public ResponseEntity<ResponseData> modiInfo(@RequestParam("member_pwd") String member_pwd,
+			HttpServletRequest request) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		String member_id = ses.getAttribute("auth") + "";
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		try {
+			// 비밀번호 변경 update문이 정상적으로 동작했다면
+			if (memberService.updateMemberPwd(map)) {
+				System.out.println("변경 완료");
+				json = new ResponseData("success", "변경 성공");
+			} else {
+				System.out.println("변경 실패");
+				json = new ResponseData("fail", "변경 실패");
+			}
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		System.out.println(member_pwd);
 		return result;
 	}
 

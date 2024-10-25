@@ -14,6 +14,7 @@
 	rel="stylesheet">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <style>
 </style>
 </head>
@@ -61,7 +62,8 @@
 							id="phoneStatus"></span><input type="hidden" value="">
 					</div>
 					<div class="form-group input-group">
-						주소<input type="text" id="address" name="address">
+						주소<input type="text" id="address" name="address" readonly
+							onclick="selectAddress(this);">
 					</div>
 					<div class="form-group input-group">
 						상세주소<input type="text" id="address2" name="address2">
@@ -84,7 +86,7 @@ var emailExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 
 let tmpPhone = "tmpPhone";
 let tmpEmail = "tmpEmail";
 // 회원 정보 불러오기
-	$(function() {
+	function getMemberData() {
 		$.ajax({
 			url : "/member/getDTO", // 데이터가 송수신될 서버의 주소
 			type : "GET", // 통신 방식 (GET, POST, PUT, DELETE)
@@ -99,6 +101,9 @@ let tmpEmail = "tmpEmail";
 			complete : function() {
 			},
 		});
+	}
+	$(function() {
+		getMemberData();
 		
 		// 이메일 입력중
 		$("#email").keyup(function() {
@@ -264,6 +269,7 @@ let tmpEmail = "tmpEmail";
                 if (data.status == "success") {
                     console.log("성공");
 					alert("변경 성공"); // 모달로 수정 예정
+					getMemberData();
                 } else if (data.status == "fail") {
                     console.log("변경 실패");
                     alert("변경 실패"); // 모달로 수정 예정
@@ -277,6 +283,17 @@ let tmpEmail = "tmpEmail";
 
     }
 });
-	
+	// daum 주소 api
+	// 주소칸에서 onclick으로 호출
+	function selectAddress(obj) {
+	    new daum.Postcode({
+	        oncomplete: function(data) {
+	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+	            console.log(data);
+	            $(obj).val(data.zonecode + "/" + data.address);
+	        }
+	    }).open();
+	}
 </script>
 </html>

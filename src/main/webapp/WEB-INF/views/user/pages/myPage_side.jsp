@@ -47,7 +47,7 @@ body {
 				<li><a
 					href="${pageContext.request.contextPath}/member/myPage/modiInfo">회원
 						정보 수정</a></li>
-				<li><a href="#">비밀번호 변경</a></li>
+				<li><a href="${pageContext.request.contextPath}/member/myPage/modiPwd">비밀번호 변경</a></li>
 				<li><a href="#">구매 내역</a></li>
 				<h4>나의 활동</h4>
 				<li><a href="#">리뷰</a></li>

@@ -65,4 +65,12 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.updateMember(memberDTO);
 	}
 
+	// 마이 페이지 비밀번호 변경
+	@Override
+	public boolean updateMemberPwd(Map<String, String> map) throws Exception {
+		return memberDAO.updateMemberPwd(map);
+	}
+	
+	
+
 }

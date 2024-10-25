@@ -62,8 +62,17 @@
 	<!-- 마이 페이지 회원 정보 수정 -->
 	<update id="updateMember">
 		update members
-		set nickname = #{nickname}, gender = #{gender}, phone_number = #{phone_number}
-		, address = #{address}, email = #{email}
+		set nickname = #{nickname}, gender =
+		#{gender}, phone_number = #{phone_number}
+		, address = #{address}, email
+		= #{email}
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 마이 페이지 비밀번호 변경 -->
+	<update id="updateMemberPwd">
+		update members
+		set member_pwd = sha2(#{member_pwd}, 256)
 		where member_id = #{member_id}
 	</update>
 

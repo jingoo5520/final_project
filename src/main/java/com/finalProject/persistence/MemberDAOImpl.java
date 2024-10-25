@@ -83,10 +83,21 @@ public class MemberDAOImpl implements MemberDAO {
 		return ses.selectOne(ns+"selectMemberById", member_id);
 	}
 
+	// 마이 페이지 회원 정보수정
 	@Override
 	public boolean updateMember(MemberDTO memberDTO) throws Exception {
 		boolean result = false;
 		if(ses.update(ns+"updateMember", memberDTO)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 마이 페이지 비밀번호 변경
+	@Override
+	public boolean updateMemberPwd(Map<String, String> map) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateMemberPwd", map)==1) {
 			result = true;
 		}
 		return result;
