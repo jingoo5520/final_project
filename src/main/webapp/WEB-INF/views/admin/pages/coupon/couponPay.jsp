@@ -120,9 +120,6 @@
 	    });
 		
 		getCouponList();
-		
-	
-		
 	});
 	
 	// 쿠폰 리스트 가져오기
@@ -130,7 +127,10 @@
 		$.ajax({
 			url : '/admin/coupon/getCouponList',
 			type : 'GET',
+			dataType: 'json',
 			success : function(data) {
+				console.log(data);
+				
 				let output = '';
 				
 				data.forEach(function(coupon){
@@ -153,10 +153,10 @@
 	
 	// 멤버 리스트 보여주기
 	function showMemberList(pageNo) {
-		
 		$.ajax({
 			url : '/admin/member/getAllMembers',
 			type : 'GET',
+			dataType: 'json',
 			data : {
 				"pageNo" : pageNo,
 				"pagingSize" : pagingSize,

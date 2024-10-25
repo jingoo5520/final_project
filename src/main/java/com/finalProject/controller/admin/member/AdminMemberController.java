@@ -42,6 +42,8 @@ public class AdminMemberController {
 			e.printStackTrace();
 		}
 
+		System.out.println(data);
+		
 		return data;
 	}
 

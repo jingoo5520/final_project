@@ -76,6 +76,9 @@ public class CouponController {
 		return "/admin/pages/coupon/couponPay";
 	}
 
+	/* ========================================================================== */
+	/* ========================================================================== */
+	
 	// 쿠폰 리스트 가져오기
 	@GetMapping("/getCouponList")
 	@ResponseBody
@@ -92,7 +95,7 @@ public class CouponController {
 		return list;
 	}
 
-	// 쿠폰 리스트 가져오기
+	// 쿠폰 리스트 가져오기(페이지네이션)
 	@GetMapping("/getCouponListWithPi")
 	@ResponseBody
 	public Map<String, Object> getCouponList(@RequestParam int pageNo, @RequestParam int pagingSize,
