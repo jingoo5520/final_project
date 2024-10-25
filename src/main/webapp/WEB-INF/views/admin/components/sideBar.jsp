@@ -102,13 +102,13 @@
 			</a>
 				<ul class="menu-sub">
 
-					<li class="menu-item <%= "coupons".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/coupons" class="menu-link">
+					<li class="menu-item <%= "coupons".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/coupon/coupons" class="menu-link">
 							<div data-i18n="Coupons">쿠폰</div>
 					</a></li>
-					<li class="menu-item <%= "couponPay".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/couponPay" class="menu-link">
+					<li class="menu-item <%= "couponPay".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/coupon/couponPay" class="menu-link">
 							<div data-i18n="Coupon Pay">쿠폰 지급</div>
 					</a></li>
-					<li class="menu-item <%= "couponUseLog".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/couponUseLog" class="menu-link">
+					<li class="menu-item <%= "couponUseLog".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/coupon/couponUseLog" class="menu-link">
 							<div data-i18n="Coupon use log">쿠폰 사용 내역</div>
 					</a></li>
 				</ul></li>

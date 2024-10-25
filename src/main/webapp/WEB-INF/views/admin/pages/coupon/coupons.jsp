@@ -46,6 +46,7 @@
 	let selectedCouponNo = 0;
 	let pageNo = 1;
 	let pagingSize = 5;
+	let pageCntPerBlock = 3;
 	
 
 	$(function() {
@@ -102,7 +103,6 @@
 	
 	// 수정 버튼 클릭(쿠폰 수정 모달 open)
 	function openUpdateCouponModal(element) {
-		
 		couponEditType = "update"
 		let parentTd = $(element).closest('td');
 		selectedCouponNo = parentTd.siblings('.couponNoCell').html();
@@ -194,14 +194,14 @@
 		console.log("pageNo: " + pageNo);
 		console.log("pagingSize: " + pagingSize);
 		
-		
 		$.ajax({
-			url : '/admin/coupons/getCouponList',
+			url : '/admin/coupon/getCouponListWithPi',
 			type : 'GET',
 			dataType : 'json',
 			data : {
 				"pageNo" : pageNo,
-				"pagingSize" : pagingSize
+				"pagingSize" : pagingSize,
+				"pageCntPerBlock" : pageCntPerBlock
 			},
 			success : function(data) {
 				console.log(data);
@@ -283,7 +283,7 @@
 		
 		if(couponEditType == "create"){
 			$.ajax({
-				url : '/admin/coupons/createCoupon',
+				url : '/admin/coupon/createCoupon',
 				type : 'POST',
 				data : {
 					"couponName" : couponName,
@@ -311,10 +311,10 @@
 				}
 			});
 		} else if(couponEditType == "update"){
-			let coupon_no = document.getElementById('couponName')
+			let coupon_no = document.getElementById('couponName');
 			
 			$.ajax({
-				url : '/admin/coupons/updateCoupon',
+				url : '/admin/coupon/updateCoupon',
 				type : 'POST',
 				data : {
 					"couponNo" : selectedCouponNo,
@@ -324,6 +324,7 @@
 					"couponDcRate" : couponDcRate
 				},
 				success : function(data) {
+					console.log(data);
 					if (data == 'duplicated') {
 						$('#couponNameErrorTag').html("중복된 쿠폰 이름입니다.");
 						$('#couponNameErrorTag').css("color", "red");
@@ -356,7 +357,7 @@
 	// 쿠폰 삭제
 	function deleteCoupon(){
 		$.ajax({
-			url : '/admin/coupons/deleteCoupon',
+			url : '/admin/coupon/deleteCoupon',
 			type : 'POST',
 			data : {
 				"couponNo" : selectedCouponNo,
@@ -545,7 +546,7 @@
 
 						<!-- 쿠폰 삭제 모달 -->
 						<div id="deleteCouponModal" class="modal fade" tabindex="-1" aria-hidden="true">
-							<div class="modal-dialog" role="document">
+							<div class="modal-dialog modal-sm" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
 										<h5 class="modal-title" id="editModalTitle">쿠폰 삭제</h5>

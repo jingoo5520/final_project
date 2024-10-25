@@ -1,4 +1,4 @@
-package com.finalProject.model;
+package com.finalProject.model.admin;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -16,7 +16,7 @@ public class PagingInfo {
 	private int startRowIndex; // 현재 페이지에서 보여지는 첫 글의 index
 	
 	// 페이징 블럭 만들 때 필요한 변수들
-	private int pageCntPerBlock = 3; // 1개의 페이징 블럭에서 보여줄 페이지 수
+	private int pageCntPerBlock; // 1개의 페이징 블럭에서 보여줄 페이지 수
 	private int pageBlockNoCurPage; // 현재 페이지가 속한 페이징 블럭 번호
 	private int startPageNoCurBloack; // 현재 페이징 블럭의 시작 페이지 번호
 	private int endPageNoCurBlock; // 현재 페이징 블럭의 마지막 페이지 번호
@@ -24,6 +24,7 @@ public class PagingInfo {
 	public PagingInfo(PagingInfoDTO dto) {
 		this.pageNo = dto.getPageNo();
 		this.viewDataCntPerPage = dto.getPagingSize();
+		this.pageCntPerBlock = dto.getPageCntPerBlock();
 	}
 	
 	public void setTotalDataCnt(int totalDataCnt) {

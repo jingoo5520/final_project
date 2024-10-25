@@ -10,14 +10,19 @@
 		select count(*) from coupons
 	</select>
 	
-
-	<!-- 쿠폰 리스트 가져오기 -->
 	<select id="selectAllCoupon" resultType="CouponDTO">
 		select
 		coupon_no, coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate
 		from coupons
+	</select>
+	
+	<!-- 쿠폰 리스트 가져오기(with pagingInfo) -->
+	<select id="selectAllCouponWithPi" resultType="CouponDTO">
+		select
+		coupon_no, coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate
+		from coupons
 		order by coupon_no desc
-		limit #{startRowIndex}, #{viewDataCntPerPage};
+		limit #{startRowIndex}, #{viewDataCntPerPage}
 	</select>
 
 
@@ -40,5 +45,19 @@
 	<delete id="deleteCoupon">
 		delete from coupons where coupon_no = #{coupon_no};
 	</delete>
+	
+	<!-- 쿠폰 지급 -->
+	<insert id="insertCouponPayLogs">
+		insert into coupon_paid (coupon_no, coupon_code, member, expire_date)
+		values 
+		<foreach collection="list" index="index" item="couponPayDTO" separator=", ">
+		(
+			#{couponPayDTO.coupon_no},
+			#{couponPayDTO.coupon_code},
+			#{couponPayDTO.member},
+			#{couponPayDTO.expire_date}		
+		)		
+		</foreach>
+	</insert>
 
 </mapper>

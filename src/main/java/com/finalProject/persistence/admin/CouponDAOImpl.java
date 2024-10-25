@@ -1,4 +1,4 @@
-package com.finalProject.persistence;
+package com.finalProject.persistence.admin;
 
 import java.util.List;
 
@@ -7,8 +7,9 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.CouponDTO;
-import com.finalProject.model.PagingInfo;
+import com.finalProject.model.admin.CouponDTO;
+import com.finalProject.model.admin.CouponPayDTO;
+import com.finalProject.model.admin.PagingInfo;
 
 @Repository
 public class CouponDAOImpl implements CouponDAO {
@@ -24,8 +25,13 @@ public class CouponDAOImpl implements CouponDAO {
 	}
 	
 	@Override
+	public List<CouponDTO> selectCouponList() throws Exception {
+		return ses.selectList(ns + "selectAllCoupon");
+	}
+	
+	@Override
 	public List<CouponDTO> selectCouponList(PagingInfo pi) throws Exception {
-		return ses.selectList(ns + "selectAllCoupon", pi);
+		return ses.selectList(ns + "selectAllCouponWithPi", pi);
 	}
 	
 	@Override
@@ -41,6 +47,12 @@ public class CouponDAOImpl implements CouponDAO {
 	@Override
 	public int deleteCoupon(int coupon_no) throws Exception {
 		return ses.delete(ns + "deleteCoupon", coupon_no);
+	}
+
+	@Override
+	public int insertCouponPayLogs(List<CouponPayDTO> list) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.insert(ns + "insertCouponPayLogs", list);
 	}
 
 	
