@@ -37,7 +37,7 @@
 				</form>
 			</c:if>
 			<c:if test="${not empty sessionScope.auth}">
-				<form action="/member/modiInfo" method="post">
+				<form id="form">
 					<div class="form-group input-group">
 						별명<input type="text" id="nickname" name="nickname">
 					</div>
@@ -70,7 +70,8 @@
 						이메일<input type="text" id="email" name="email"><span
 							id="emailStatus"></span><input type="hidden" value="">
 					</div>
-					<button class="btn btn-info" type="submit" value="수정하기" onclick="return checkData();">수정하기</button>
+					<button class="btn btn-info" type="submit" value="수정하기"
+						onclick="checkData();">수정하기</button>
 				</form>
 			</c:if>
 		</main>
@@ -230,6 +231,7 @@ let tmpEmail = "tmpEmail";
 		}
 	}
 	
+	
 	// 수정하기
 	function checkData() {
 		let result = true;
@@ -246,8 +248,29 @@ let tmpEmail = "tmpEmail";
 			result = false;
 			text += "<div>휴대폰번호</div>";
 		}
-		console.log(result);
-		return result;
+		if(result) {
+			$("#form").submit(function(e) {
+	            e.preventDefault(); // 기본 제출 동작 방지
+	                $.ajax({
+	                    type: 'POST',
+	                    url: '/member/modiInfo',
+	                    data: $("#form").serialize(), // 폼 데이터를 DTO로 받을수 있도록 해줌(데이터 직렬화)
+	                    success: function(data) {
+	                        console.log(data);
+	                        if(data.status == "success") {
+	                        	window.location.href = "/member/myPage/modiInfo?status=success";
+	                        } else if(data.status == "fail") {
+	                        	console.log("변경 실패");
+	                        }
+	                    },
+	                    error: function(error) {
+	                    	console.log("통신 실패");
+	                    }
+	                });
+	        });
+		} else {
+			
+		}
 	}
 	
 </script>

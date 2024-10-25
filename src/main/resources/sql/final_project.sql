@@ -24,5 +24,6 @@ select * from members where member_id = 1;
 
 -- 회원 정보 변경(마이페이지)
 update members
-set nickname = '업데이트', gender = 'M', phone_number = '010-1212-3434'
-, address = '05237/서울 강동구 아리수로 46/102호', email = 'lch1999@naver.com';
+set nickname = '업데이트xmxm', gender = 'M', phone_number = '010-1212-3434'
+, address = '05237/서울 강동구 아리수로 46/102호', email = 'lch1999@naver.com'
+where member_id = '1';

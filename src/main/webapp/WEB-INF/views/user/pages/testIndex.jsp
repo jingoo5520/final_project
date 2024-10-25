@@ -9,8 +9,8 @@
 <title>Test Page</title>
 </head>
 <body>
-<jsp:include page="user/header.jsp"></jsp:include>
+<jsp:include page="header.jsp"></jsp:include>
 <a href="${pageContext.request.contextPath}/test/auth""><h1>권한 테스트 페이지1</h1></a>
-<jsp:include page="user/footer.jsp"></jsp:include>
+<jsp:include page="footer.jsp"></jsp:include>
 </body>
 </html>

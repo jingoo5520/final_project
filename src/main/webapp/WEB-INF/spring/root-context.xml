@@ -44,6 +44,6 @@
 
 	<context:component-scan base-package="com.finalProject.persistence" />
 	<context:component-scan base-package="com.finalProject.model" />
-	<context:component-scan base-package="com.finalProject.service" />
+	<context:component-scan base-package="com.finalProject.service.member" />
 	<context:component-scan base-package="com.finalProject.util" />
 </beans>

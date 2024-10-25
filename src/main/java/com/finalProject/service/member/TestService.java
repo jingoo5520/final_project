@@ -1,4 +1,4 @@
-package com.finalProject.service;
+package com.finalProject.service.member;
 
 import java.util.List;
 

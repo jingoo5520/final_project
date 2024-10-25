@@ -1,7 +1,5 @@
 package com.finalProject.controller.member;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,7 +8,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.ResponseData;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.service.MemberService;
+import com.finalProject.service.member.MemberService;
 import com.finalProject.util.ReceiveMailPOP3;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +44,7 @@ public class MemberController {
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
 	public String viewLogin() {
 		System.out.println("로그인 페이지로 이동");
-		return "/user/member/login";
+		return "/user/pages/member/login";
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
@@ -73,13 +70,13 @@ public class MemberController {
 		// 로그인 성공 실패에 따른 페이지 이동은 인터셉터가 처리함.
 		// 리턴 타입을 void로 login.jsp의 form태그 action에 설정된 경로의 jsp를 찾고, 해당 경로의 jsp는 없기때문에
 		// 실제하는 아무파일의 경로를 임의로 리턴해줌.
-		return "/user/member/login";
+		return "/user/pages/member/login";
 	}
 
 	@RequestMapping(value = "/viewSignUp") // "/member/viewSignUp/"
 	public String viewSingUp() {
 		System.out.println("회원가입 페이지로 이동");
-		return "/user/member/signUp";
+		return "/user/pages/member/signUp";
 	}
 
 	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST) // 회원가입 데이터 중복 체크 (ajax)
@@ -207,7 +204,7 @@ public class MemberController {
 	@RequestMapping(value = "/myPage/modiInfo")
 	public String myPage() {
 		System.out.println("마이페이지로 이동");
-		return "/user/member/myPage_modiInfo";
+		return "/user/pages/member/myPage_modiInfo";
 	}
 
 	// 마이페이지 인증(정보 수정시 비밀번호를 확인함.)
@@ -227,10 +224,10 @@ public class MemberController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "/user/member/myPage_modiInfo"; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
+		return "/user/pages/member/myPage_modiInfo"; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
 	}
 
-	// 회원 정보 수정(ajax)
+	// 회원 정보 받아오기(마이페이지 ajax)
 	@RequestMapping(value = "/getDTO")
 	public void getDTO(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession ses = request.getSession(); // 세션 받아오기
@@ -254,9 +251,12 @@ public class MemberController {
 
 	// 회원 정보 수정하기
 	@RequestMapping(value = "/modiInfo", method = RequestMethod.POST)
-	public String modiInfo(MemberDTO memberDTO) {
-		String result = null;
-		System.out.println(memberDTO.toString());
+	public ResponseEntity<ResponseData> modiInfo(MemberDTO memberDTO, HttpServletRequest request) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession(); // 세션 받아오기
+		String member_id = ses.getAttribute("auth") + "";
+		memberDTO.setMember_id(member_id);
 
 		// 입력받은 폰번호 형식을 DB에 저장될 형식으로 변경
 		// 01012345678 의 형식(-가 없는 형식이 경우)
@@ -277,20 +277,22 @@ public class MemberController {
 		// 입력받은 주소+상세주소
 		// 우편번호/주소/상세주소
 		memberDTO.setAddress(memberDTO.getAddress() + "/" + memberDTO.getAddress2());
-
+		System.out.println(memberDTO.toString());
 		try {
 			// update가 정상적으로 됬다면
 			if (memberService.updateMember(memberDTO)) {
 				System.out.println("변경 완료");
-				result = "redirect:/myPage/modiInfo";
+				json = new ResponseData("success", "변경 성공");
 			} else {
 				System.out.println("변경 실패");
-				result = null;
+				json = new ResponseData("fail", "변경 실패");
 			}
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);				
 		} catch (Exception e) {
 			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-
 		return result;
 	}
 
