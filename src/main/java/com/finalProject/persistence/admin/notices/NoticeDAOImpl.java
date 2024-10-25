@@ -48,7 +48,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 
 	@Override
 	public void addEvent(NoticeVO notice) throws Exception {
-		System.out.println(ses.insert(ns + "addEvent", notice)); // 1
+//		System.out.println(ses.insert(ns + "addEvent", notice)); // 1
 		ses.insert(ns + "addEvent", notice);
 	}
 

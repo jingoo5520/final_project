@@ -48,7 +48,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">${event.notice_title}</h5>
-                                <p class="card-text">작성자: ${event.admin_id} | 작성일: ${notice.reg_date}</p>
+                                <p class="card-text">작성자: ${event.admin_id} | 작성일: ${event.reg_date}</p>
                             </div>
                             <div class="card-body">
                                 <p class="card-text">${event.notice_content}</p>

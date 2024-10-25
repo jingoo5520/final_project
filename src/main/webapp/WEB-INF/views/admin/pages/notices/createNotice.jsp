@@ -141,11 +141,10 @@
 				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" required id="noticeType2" onchange="changeForm(this.value)"/>이벤트</div>
 				      </div>
 
-                      <div class="input-group">
-                        <span class="input-group-text">내용</span>
-                        <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요"></div>
+                      <div class="input-group" id="summerSize">
+                        <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요" required></div>
                       </div>
-                      <input type="hidden" name="noticeContent" id="noticeContentInput" />
+                      <input type="hidden" name="noticeContent" id="noticeContentInput" required/>
                       
 				<!-- 공지 등록 버튼 -->
 		      	<div class="text-end mt-3">

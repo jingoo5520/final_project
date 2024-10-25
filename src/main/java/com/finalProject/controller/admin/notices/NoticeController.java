@@ -1,6 +1,5 @@
 package com.finalProject.controller.admin.notices;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -144,13 +143,15 @@ public class NoticeController {
 
 	// 공지사항 작성 페이지 표시
 	@RequestMapping("/createNotice")
-	public String createNoticeForm(Model model) {
+	public String createNoticeForm(@ModelAttribute NoticeDTO noticeDTO, Model model) {
+//	    System.out.println("Notice Content: " + noticeDTO.getNotice_content());
 		return "admin/pages/notices/createNotice";
 	}
 	
 	// 이벤트 작성 페이지 표시
 	@RequestMapping("/createEvent")
-	public String createEventForm(Model model) {
+	public String createEventForm(@ModelAttribute NoticeDTO noticeDTO, Model model) {
+//	    System.out.println("Event Content: " + noticeDTO.getNotice_content());
 		return "admin/pages/notices/createEvent";
 	}
 	
@@ -248,10 +249,10 @@ public class NoticeController {
     // 공지사항 수정 페이지 표시
     @GetMapping("/editNotice/{notice_no}")
     public String showEditNoticeForm(@PathVariable("notice_no") int noticeNo, Model model) {
-        NoticeDTO noticeDTO;
+        NoticeDTO notice;
 		try {
-			noticeDTO = noticeService.selectNoticeById(noticeNo);
-			model.addAttribute("notice", noticeDTO);
+			notice = noticeService.selectNoticeById(noticeNo);
+			model.addAttribute("notice", notice);
 		} catch (Exception e) {
 			log.error("공지사항 조회 실패" + e.getMessage());
 			return "redirect:/admin/notices/notice";
@@ -262,10 +263,10 @@ public class NoticeController {
     // 이벤트 수정 페이지 표시
     @GetMapping("/editEvent/{notice_no}")
     public String showEditEventForm(@PathVariable("notice_no") int noticeNo, Model model) {
-        NoticeDTO noticeDTO;
+        NoticeDTO event;
 		try {
-			noticeDTO = noticeService.selectEventById(noticeNo);
-			model.addAttribute("event", noticeDTO);
+			event = noticeService.selectEventById(noticeNo);
+			model.addAttribute("event", event);
 		} catch (Exception e) {
 			log.error("이벤트 조회 실패" + e.getMessage());
 			return "redirect:/admin/notices/event";
@@ -301,8 +302,8 @@ public class NoticeController {
         try {
 			noticeService.updateEvent(noticeDTO);
 			redirectAttributes.addFlashAttribute("message", "이벤트 수정 완료");
-		    System.out.println("Notice Title: " + noticeDTO.getNotice_title());
-		    System.out.println("Notice Content: " + noticeDTO.getNotice_content()); 
+		    System.out.println("Event Title: " + noticeDTO.getNotice_title());
+		    System.out.println("Event Content: " + noticeDTO.getNotice_content()); 
 		    System.out.println("NoticeDTO: " + noticeDTO);
 
 		} catch (Exception e) {

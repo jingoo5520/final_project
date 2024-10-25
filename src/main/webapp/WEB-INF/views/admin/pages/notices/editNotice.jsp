@@ -145,7 +145,6 @@
 							            </div>
 							            </div>
 							            <div class="input-group">
-							                <span class="input-group-text">내용</span>
 							            <div id="summernote" aria-label="With textarea">${notice.notice_content}</div>
 							            </div>
 							                <input type="hidden"  name="notice_content" id="noticeContentInput" />

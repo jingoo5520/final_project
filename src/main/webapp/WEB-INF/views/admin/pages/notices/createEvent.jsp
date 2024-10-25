@@ -323,8 +323,8 @@
             });
         }
     	
-        function saveNotice() {
-            let noticeContent = $('#summernote').summernote('code');
+        function saveEvent() {
+            let eventContent = $('#summernote').summernote('code');
             $.ajax({
                 url: '/post/saveEvent',
                 type: 'POST',
