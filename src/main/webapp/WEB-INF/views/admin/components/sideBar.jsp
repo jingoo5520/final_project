@@ -133,12 +133,12 @@
 				<ul class="menu-sub">
 					<li
 						class="menu-item <%="productSave".equals(request.getParameter("pageName")) ? "active" : ""%>"><a
-							href="/productmanage/productSave" class="menu-link">
+							href="/admin/productmanage/productSave" class="menu-link">
 							<div data-i18n="productSave">상품</div>
 						</a></li>
 					<li
 						class="menu-item  <%="productView".equals(request.getParameter("pageName")) ? "active" : ""%>"><a
-							href="/productmanage/productView " class="menu-link">
+							href="/admin/productmanage/productView " class="menu-link">
 							<div data-i18n="productView">상품 조회</div>
 						</a></li>
 				</ul></li>

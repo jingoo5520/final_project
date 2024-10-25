@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.ProductDTO;
 import com.finalProject.model.ProductUpdateDTO;
+import com.finalProject.model.ProductVO;
 
 @Repository
 public class ProductDAOImpl implements ProductDAO {
@@ -52,9 +53,9 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	@Override
-	public List<ProductDTO> getAllProducts() {
+	public List<ProductDTO> getAllProducts(Map<String, Object> map) {
 		// TODO Auto-generated method stub
-		return ses.selectList(ns + "getAllBoard");
+		return ses.selectList(ns + "getAllBoard", map);
 
 	}
 
@@ -69,5 +70,44 @@ public class ProductDAOImpl implements ProductDAO {
 		prams.put("product_sell_count", updateProduct.getProduct_sell_count());
 		prams.put("product_no", updateProduct.getProduct_no());
 		return ses.update(ns + "updateProduct", prams);
+	}
+
+	@Override
+	public List<ProductVO> getSearchProducts(Map<String, Object> map) {
+
+		return ses.selectList(ns + "getSearchProduct", map);
+	}
+
+	@Override
+	public List<ProductDTO> getFilterProducts() {
+
+		return ses.selectList(ns + "getFilterProduct");
+	}
+
+	@Override
+	public int getTotalPostCnt() {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getCountAllProduct");
+	}
+
+	@Override
+	public int getTotalSearchCnt(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getSearchAllProduct", map);
+	}
+
+	@Override
+	public int updateProductImg(ProductUpdateDTO updateProduct) {
+		Map<String, Object> prams = new HashMap<>();
+		prams.put("product_no", updateProduct.getProduct_no());
+		prams.put("product_main_image", updateProduct.getProduct_main_image());
+		prams.put("product_sub_image", updateProduct.getProduct_sub_image());
+		return ses.update(ns + "deleteProductImg", prams);
+	}
+
+	@Override
+	public int deleteProduct(int productId) {
+		// TODO Auto-generated method stub
+		return ses.delete(ns + "deleteProduct", productId);
 	}
 }

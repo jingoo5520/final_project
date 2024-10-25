@@ -1,9 +1,11 @@
-package com.finalProject.controller;
+package com.finalProject.controller.admin.product;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
@@ -19,15 +21,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finalProject.model.ProductDTO;
+import com.finalProject.model.ProductPagingInfoDTO;
+import com.finalProject.model.ProductSearchDTO;
 import com.finalProject.model.ProductUpdateDTO;
-import com.finalProject.service.ProductService;
+import com.finalProject.model.ProductVO;
+import com.finalProject.service.admin.product.ProductService;
 import com.finalProject.util.ProductUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequestMapping("/productmanage")
+@RequestMapping("/admin/productmanage")
 public class ProductController {
 
 	@Autowired
@@ -43,7 +48,7 @@ public class ProductController {
 	@RequestMapping(value = "/productSave")
 	public String productSave(HttpServletRequest request) {
 		System.out.println(request.getSession().getServletContext().getRealPath("product"));
-		return "productmanage/productSave";
+		return "admin/pages/productmanage/productSave";
 	}
 
 	@RequestMapping(value = "/productUpdate", method = RequestMethod.POST)
@@ -51,7 +56,7 @@ public class ProductController {
 		System.out.println(updateProduct.toString());
 		List<String> subArr = new ArrayList<String>();
 		ServletContext sc = request.getSession().getServletContext();
-		if (ps.updateProduct(updateProduct) == 1) {
+		if (ps.updateProduct(updateProduct)) {
 
 			if (!(updateProduct.getProduct_main_image().equals("true"))) {
 
@@ -66,7 +71,7 @@ public class ProductController {
 				}
 				pu.removeFile(subArr);
 			}
-			// 파일 db 삭제 처리 하기
+			// 수정 성공 메시지 반환
 		}
 
 	}
@@ -98,6 +103,7 @@ public class ProductController {
 	@RequestMapping(value = "/uploadProduct", method = RequestMethod.POST)
 	public void UploadProduct(ProductDTO productDTO, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println(productDTO.toString());
+		System.out.println(productDTO.getImage_main_url().getOriginalFilename());
 		String url = "/resources/product";
 		ServletContext sc = request.getSession().getServletContext();
 
@@ -110,7 +116,7 @@ public class ProductController {
 		pu.makeDirectory(request, realPath);
 
 		try {
-			if (productDTO.getImage_main_url() != null) {
+			if (productDTO.getImage_main_url().getOriginalFilename() != "") {
 				fileName = "Main_" + UUID.randomUUID() + productDTO.getImage_main_url().getOriginalFilename();
 				route = realPath + File.separator + fileName;
 				File Directory = new File(realPath + File.separator + fileName);
@@ -124,8 +130,8 @@ public class ProductController {
 				}
 			}
 
-			if (productDTO.getImage_sub_url() != null) {
-				for (MultipartFile file : productDTO.getImage_sub_url()) {
+			for (MultipartFile file : productDTO.getImage_sub_url()) {
+				if (file.getOriginalFilename() != "") {
 					fileName = "Sub_" + UUID.randomUUID() + file.getOriginalFilename();
 					route = realPath + File.separator + fileName;
 
@@ -142,10 +148,10 @@ public class ProductController {
 
 			if (ps.saveProduct(productDTO, list) == 1) {
 				System.out.println("���옣 �꽦怨�");
-				response.sendRedirect("/productmanage/productSave");
+				response.sendRedirect("/admin/productmanage/productSave");
 			} else {
 				pu.removeFile(list); // �떎�뙣 �떆 �뙆�씪 �궘�젣
-				response.sendRedirect("/productmanage/productSave");
+				response.sendRedirect("/admin/productmanage/productSave");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -156,15 +162,53 @@ public class ProductController {
 	}
 
 	@RequestMapping("/productView")
-	public void GetAllProduct(Model model) {
-		model.addAttribute("productList", ps.getAllProducts());
+	public String GetAllProduct(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
+		ProductPagingInfoDTO dto = ProductPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		Map<String, Object> maps = new HashMap<String, Object>();
+		try {
+			maps = ps.getAllProducts(dto);
+			model.addAttribute("productList", maps.get("list"));
+			model.addAttribute("pi", maps.get("pi"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "admin/pages/productmanage/productView";
 	}
 
 	@RequestMapping("/productSearch")
-	public String getSearchProduct(@RequestParam("product_dc_type") String product_dc_type,
-			@RequestParam("product_name") String product_name, @RequestParam("reg_date_start") String time) {
-		System.out.println(product_name + " , " + product_dc_type + " , " + time);
-		return "/productmanage/productView";
+	public String getSearchProduct(ProductSearchDTO psd, Model model,
+			@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
+		ProductPagingInfoDTO dto = ProductPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		List<ProductVO> list = new ArrayList<>();
+		Map<String, Object> map = new HashMap<>();
+		map.put("product_dc_type", psd.getProduct_dc_type());
+		map.put("product_name", '%' + psd.getProduct_name() + '%');
+		map.put("reg_date_start", psd.getReg_date_start());
+		map.put("reg_date_end", psd.getReg_date_end());
+		map.put("searchType", psd.getSearchType());
+		System.out.println(psd.getProduct_dc_type());
+		System.out.println(psd.getProduct_name());
+		System.out.println(psd.getReg_date_start());
+		System.out.println(psd.getReg_date_end());
+		try {
+			map = ps.searchProduct(map, dto);
+			model.addAttribute("productList", map.get("plist"));
+			model.addAttribute("pi", map.get("pi"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+		return "admin/pages/productmanage/productView";
+	}
+
+	@RequestMapping(value = "/productDelete", method = RequestMethod.POST)
+	public void DeleteProduct(int productId) {
+		if (ps.deleteProduct(productId) == 1) {
+
+		}
 	}
 }

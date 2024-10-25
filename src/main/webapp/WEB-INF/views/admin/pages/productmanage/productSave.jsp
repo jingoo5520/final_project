@@ -110,7 +110,7 @@
 									<small class="text-muted float-end"></small>
 								</div>
 								<div class="card-body">
-									<form action="uploadProduct" enctype="multipart/form-data"
+									<form action="/admin/productmanage/uploadProduct" enctype="multipart/form-data"
 										method="post">
 										<div class="row mb-3">
 											<label class="col-sm-2 col-form-label"
