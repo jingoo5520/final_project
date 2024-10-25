@@ -1,4 +1,4 @@
-package com.finalProject.persistence;
+package com.finalProject.persistence.admin.product;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.ProductDTO;
-import com.finalProject.model.ProductUpdateDTO;
-import com.finalProject.model.ProductVO;
+import com.finalProject.model.admin.product.ProductDTO;
+import com.finalProject.model.admin.product.ProductUpdateDTO;
+import com.finalProject.model.admin.product.ProductVO;
 
 @Repository
 public class ProductDAOImpl implements ProductDAO {

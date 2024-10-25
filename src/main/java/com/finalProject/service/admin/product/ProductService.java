@@ -3,9 +3,9 @@ package com.finalProject.service.admin.product;
 import java.util.List;
 import java.util.Map;
 
-import com.finalProject.model.ProductDTO;
-import com.finalProject.model.ProductPagingInfoDTO;
-import com.finalProject.model.ProductUpdateDTO;
+import com.finalProject.model.admin.product.ProductDTO;
+import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.ProductUpdateDTO;
 
 public interface ProductService {
 

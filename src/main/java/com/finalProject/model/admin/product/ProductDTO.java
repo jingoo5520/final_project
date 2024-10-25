@@ -1,4 +1,4 @@
-package com.finalProject.model;
+package com.finalProject.model.admin.product;
 
 import org.springframework.web.multipart.MultipartFile;
 
