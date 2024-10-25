@@ -40,23 +40,23 @@ public class MemberController {
 	@Inject
 	private ReceiveMailPOP3 remail;
 
-	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
+	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 濡쒓렇�씤 �럹�씠吏�濡� �씠�룞
 	public String viewLogin() {
-		System.out.println("로그인 페이지로 이동");
-		return "/user/member/login";
+		System.out.println("濡쒓렇�씤 �럹�씠吏�濡� �씠�룞");
+		return "/user/pages/member/login";
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
+	@RequestMapping(value = "/login", method = RequestMethod.POST) // 濡쒓렇�씤 �슂泥��떆 �룞�옉
 	public String login(LoginDTO loginDTO, RedirectAttributes rttr, Model model, HttpSession session, @RequestParam(value="autologin_code", required = false)boolean autologin) {
-		System.out.println(loginDTO + "로 로그인 요청");
-		System.out.println("자동로그인 : " + autologin);
+		System.out.println(loginDTO + "濡� 濡쒓렇�씤 �슂泥�");
+		System.out.println("�옄�룞濡쒓렇�씤 : " + autologin);
 		log.info("postLogin");
 		try {
-			LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에 조회한다.
-			if (loginMember != null) { // 입력한 아이디 비밀번호에 해당하는 member가 없다면 null
-				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장
-				if(autologin) {	// 자동로그인 체크했을경우
-					model.addAttribute("autologin", autologin); // 모델객체에 자동로그인 저장
+			LoginDTO loginMember = memberService.login(loginDTO); // �엯�젰�븳 member_id, member_pwd瑜� loginDTO濡� 諛쏆븘�꽌 db�뿉 議고쉶�븳�떎.
+			if (loginMember != null) { // �엯�젰�븳 �븘�씠�뵒 鍮꾨�踰덊샇�뿉 �빐�떦�븯�뒗 member媛� �뾾�떎硫� null
+				model.addAttribute("loginMember", loginMember); // 紐⑤뜽媛앹껜�뿉 濡쒓렇�씤 �젙蹂� ���옣
+				if(autologin) {	// �옄�룞濡쒓렇�씤 泥댄겕�뻽�쓣寃쎌슦
+					model.addAttribute("autologin", autologin); // 紐⑤뜽媛앹껜�뿉 �옄�룞濡쒓렇�씤 ���옣
 				}
 			}
 
@@ -65,28 +65,28 @@ public class MemberController {
 			e.printStackTrace();
 
 		}
-		// 로그인 성공 실패에 따른 페이지 이동은 인터셉터가 처리함.
-		// 리턴 타입을 void로 login.jsp의 form태그 action에 설정된 경로의 jsp를 찾고, 해당 경로의 jsp는 없기때문에 실제하는 아무파일의 경로를 임의로 리턴해줌.
+		// 濡쒓렇�씤 �꽦怨� �떎�뙣�뿉 �뵲瑜� �럹�씠吏� �씠�룞�� �씤�꽣�뀎�꽣媛� 泥섎━�븿.
+		// 由ы꽩 ���엯�쓣 void濡� login.jsp�쓽 form�깭洹� action�뿉 �꽕�젙�맂 寃쎈줈�쓽 jsp瑜� 李얘퀬, �빐�떦 寃쎈줈�쓽 jsp�뒗 �뾾湲곕븣臾몄뿉 �떎�젣�븯�뒗 �븘臾댄뙆�씪�쓽 寃쎈줈瑜� �엫�쓽濡� 由ы꽩�빐以�.
 		return "/user/member/login";
 	}
 
 	@RequestMapping(value = "/viewSignUp") // "/member/viewSignUp/"
 	public String viewSingUp() {
-		System.out.println("회원가입 페이지로 이동");
-		return "/user/member/signUp";
+		System.out.println("�쉶�썝媛��엯 �럹�씠吏�濡� �씠�룞");
+		return "/user/pages/member/signUp";
 	}
 
-	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST) // 회원가입 데이터 중복 체크 (ajax)
+	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST) // �쉶�썝媛��엯 �뜲�씠�꽣 以묐났 泥댄겕 (ajax)
 	public ResponseEntity<ResponseData> isDuplicate(@RequestParam("key") String key,
 			@RequestParam("value") String value) {
-		// key = 중복체크를 진행할 요소(id, email, phone)
-		// value = 체크할 값
+		// key = 以묐났泥댄겕瑜� 吏꾪뻾�븷 �슂�냼(id, email, phone)
+		// value = 泥댄겕�븷 媛�
 		Map<String, Object> map = new HashMap<String, Object>();
 		System.out.println("key : " + key);
 		System.out.println("value : " + value);
-		// 휴대폰번호가 11자인경우(01012345678)
+		// �쑕���룿踰덊샇媛� 11�옄�씤寃쎌슦(01012345678)
 		if(key.equals("phone") && value.length()==11) {
-			// 010-1234-5678 로 만듦
+			// 010-1234-5678 濡� 留뚮벀
 			value = value.substring(0, 3) + "-" + value.substring(3, 7) + "-" + value.substring(7, 11);
 		}
 		map.put("key", key);
@@ -97,9 +97,9 @@ public class MemberController {
 		ResponseEntity<ResponseData> result = null;
 
 		try {
-			// map에 key와 value를 담아서 쿼리문을 실행
-			// key = where절에 들어갈 컬럼을 결정
-			// value = 찾을 값
+			// map�뿉 key�� value瑜� �떞�븘�꽌 荑쇰━臾몄쓣 �떎�뻾
+			// key = where�젅�뿉 �뱾�뼱媛� 而щ읆�쓣 寃곗젙
+			// value = 李얠쓣 媛�
 			if (!memberService.autoDuplicate(map)) {
 				json = new ResponseData("notDuplicate", value);
 			} else {
@@ -115,63 +115,63 @@ public class MemberController {
 		return result;
 	}
 
-	@RequestMapping(value = "/signUp", method = RequestMethod.POST) // 회원가입 처리
+	@RequestMapping(value = "/signUp", method = RequestMethod.POST) // �쉶�썝媛��엯 泥섎━
 	public String signUp(SignUpDTO signUpDTO, RedirectAttributes rttr) {
-		System.out.println("회원가입 요청");
+		System.out.println("�쉶�썝媛��엯 �슂泥�");
 		System.out.println(signUpDTO.toString());
 		String result = "redirect:/viewSignUp";
-		// 입력받은 생일 형식을 DB에 저장될 형식으로 변경
+		// �엯�젰諛쏆� �깮�씪 �삎�떇�쓣 DB�뿉 ���옣�맆 �삎�떇�쑝濡� 蹂�寃�
 		String birtday = signUpDTO.getBirthday().replace("-", "");
 		signUpDTO.setBirthday(birtday);
 
-		// 입력받은 폰번호 형식을 DB에 저장될 형식으로 변경
-		// 01012345678 의 형식(-가 없는 형식이 경우)
+		// �엯�젰諛쏆� �룿踰덊샇 �삎�떇�쓣 DB�뿉 ���옣�맆 �삎�떇�쑝濡� 蹂�寃�
+		// 01012345678 �쓽 �삎�떇(-媛� �뾾�뒗 �삎�떇�씠 寃쎌슦)
 		if (signUpDTO.getPhone_number().length() == 11) {
 			String phone = signUpDTO.getPhone_number().substring(0, 3) + "-"
 					+ signUpDTO.getPhone_number().substring(3, 7) + "-" + signUpDTO.getPhone_number().substring(7, 11);
 			signUpDTO.setPhone_number(phone);
 		}
 		
-		// 별명(nickname)을 입력하지 않았을 경우
+		// 蹂꾨챸(nickname)�쓣 �엯�젰�븯吏� �븡�븯�쓣 寃쎌슦
 		if (signUpDTO.getNickname().equals("")) {
 			UUID randomuuid = UUID.randomUUID();
-			// member_name + 무작위 8글자로 닉네임 저장
-			// ex : 홍길동_44a9d39b
+			// member_name + 臾댁옉�쐞 8湲��옄濡� �땳�꽕�엫 ���옣
+			// ex : �솉湲몃룞_44a9d39b
 			signUpDTO.setNickname(signUpDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
 
-		// 입력받은 주소+상세주소
-		// 우편번호/주소/상세주소
+		// �엯�젰諛쏆� 二쇱냼+�긽�꽭二쇱냼
+		// �슦�렪踰덊샇/二쇱냼/�긽�꽭二쇱냼
 		signUpDTO.setAddress(signUpDTO.getAddress() + "/" + signUpDTO.getAddress2());
 
-		// 성별 미선택시 null로 들어오는 데이터 처리
+		// �꽦蹂� 誘몄꽑�깮�떆 null濡� �뱾�뼱�삤�뒗 �뜲�씠�꽣 泥섎━
 		if (signUpDTO.getGender() == null) {
 			signUpDTO.setGender("N");
 		}
 
 		try {
 			if (memberService.signUp(signUpDTO) == 1) {
-				System.out.println("insert성공");
+				System.out.println("insert�꽦怨�");
 				result = "redirect:/";
 			} else {
-				System.out.println("insert실패");
+				System.out.println("insert�떎�뙣");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("insert예외");
+			System.out.println("insert�삁�쇅");
 		}
 
 		return result;
 	}
 
-	@RequestMapping(value = "/verifyCheck", method = RequestMethod.POST) // 휴대폰 인증 메일 확인 (ajax)
+	@RequestMapping(value = "/verifyCheck", method = RequestMethod.POST) // �쑕���룿 �씤利� 硫붿씪 �솗�씤 (ajax)
 	public ResponseEntity<ResponseData> verifyCheck(@RequestParam("phone") String phone) {
 		System.out.println(phone);
-		// 010-1234-5678 형식의(길이가13) 번호인 경우
+		// 010-1234-5678 �삎�떇�쓽(湲몄씠媛�13) 踰덊샇�씤 寃쎌슦
 		if(phone.length()==13) {
-			phone = phone.replace("-", ""); // 01012345678 형식으로 (길이 11)로 변환
+			phone = phone.replace("-", ""); // 01012345678 �삎�떇�쑝濡� (湲몄씠 11)濡� 蹂��솚
 		}
 		
 		ResponseEntity<ResponseData> result = null;
@@ -187,12 +187,12 @@ public class MemberController {
 		return result;
 	}
 	
-	// 로그아웃
+	// 濡쒓렇�븘�썐
 	@RequestMapping(value = "/logout")
 	public String logout(HttpServletRequest request) {
 		HttpSession ses = request.getSession();
 		ses.removeAttribute("loginMember");
-		System.out.println("로그아웃");
+		System.out.println("濡쒓렇�븘�썐");
 		return "redirect:/";
 	}
 

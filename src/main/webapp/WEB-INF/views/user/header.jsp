@@ -55,8 +55,8 @@
 
 								</div>
 								<ul class="user-login">
-									<li><a href="/member/viewLogin">로그인</a></li>
-									<li><a href="/member/viewSignUp">회원가입</a></li>
+									<li><a href="/pages/member/viewLogin">로그인</a></li>
+									<li><a href="/pages//member/viewSignUp">회원가입</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->
