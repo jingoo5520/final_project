@@ -1,11 +1,11 @@
-package com.finalProject.persistence;
+package com.finalProject.persistence.admin.product;
 
 import java.util.List;
 import java.util.Map;
 
-import com.finalProject.model.ProductDTO;
-import com.finalProject.model.ProductUpdateDTO;
-import com.finalProject.model.ProductVO;
+import com.finalProject.model.admin.product.ProductDTO;
+import com.finalProject.model.admin.product.ProductUpdateDTO;
+import com.finalProject.model.admin.product.ProductVO;
 
 public interface ProductDAO {
 

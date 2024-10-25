@@ -1,6 +1,6 @@
-package com.finalProject.model;
+package com.finalProject.model.admin.product;
 
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-public class ProductVO {
+public class ProductDTO {
 	private int product_no;
 	private String product_name;
 	private int product_price;
@@ -25,5 +25,6 @@ public class ProductVO {
 	private int product_dc_amount;
 	private int product_sell_count;
 
-	private List<ProductImg> list;
+	private MultipartFile image_main_url;
+	private MultipartFile[] image_sub_url;
 }
