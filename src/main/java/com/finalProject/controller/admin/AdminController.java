@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminController {
 
 	// 관리자 페이지 이동
-	@GetMapping("/")
+	@GetMapping("")
 	public String adminPage() {
 		System.out.println("to admin index page");
-		return "admin/index";
+		return "/admin/index";
 	}
 }
