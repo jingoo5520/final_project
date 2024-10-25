@@ -12,18 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 
-import com.finalProject.model.TestVO;
-import com.finalProject.service.member.TestService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
 @RequestMapping(value="/test")
 public class TestController {
-
-	@Inject
-	private TestService service;
 
 	@RequestMapping(value = "/uuid")
 	public String uuid() {

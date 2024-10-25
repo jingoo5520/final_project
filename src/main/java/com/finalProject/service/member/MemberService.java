@@ -31,4 +31,6 @@ public interface MemberService {
 	// 마이 페이지 회원 정보 수정
 	boolean updateMember(MemberDTO memberDTO)throws Exception;
 	
+	
+	
 }
