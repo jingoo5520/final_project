@@ -70,8 +70,7 @@
 						이메일<input type="text" id="email" name="email"><span
 							id="emailStatus"></span><input type="hidden" value="">
 					</div>
-					<button class="btn btn-info" type="submit" value="수정하기"
-						onclick="checkData();">수정하기</button>
+					<button id="button" class="btn btn-info" type="button" value="수정하기">수정하기</button>
 				</form>
 			</c:if>
 		</main>
@@ -233,45 +232,51 @@ let tmpEmail = "tmpEmail";
 	
 	
 	// 수정하기
-	function checkData() {
-		let result = true;
-		let text = ""; // modal의 text영역에 들어갈 내용
-		let emailCheck = $("#email").next().next().val();
-		let phoneCheck = $("#phone_number").next().next().val();
-		console.log(emailCheck);
-		console.log(phoneCheck);
-		if(emailCheck != "true") {
-			result = false;
-			text += "<div>이메일</div>";
-		}
-		if(phoneCheck != "true") {
-			result = false;
-			text += "<div>휴대폰번호</div>";
-		}
-		if(result) {
-			$("#form").submit(function(e) {
-	            e.preventDefault(); // 기본 제출 동작 방지
-	                $.ajax({
-	                    type: 'POST',
-	                    url: '/member/modiInfo',
-	                    data: $("#form").serialize(), // 폼 데이터를 DTO로 받을수 있도록 해줌(데이터 직렬화)
-	                    success: function(data) {
-	                        console.log(data);
-	                        if(data.status == "success") {
-	                        	window.location.href = "/member/myPage/modiInfo?status=success";
-	                        } else if(data.status == "fail") {
-	                        	console.log("변경 실패");
-	                        }
-	                    },
-	                    error: function(error) {
-	                    	console.log("통신 실패");
-	                    }
-	                });
-	        });
-		} else {
-			
-		}
-	}
+	$("#button").click(function(e) {
+    e.preventDefault(); // 기본 제출 동작 방지
+    let result = true;
+    let text = ""; // modal의 text영역에 들어갈 내용
+    let emailCheck = $("#email").next().next().val();
+    let phoneCheck = $("#phone_number").next().next().val();
+    console.log(emailCheck);
+    console.log(phoneCheck);
+    
+    if (emailCheck != "true") {
+        result = false;
+        text += "<div>이메일</div>";
+    }
+    
+    if (phoneCheck != "true") {
+        result = false;
+        text += "<div>휴대폰번호</div>";
+    }
+    
+    console.log(result);
+    
+    if (result) {
+        $.ajax({
+            type: 'POST',
+            url: '/member/modiInfo',
+            data: $("#form").serialize(), // 폼 데이터를 DTO로 받을수 있도록 해줌(데이터 직렬화)
+            dataType: "json",
+            success: function(data) {
+                console.log(data);
+                if (data.status == "success") {
+                    console.log("성공");
+					alert("변경 성공"); // 모달로 수정 예정
+                } else if (data.status == "fail") {
+                    console.log("변경 실패");
+                    alert("변경 실패"); // 모달로 수정 예정
+                }
+            },
+            error: function(error) {
+                console.log("통신 실패");
+            }
+        });
+    } else {
+
+    }
+});
 	
 </script>
 </html>
