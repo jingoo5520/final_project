@@ -19,12 +19,11 @@ import lombok.ToString;
 @Setter
 @ToString
 public class NoticeDTO {
-	private NoticeType noticeType;
-	private String noticeTitle;
-	private LocalDateTime regDate;
-	private String noticeContent;
-	private String adminId;
-	
-	private List<NoticeImagesDTO> fileList;
+	private int notice_no;
+	private String notice_title;
+	private String admin_id;
+	private String notice_content;
+	private NoticeTypeStatus.NoticeType notice_type;
+	private LocalDateTime reg_date;
 	
 }

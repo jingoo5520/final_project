@@ -21,8 +21,8 @@ public class NoticeVO {
 	private int noticeNo;
 	private String noticeType;
 	private String noticeTitle;
+	private String adminId;
 	private String noticeContent;
 	private LocalDateTime regDate;
-	private String adminId;
-	private Timestamp noticeEndDate;
+	private LocalDateTime noticeEndDate;
 }

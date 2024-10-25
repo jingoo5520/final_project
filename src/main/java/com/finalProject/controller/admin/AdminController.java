@@ -26,8 +26,14 @@ public class AdminController {
 	}
 	
 	// 공지사항 관리 - 공지 페이지 이동
-	@GetMapping("/admin/notice")
+	@GetMapping("/admin/notices/notice")
 	public String noticePage() {
-		return "/admin/pages/notice";
+		return "/admin/pages/notices/notice";
+	}
+	
+	// 이벤트 관리 - 이벤트 페이지 이동
+	@GetMapping("/admin/notices/event")
+	public String eventPage() {
+		return "/admin/pages/notices/event";
 	}
 }

@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -39,81 +41,22 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
-
-    <style>
-        /* 전체 페이지 스타일 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-
-        /* 폼 스타일 */
-        form {
-            width: 100%; /* 폼이 페이지의 80%를 차지하도록 설정 */
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 라벨과 입력 필드 스타일 */
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        input[type="text"], select, textarea, input[type="file"] {
-            width: 100%; /* 입력 필드, 드롭다운, 텍스트 영역의 너비를 100%로 설정 */
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        /* 텍스트 영역 크기 */
-        textarea {
-            height: 150px; /* 내용 입력 영역의 높이 */
-        }
-
-        /* 버튼 스타일 */
-        button {
-            width: 100%; /* 버튼도 페이지에 꽉 차게 */
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-
+<script>
+	
+</script>
 </head>
 
+ <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
 
-<body>
-	<!-- Layout wrapper -->
-	<div class="layout-wrapper layout-content-navbar">
-		<div class="layout-container">
-			
-			
-			<!-- Menu -->
+        <!-- Menu -->
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="pageName" value="notice" />
+				<jsp:param name="notice" value="notice" />
 
 			</jsp:include>
 
@@ -129,7 +72,9 @@
 						</a>
 					</div>
 
+
 				</nav>
+
 				<!-- / Navbar -->
 
 				<!-- Content wrapper -->
@@ -138,64 +83,93 @@
 
 					<div class="container-xxl flex-grow-1 container-p-y">
 
-
-
 						<!-- body  -->
-공지
 				<!-- / Content -->
-	<h1>공지사항 작성 페이지</h1>
 	
-    <form action="/admin/pages/createNotice" method="post" enctype="multipart/form-data">
-        <!-- 제목 입력 -->
-        <div>
-            <label for="title">제목:</label>
-            <input type="text" id="title" name="noticeTitle" required />
-        </div>
+               <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">공지 /</span> 공지사항 목록</h4>
 
-        <!-- 작성자 선택 (드롭다운) -->
-        <div>
-            <label for="adminId">작성자:</label>
-            <select id="adminId" name="adminId" required>
-                <option value="전체" disabled selected>전체</option>
-                <option value="admin1">admin1</option>
-                <option value="admin2">admin2</option>
-                <option value="superAdmin">superAdmin</option>
-            </select>
-        </div>
+              <div class="row">
+              <!-- Bordered Table -->
+              <div class="card">
+                <h5 class="card-header"></h5>
+                <div class="card-body">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>번호</th>
+                          <th>구분</th>
+                          <th>제목</th>
+                          <th>작성자</th>
+                          <th>작성일자</th>
+                          <th>관리</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+	                      <c:choose>
+	                        <c:when test="${not empty notices}">
+								<c:forEach var="notice" items="${notices}">
+								    <tr id="notice-row-${notice.notice_no}">
+								        <td>${notice.notice_no}</td>
+								        <td>${notice.notice_type}</td>
+								        <td><a href="viewNotice/${notice.notice_no}">${notice.notice_title}</td>
+								        <td>${notice.admin_id}</td>
+								        <td>${notice.reg_date}</td>
+								        <td>
+											<div>${notice.notice_content}</div>
+											<a class="btn rounded-pill btn-outline-warning" href="editNotice/${notice.notice_no}">수정</a>
+										    <a class="btn rounded-pill btn-outline-danger" onclick="confirmDelete(${notice.notice_no});">삭제</a>
+										</td>
+									</tr>
+								</c:forEach>
+	                        </c:when>
+	                        <c:otherwise>
+	                        	<tr>
+	                            	<td colspan="6">등록된 공지사항이 없습니다.</td>
+	                            </tr>
+							</c:otherwise>
+	                      </c:choose>
+                      </tbody>
+                    </table>
+                    
+		<!-- 페이지네이션 -->
+		<p>현재 페이지: ${currentPage != null ? currentPage : 'N/A'} / 총 페이지: ${totalPages != null ? totalPages : 'N/A'}</p>
+		<div class="pagination">
+		    <c:if test="${currentPage > 1}">
+		        <a href="?page=${currentPage - 1}">이전</a>
+		    </c:if>
+		    
+		    <c:if test="${totalPages > 0}">
+		        <c:forEach var="i" begin="1" end="${totalPages}">
+		            <c:choose>
+		                <c:when test="${i == currentPage}">
+		                    <span>${i}</span> <!-- 현재 페이지는 그냥 숫자 표시 -->
+		                </c:when>
+		                <c:otherwise>
+		                    <a href="?page=${i}">${i}</a>
+		                </c:otherwise>
+		            </c:choose>
+		        </c:forEach>
+		    </c:if>
+		
+		    <c:if test="${currentPage < totalPages}">
+		        <a href="?page=${currentPage + 1}">다음</a>
+		    </c:if>
+		</div>
 
-        <!-- 그룹 선택 (드롭다운, 기본값: 전체) -->
-        <div>
-            <label for="group">그룹:</label>
-            <select id="group" name="noticeType" required>
-                <!-- <option value="전체" disabled selected>전체</option> -->
-                <option value="N" selected>공지</option>
-                <option value="E">이벤트</option>
-            </select>
-        </div>
+      <!-- 공지 작성 버튼 -->
+      <div class="text-end mt-3">
+        <a class="btn rounded-pill btn-outline-primary" href="/admin/notices/createNotice">공지 작성</a>
+                  </div>
+                </div>
+              </div>
+ 
+ 
+            </div>
+            <!-- / Content -->
 
-        <!-- 내용 (첨부파일 포함) -->
-        <div>
-            <label for="content">내용:</label>
-            <textarea id="content" name="noticeContent" rows="5" cols="40" required></textarea>
-        </div>
 
-        <!-- 파일 첨부 -->
-         <div>
-             <label for="file">파일 첨부:</label>
-             <input type="file" id="file" name="file" multiple>
-         </div>
-
-        <!-- 등록 버튼 -->
-        <div>
-            <button type="submit">공지 등록</button>
-        </div>
-        
-        <!-- 등록 날짜, 숨김 처리-->
-<%--         <input type="hidden" id="regDate" name="regDate" value="${pageContext.request.time}"> --%>
-        
-    </form>
-    
-    
 				<!-- Footer -->
 				<footer class="content-footer footer bg-footer-theme">
 					<div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
@@ -246,7 +220,31 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-  </body>
+	<script type="text/javascript">
+	
+	
+	function confirmDelete(noticeNo) {
+	    if (confirm("정말 삭제하시겠습니까?")) {
+	        deleteNotice(noticeNo);
+	    }
+	}
 
+	function deleteNotice(noticeNo) {
+	    $.ajax({
+	        type: "POST",
+	        url: "/admin/notices/deleteNotice",
+	        data: { notice_no: noticeNo },
+	        success: function(response) {
+	            $("#notice-row-" + noticeNo).remove(); // 공지사항 행 제거
+	            alert("공지사항 삭제 완료");
+	        },
+	        error: function(xhr, status, error) {
+	            alert("공지사항 삭제 실패");
+	            console.error(xhr.responseText);
+	        }
+	    });
+	}
+	</script>
+  </body>
 
 </html>
