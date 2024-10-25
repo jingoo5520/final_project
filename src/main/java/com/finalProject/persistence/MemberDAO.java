@@ -3,7 +3,7 @@ package com.finalProject.persistence;
 import java.util.Map;
 
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.SignUpDTO;
+import com.finalProject.model.MemberDTO;
 
 public interface MemberDAO {
 
@@ -14,7 +14,7 @@ public interface MemberDAO {
 	boolean autoDuplicate(Map<String, Object> map) throws Exception;
 
 	// 회원가입
-	int signUp(SignUpDTO signUpDTO) throws Exception;
+	int signUp(MemberDTO signUpDTO) throws Exception;
 
 	// 자동 로그인 정보 저장
 	void setAutoLogin(String member_id, String code, int AUTOLOGIN_DATE) throws Exception;
@@ -24,5 +24,11 @@ public interface MemberDAO {
 
 	// 마이 페이지 비밀번호 인증
 	boolean auth(String member_id, String member_pwd) throws Exception;
+
+	// 마이 페이지 회원 정보 조회
+	MemberDTO getMember(String member_id)throws Exception;
+
+	// 마이 페이지 회원 정보 수정
+	boolean updateMember(MemberDTO memberDTO)throws Exception;
 
 }

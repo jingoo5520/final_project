@@ -9,7 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.SignUpDTO;
+import com.finalProject.model.MemberDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +42,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 	// 회원가입
 	@Override
-	public int signUp(SignUpDTO signUpDTO) throws Exception {
+	public int signUp(MemberDTO signUpDTO) throws Exception {
 		return ses.insert(ns + "signUpMember", signUpDTO);
 	}
 
@@ -74,6 +74,21 @@ public class MemberDAOImpl implements MemberDAO {
 			result = true;
 		}
 		
+		return result;
+	}
+
+	// 마이 페이지 회원 정보 조회
+	@Override
+	public MemberDTO getMember(String member_id) throws Exception {
+		return ses.selectOne(ns+"selectMemberById", member_id);
+	}
+
+	@Override
+	public boolean updateMember(MemberDTO memberDTO) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateMember", memberDTO)==1) {
+			result = true;
+		}
 		return result;
 	}
 

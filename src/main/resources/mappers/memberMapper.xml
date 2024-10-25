@@ -53,5 +53,18 @@
 		now()
 	</select>
 
+	<!-- 마이 페이지 회원 정보 조회 -->
+	<select id="selectMemberById" resultType="MemberDTO">
+		select * from members
+		where member_id = #{member_id}
+	</select>
+
+	<!-- 마이 페이지 회원 정보 수정 -->
+	<update id="updateMember">
+		update members
+		set nickname = #{nickname}, gender = #{gender}, phone_number = #{phone_number}
+		, address = #{address}, email = #{email}
+		where member_id = #{member_id}
+	</update>
 
 </mapper>

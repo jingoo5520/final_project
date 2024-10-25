@@ -225,7 +225,7 @@
 									onclick="return checkData();">회원 가입</button>
 							</div>
 							<p class="outer-link">
-								이미 ELOLIA의 회원이신가요? <a href="${pageContext.request.contextPath}/member/viewLogin"">로그인 하기</a>
+								이미 ELOLIA의 회원이신가요? <a href="${pageContext.request.contextPath}/member/viewLogin">로그인 하기</a>
 							</p>
 						</form>
 					</div>
