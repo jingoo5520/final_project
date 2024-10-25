@@ -55,7 +55,7 @@
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
 				<jsp:param name="pageName" value="dashboard" />
-
+	
 			</jsp:include>
 
 		<!-- / Menu -->
