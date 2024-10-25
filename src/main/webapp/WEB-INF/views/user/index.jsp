@@ -266,8 +266,9 @@
 						<div class="product-image">
 							<img src="https://via.placeholder.com/335x335" alt="#">
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -297,8 +298,9 @@
 							<img src="https://via.placeholder.com/335x335" alt="#"> <span
 								class="sale-tag">-25%</span>
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -327,8 +329,9 @@
 						<div class="product-image">
 							<img src="https://via.placeholder.com/335x335" alt="#">
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -358,8 +361,9 @@
 							<img src="https://via.placeholder.com/335x335" alt="#"> <span
 								class="new-tag">New</span>
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -388,8 +392,9 @@
 						<div class="product-image">
 							<img src="https://via.placeholder.com/335x335" alt="#">
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -418,8 +423,9 @@
 						<div class="product-image">
 							<img src="https://via.placeholder.com/335x335" alt="#">
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -449,8 +455,9 @@
 							<img src="https://via.placeholder.com/335x335" alt="#"> <span
 								class="sale-tag">-50%</span>
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -479,8 +486,9 @@
 						<div class="product-image">
 							<img src="https://via.placeholder.com/335x335" alt="#">
 							<div class="button">
-								<a href="product-details.html" class="btn"><i
-									class="lni lni-cart"></i> Add to Cart</a>
+								<a href="product-details.html" class="btn">
+									<i class="lni lni-cart"></i> Add to Cart
+								</a>
 							</div>
 						</div>
 						<div class="product-info">
@@ -569,8 +577,9 @@
 								<div class="product-image">
 									<img src="https://via.placeholder.com/335x335" alt="#">
 									<div class="button">
-										<a href="product-details.html" class="btn"><i
-											class="lni lni-cart"></i> Add to Cart</a>
+										<a href="product-details.html" class="btn">
+											<i class="lni lni-cart"></i> Add to Cart
+										</a>
 									</div>
 								</div>
 								<div class="product-info">
@@ -599,8 +608,9 @@
 								<div class="product-image">
 									<img src="https://via.placeholder.com/335x335" alt="#">
 									<div class="button">
-										<a href="product-details.html" class="btn"><i
-											class="lni lni-cart"></i> Add to Cart</a>
+										<a href="product-details.html" class="btn">
+											<i class="lni lni-cart"></i> Add to Cart
+										</a>
 									</div>
 								</div>
 								<div class="product-info">
@@ -629,8 +639,9 @@
 								<div class="product-image">
 									<img src="https://via.placeholder.com/335x335" alt="#">
 									<div class="button">
-										<a href="product-details.html" class="btn"><i
-											class="lni lni-cart"></i> Add to Cart</a>
+										<a href="product-details.html" class="btn">
+											<i class="lni lni-cart"></i> Add to Cart
+										</a>
 									</div>
 								</div>
 								<div class="product-info">
@@ -735,8 +746,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -749,8 +761,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -763,8 +776,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -780,8 +794,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -794,8 +809,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -808,8 +824,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -825,8 +842,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -839,8 +857,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -853,8 +872,9 @@
 					<!-- Start Single List -->
 					<div class="single-list">
 						<div class="list-image">
-							<a href="product-grids.html"><img
-								src="https://via.placeholder.com/100x100" alt="#"></a>
+							<a href="product-grids.html">
+								<img src="https://via.placeholder.com/100x100" alt="#">
+							</a>
 						</div>
 						<div class="list-info">
 							<h3>
@@ -929,8 +949,8 @@
 					<!-- Start Single Blog -->
 					<div class="single-blog">
 						<div class="blog-img">
-							<a href="blog-single-sidebar.html"> <img
-								src="https://via.placeholder.com/370x215" alt="#">
+							<a href="blog-single-sidebar.html">
+								<img src="https://via.placeholder.com/370x215" alt="#">
 							</a>
 						</div>
 						<div class="blog-content">
@@ -952,8 +972,8 @@
 					<!-- Start Single Blog -->
 					<div class="single-blog">
 						<div class="blog-img">
-							<a href="blog-single-sidebar.html"> <img
-								src="https://via.placeholder.com/370x215" alt="#">
+							<a href="blog-single-sidebar.html">
+								<img src="https://via.placeholder.com/370x215" alt="#">
 							</a>
 						</div>
 						<div class="blog-content">
@@ -975,8 +995,8 @@
 					<!-- Start Single Blog -->
 					<div class="single-blog">
 						<div class="blog-img">
-							<a href="blog-single-sidebar.html"> <img
-								src="https://via.placeholder.com/370x215" alt="#">
+							<a href="blog-single-sidebar.html">
+								<img src="https://via.placeholder.com/370x215" alt="#">
 							</a>
 						</div>
 						<div class="blog-content">
@@ -1051,7 +1071,8 @@
 	<jsp:include page="footer.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
-	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
+	<a href="#" class="scroll-top">
+		<i class="lni lni-chevron-up"></i>
 	</a>
 
 	<!-- ========================= JS here ========================= -->
