@@ -55,7 +55,7 @@
 
 <body>
 
-<jsp:include page="../header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/header.jsp"></jsp:include>
 
     <!-- Preloader -->
     <div class="preloader">
@@ -254,7 +254,7 @@
     <!-- End Item Details -->
 
 
-    <jsp:include page="../footer.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/footer.jsp"></jsp:include>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">

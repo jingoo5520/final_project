@@ -364,7 +364,7 @@
 </head>
 <body>
 
-	<jsp:include page="../header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/header.jsp"></jsp:include>
 
 	<div class="body">
 
@@ -469,7 +469,7 @@
 
 	</div>
 
-	<jsp:include page="../footer.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/footer.jsp"></jsp:include>
 
 </body>
 </html>

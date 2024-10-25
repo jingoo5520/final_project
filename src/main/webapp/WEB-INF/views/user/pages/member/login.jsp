@@ -53,7 +53,7 @@ button:hover {
 
 <body>
 
-	<jsp:include page="../header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/header.jsp"></jsp:include>
 	<div class="body">
 		<form action="/member/login" method="post">
 			<div class="loginContainer">
@@ -77,7 +77,7 @@ button:hover {
 		</form>
 	</div>
 
-	<jsp:include page="../footer.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/footer.jsp"></jsp:include>
 	<script src="/resources/assets/user/js/main.js"></script>
 </body>
 

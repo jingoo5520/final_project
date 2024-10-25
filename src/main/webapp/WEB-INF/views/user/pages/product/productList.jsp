@@ -30,7 +30,7 @@ function submitSortingForm() {
 </script>
 
 <body>
-<jsp:include page="../header.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/header.jsp"></jsp:include>
 
     <!-- Preloader -->
     <div class="preloader">
@@ -247,7 +247,7 @@ function submitSortingForm() {
     </section>
     <!-- End Product Grids -->
 
-    <jsp:include page="../footer.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/user/footer.jsp"></jsp:include>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">
