@@ -2,7 +2,7 @@ package com.finalProject.service.product;
 
 import java.util.List;
 
-import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.ProductDTO;
 
 public interface ProductService {
 

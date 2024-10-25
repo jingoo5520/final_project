@@ -133,13 +133,30 @@
                 </a>
             </p>
             
-						            <!-- 가격 표시 -->
-						            <h3 class="price">
-						                <fmt:formatNumber value="${products[0].product_price}" type="number" pattern="#,###"/> KRW
-						                <c:if test="${products[0].product_cost != 0}">
-						                    <span><fmt:formatNumber value="${products[0].product_cost}" type="number" pattern="#,###"/> KRW</span>
-						                </c:if>
-						            </h3>
+									<!-- 가격 표시 -->
+									<h3 class="price" style="display: flex; flex-direction: column; gap: 5px;">
+									    <!-- 원래 가격 표시 (할인이 있는 경우만 표시) -->
+									    <c:if test="${products[0].product_dc_type == 'P' && products[0].product_price != products[0].calculatedPrice}">
+									        <span style="text-decoration: line-through; font-size: 0.9em; color: #999;">
+									            <fmt:formatNumber value="${products[0].product_price}" type="number" pattern="#,###"/>원
+									        </span>
+									    </c:if>
+									
+									    <!-- 할인율 및 할인 적용된 가격 표시 -->
+									    <div style="display: flex; align-items: baseline; gap: 10px;">
+									        <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
+									            <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+									                ${products[0].dc_rate}%
+									            </span>
+									        </c:if>
+									
+									        <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;">
+									            <fmt:formatNumber value="${products[0].calculatedPrice}" type="number" pattern="#,###"/>원
+									        </span>
+									    </div>
+									</h3>
+
+
 						
 						            <div class="row">
 						                <div class="col-lg-4 col-md-4 col-12"></div>

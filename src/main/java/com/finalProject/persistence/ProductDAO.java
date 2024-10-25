@@ -1,9 +1,9 @@
-package com.finalProject.persistence.product;
+package com.finalProject.persistence;
 
 import java.util.List;
 import java.util.Map;
 
-import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.ProductDTO;
 
 public interface ProductDAO {
 	

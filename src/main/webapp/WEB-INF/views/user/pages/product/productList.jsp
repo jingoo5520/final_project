@@ -139,7 +139,7 @@ function submitSortingForm() {
 <!--                                         개수 -->
                                         <div class="single-product">
                                             <div class="product-image">
-                                                <a href = "/product/jewelry/detail?productNo=${product.product_no}&categoryName=${product.category_name}&categoryNo=${product.product_category}"><img src="${product.image_main_url}" alt="${product.product_name}" width="300px" height="300px"></a> 
+                                                <a href = "/product/jewelry/detail?productNo=${product.product_no}"><img src="${product.image_main_url}" alt="${product.product_name}" width="300px" height="300px"></a> 
                                                 
                                                 <div class="button">
                                                     <a onclick="addCart(${product.product_no})" class="btn"><i class="lni lni-cart"></i></a>
@@ -159,11 +159,39 @@ function submitSortingForm() {
 												</span>
 												
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">${product.product_name }</a>
+                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}">${product.product_name }</a>
                                                 </h4>
+                                                
                                                 <div class="price">
-                                                <span><fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###"/> 원</span>
+<!--                                                 할인 전 가격 -->
+                                                <span>
+	                                                <c:if test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
+										            	<fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###"/>원
+										    		</c:if>
+                                                </span>
+                                                
+<!--                                                 할인률 -->
+                                                <span class="sale-tag">${product.dc_rate }%</span>
+                                                
+<!--                                                 할인 된 가격 -->
+                                                <span><fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###"/> 원</span>
                                                 </div>
+									    <!-- 원래 가격 표시 (할인이 있는 경우만 표시) -->
+
+									
+									    <!-- 할인율 및 할인 적용된 가격 표시 -->
+<!-- 									    <div style="display: flex; align-items: baseline; gap: 10px;"> -->
+									        <c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
+									            <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+									                ${product.dc_rate}%
+									            </span>
+									        </c:if>
+									
+<!-- 									        <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;"> -->
+<%-- 									            <fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###"/>원 --%>
+<!-- 									        </span> -->
+<!-- 									    </div> -->
+                                                
                                             </div>
                                             
                                         </div>

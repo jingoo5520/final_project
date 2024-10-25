@@ -1,4 +1,4 @@
-package com.finalProject.model.product;
+package com.finalProject.model;
 
 import lombok.Getter;
 import lombok.ToString;

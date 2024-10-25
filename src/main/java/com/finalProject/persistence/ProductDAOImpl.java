@@ -1,4 +1,4 @@
-package com.finalProject.persistence.product;
+package com.finalProject.persistence;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.ProductDTO;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
-import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.ProductDTO;
 import com.finalProject.service.product.ProductService;
 import com.mysql.cj.result.DefaultValueFactory;
 
@@ -61,6 +61,7 @@ public class PController {
         model.addAttribute("category", category);  // 카테고리 추가
         model.addAttribute("totalProducts", totalProducts);
         
+        
         // 각 카테고리별 상품 개수 전달
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
@@ -83,7 +84,7 @@ public class PController {
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
 		
-		return "/user/product/productList"; // jsp
+		return "/user/pages/product/productList"; // jsp
 	}
 	
 	// 2. 카테고리별로 상품을 보여주는 메서드
@@ -97,8 +98,9 @@ public class PController {
 
     	System.out.println("카테고리 값 : " + category); 
     	sortOrder = sortOrder.trim();
-    	
+
         List<ProductDTO> products = service.getProductsByCategoryAndPage(category, page, pageSize, sortOrder);
+        
         int totalProducts = service.getProductCountByCategory(category);
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         int totalProductCount = service.getProductCount();
@@ -149,7 +151,7 @@ public class PController {
         model.addAttribute("hasNextBlock", endPage < totalPages);
         
 
-        return "/user/product/productList";  // JSP 파일
+        return "/user/pages/product/productList";  // JSP 파일
     }
     
     @GetMapping ("/jewelry/detail")
@@ -168,7 +170,8 @@ public class PController {
     	
     	model.addAttribute("products", products);
     	model.addAttribute("product_content", product.getProduct_content());
-    	return "/user/product/productDetail";
+    	model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 계산된 가격 추가
+    	return "/user/pages/product/productDetail";
     }
    
     
