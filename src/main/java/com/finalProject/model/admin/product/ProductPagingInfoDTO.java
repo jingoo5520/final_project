@@ -1,4 +1,4 @@
-package com.finalProject.model;
+package com.finalProject.model.admin.product;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,13 +10,11 @@ import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @Getter
 @Setter
+@Builder
 @ToString
-public class PagingInfoDTO {
-
+public class ProductPagingInfoDTO {
 	private int pageNo;
 	private int pagingSize;
-	
 }

@@ -1,6 +1,5 @@
-package com.finalProject.model;
+package com.finalProject.model.admin;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,15 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
 @ToString
 public class PagingInfoDTO {
-
 	private int pageNo;
-	private int pagingSize;
-	
+	private int pagingSize; // 한 페이지에서 보여질 데이터의 개수
+	private int pageCntPerBlock; // 한 블럭에서 보여질 페이지 개수
 }

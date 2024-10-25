@@ -7,5 +7,8 @@
 		<typeAlias type="com.finalProject.model.LoginDTO" alias="LoginDTO" />
 		<typeAlias type="com.finalProject.model.ProductDTO" alias="ProductDTO" />
 
+		<typeAlias type="com.finalProject.model.admin.CouponDTO" alias="CouponDTO" />
+		<typeAlias type="com.finalProject.model.admin.MemberManageDTO" alias="MemberManageDTO" />
+
 	</typeAliases>
 </configuration>

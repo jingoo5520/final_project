@@ -11,7 +11,6 @@
 	<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
 		<div class="app-brand demo">
 			<a href="/admin" class="app-brand-link"> <span class="app-brand-logo demo">
-
 					<svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                   <defs>
                     <path d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z" id="path-1"></path>
@@ -53,14 +52,16 @@
 
 		<ul class="menu-inner py-1">
 			<!-- Dashboard -->
-			<li class="menu-item <%= "dashboard".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin" class="menu-link"> <i class="menu-icon tf-icons bx bx-home-circle"></i>
+			<li class="menu-item <%="dashboard".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin" class="menu-link"> <i class="menu-icon tf-icons bx bx-home-circle"></i>
 
 					<div data-i18n="Analytics">Dashboard</div>
 			</a></li>
 
 			<li class="menu-header small text-uppercase"><span class="menu-header-text">Pages</span></li>
 
-			<li class="menu-item <%= "members".equals(request.getParameter("pageName")) || "levels".equals(request.getParameter("pageName")) ? "active open" : "" %>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%="members".equals(request.getParameter("pageName")) || "levels".equals(request.getParameter("pageName"))
+		? "active open"
+		: ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Amange Members">회원 관리</div>
 			</a>
 				<ul class="menu-sub">
@@ -84,29 +85,34 @@
 					</a></li>
 				</ul></li>
 
-			<li class="menu-item"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
-					<div data-i18n="Admin Products">상품 관리</div>
+			<li class="menu-item <%="productSave".equals(request.getParameter("pageName")) || "productView".equals(request.getParameter("pageName"))
+				? "active open"
+				: ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+					<div data-i18n="productmanage">상품 관리</div>
 			</a>
 				<ul class="menu-sub">
-					<li class="menu-item"><a href="/admin/coupon" class="menu-link">
-							<div data-i18n="products">상품</div>
+					<li class="menu-item <%="productSave".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/productmanage/productSave" class="menu-link">
+							<div data-i18n="productSave">상품</div>
 					</a></li>
-					<li class="menu-item"><a href="pages-account-settings-connections.html" class="menu-link">
-							<div data-i18n="categories">카테고리</div>
+					<li class="menu-item  <%="productView".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/productmanage/productView " class="menu-link">
+							<div data-i18n="productView">상품 조회</div>
 					</a></li>
 				</ul></li>
 
 
-			<li class="menu-item <%= "coupons".equals(request.getParameter("pageName")) || "couponUseLog".equals(request.getParameter("pageName")) ? "active open" : "" %>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%="coupons".equals(request.getParameter("pageName")) || "couponUseLog".equals(request.getParameter("pageName"))
+		|| "couponPay".equals(request.getParameter("pageName")) ? "active open" : ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Amange Coupons">쿠폰 관리</div>
 			</a>
 				<ul class="menu-sub">
 
-					<li class="menu-item <%= "coupons".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/coupons" class="menu-link">
+					<li class="menu-item <%="coupons".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/coupon/coupons" class="menu-link">
 							<div data-i18n="Coupons">쿠폰</div>
 					</a></li>
-					<li class="menu-item <%= "couponUseLog".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/couponUseLog" class="menu-link">
-
+					<li class="menu-item <%="couponPay".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/coupon/couponPay" class="menu-link">
+							<div data-i18n="Coupon Pay">쿠폰 지급</div>
+					</a></li>
+					<li class="menu-item <%="couponUseLog".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/coupon/couponUseLog" class="menu-link">
 							<div data-i18n="Coupon use log">쿠폰 사용 내역</div>
 					</a></li>
 				</ul></li>
