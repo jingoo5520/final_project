@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.finalProject.model.admin.CouponDTO;
 import com.finalProject.model.admin.CouponPayDTO;
-import com.finalProject.model.admin.PagingInfo;
+import com.finalProject.model.admin.PagingInfoNew;
 
 public interface CouponDAO {
 
@@ -13,7 +13,7 @@ public interface CouponDAO {
 	
 	// 쿠폰 리스트 가져오기
 	List<CouponDTO> selectCouponList() throws Exception;
-	List<CouponDTO> selectCouponList(PagingInfo pi) throws Exception;
+	List<CouponDTO> selectCouponList(PagingInfoNew pi) throws Exception;
 		
 	// 쿠폰 생성
 	int insertCoupon(CouponDTO couponDTO) throws Exception;

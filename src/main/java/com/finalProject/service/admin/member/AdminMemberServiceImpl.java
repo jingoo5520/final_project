@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.finalProject.model.admin.MemberManageDTO;
 import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfo;
-import com.finalProject.model.admin.PagingInfoDTO;
+import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.PagingInfoNewDTO;
 import com.finalProject.persistence.admin.AdminMemberDAO;
 
 @Service
@@ -21,8 +21,8 @@ public class AdminMemberServiceImpl implements AdminMemberService {
 	AdminMemberDAO mDao;
 
 	@Override
-	public Map<String, Object> getAllMembers(PagingInfoDTO pagingInfoDTO) throws Exception {
-		PagingInfo pi = makePagingInfo(pagingInfoDTO);
+	public Map<String, Object> getAllMembers(PagingInfoNewDTO pagingInfoDTO) throws Exception {
+		PagingInfoNew pi = makePagingInfo(pagingInfoDTO);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<MemberManageDTO> list = mDao.selectAllMembers(pi);
@@ -43,7 +43,7 @@ public class AdminMemberServiceImpl implements AdminMemberService {
 
 		System.out.println("pageNo: " + pageNo);
 		
-		PagingInfo pi = makePagingInfo(new PagingInfoDTO(pageNo, pagingSizeg, pageCntPerBlock), memberSearchFilterDTO);
+		PagingInfoNew pi = makePagingInfo(new PagingInfoNewDTO(pageNo, pagingSizeg, pageCntPerBlock), memberSearchFilterDTO);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<MemberManageDTO> list = mDao.selectFilteredMembers(memberSearchFilterDTO, pi);
@@ -54,8 +54,8 @@ public class AdminMemberServiceImpl implements AdminMemberService {
 		return result;
 	}
 
-	private PagingInfo makePagingInfo(PagingInfoDTO pagingInfoDTO) throws Exception {
-		PagingInfo pi = new PagingInfo(pagingInfoDTO);
+	private PagingInfoNew makePagingInfo(PagingInfoNewDTO pagingInfoDTO) throws Exception {
+		PagingInfoNew pi = new PagingInfoNew(pagingInfoDTO);
 
 		// setter 호출
 		pi.setTotalDataCnt(mDao.getTotalMemberCnt());
@@ -71,8 +71,8 @@ public class AdminMemberServiceImpl implements AdminMemberService {
 		return pi;
 	}
 	
-	private PagingInfo makePagingInfo(PagingInfoDTO pagingInfoDTO, MemberSearchFilterDTO memberSearchFilterDTO) throws Exception {
-		PagingInfo pi = new PagingInfo(pagingInfoDTO);
+	private PagingInfoNew makePagingInfo(PagingInfoNewDTO pagingInfoDTO, MemberSearchFilterDTO memberSearchFilterDTO) throws Exception {
+		PagingInfoNew pi = new PagingInfoNew(pagingInfoDTO);
 
 		// setter 호출
 		pi.setTotalDataCnt(mDao.getTotalFilterdMemberCnt(memberSearchFilterDTO));

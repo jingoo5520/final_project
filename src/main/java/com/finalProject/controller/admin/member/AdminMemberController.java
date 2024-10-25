@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfoDTO;
+import com.finalProject.model.admin.PagingInfoNewDTO;
 import com.finalProject.service.admin.member.AdminMemberService;
 
 @Controller
@@ -36,7 +36,7 @@ public class AdminMemberController {
 
 		try {
 			result = "success";
-			data = amService.getAllMembers(new PagingInfoDTO(pageNo, pagingSize, pageCntPerBlock));
+			data = amService.getAllMembers(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock));
 		} catch (Exception e) {
 			result = "fail";
 			e.printStackTrace();

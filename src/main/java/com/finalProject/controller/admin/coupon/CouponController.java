@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.CouponDTO;
 import com.finalProject.model.admin.MemberManageDTO;
-import com.finalProject.model.admin.PagingInfoDTO;
+import com.finalProject.model.admin.PagingInfoNewDTO;
 import com.finalProject.service.admin.coupon.CouponService;
 import com.finalProject.service.admin.member.AdminMemberService;
 
@@ -42,7 +42,7 @@ public class CouponController {
 		List<CouponDTO> list = null;
 
 		try {
-			data = cService.getCouponList(new PagingInfoDTO(1, 5, 3));
+			data = cService.getCouponList(new PagingInfoNewDTO(1, 5, 3));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +67,7 @@ public class CouponController {
 		List<MemberManageDTO> list = null;
 
 		try {
-			data = amService.getAllMembers(new PagingInfoDTO(1, 10, 10));
+			data = amService.getAllMembers(new PagingInfoNewDTO(1, 10, 10));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,7 +101,7 @@ public class CouponController {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		try {
-			data = cService.getCouponList(new PagingInfoDTO(pageNo, pagingSize, pageCntPerBlock));
+			data = cService.getCouponList(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

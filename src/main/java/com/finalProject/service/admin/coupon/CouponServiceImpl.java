@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.finalProject.model.admin.CouponDTO;
 import com.finalProject.model.admin.CouponPayDTO;
-import com.finalProject.model.admin.PagingInfo;
-import com.finalProject.model.admin.PagingInfoDTO;
+import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.PagingInfoNewDTO;
 import com.finalProject.persistence.admin.CouponDAO;
 
 @Service
@@ -29,9 +29,9 @@ public class CouponServiceImpl implements CouponService {
 	}
 	
 	@Override
-	public Map<String, Object> getCouponList(PagingInfoDTO pagingInfoDTO) throws Exception {
+	public Map<String, Object> getCouponList(PagingInfoNewDTO pagingInfoDTO) throws Exception {
 		
-		PagingInfo pi = makePagingInfo(pagingInfoDTO);
+		PagingInfoNew pi = makePagingInfo(pagingInfoDTO);
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<CouponDTO> list = cDao.selectCouponList(pi);
@@ -42,8 +42,8 @@ public class CouponServiceImpl implements CouponService {
 		return result;
 	}
 	
-	private PagingInfo makePagingInfo(PagingInfoDTO pagingInfoDTO) throws Exception {
-		PagingInfo pi = new PagingInfo(pagingInfoDTO);
+	private PagingInfoNew makePagingInfo(PagingInfoNewDTO pagingInfoDTO) throws Exception {
+		PagingInfoNew pi = new PagingInfoNew(pagingInfoDTO);
 		
 		// setter 호출
 		pi.setTotalDataCnt(cDao.getTotalCouponCnt());

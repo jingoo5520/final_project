@@ -10,8 +10,5 @@
 			alias="CouponDTO" />
 		<typeAlias type="com.finalProject.model.admin.MemberManageDTO"
 			alias="MemberManageDTO" />
-			
-
-
 	</typeAliases>
 </configuration>

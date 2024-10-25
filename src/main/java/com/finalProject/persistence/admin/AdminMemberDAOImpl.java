@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.MemberManageDTO;
 import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfo;
+import com.finalProject.model.admin.PagingInfoNew;
 
 @Repository
 public class AdminMemberDAOImpl implements AdminMemberDAO {
@@ -33,12 +33,12 @@ public class AdminMemberDAOImpl implements AdminMemberDAO {
 	}
 	
 	@Override
-	public List<MemberManageDTO> selectAllMembers(PagingInfo pi) throws Exception {
+	public List<MemberManageDTO> selectAllMembers(PagingInfoNew pi) throws Exception {
 		return ses.selectList(ns + "selectAllMembers", pi);
 	}
 
 	@Override
-	public List<MemberManageDTO> selectFilteredMembers(MemberSearchFilterDTO memberSearchFilterDTO, PagingInfo pi) throws Exception {
+	public List<MemberManageDTO> selectFilteredMembers(MemberSearchFilterDTO memberSearchFilterDTO, PagingInfoNew pi) throws Exception {
 		
 		System.out.println(memberSearchFilterDTO);
 		System.out.println(pi);

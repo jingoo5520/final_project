@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.CouponDTO;
 import com.finalProject.model.admin.CouponPayDTO;
-import com.finalProject.model.admin.PagingInfo;
+import com.finalProject.model.admin.PagingInfoNew;
 
 @Repository
 public class CouponDAOImpl implements CouponDAO {
@@ -30,7 +30,7 @@ public class CouponDAOImpl implements CouponDAO {
 	}
 	
 	@Override
-	public List<CouponDTO> selectCouponList(PagingInfo pi) throws Exception {
+	public List<CouponDTO> selectCouponList(PagingInfoNew pi) throws Exception {
 		return ses.selectList(ns + "selectAllCouponWithPi", pi);
 	}
 	
