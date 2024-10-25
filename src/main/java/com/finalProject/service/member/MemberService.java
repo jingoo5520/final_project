@@ -22,4 +22,6 @@ public interface MemberService {
 	// 자동 로그인 정보 조회
 	LoginDTO getAutoLogin(String autologin_code) throws Exception;
 	
+	
+	
 }

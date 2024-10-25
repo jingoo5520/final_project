@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.productMapper">
+
+	<insert id="saveProduct"
+		parameterType="com.finalProject.model.ProductDTO"
+		useGeneratedKeys="true" keyProperty="product_no">
+		INSERT INTO Product (product_name,
+		product_price,
+		product_content, product_dc_type, product_dc_amount,
+		product_sell_count)
+		VALUES (#{product_name}, #{product_price},
+		#{product_content},
+		#{product_dc_type}, #{product_dc_amount},
+		#{product_sell_count});
+	</insert>
+
+	<insert id="saveMainImage" parameterType="map">
+		INSERT INTO Image
+		(product_no, image_url,image_type)
+		VALUES (#{product_no},
+		#{mainImage},'M')
+	</insert>
+
+	<insert id="saveSubImage" parameterType="map">
+		INSERT INTO Image (product_no, image_url, image_type)
+		VALUES
+		<foreach collection="subImage" item="sub_Image" separator=",">
+			(#{product_no}, #{sub_Image},'S')
+		</foreach>
+	</insert>
+
+	<resultMap type="com.finalProject.model.ProductVO"
+		id="productResultMap">
+		<id column="product_no" property="product_no" javaType="int" />
+		<result column="product_name" property="product_name"
+			javaType="String" />
+		<result column="product_price" property="product_price"
+			javaType="int" />
+		<result column="product_content" property="product_content"
+			javaType="String" />
+		<result column="product_dc_type" property="product_dc_type"
+			javaType="String" />
+		<result column="product_dc_amount" property="product_dc_amount"
+			javaType="int" />
+		<result column="product_sell_count"
+			property="product_sell_count" javaType="int" />
+
+		<collection column="product_no" property="list"
+			ofType="com.finalProject.model.ProductImg" javaType="java.util.List"
+			select="getAllImg" />
+	</resultMap>
+
+	<select id="getAllBoard" resultMap="productResultMap">
+		SELECT product_no,
+		product_name, product_price, product_content, product_dc_type,
+		product_dc_amount,
+		product_sell_count
+		FROM product
+		limit #{startRowIndex}
+		,#{viewPostCntPerPage}
+	</select>
+
+	<select id="getAllImg"
+		resultType="com.finalProject.model.ProductImg">
+		SELECT image_url, image_type FROM image WHERE product_no =
+		#{product_no}
+	</select>
+
+	<update id="updateProduct">
+		update product set product_name = #{product_name} ,
+		product_price = #{product_price},
+		product_content = #{product_content}
+		, product_dc_type = #{product_dc_type}, product_dc_amount =
+		#{product_dc_amount}, product_sell_count = #{product_sell_count} where
+		product_no =#{product_no};
+	</update>
+
+	<select id="getSearchProduct" resultMap="productSearchResultMap">
+		SELECT product_no, product_name, product_price, product_content,
+		product_dc_type, product_dc_amount, product_sell_count
+		FROM product
+		WHERE 1=1
+		<if test="product_name != null and product_name != ''">
+			AND product_name LIKE #{product_name}
+		</if>
+		<if test="product_dc_type != null and product_dc_type.size() > 0">
+			AND product_dc_type IN
+			<foreach item="type" collection="product_dc_type" open="("
+				close=")" separator=",">
+				#{type}
+			</foreach>
+		</if>
+		<if test="reg_date_start != null and reg_date_start != ''">
+			AND product_reg_date &gt; #{reg_date_start}
+		</if>
+		<if test="reg_date_end != null and reg_date_end != ''">
+			AND product_reg_date &lt; #{reg_date_end}
+		</if>
+		<choose>
+			<when test="searchType == 'priceHigh'">
+				order by product_price desc
+			</when>
+			<when test="searchType == 'priceLow'">
+				order by product_price
+			</when>
+			<when test="searchType == 'sortAmountLow'">
+				order by product_dc_amount
+			</when>
+			<when test="searchType == 'sortAmountHigh'">
+				order by product_dc_amount desc
+			</when>
+		</choose>
+		limit #{startRowIndex} ,#{viewPostCntPerPage}
+	</select>
+
+	<resultMap type="com.finalProject.model.ProductVO"
+		id="productSearchResultMap">
+		<id column="product_no" property="product_no" javaType="int" />
+		<result column="product_name" property="product_name"
+			javaType="String" />
+		<result column="product_price" property="product_price"
+			javaType="int" />
+		<result column="product_content" property="product_content"
+			javaType="String" />
+		<result column="product_dc_type" property="product_dc_type"
+			javaType="String" />
+		<result column="product_dc_amount" property="product_dc_amount"
+			javaType="int" />
+		<result column="product_sell_count"
+			property="product_sell_count" javaType="int" />
+
+		<collection column="product_no" property="list"
+			ofType="com.finalProject.model.ProductImg" javaType="java.util.List"
+			select="getAllImg" />
+	</resultMap>
+
+	<select id="getCountAllProduct" resultType="int">
+		select count(*) from
+		product
+	</select>
+
+	<select id="getSearchAllProduct" resultType="int">
+		select count(*) from product
+		where 1=1
+		<if test="product_name != null and product_name != ''">
+			AND product_name LIKE #{product_name}
+		</if>
+		<if test="product_dc_type != null and product_dc_type.size() > 0">
+			AND product_dc_type IN
+			<foreach item="type" collection="product_dc_type" open="("
+				close=")" separator=",">
+				#{type}
+			</foreach>
+		</if>
+		<if test="reg_date_start != null and reg_date_start != ''">
+			AND product_reg_date &gt; #{reg_date_start}
+		</if>
+		<if test="reg_date_end != null and reg_date_end != ''">
+			AND product_reg_date &lt; #{reg_date_end}
+		</if>
+		<choose>
+			<when test="searchType == 'priceHigh'">
+				order by product_price desc
+			</when>
+			<when test="searchType == 'priceLow'">
+				order by product_price
+			</when>
+			<when test="searchType == 'sortAmountLow'">
+				order by product_dc_amount
+			</when>
+			<when test="searchType == 'sortAmountHigh'">
+				order by product_dc_amount desc
+			</when>
+		</choose>
+	</select>
+
+	<delete id="deleteProductImg">
+		delete from image where product_no = #{product_no}
+		<if test="product_main_image !=null and product_main_image != ''">
+			and image_url = #{product_main_image}
+		</if>
+		<if test="product_sub_image !=null">
+			<foreach item="sub_image" collection="product_sub_image"
+				open="or" separator="or">
+				image_url = #{sub_image}
+			</foreach>
+		</if>
+
+	</delete>
+</mapper>

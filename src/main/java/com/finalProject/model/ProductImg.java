@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder
-public class TestVO {
-	private int testIdx;
-	private String testName;
+public class ProductImg {
+	private String image_url;
+	private String image_type;
 }
