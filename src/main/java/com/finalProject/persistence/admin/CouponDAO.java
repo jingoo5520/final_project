@@ -14,6 +14,9 @@ public interface CouponDAO {
 	// 쿠폰 리스트 가져오기
 	List<CouponDTO> selectCouponList() throws Exception;
 	List<CouponDTO> selectCouponList(PagingInfoNew pi) throws Exception;
+	
+	// 쿠폰 정보 가져오기
+	CouponDTO selectCoupon(int couponNo) throws Exception;
 		
 	// 쿠폰 생성
 	int insertCoupon(CouponDTO couponDTO) throws Exception;

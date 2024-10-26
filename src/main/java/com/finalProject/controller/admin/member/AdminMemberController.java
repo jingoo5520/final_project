@@ -52,6 +52,7 @@ public class AdminMemberController {
 	@ResponseBody
 	public Map<String, Object> getFilteredMembers(@ModelAttribute MemberSearchFilterDTO dto) {
 
+		System.out.println(dto);
 		
 		String result = "";
 		Map<String, Object> data = new HashMap<String, Object>();

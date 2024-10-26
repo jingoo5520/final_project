@@ -41,13 +41,11 @@ public class AdminMemberServiceImpl implements AdminMemberService {
 		int pagingSizeg = memberSearchFilterDTO.getPagingSize();
 		int pageCntPerBlock = memberSearchFilterDTO.getPageCntPerBlock();
 
-		System.out.println("pageNo: " + pageNo);
-		
 		PagingInfoNew pi = makePagingInfo(new PagingInfoNewDTO(pageNo, pagingSizeg, pageCntPerBlock), memberSearchFilterDTO);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<MemberManageDTO> list = mDao.selectFilteredMembers(memberSearchFilterDTO, pi);
-
+		
 		result.put("pi", pi);
 		result.put("list", list);
 

@@ -33,7 +33,7 @@ public class CouponController {
 
 	@Inject
 	AdminMemberService amService;
-	
+
 	// 쿠폰 관리 - 쿠폰 페이지 이동
 	@GetMapping("/coupons")
 	public String couponPage(Model model) {
@@ -78,7 +78,7 @@ public class CouponController {
 
 	/* ========================================================================== */
 	/* ========================================================================== */
-	
+
 	// 쿠폰 리스트 가져오기
 	@GetMapping("/getCouponList")
 	@ResponseBody
@@ -115,19 +115,13 @@ public class CouponController {
 	// 쿠폰 생성
 	@PostMapping("/createCoupon")
 	@ResponseBody
-	public ResponseEntity<String> createCoupon(@RequestParam String couponName, @RequestParam String couponType,
-			@RequestParam int couponDcAmount, @RequestParam float couponDcRate) {
+	public ResponseEntity<String> createCoupon(@RequestBody CouponDTO couponDTO) {
 		String result = "";
+
+		System.out.println(couponDTO);
 
 		System.out.println("/createCoupon");
 
-		System.out.println(couponName);
-		System.out.println(couponType);
-		System.out.println(couponDcAmount);
-		System.out.println(couponDcRate);
-
-		CouponDTO couponDTO = CouponDTO.builder().coupon_name(couponName).coupon_dc_type(couponType)
-				.coupon_dc_amount(couponDcAmount).coupon_dc_rate(couponDcRate).build();
 
 		try {
 			cService.createCoupon(couponDTO);
@@ -145,16 +139,10 @@ public class CouponController {
 	// 쿠폰 수정
 	@PostMapping("/updateCoupon")
 	@ResponseBody
-	public ResponseEntity<String> updateCoupon(@RequestParam int couponNo, @RequestParam String couponName,
-			@RequestParam String couponType, @RequestParam int couponDcAmount, @RequestParam float couponDcRate) {
+	public ResponseEntity<String> updateCoupon(@RequestBody CouponDTO couponDTO) {
 		String result = "";
 
 		System.out.println("/updateCoupon");
-
-		System.out.println(couponNo);
-
-		CouponDTO couponDTO = CouponDTO.builder().coupon_no(couponNo).coupon_name(couponName).coupon_dc_type(couponType)
-				.coupon_dc_amount(couponDcAmount).coupon_dc_rate(couponDcRate).build();
 
 		try {
 			cService.updateCoupon(couponDTO);
@@ -169,6 +157,7 @@ public class CouponController {
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 
+	// 쿠폰 삭제
 	@PostMapping("/deleteCoupon")
 	@ResponseBody
 	public ResponseEntity<String> deleteCoupon(@RequestParam int couponNo) {
@@ -185,6 +174,7 @@ public class CouponController {
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 
+	// 쿠폰 지급
 	@PostMapping("/payCoupon")
 	public ResponseEntity<String> payCoupon(@RequestBody Map<String, Object> params) {
 

@@ -35,6 +35,11 @@ public class CouponDAOImpl implements CouponDAO {
 	}
 	
 	@Override
+	public CouponDTO selectCoupon(int couponNo) throws Exception {
+		return ses.selectOne(ns + "selectCoupon", couponNo);
+	}
+	
+	@Override
 	public int insertCoupon(CouponDTO couponDTO) throws Exception {
 		return ses.insert(ns + "insertCoupon", couponDTO);
 	}
@@ -54,6 +59,8 @@ public class CouponDAOImpl implements CouponDAO {
 		// TODO Auto-generated method stub
 		return ses.insert(ns + "insertCouponPayLogs", list);
 	}
+
+	
 
 	
 
