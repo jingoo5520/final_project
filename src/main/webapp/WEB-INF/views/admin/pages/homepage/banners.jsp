@@ -53,11 +53,9 @@
 	justify-content: right;
 }
 
-.table > thead {
-    vertical-align: middle;
+.table>thead {
+	vertical-align: middle;
 }
-
-
 </style>
 
 <body>
@@ -88,7 +86,30 @@
 					<!-- Content -->
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
-						배너 관리
+
+
+						<div class="card mt-4">
+							<h5 class="card-header">회원 목록</h5>
+
+							<div class="card-body">
+								<div class="row mb-3">
+									<label id="couponNameLabel" class="col-sm-3 col-form-label" for="">쿠폰 이름</label>
+									<div class="col-sm-9">
+										<input id="couponName" type="text" name="couponName" id="" class="form-control" placeholder="Enter Name" aria-label="" aria-describedby="" />
+									</div>
+								</div>
+								<div class="row mb-3">
+									<label id="couponNameLabel" class="col-sm-3 col-form-label" for="">쿠폰 타입</label>
+									<div class="col-sm-9">
+										<button id="couponTypeBtn" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">쿠폰 타입</button>
+										<ul class="dropdown-menu">
+											<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인률</a></li>
+											<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인 금액</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<!-- / Content -->

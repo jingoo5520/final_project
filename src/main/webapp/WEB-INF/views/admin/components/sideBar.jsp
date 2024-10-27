@@ -154,7 +154,7 @@
 					<div data-i18n="Admin Homepage">홈페이지 관리</div>
 			</a>
 				<ul class="menu-sub">
-					<li class="menu-item <%="banners".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/homepage" class="menu-link">
+					<li class="menu-item <%="banners".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/homepage/banners" class="menu-link">
 							<div data-i18n="Banners">배너</div>
 					</a></li>
 				</ul></li>
