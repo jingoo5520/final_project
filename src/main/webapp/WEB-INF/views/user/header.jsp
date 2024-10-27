@@ -133,7 +133,7 @@
 								</div>
 								<div class="cart-items">
 									<a href="/cart" class="main-btn"> <i
-										class="lni lni-cart"></i> <span class="total-items">2</span>
+										class="lni lni-cart"></i> <span class="total-items">${cartItemCount }</span>
 									</a>
 								</div>
 							</div>

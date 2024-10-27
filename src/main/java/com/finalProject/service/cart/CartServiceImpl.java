@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.cart.CartDTO;
+import com.finalProject.model.cart.CartMemberLevelDTO;
+import com.finalProject.model.cart.CookieCartDTO;
 import com.finalProject.persistence.cart.CartDAO;
 
 @Service
@@ -36,10 +38,6 @@ public class CartServiceImpl implements CartService {
 				
 		List<CartDTO> cartItems = cDAO.selectCartItems(cartNo);
 		
-		for (CartDTO item : cartItems) {
-			System.out.println(item.toString());
-		}
-			
 		return cartItems;
 	}
 
@@ -105,4 +103,46 @@ public class CartServiceImpl implements CartService {
 		
 		return cMap;
 	}
+
+	@Override
+	public int getCartItemCount(int cartNo) {
+		
+		return cDAO.selectCntCartItem(cartNo);
+	}
+
+	@Override
+	public CartMemberLevelDTO getLevelInfo(String memberId) {
+		return cDAO.selectLevelInfoOfMemberId(memberId);
+	}
+
+	@Override
+	public CookieCartDTO getProductInfoOfCookieCart(int productNo) {
+		return cDAO.selectProductInfoByCookie(productNo);
+	}
+
+	@Override
+	public void mergeQuantityExistCookie(Map<String, Object> cMap) {
+		cDAO.updateQuantityWithCookieCart(cMap);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	public boolean removeCartList(List<Integer> productNoList, String memberId) {
+		Map<String, Object> cMap = new HashMap<>();
+		
+		boolean result = false;
+		
+		for (int productNo : productNoList) {
+			cMap.put("productNo", productNo);
+			cMap.put("memberId", memberId);
+			
+			if (cDAO.deleteCartItem(cMap) != 0) {
+				result = true;
+			} else {
+				result = false;
+			}
+		}
+		return result;
+	}
+
 }

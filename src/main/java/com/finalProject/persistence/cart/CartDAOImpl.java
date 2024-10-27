@@ -9,6 +9,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.cart.CartDTO;
+import com.finalProject.model.cart.CartMemberLevelDTO;
+import com.finalProject.model.cart.CookieCartDTO;
 
 @Repository
 public class CartDAOImpl implements CartDAO {
@@ -44,7 +46,7 @@ public class CartDAOImpl implements CartDAO {
 		return ses.selectList(ns + "selectCartItems", cartNo);
 	}
 
-	// 장바구니 상품 수량 설정
+	// 장바구니 상품 수량 수정
 	@Override
 	public int updateQuantity(Map<String, Object> cMap) {
 		return ses.update(ns + "updateQuantity", cMap);
@@ -78,6 +80,30 @@ public class CartDAOImpl implements CartDAO {
 	@Override
 	public int updateQuantityFromAddItem(Map<String, Object> cMap) {
 		return ses.update(ns + "updateQuantityFromAddItem", cMap);
+	}
+	
+	// 장바구니 상품 개수 조회
+	@Override
+	public int selectCntCartItem(int cartNo) {
+		return ses.selectOne(ns + "selectCntCartItem", cartNo);
+	}
+	
+	// 장바구니를 조회한 회원의 등급 정보 조회
+	@Override
+	public CartMemberLevelDTO selectLevelInfoOfMemberId(String memberId) {
+		return ses.selectOne(ns + "selectLevelInfoOfMemberId", memberId);
+	}
+	
+	// 쿠키로 저장된 상품정보 조회
+	@Override
+	public CookieCartDTO selectProductInfoByCookie(int productNo) {
+		return ses.selectOne(ns + "selectProductInfoByCookie", productNo);
+	}
+	
+	// 장바구니의 쿠키와 중복 상품 수량 수정
+	@Override
+	public void updateQuantityWithCookieCart(Map<String, Object> cMap) {
+		ses.update(ns + "updateQuantityWithCookieCart", cMap);
 	}
 
 }

@@ -25,8 +25,82 @@
 
 <script type="text/javascript">
 
+$(document).ready(function() {
+	let productCount = $("div.cart-single-list").length;
+	
+	const checkedCount = $('input[type="checkbox"].checkProduct').length;
+    $("#checkedProductCount").text(checkedCount + "개");
+    
+    if (checkedCount <= 0) {
+    	if ($("#removeChecked").hasClass("active-remove")) {
+    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
+        }
+    } else {
+    	if ($("#removeChecked").hasClass("disabled-remove")) {
+    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
+        }
+    }
+	
+	$('input[type="checkbox"].checkProduct').change(function() {
+		const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
+	    $("#checkedProductCount").text(checkedCount + "개");
+	    
+	    if (productCount == checkedCount) {
+			$('#allProductChecked').prop("checked", true);
+		} else {
+			$('#allProductChecked').prop("checked", false);
+		}
+	    
+	    if (checkedCount <= 0) {
+	    	if ($("#removeChecked").hasClass("active-remove")) {
+	    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
+	        }
+	    } else {
+	    	if ($("#removeChecked").hasClass("disabled-remove")) {
+	    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
+	        }
+	    }
+	    
+    });
+	
+	$("#allProductChecked").change(function() {
+        if ($(this).prop("checked")) {
+            $("input[type='checkbox'].checkProduct").prop("checked", true);
+            if ($("#removeChecked").hasClass("disabled-remove")) {
+	    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
+	        }
+        } else {
+            $("input[type='checkbox'].checkProduct").prop("checked", false);
+            if ($("#removeChecked").hasClass("active-remove")) {
+	    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
+	        }
+        }
+        const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
+	    $("#checkedProductCount").text(checkedCount + "개");
+    });
+	
+});
+
+function countUp(productNo) {
+	let quantity = parseInt($("#"+productNo + "_quantity").text());
+	
+	$("#"+productNo + "_quantity").text(quantity + 1);
+}
+
+function countDown(productNo) {
+	let quantity = parseInt($("#"+productNo + "_quantity").text());
+	
+	if (quantity <= 1) {
+		alert("최소수량 1개 이하로 내릴 수 없습니다.");
+	} else {
+		$("#"+productNo + "_quantity").text(quantity - 1);
+	} 
+	
+}
+
+
 function applyQuantity(productNo) {
-	let quantity = parseInt($("#"+productNo + "_quantity").val());
+	let quantity = parseInt($("#"+productNo + "_quantity").text());
 	
 	if (quantity < 1) {
 		alert("최소수량 1개 이하로 내릴 수 없습니다.");
@@ -114,9 +188,137 @@ function removeItem(productNo) {
 	
 }
 
+function removeCheckedItem() {
+    let isConfirmed = confirm("선택한 상품을 삭제 하시겠습니까?");
+    
+    if (isConfirmed) {
+        let checkboxes = $('input[type="checkbox"].checkProduct');
+        let productNos = [];
+        
+        for (let i = 0; i < checkboxes.length; i++) {
+            let checkbox = checkboxes[i];
+            if (checkbox.checked) {
+                productNos.push(parseInt(checkbox.id));
+            }
+        }
+        
+        console.log(productNos);
+        
+        $.ajax({
+		    url: 'removeCheckedItems',
+		    type: 'POST',
+		    data: {
+		    	productNos : productNos
+		    	},
+		    dataType: 'json',
+		    success: function(data) {
+		        console.log(data);
+		    },
+		    error: function() {
+		    },
+		    complete: function(data) {
+		        console.log(data);
+		        
+		        /* if (data.status == 200) {
+		            location.reload();
+		        } else if (data.responseText == 400){
+		            alert('상품 삭제에 실패했습니다. 다시 시도해주세요.');
+		        } else if (data.responseText == 401){
+		        	alert("로그인 안했는데요?");
+		        } */
+		    }
+		});
+    }
+}
+
 
 
 </script>
+
+<style>
+	.count-input-div {
+		display: flex;
+    	align-items: center;
+    	justify-content: center;
+    	padding: 0;
+    	margin: 0;
+	}
+	
+	.count-input-div .btn {
+    	background-color: #a8a691;
+    	color: white;
+	}
+	
+	.count-input-div .btn:hover {
+    	background-color: #807e6f;
+    	color: white;
+	}
+	
+	.count-input-div .countUp {
+		border-radius: 0 4px 4px 0;
+	}
+	
+	.count-input-div .countDown {
+		border-radius: 4px 0 0 4px;
+	}
+	
+	.count-input-div .countApply {
+		margin-left: 10px;
+		border-radius: 4px;
+		font-weigth: bold;
+		font-size: 13px;
+		height: 38px;
+		width: 60px;
+		padding: 0;
+	}
+	
+	.count-input-div .count-div {
+		text-align : center;
+		border: 1px solid #efefef;
+		height: 38px;
+		line-height: 38px;
+		width: 50px;
+		padding: 0;
+    	margin: 0;
+	}
+	
+	.form-check-input:focus {
+		border-color: #a8a691 !important;
+	}
+	
+	.chkbox {
+		color: black;
+		font-weight: bold;
+	}
+	
+	#checkedProductCount {
+		color: #fd5a68;
+	}
+	
+	input[type="checkbox"]:hover {
+		cursor: pointer;
+	}
+	
+	.active-remove {
+		color: black;
+		font-weight: bold;
+	}
+	
+	.disabled-remove {
+		color: gray;
+    	pointer-events: none;
+		font-weight: bold;
+	}
+	
+	#removeChecked:hover {
+		color: #807e6f;
+	}
+	
+	#removeChecked:focus {
+		color: #807e6f;
+	}
+
+</style>
 
 <body>
 
@@ -158,7 +360,15 @@ function removeItem(productNo) {
     <div class="shopping-cart section">
         <div class="container">
         	<c:choose>
-        		<c:when test="${not empty cartItems }">
+        		<c:when test="${not empty cartItems || not empty cookieCartItems }">
+        			<div class="row">
+        				<div class="chkbox col-lg-11 col-12" id="allCheckDiv">
+		              		<input type="checkbox" class="form-check-input" id="allProductChecked" checked> 전체선택 (<span id="checkedProductCount"></span>)
+		              	</div>
+		              	<div class="chkbox col-lg-1 col-12">
+		              		<a class="active-remove" href="#" onclick="removeCheckedItem();" id="removeChecked"><u>선택삭제</u></a>
+		              	</div>
+        			</div>
 		            <div class="cart-list-head">
 		                <!-- Cart List Title -->
 		                <div class="cart-list-title">
@@ -169,11 +379,11 @@ function removeItem(productNo) {
 		                        <div class="col-lg-3 col-md-2 col-12">
 		                            <p>상품 이름</p>
 		                        </div>
-		                        <div class="col-lg-1 col-md-2 col-12">
-		                            <p></p>
-		                        </div>
-		                        <div class="col-lg-3 col-md-2 col-12">
+		                        <div class="col-lg-2 col-md-2 col-12">
 		                            <p>수량</p>
+		                        </div>
+		                        <div class="col-lg-2 col-md-2 col-12">
+		                            <p>적립예정포인트</p>
 		                        </div>
 		                        <div class="col-lg-2 col-md-2 col-12">
 		                            <p>결제 금액</p>
@@ -184,31 +394,44 @@ function removeItem(productNo) {
 		                    </div>
 		                </div>
 		                <!-- End Cart List Title -->
+		                <c:if test="${not empty cartItems }">
 		              	<c:forEach var="item" items="${cartItems }">
 		              		<!-- Cart Single List list -->
-		              		<div class="cart-single-list">
+		              		<div class="cart-single-list" >
+		              			<div class="chkbox">
+		              			<input id="${item.product_no }" type="checkbox" class="form-check-input checkProduct" checked>
+		              			</div>
 			                    <div class="row align-items-center">
 			                        <div class="col-lg-1 col-md-1 col-12">
 			                            <a href="/product/productDetail?productNo=${item.product_no }"><img src="${item.image_main_url }" alt="#"></a>
 			                        </div>
-			                        <div class="col-lg-3 col-md-3 col-12">
+			                        <div class="col-lg-3 col-md-2 col-12">
 			                            <h5 class="product-name"><a href="/product/productDetail?productNo=${item.product_no }">
 			                                    ${item.product_name }</a></h5>
 			                            <p class="product-des">
 			                                <span><em>Type:</em> Mirrorless</span>
-			                                <span><em>Color:</em> Black</span>
 			                            </p>
 			                        </div>
-			                        <div class="col-lg-2 col-md-1 col-12">
-			                            <div class="count-input">
-			                            	<input id="${item.product_no }_quantity" class="count-input" type="text" name="quantity" value="${item.product_count }">
-			                            </div>
-			                        </div>
-			                        <div class="col-lg-2 col-md-1 col-12">
-			                            <div class="button">
-		                                	<button class="btn" onclick="applyQuantity(${item.product_no });">변경</button>
-		                                </div>
-			                        </div>
+			                        <div class="count-input-div col-lg-2 col-md-1 col-12">
+										<button class="btn countDown" onclick="countDown(${item.product_no })">-</button>
+										<div class="count-div" id="${item.product_no }_quantity">${item.product_count }</div>
+										<button class="btn countUp" onclick="countUp(${item.product_no})">+</button>
+		                            	<button class="btn countApply" onclick="applyQuantity(${item.product_no });">변경</button>
+									</div>
+									<c:if test="${not empty levelInfo }">
+				                        <div class="col-lg-2 col-md-3 col-12">
+				                        	<p class="price"><fmt:formatNumber value="${Math.floor(item.product_price * item.product_count * levelInfo.level_point / 10) * 10}" type="number" pattern="#,###" /> P</p>
+				                            <p class="product-des">
+				                                <span><em>등급:</em> ${levelInfo.level_name }</span>
+				                                <span><em>포인트적립:</em> ${Math.round(levelInfo.level_point * 100) } %</span>
+				                            </p>
+				                        </div>
+			                        </c:if>
+			                        <c:if test="${empty levelInfo }">
+				                        <div class="col-lg-2 col-md-3 col-12">
+				                        	<p class="price">0</p>
+				                        </div>
+			                        </c:if>
 			                        <div class="col-lg-2 col-md-2 col-12">
 			                            <p class="price"><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" />원</p>
 			                        </div>
@@ -219,59 +442,62 @@ function removeItem(productNo) {
 			                </div>
 		                	<!-- End Single List list -->
 		              	</c:forEach>
+		              	</c:if>
+		              	<c:if test="${not empty cookieCartItems }">
+		              	<c:forEach var="item" items="${cookieCartItems }">
 		              		<!-- Cart Single List list -->
-		              		<div class="cart-single-list">
+		              		<div class="cart-single-list" >
+		              			<div class="chkbox">
+		              			<input id="${item.product_no }" type="checkbox" class="form-check-input checkProduct" checked>
+		              			</div>
 			                    <div class="row align-items-center">
 			                        <div class="col-lg-1 col-md-1 col-12">
-			                            <a href="/product/productDetail?productNo=1"><img src="" alt="#"></a>
+			                            <a href="/product/productDetail?productNo=${item.product_no }"><img src="${item.image_main_url }" alt="#"></a>
 			                        </div>
-			                        <div class="col-lg-3 col-md-3 col-12">
-			                            <h5 class="product-name"><a href="/product/productDetail?productNo=1">
+			                        <div class="col-lg-3 col-md-2 col-12">
+			                            <h5 class="product-name"><a href="/product/productDetail?productNo=${item.product_no }">
 			                                    ${item.product_name }</a></h5>
 			                            <p class="product-des">
 			                                <span><em>Type:</em> Mirrorless</span>
-			                                <span><em>Color:</em> Black</span>
 			                            </p>
 			                        </div>
-			                        <div class="col-lg-2 col-md-1 col-12">
-			                            <div class="count-input row col-4">
-				                        	<button class="col-lg-1">+</button>
-			                            	<input class="count-input col-lg-2" type="text" name="quantity" value="5">
-				                        	<button class="col-lg-1">-</button>
-			                            </div>
-			                        </div>
-			                        <div class="col-lg-2 col-md-1 col-12">
-			                            <div class="button">
-		                                	<button class="btn">변경</button>
-		                                </div>
-			                        </div>
+			                        <div class="count-input-div col-lg-2 col-md-1 col-12">
+										<button class="btn countDown" onclick="countDown(${item.product_no })">-</button>
+										<div class="count-div" id="${item.product_no }_quantity">${item.product_count }</div>
+										<button class="btn countUp" onclick="countUp(${item.product_no})">+</button>
+		                            	<button class="btn countApply" onclick="applyQuantity(${item.product_no });">변경</button>
+									</div>
+									<c:if test="${not empty levelInfo }">
+				                        <div class="col-lg-2 col-md-3 col-12">
+				                        	<p class="price"><fmt:formatNumber value="${Math.floor(item.product_price * item.product_count * levelInfo.level_point / 10) * 10}" type="number" pattern="#,###" /> P</p>
+				                            <p class="product-des">
+				                                <span><em>등급:</em> ${levelInfo.level_name }</span>
+				                                <span><em>포인트적립:</em> ${Math.round(levelInfo.level_point * 100) } %</span>
+				                            </p>
+				                        </div>
+			                        </c:if>
+			                        <c:if test="${empty levelInfo }">
+				                        <div class="col-lg-2 col-md-3 col-12">
+				                        	<p class="price">0</p>
+				                        </div>
+			                        </c:if>
 			                        <div class="col-lg-2 col-md-2 col-12">
-			                            <p class="price"><fmt:formatNumber value="50000" type="number" pattern="#,###" />원</p>
+			                            <p class="price"><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" />원</p>
 			                        </div>
 			                        <div class="col-lg-1 col-md-2 col-12">
-			                            <a class="remove-item" href="#"><i class="lni lni-close"></i></a>
+			                            <a class="remove-item" href="#" onclick="removeItem(${item.product_no });"><i class="lni lni-close"></i></a>
 			                        </div>
 			                    </div>
 			                </div>
 		                	<!-- End Single List list -->
+		              	</c:forEach>
+		              	</c:if>
 		            </div>
 		            <div class="row">
 		                <div class="col-12">
 		                    <!-- Total Amount -->
 		                    <div class="total-amount">
 		                        <div class="row">
-		                            <div class="col-lg-8 col-md-6 col-12">
-		                                <div class="left">
-		                                    <div class="coupon">
-		                                        <form action="#" target="_blank">
-		                                            <input name="Coupon" placeholder="Enter Your Coupon">
-		                                            <div class="button">
-		                                                <button class="btn">Apply Coupon</button>
-		                                            </div>
-		                                        </form>
-		                                    </div>
-		                                </div>
-		                            </div>
 		                            <div class="col-lg-4 col-md-6 col-12">
 		                                <div class="right">
 		                                    <ul>
@@ -295,7 +521,7 @@ function removeItem(productNo) {
             	<c:otherwise>
             		<h1>장바구니에 상품이 없습니다.</h1>
             		<div class="button">
-		            	<a href="/product/productList" class="btn btn-alt">상품 보러 가기</a>
+		            	<a href="/product/jewelry/all" class="btn btn-alt">상품 보러 가기</a>
 		            </div>
             	</c:otherwise>
         	</c:choose>

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.cart.CartDTO;
+import com.finalProject.model.cart.CartMemberLevelDTO;
+import com.finalProject.model.cart.CookieCartDTO;
 
 public interface CartService {
 
@@ -21,6 +23,16 @@ public interface CartService {
 	void addCartIteminNewList(String memberId, int productNo, int quantity);
 
 	void addCartItem(int cartNo, int productNo, int quantity, String memberId);
+
+	int getCartItemCount(int cartNo);
+
+	CartMemberLevelDTO getLevelInfo(String memberId);
+
+	CookieCartDTO getProductInfoOfCookieCart(int productNo);
+
+	void mergeQuantityExistCookie(Map<String, Object> cMap);
+
+	boolean removeCartList(List<Integer> productNoList, String member_id);
 
 
 

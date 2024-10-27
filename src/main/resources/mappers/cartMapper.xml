@@ -17,6 +17,7 @@
 		inner join cart_items c 
 		on p.product_no = c.product_no 
 		where p.product_no = i.product_no and c.cart_no = #{cartNo}
+		and i.image_sub_url = "M"
 	</select>
 	
 	<update id="updateQuantity">
@@ -48,5 +49,23 @@
 		where product_no = #{productNo} 
 		and cart_no = 
 		#{cartNo}
+	</update>
+	
+	<select id="selectCntCartItem" resultType="Integer">
+		select count(*) from cart_items where cart_no = #{cartNo}
+	</select>
+	
+	<select id="selectLevelInfoOfMemberId" resultType="com.finalProject.model.cart.CartMemberLevelDTO">
+		select l.level_name, l.level_dc, l.level_point from levels l inner join members m on member_level = level_no where member_id = #{memberId}
+	</select>
+	
+	<select id="selectProductInfoByCookie" resultType="com.finalProject.model.cart.CookieCartDTO">
+		select p.product_no, p.product_name, p.product_price, i.image_main_url 
+		from product_images i inner join products p on p.product_no = i.product_no 
+		where i.image_sub_url = "M" and p.product_no = #{productNo}
+	</select>
+	
+	<update id="updateQuantityWithCookieCart">
+		update cart_items set product_count = product_count + #{quantity} where cart_no = #{cartNo} and product_no = #{productNo}
 	</update>
 </mapper>
