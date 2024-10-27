@@ -1,6 +1,5 @@
-package com.finalProject.model;
+package com.finalProject.model.admin.notices;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,13 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
-@Builder
 @ToString
-public class ProductPagingInfoDTO {
-	private int pageNo;
-	private int pagingSize;
+public class SearchCriteriaDTO {
+	private String searchType;
+	private String searchWord;
 }

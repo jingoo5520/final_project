@@ -16,28 +16,29 @@ public class ProductUtil {
 		File file = new File(realPath);
 		if (!new File(realPath).exists()) {
 			file.mkdirs();
-		} else {
-
 		}
 	}
 
-	public void removeFile(List<String> list) {
+	public boolean removeFile(List<String> list) {
 		// TODO Auto-generated method stub
+		boolean result = false;
 		for (String filePath : list) {
 			File file = new File(filePath);
 			if (file.exists()) {
-				file.delete();
+				result = file.delete();
 			}
 		}
+		return result;
 	}
 
-	public void removeFile(String path) {
+	public boolean removeFile(String path) {
 		// TODO Auto-generated method stub
 
 		File file = new File(path);
 		if (file.exists()) {
-			file.delete();
+			return file.delete();
 		}
+		return false;
 	}
 
 }

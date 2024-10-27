@@ -7,77 +7,133 @@
 <head>
 <meta charset="UTF-8">
 <title>로그인</title>
-<style type="text/css">
-.body {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 50vh; /* 화면 전체 높이 */
-	margin: 0; /* 기본 여백 제거 */
-	background-color: white; /* 배경색 설정 */
-}
+<!-- ========================= CSS here ========================= -->
+<link rel="stylesheet"
+	href="/resources/assets/user/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/LineIcons.3.0.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/glightbox.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
-.loginContainer {
-	background: white; /* 배경색 설정 */
-	padding: 20px 50px 20px 50px; /* 안쪽 여백 */
-	/* border-radius: 10px; /* 둥근 모서리 */
-	*/
-	/* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-	*/
-}
-
-input {
-	display: block; /* 입력 요소를 블록으로 설정 */
-	margin-bottom: 10px; /* 아래쪽 여백 */
-	width: 90%; /* 너비 100% */
-	padding: 10px; /* 안쪽 여백 */
-	border: 1px solid #ccc; /* 테두리 */
-	border-radius: 5px; /* 둥근 모서리 */
-}
-
-button {
-	width: 100%; /* 버튼 너비 100% */
-	padding: 10px; /* 안쪽 여백 */
-	border: none; /* 기본 테두리 제거 */
-	border-radius: 5px; /* 둥근 모서리 */
-	background-color: #007bff; /* 버튼 배경색 */
-	color: white; /* 글자 색 */
-	cursor: pointer; /* 포인터 커서 */
-}
-
-button:hover {
-	background-color: #0056b3; /* 버튼 호버 색상 */
-}
-</style>
 </head>
 
 <body>
+	<!--[if lte IE 9]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+        your experience and security.
+      </p>
+    <![endif]-->
+
+	<!-- Preloader -->
+	<div class="preloader">
+		<div class="preloader-inner">
+			<div class="preloader-icon">
+				<span></span> <span></span>
+			</div>
+		</div>
+	</div>
+	<!-- /End Preloader -->
 
 	<jsp:include page="../header.jsp"></jsp:include>
-	<div class="body">
-		<form action="/member/login" method="post">
-			<div class="loginContainer">
-				<h1>로그인</h1>
-				<div>
-					id<input type="text" name="member_id" id="member_id"
-						placeholder="id를 입력">
-				</div>
-				<div>
-					pwd<input type="password" name="member_pwd" id="member_pwd"
-						placeholder="pwd를 입력">
-					<div>
-						자동 로그인<input type="checkbox" name="autologin_code"
-							id="autologin_code">
+
+	<!-- Start Breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-md-6 col-12">
+					<div class="breadcrumbs-content">
+						<h1 class="page-title">Login</h1>
 					</div>
 				</div>
-				<div>
-					<button type="submit">로그인</button>
+				<div class="col-lg-6 col-md-6 col-12">
+					<ul class="breadcrumb-nav">
+						<li><a href="index.html"><i class="lni lni-home"></i>
+								Home</a></li>
+						<li>Login</li>
+					</ul>
 				</div>
 			</div>
-		</form>
+		</div>
 	</div>
+	<!-- End Breadcrumbs -->
+
+	<!-- Start Account Login Area -->
+	<div class="account-login section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 offset-lg-3 col-md-10 offset-md-1 col-12">
+					<form class="card login-form" action="/member/login" method="post">
+						<div class="card-body">
+							<div class="title">
+								<h3>로그인 하세요</h3>
+								<p>You can login using your social media account or email
+									address.</p>
+							</div>
+							<div class="social-login">
+								<div class="row">
+									<div class="col-lg-4 col-md-4 col-12">
+										<a class="btn facebook-btn" href="javascript:void(0)"><i
+											class="lni lni-facebook-filled"></i> 페이스북 로그인</a>
+									</div>
+									<div class="col-lg-4 col-md-4 col-12">
+										<a class="btn twitter-btn" href="javascript:void(0)"><i
+											class="lni lni-twitter-original"></i> 트위터 로그인</a>
+									</div>
+									<div class="col-lg-4 col-md-4 col-12">
+										<a class="btn google-btn" href="javascript:void(0)"><i
+											class="lni lni-google"></i> 구글 로그인</a>
+									</div>
+								</div>
+							</div>
+							<div class="alt-option">
+								<span>Or</span>
+							</div>
+							<div class="form-group input-group">
+								<label for="reg-fn">아이디</label> <input class="form-control"
+									type="text" name="member_id" id="member_id" required>
+							</div>
+							<div class="form-group input-group">
+								<label for="reg-fn">비밀번호</label> <input class="form-control"
+									type="password" name="member_pwd" id="member_pwd" required>
+							</div>
+							<div
+								class="d-flex flex-wrap justify-content-between bottom-content">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input width-auto"
+										name="autologin_code" id="autologin_code"> <label
+										class="form-check-label">자동 로그인</label>
+								</div>
+								<a class="lost-pass" href="account-password-recovery.html">비밀번호
+									찾기</a>
+							</div>
+							<div class="button">
+								<button class="btn" type="submit">로그인</button>
+							</div>
+							<p class="outer-link">
+								아직 회원이 아니신가요? <a href="${pageContext.request.contextPath}/member/viewSignUp"">회원가입 하기 </a>
+							</p>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Account Login Area -->
 
 	<jsp:include page="../footer.jsp"></jsp:include>
+
+	<!-- ========================= scroll-top ========================= -->
+	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
+	</a>
+
+	<!-- ========================= JS here ========================= -->
+	<script src="/resources/assets/user/js/bootstrap.min.js"></script>
+	<script src="/resources/assets/user/js/tiny-slider.js"></script>
+	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
 </body>
 

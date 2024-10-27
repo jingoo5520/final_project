@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class HomeController {
-
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 	@GetMapping("/")

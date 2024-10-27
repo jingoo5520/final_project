@@ -1,7 +1,5 @@
 package com.finalProject.model;
 
-import java.sql.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +13,7 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-public class SignUpDTO {
+public class MemberDTO {
 	private String member_id;
 	private String member_pwd;
 	private String member_name;

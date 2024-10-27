@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.SignUpDTO;
+import com.finalProject.model.MemberDTO;
 import com.finalProject.persistence.MemberDAO;
 
 @Service
@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
 
 	// 회원가입
 	@Override
-	public int signUp(SignUpDTO signUpDTO) throws Exception {
+	public int signUp(MemberDTO signUpDTO) throws Exception {
 		return memberDAO.signUp(signUpDTO);
 	}
 
@@ -45,6 +45,24 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public LoginDTO getAutoLogin(String autologin_code) throws Exception {
 		return memberDAO.getAutoLogin(autologin_code);
+	}
+
+	// 마이 페이지 비밀번호 인증
+	@Override
+	public boolean auth(String member_id, String member_pwd) throws Exception {
+		return memberDAO.auth(member_id, member_pwd);
+	}
+
+	// 마이 페이지 회원 정보 조회
+	@Override
+	public MemberDTO getMember(String member_id) throws Exception {
+		return memberDAO.getMember(member_id);
+	}
+
+	// 마이 페이지 회원 정보 수정
+	@Override
+	public boolean updateMember(MemberDTO memberDTO) throws Exception {
+		return memberDAO.updateMember(memberDTO);
 	}
 
 }

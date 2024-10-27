@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.finalProject.model.PagingInfo;
-import com.finalProject.model.ProductDTO;
-import com.finalProject.model.ProductPagingInfoDTO;
-import com.finalProject.model.ProductUpdateDTO;
-import com.finalProject.model.ProductVO;
-import com.finalProject.persistence.ProductDAO;
+import com.finalProject.model.admin.product.PagingInfo;
+import com.finalProject.model.admin.product.ProductDTO;
+import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.ProductUpdateDTO;
+import com.finalProject.model.admin.product.ProductVO;
+import com.finalProject.persistence.admin.product.ProductDAO;
 
 @Service
 public class ProductServiceImpl implements ProductService {
