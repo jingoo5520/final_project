@@ -11,15 +11,15 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.finalProject.model.PagingInfo;
-import com.finalProject.model.ProductDTO;
-import com.finalProject.model.ProductPagingInfoDTO;
-import com.finalProject.model.ProductUpdateDTO;
-import com.finalProject.model.ProductVO;
-import com.finalProject.persistence.ProductDAO;
+import com.finalProject.model.admin.product.PagingInfo;
+import com.finalProject.model.admin.product.ProductDTO;
+import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.ProductUpdateDTO;
+import com.finalProject.model.admin.product.ProductVO;
+import com.finalProject.persistence.admin.product.ProductDAO;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class UserProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductDAO pDAO;
@@ -34,9 +34,9 @@ public class ProductServiceImpl implements ProductService {
 		System.out.println(productId);
 		for (String imageUrl : list) {
 			if (imageUrl.contains("Main_")) {
-				mainImage = imageUrl; // "main"ì´ í¬í•¨ëœ ì´ë¯¸ì§€ëŠ” ë©”ì¸ ì´ë¯¸ì§€ë¡œ ì²˜ë¦¬
+				mainImage = imageUrl; // "main"?´ ?¬?•¨?œ ?´ë¯¸ì??Š” ë©”ì¸ ?´ë¯¸ì?ë¡? ì²˜ë¦¬
 			} else if (imageUrl.contains("Sub_")) {
-				subImages.add(imageUrl); // "sub"ì´ í¬í•¨ëœ ì´ë¯¸ì§€ëŠ” ì„œë¸Œ ì´ë¯¸ì§€ë¡œ ì²˜ë¦¬
+				subImages.add(imageUrl); // "sub"?´ ?¬?•¨?œ ?´ë¯¸ì??Š” ?„œë¸? ?´ë¯¸ì?ë¡? ì²˜ë¦¬
 			}
 		}
 		if (mainImage != null) {
@@ -103,10 +103,10 @@ public class ProductServiceImpl implements ProductService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalSearchCnt(map));
 
-		pi.setTotalPageCnt(); // ì „ì²´ í˜ì´ì§€ ìˆ˜ ì„¸íŒ…
-		pi.setStartRowIndex(); // í˜„ì¬ í˜ì´ì§€ì—ì„œ ë³´ì—¬ì£¼ê¸° ì‹œì‘í•  ê¸€ì˜ indexë²ˆí˜¸
+		pi.setTotalPageCnt(); // ? „ì²? ?˜?´ì§? ?ˆ˜ ?„¸?Œ…
+		pi.setStartRowIndex(); // ?˜„?¬ ?˜?´ì§??—?„œ ë³´ì—¬ì£¼ê¸° ?‹œ?‘?•  ê¸??˜ indexë²ˆí˜¸
 
-		// í˜ì´ì§• ë¸”ëŸ­
+		// ?˜?´ì§? ë¸”ëŸ­
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
@@ -126,10 +126,10 @@ public class ProductServiceImpl implements ProductService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalPostCnt());
 
-		pi.setTotalPageCnt(); // ì „ì²´ í˜ì´ì§€ ìˆ˜ ì„¸íŒ…
-		pi.setStartRowIndex(); // í˜„ì¬ í˜ì´ì§€ì—ì„œ ë³´ì—¬ì£¼ê¸° ì‹œì‘í•  ê¸€ì˜ indexë²ˆí˜¸
+		pi.setTotalPageCnt(); // ? „ì²? ?˜?´ì§? ?ˆ˜ ?„¸?Œ…
+		pi.setStartRowIndex(); // ?˜„?¬ ?˜?´ì§??—?„œ ë³´ì—¬ì£¼ê¸° ?‹œ?‘?•  ê¸??˜ indexë²ˆí˜¸
 
-		// í˜ì´ì§• ë¸”ëŸ­
+		// ?˜?´ì§? ë¸”ëŸ­
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();

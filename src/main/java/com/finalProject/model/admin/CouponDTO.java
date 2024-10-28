@@ -20,4 +20,5 @@ public class CouponDTO {
 	private String coupon_dc_type;
 	private int coupon_dc_amount;
 	private float coupon_dc_rate;
+	private int coupon_use_days;
 }

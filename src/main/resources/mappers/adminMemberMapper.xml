@@ -12,7 +12,6 @@
 	</select>
 
 	<!-- 필터링 된 회원 수 -->
-
 	<select id="selectFilteredMemberCnt" resultType="int">
 		select count(*)
 		from members
@@ -25,15 +24,15 @@
 			</foreach>
 			)
 		</if>
-
+		
 		<if test="levels != null and levels.length > 0">
 			and (
 			<foreach item="level" collection="levels" separator=" OR ">
 				member_level = #{level}
 			</foreach>
 			)
-		</if> 
-		
+		</if>
+
 		<if test="member_id != null and member_id != ''">
 			AND member_id LIKE CONCAT('%', #{member_id}, '%')
 		</if>
@@ -47,9 +46,7 @@
 		and birthday <= #{birthday_end}
 		]]>
 
-		
 	</select>
-
 
 
 	<!-- 전체 회원 조회 -->
@@ -93,11 +90,13 @@
 
 		<if
 			test="memberSearchFilterDTO.member_id != null and memberSearchFilterDTO.member_id != ''">
-			and member_id LIKE CONCAT('%', #{memberSearchFilterDTO.member_id}, '%')
+			and member_id LIKE CONCAT('%',
+			#{memberSearchFilterDTO.member_id}, '%')
 		</if>
 		<if
 			test="memberSearchFilterDTO.member_name != null and memberSearchFilterDTO.member_name != ''">
-			and member_name LIKE CONCAT('%', #{memberSearchFilterDTO.member_name}, '%')
+			and member_name LIKE CONCAT('%',
+			#{memberSearchFilterDTO.member_name}, '%')
 		</if>
 		
 		<![CDATA[

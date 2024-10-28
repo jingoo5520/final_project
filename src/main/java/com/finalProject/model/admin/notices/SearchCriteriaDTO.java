@@ -1,4 +1,4 @@
-package com.finalProject.model;
+package com.finalProject.model.admin.notices;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,11 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @ToString
-@Builder
-public class ProductImg {
-	private String image_url;
-	private String image_type;
+public class SearchCriteriaDTO {
+	private String searchType;
+	private String searchWord;
 }

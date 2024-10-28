@@ -4,31 +4,22 @@ import java.util.List;
 import java.util.Map;
 
 import com.finalProject.model.ProductDTO;
-import com.finalProject.model.ProductUpdateDTO;
-import com.finalProject.model.ProductVO;
 
 public interface ProductDAO {
+	
+	// 상품 출력
+	List<ProductDTO> selectProductsByPage(int offset, int pageSize) throws Exception;
 
-	int saveProduct(ProductDTO productDTO);
+	// 페이지네이션
+	int selectProductCount() throws Exception;
 
-	int insertMainImage(String mainImage, int productId);
+	// 카테고리 번호에 따른 상품 개수 조회
+	int selectProductCountByCategory(Map<String, Object> params) throws Exception;
+	
+	// 카테고리 번호와 페이지에 따른 상품 조회
+	List<ProductDTO> selectProductsByCategoryAndPage(Map<String, Object> params) throws Exception;
 
-	int insertSubImage(List<String> subImages, int productId);
+	List<ProductDTO> getProductById (int productId) throws Exception;
 
-	List<ProductDTO> getAllProducts(Map<String, Object> map);
-
-	int updateProduct(ProductUpdateDTO updateProduct);
-
-	List<ProductVO> getSearchProducts(Map<String, Object> map);
-
-	List<ProductDTO> getFilterProducts();
-
-	int getTotalPostCnt();
-
-	int getTotalSearchCnt(Map<String, Object> map);
-
-	int updateProductImg(ProductUpdateDTO updateProduct);
-
-	int deleteProduct(int productId);
-
+	ProductDTO getProductDetailById(int productId) throws Exception;
 }

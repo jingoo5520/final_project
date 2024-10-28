@@ -23,6 +23,7 @@
 </head>
 <body>
     <!-- Start Footer Area -->
+    
     <footer class="footer">
         <!-- Start Footer Top -->
         <div class="footer-top">
