@@ -1,8 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
+<script type="text/javascript">
+function countUp(productNo) {
+    let quantity = parseInt($("#" + productNo + "_quantity").text());
+    $("#" + productNo + "_quantity").text(quantity + 1);
+}
+
+function countDown(productNo) {
+    let quantity = parseInt($("#" + productNo + "_quantity").text());
+    
+    if (quantity <= 1) {
+    } else {
+        $("#" + productNo + "_quantity").text(quantity - 1);
+    }
+}
+
+function addCart(productNo) {
+	let quantity = parseInt($("#" + productNo + "_quantity").text());
+	
+}
+</script>
 <style>
 
 #gallery {
@@ -35,16 +57,51 @@
 .images img:hover {
     transform: scale(1.2); /* 서브 이미지에 호버 시 확대 효과 */
 }
-</style>
 
+.count-input-div {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0;
+   margin: 0;
+}
+
+.count-input-div .btn {
+   background-color: #a8a691;
+   color: white;
+}
+
+.count-input-div .btn:hover {
+   background-color: #807e6f;
+   color: white;
+}
+
+.count-input-div .countUp {
+   border-radius: 0 4px 4px 0;
+}
+
+.count-input-div .countDown {
+   border-radius: 4px 0 0 4px;
+}
+
+.count-input-div .count-div {
+   text-align: center;
+   border: 1px solid #efefef;
+   height: 38px;
+   line-height: 38px;
+   width: 50px;
+   padding: 0;
+   margin: 0;
+}
+
+</style>
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -54,43 +111,6 @@
     <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
-
-<script type="text/javascript">
-
-function addCart(productNo) {
-	let quantity = $("#quantity").val();
-	
-	$.ajax({
-	    url: '/addCartItem',
-	    type: 'POST',
-	    data: {
-	    	productNo : productNo,
-	    	quantity : quantity
-	    	},
-	    dataType: 'json',
-	    success: function(data) {
-	        console.log(data);
-	    },
-	    error: function() {
-	    },
-	    complete: function(data) {
-	    	if (data.status == 200) {
-	    		let isConfirmed = confirm("장바구니 페이지로 가시겠습니까?");
-	    		
-	    		if (isConfirmed) {
-	    			location.href="/cart";
-	    		}
-	        } else if (data.responseText == 401){
-	        	alert("로그인 안했는데요?");
-	        }
-	    }
-	});
-	
-	
-	
-}
-
-</script>
 
 <body>
 
@@ -172,13 +192,30 @@ function addCart(productNo) {
                 </a>
             </p>
             
-						            <!-- 가격 표시 -->
-						            <h3 class="price">
-						                <fmt:formatNumber value="${products[0].product_price}" type="number" pattern="#,###"/> KRW
-						                <c:if test="${products[0].product_cost != 0}">
-						                    <span><fmt:formatNumber value="${products[0].product_cost}" type="number" pattern="#,###"/> KRW</span>
-						                </c:if>
-						            </h3>
+									<!-- 가격 표시 -->
+									<h3 class="price" style="display: flex; flex-direction: column; gap: 5px;">
+									    <!-- 원래 가격 표시 (할인이 있는 경우만 표시) -->
+									    <c:if test="${products[0].product_dc_type == 'P' && products[0].product_price != products[0].calculatedPrice}">
+									        <span style="text-decoration: line-through; font-size: 0.9em; color: #999;">
+									            <fmt:formatNumber value="${products[0].product_price}" type="number" pattern="#,###"/>원
+									        </span>
+									    </c:if>
+									
+									    <!-- 할인율 및 할인 적용된 가격 표시 -->
+									    <div style="display: flex; align-items: baseline; gap: 10px;">
+									        <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
+									            <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+									                ${products[0].dc_rate}%
+									            </span>
+									        </c:if>
+									
+									        <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;">
+									            <fmt:formatNumber value="${products[0].calculatedPrice}" type="number" pattern="#,###"/>원
+									        </span>
+									    </div>
+									</h3>
+
+
 						
 						            <div class="row">
 						                <div class="col-lg-4 col-md-4 col-12"></div>
@@ -197,26 +234,24 @@ function addCart(productNo) {
 									            </div>
 									        </div>
 									    </div>
-									    <form action="/order" method="post">
 									    <div class="row align-items-center mt-3">
 									        <!-- 주문 개수 선택 드롭다운 -->
-									        <div class="col-lg-12 col-md-12 col-12">
-									            <div class="form-group quantity">
-									                <label for="quantity">주문개수</label>
-									                <input type="text" placeholder="수량" id="quantity" name="quantity" value="1">
-									            </div>
-									        </div>
-									    </div>
+										<div class="col-lg-12 col-md-12 col-12">
+											<div class="count-input-div col-lg-2 col-md-1 col-12">
+												<button class="btn countDown" onclick="countDown(${products[0].product_no})">-</button>
+													<div class="count-div" id="${products[0].product_no}_quantity">1</div>
+														<button class="btn countUp"  onclick="countUp(${products[0].product_no})">+</button>
+													</div>
+											</div>	
+										</div>
 									    <div class="row align-items-center mt-3">
 									        <!-- 결제 버튼을 전체 너비로 배치 -->
 									        <div class="col-lg-12 col-md-12 col-12">
 									            <div class="wish-button">
-									            	<input type="hidden" name="productNo" value="${products[0].product_no }">
-									                <button type="submit" class="btn" style="width: 100%;"><i class="lni lni-credit-cards"></i> 결제</button>
+									                <button class="btn" style="width: 100%;"><i class="lni lni-credit-cards"></i> 결제</button>
 									            </div>
 									        </div>
 									    </div>
-									    </form>
 									</div>
 						        </div>
 						    </div>
@@ -273,7 +308,7 @@ function addCart(productNo) {
     <!-- End Item Details -->
 
 
-    <jsp:include page="../footer.jsp"></jsp:include>
+<jsp:include page="../footer.jsp"></jsp:include>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">

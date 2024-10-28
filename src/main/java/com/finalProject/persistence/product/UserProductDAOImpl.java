@@ -8,26 +8,18 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.product.ProductDTO;
-
+import com.finalProject.model.ProductDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
-public class UserProductDAOImpl implements ProductDAO {
+public class UserProductDAOImpl implements UserProductDAO {
 
 	@Autowired
 	   private SqlSession ses;
 
 	   private static final String NS = "com.final_project.mappers.productMapper.";
 	   
-//	@Override
-//	public List<ProductDTO> selectAllProducts() throws Exception {
-////		int cnt = ses.selectOne(NS + "selectAllProducts");
-////		System.out.println(cnt);
-//		return ses.selectList(NS + "selectAllProducts");
-//	}
-
 	@Override
 	public List<ProductDTO> selectProductsByPage(int offset, int limit) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();

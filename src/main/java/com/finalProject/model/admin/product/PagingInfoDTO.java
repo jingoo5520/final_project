@@ -1,4 +1,4 @@
-package com.finalProject.model.product;
+package com.finalProject.model.admin.product;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

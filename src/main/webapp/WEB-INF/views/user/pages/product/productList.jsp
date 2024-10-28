@@ -1,10 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
-
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
@@ -12,7 +10,6 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -22,47 +19,18 @@
     <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
-
 <script type="text/javascript">
-	function addCart(productNo) {
-		
-		console.log(productNo);
-		
-		$.ajax({
-		    url: '/addCartItem',
-		    type: 'POST',
-		    data: {
-		    	productNo : productNo
-		    	},
-		    dataType: 'json',
-		    success: function(data) {
-		        console.log(data);
-		    },
-		    error: function() {
-		    },
-		    complete: function(data) {
-		    	if (data.status == 200) {
-		    		let isConfirmed = confirm("장바구니 페이지로 가시겠습니까?");
-		    		
-		    		if (isConfirmed) {
-		    			location.href="/cart";
-		    		}
-		        } else if (data.responseText == 401){
-		        	alert("로그인 안했는데요?");
-		        }
-		    }
-		});
-	}
-	
-	function submitSortingForm() {
-    	var sortingSelect = document.getElementById('sorting');
-    	sortingSelect.value = sortingSelect.value.trim(); // 선택된 값에서 공백 제거
-    	document.getElementById('sortingForm').submit();
-	}
-	
+
+function submitSortingForm() {
+    var sortingSelect = document.getElementById('sorting');
+    sortingSelect.value = sortingSelect.value.trim(); // 선택된 값에서 공백 제거
+    document.getElementById('sortingForm').submit();
+}
+
 </script>
 
 <body>
+
 <jsp:include page="../header.jsp"></jsp:include>
 
     <!-- Preloader -->
@@ -172,10 +140,14 @@
 <!--                                         개수 -->
                                         <div class="single-product">
                                             <div class="product-image">
-                                                <a href = "/product/jewelry/detail?productNo=${product.product_no}&categoryName=${product.category_name}&categoryNo=${product.product_category}"><img src="${product.image_main_url}" alt="${product.product_name}" width="300px" height="300px"></a> 
+                                                <a href = "/product/jewelry/detail?productNo=${product.product_no}"><img src="${product.image_main_url}" alt="${product.product_name}" width="300px" height="300px"></a> 
                                                 
                                                 <div class="button">
-                                                    <div class="btn" onclick="addCart(${product.product_no});"><i class="lni lni-cart"></i></div>
+                                                    <a onclick="addCart(${product.product_no})" class="btn"><i class="lni lni-cart"></i></a>
+                                                </div>
+                                                
+                                                <div class="button">
+                                                    <a href="#" class="btn"><i class="lni lni-cart"></i></a>
                                                 </div>
                                                 
                                             </div>
@@ -188,13 +160,31 @@
 												</span>
 												
                                                 <h4 class="title">
-                                                    <a href="product-grids.html">${product.product_name }</a>
+                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}">${product.product_name }</a>
                                                 </h4>
-                                                <div class="price">
-                                                <span><fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###"/> 원</span>
-                                                </div>
+<div class="price">
+<!--     dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
+    <c:if test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
+        <span style="text-decoration: line-through; color: #999;">
+            <fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###"/>원
+        </span>
+    </c:if>
+
+<!--     할인율 (dc 타입이 P일 때만 표시) -->
+    <c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
+        <span class="sale-tag" style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+            -${product.dc_rate}%
+        </span>
+    </c:if>
+    
+<!--     최종 계산된 가격 표시 -->
+    <span>
+        <fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###"/> 원
+    </span>
+</div>
+
+                                                
                                             </div>
-                                            
                                         </div>
                                         <!-- End Single Product -->
                                     </div>
@@ -257,7 +247,7 @@
     </section>
     <!-- End Product Grids -->
 
-    <jsp:include page="../footer.jsp"></jsp:include>
+<jsp:include page="../footer.jsp"></jsp:include>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">

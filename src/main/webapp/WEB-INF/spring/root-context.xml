@@ -21,7 +21,7 @@
 	<!-- 데이터베이스 Connection -->
 	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"> </property> 
-		<property name="url" value="jdbc:mysql://localhost:3306/my?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false"> 
+		<property name="url" value="jdbc:mysql://localhost:3306/jyw?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false"> 
 		</property> <property name="username" value="root"></property> <property 
 		name="password" value="1234"></property> </bean> -->
 
