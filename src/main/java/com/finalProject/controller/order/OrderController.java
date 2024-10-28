@@ -33,7 +33,7 @@ public class OrderController {
 	@Inject
 	private OrderService orderService;
 	
-	@GetMapping("/pages/order")
+	@GetMapping("/order")
 	public String order() {
 		System.out.println("주문 페이지 접속");
 		return "/user/pages/order/order";
@@ -184,5 +184,18 @@ public class OrderController {
 	@GetMapping("/pages/order/temp_03")
 	public String showCancelPage() {
 		return "/user/pages/order/temp_03";
+	}
+	
+	@GetMapping("/orderList")
+	public String showOrderListPage() {
+		return "/user/pages/order/orderList";
+	}
+	
+	@PostMapping("/cancelOrder")
+	public String cancelOrder(@RequestParam int orderNo, Model model) {
+		System.out.println("주문취소(or 반품/환불) 페이지 접속");
+		System.out.println("주문번호는 " + orderNo);
+		model.addAttribute("orderNo", orderNo);
+		return "/user/pages/order/cancelOrder";
 	}
 }
