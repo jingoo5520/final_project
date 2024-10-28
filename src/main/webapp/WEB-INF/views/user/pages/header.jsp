@@ -106,6 +106,7 @@
 								</div>
 								<div class="search-input">
 									<input type="text" placeholder="Search">
+									
 								</div>
 								<div class="search-btn">
 									<button>

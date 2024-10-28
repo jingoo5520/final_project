@@ -1,8 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
+<script type="text/javascript">
+function countUp(productNo) {
+    let quantity = parseInt($("#" + productNo + "_quantity").text());
+    $("#" + productNo + "_quantity").text(quantity + 1);
+}
+
+function countDown(productNo) {
+    let quantity = parseInt($("#" + productNo + "_quantity").text());
+    
+    if (quantity <= 1) {
+    } else {
+        $("#" + productNo + "_quantity").text(quantity - 1);
+    }
+}
+</script>
 <style>
 
 #gallery {
@@ -35,6 +52,43 @@
 .images img:hover {
     transform: scale(1.2); /* 서브 이미지에 호버 시 확대 효과 */
 }
+
+.count-input-div {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0;
+   margin: 0;
+}
+
+.count-input-div .btn {
+   background-color: #a8a691;
+   color: white;
+}
+
+.count-input-div .btn:hover {
+   background-color: #807e6f;
+   color: white;
+}
+
+.count-input-div .countUp {
+   border-radius: 0 4px 4px 0;
+}
+
+.count-input-div .countDown {
+   border-radius: 4px 0 0 4px;
+}
+
+.count-input-div .count-div {
+   text-align: center;
+   border: 1px solid #efefef;
+   height: 38px;
+   line-height: 38px;
+   width: 50px;
+   padding: 0;
+   margin: 0;
+}
+
 </style>
 <head>
     <meta charset="utf-8" />
@@ -55,7 +109,7 @@
 
 <body>
 
-<jsp:include page="/WEB-INF/views/user/header.jsp"></jsp:include>
+<jsp:include page="../header.jsp"></jsp:include>
 
     <!-- Preloader -->
     <div class="preloader">
@@ -177,19 +231,14 @@
 									    </div>
 									    <div class="row align-items-center mt-3">
 									        <!-- 주문 개수 선택 드롭다운 -->
-									        <div class="col-lg-12 col-md-12 col-12">
-									            <div class="form-group quantity">
-									                <label for="quantity">주문개수</label>
-									                <select class="form-control" id="quantity">
-									                    <option>1</option>
-									                    <option>2</option>
-									                    <option>3</option>
-									                    <option>4</option>
-									                    <option>5</option>
-									                </select>
-									            </div>
-									        </div>
-									    </div>
+										<div class="col-lg-12 col-md-12 col-12">
+											<div class="count-input-div col-lg-2 col-md-1 col-12">
+												<button class="btn countDown" onclick="countDown(${products[0].product_no})">-</button>
+													<div class="count-div" id="${products[0].product_no}_quantity">1</div>
+														<button class="btn countUp"  onclick="countUp(${products[0].product_no})">+</button>
+													</div>
+											</div>	
+										</div>
 									    <div class="row align-items-center mt-3">
 									        <!-- 결제 버튼을 전체 너비로 배치 -->
 									        <div class="col-lg-12 col-md-12 col-12">
@@ -254,7 +303,7 @@
     <!-- End Item Details -->
 
 
-<jsp:include page="/WEB-INF/views/user/footer.jsp"></jsp:include>
+<jsp:include page="../footer.jsp"></jsp:include>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">
