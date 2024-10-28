@@ -8,7 +8,7 @@
 	<!-- 로그인 -->
 	<select id="login" resultType="LoginDTO">
 		select * from members where
-		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256)
+		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256) and member_status = 'active'
 	</select>
 
 	<!-- id, email, phone_number 중복 체크 -->

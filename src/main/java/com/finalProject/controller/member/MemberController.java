@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
@@ -28,6 +30,7 @@ import com.finalProject.model.ResponseData;
 import com.finalProject.model.MemberDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.util.ReceiveMailPOP3;
+import com.finalProject.util.RememberPath;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -203,9 +206,34 @@ public class MemberController {
 
 	// 마이페이지 (내정보수정 페이지)
 	@RequestMapping(value = "/myPage/modiInfo")
-	public String myPage() {
+	public String myPage(HttpServletRequest request) {
 		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_modiInfo";
+	}
+
+	// 마이페이지 (비밀번호 변경 페이지)
+	@RequestMapping(value = "/myPage/modiPwd")
+	public String myPage_pwd(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_modiPwd";
+	}
+
+	// 마이페이지 (회원 탈퇴)
+	@RequestMapping(value = "/myPage/withdraw")
+	public String myPage_withdraw(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_withdraw";
+	}
+
+	// 마이페이지 (구매 내역)
+	@RequestMapping(value = "/myPage/history")
+	public String myPage_history(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_history";
 	}
 
 	// 마이페이지 인증(정보 수정시 비밀번호를 확인함.)
@@ -214,6 +242,7 @@ public class MemberController {
 		HttpSession ses = request.getSession();
 		LoginDTO loginMember = (LoginDTO) ses.getAttribute("loginMember");
 		String member_id = loginMember.getMember_id(); // 세션에 저장된 member_id 저장
+		String rememberPath = ses.getAttribute("rememberPath") + "";
 		try {
 			// 로그인된 아이디와 입력한 비밀번호가 일치하는지 DB조회
 			if (memberService.auth(member_id, member_pwd)) {
@@ -225,7 +254,7 @@ public class MemberController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "/user/pages/member/myPage_modiInfo"; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
+		return "redirect:"+rememberPath; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
 	}
 
 	// 회원 정보 받아오기(마이페이지 ajax)
@@ -297,13 +326,6 @@ public class MemberController {
 		return result;
 	}
 
-	// 마이페이지 (비밀번호 변경 페이지)
-	@RequestMapping(value = "/myPage/modiPwd")
-	public String myPage_pwd() {
-		System.out.println("마이페이지로 이동");
-		return "/user/pages/member/myPage_modiPwd";
-	}
-
 	// 비밀번호 변경하기
 	@RequestMapping(value = "/modiPwd", method = RequestMethod.POST)
 	public ResponseEntity<ResponseData> modiInfo(@RequestParam("member_pwd") String member_pwd,
@@ -334,31 +356,21 @@ public class MemberController {
 		return result;
 	}
 
-	// 마이페이지 (회원 탈퇴)
-	@RequestMapping(value = "/myPage/withdraw")
-	public String myPage_withdraw() {
-		System.out.println("마이페이지로 이동");
-		return "/user/pages/member/myPage_withdraw";
-	}
-
-	// 마이페이지 (구매 내역)
-	@RequestMapping(value = "/myPage/history")
-	public String myPage_history() {
-		System.out.println("마이페이지로 이동");
-		return "/user/pages/member/myPage_history";
-	}
-	
 	// 회원탈퇴
 	@RequestMapping(value = "/withdraw", method = RequestMethod.POST)
-	public ResponseEntity<ResponseData> withdraw(HttpServletRequest request) {
+	public ResponseEntity<ResponseData> withdraw(HttpServletRequest request, HttpServletResponse response) {
 		ResponseEntity<ResponseData> result = null;
 		ResponseData json = null;
 		HttpSession ses = request.getSession();
-		String member_id = ses.getAttribute("auth")+"";
+		String member_id = ses.getAttribute("auth") + "";
 		try {
 			// 회원 탈퇴 성공시
-			if(memberService.withDrawMember(member_id)) {
+			if (memberService.withDrawMember(member_id)) {
 				json = new ResponseData("success", "탈퇴 완료");
+				Cookie cookie = new Cookie("al", ""); // 쿠키객체 생성
+				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)
+				cookie.setPath("/"); // 모든 경로에서 사용 가능
+				response.addCookie(cookie); // 쿠키 저장(삭제)
 			} else {
 				json = new ResponseData("fail", "탈퇴 실패");
 			}
