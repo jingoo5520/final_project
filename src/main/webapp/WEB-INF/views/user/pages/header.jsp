@@ -19,6 +19,9 @@
 <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
+
+
+
 <style type="text/css">
 .user-login li a:hover {
 	color: red;
@@ -96,6 +99,7 @@
 								</div>
 								<div class="search-input">
 									<input type="text" placeholder="Search">
+									
 								</div>
 								<div class="search-btn">
 									<button>

@@ -12,6 +12,7 @@
 	rel="stylesheet">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	
 <style>
 body {
 	font-family: Arial, sans-serif; /* 기본 글꼴 설정 */
@@ -50,7 +51,7 @@ body {
 				<li><a href="#">비밀번호 변경</a></li>
 				<li><a href="#">구매 내역</a></li>
 				<h4>나의 활동</h4>
-				<li><a href="#">리뷰</a></li>
+				<li><a href="">리뷰</a></li>
 				<li><a href="#">찜</a></li>
 				<li><a href="#">문의</a></li>
 				<h4>나의 혜택</h4>
