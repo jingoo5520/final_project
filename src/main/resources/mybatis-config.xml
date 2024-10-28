@@ -4,14 +4,11 @@
   "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<typeAlias type="com.finalProject.model.MemberDTO"
-			alias="MemberDTO" />
-		<typeAlias type="com.finalProject.model.LoginDTO"
-			alias="LoginDTO" />
-		<typeAlias type="com.finalProject.model.admin.CouponDTO"
-			alias="CouponDTO" />
-		<typeAlias
-			type="com.finalProject.model.admin.MemberManageDTO"
-			alias="MemberManageDTO" />
+		<typeAlias type="com.finalProject.model.LoginDTO" alias="LoginDTO" />
+		<typeAlias type="com.finalProject.model.admin.notices.NoticeDTO" alias="NoticeDTO" />
+		<typeAlias type="com.finalProject.model.admin.MemberManageDTO" alias="MemberManageDTO" />
+		<typeAlias type="com.finalProject.model.admin.CouponDTO" alias="CouponDTO" />
+		<typeAlias type="com.finalProject.model.admin.CouponPayDTO" alias="CouponPayDTO" />
+		<typeAlias type="com.finalProject.model.MemberDTO" alias="MemberDTO" />
 	</typeAliases>
 </configuration>

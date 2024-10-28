@@ -117,14 +117,14 @@
 					</a></li>
 				</ul></li>
 
-			<li class="menu-item"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%= "notice".equals(request.getParameter("pageName")) || "event".equals(request.getParameter("pageName")) ? "active open" : "" %>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Admin Notices">공지사항 관리</div>
 			</a>
 				<ul class="menu-sub">
-					<li class="menu-item"><a href="/admin/coupon" class="menu-link">
+					<li class="menu-item <%= "notice".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/notices/notice" class="menu-link">
 							<div data-i18n="notices">공지</div>
 					</a></li>
-					<li class="menu-item"><a href="pages-account-settings-connections.html" class="menu-link">
+					<li class="menu-item <%= "event".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/notices/event" class="menu-link">
 							<div data-i18n="events">이벤트</div>
 					</a></li>
 				</ul></li>

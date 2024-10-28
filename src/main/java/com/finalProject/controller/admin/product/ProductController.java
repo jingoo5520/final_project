@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +22,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.finalProject.model.ProductDTO;
-import com.finalProject.model.ProductPagingInfoDTO;
-import com.finalProject.model.ProductSearchDTO;
-import com.finalProject.model.ProductUpdateDTO;
-import com.finalProject.model.ProductVO;
+import com.finalProject.model.admin.product.ProductDTO;
+import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.ProductSearchDTO;
+import com.finalProject.model.admin.product.ProductUpdateDTO;
+import com.finalProject.model.admin.product.ProductVO;
 import com.finalProject.service.admin.product.ProductService;
 import com.finalProject.util.ProductUtil;
 
@@ -52,9 +54,10 @@ public class ProductController {
 	}
 
 	@RequestMapping(value = "/productUpdate", method = RequestMethod.POST)
-	public void productUpdate(ProductUpdateDTO updateProduct, HttpServletRequest request) {
+	public ResponseEntity<String> productUpdate(ProductUpdateDTO updateProduct, HttpServletRequest request) {
 		System.out.println(updateProduct.toString());
 		List<String> subArr = new ArrayList<String>();
+
 		ServletContext sc = request.getSession().getServletContext();
 		if (ps.updateProduct(updateProduct)) {
 
@@ -71,9 +74,9 @@ public class ProductController {
 				}
 				pu.removeFile(subArr);
 			}
-			// 수정 성공 메시지 반환
+			return ResponseEntity.ok("수정 성공");
 		}
-
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
 	}
 //
 //	@RequestMapping("/test")
@@ -206,9 +209,11 @@ public class ProductController {
 	}
 
 	@RequestMapping(value = "/productDelete", method = RequestMethod.POST)
-	public void DeleteProduct(int productId) {
+	public ResponseEntity<String> DeleteProduct(int productId) {
 		if (ps.deleteProduct(productId) == 1) {
-
+			return ResponseEntity.ok("deleteSuccess");
+		} else {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("deleteFail");
 		}
 	}
 }

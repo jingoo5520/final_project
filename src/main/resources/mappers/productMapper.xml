@@ -5,7 +5,7 @@
 <mapper namespace="com.finalProject.mappers.productMapper">
 
 	<insert id="saveProduct"
-		parameterType="com.finalProject.model.ProductDTO"
+		parameterType="com.finalProject.model.admin.product.ProductDTO"
 		useGeneratedKeys="true" keyProperty="product_no">
 		INSERT INTO Product (product_name,
 		product_price,
@@ -32,7 +32,7 @@
 		</foreach>
 	</insert>
 
-	<resultMap type="com.finalProject.model.ProductVO"
+	<resultMap type="com.finalProject.model.admin.product.ProductVO"
 		id="productResultMap">
 		<id column="product_no" property="product_no" javaType="int" />
 		<result column="product_name" property="product_name"
@@ -49,7 +49,7 @@
 			property="product_sell_count" javaType="int" />
 
 		<collection column="product_no" property="list"
-			ofType="com.finalProject.model.ProductImg" javaType="java.util.List"
+			ofType="com.finalProject.model.admin.product.ProductImg" javaType="java.util.List"
 			select="getAllImg" />
 	</resultMap>
 
@@ -64,7 +64,7 @@
 	</select>
 
 	<select id="getAllImg"
-		resultType="com.finalProject.model.ProductImg">
+		resultType="com.finalProject.model.admin.product.ProductImg">
 		SELECT image_url, image_type FROM image WHERE product_no =
 		#{product_no}
 	</select>
@@ -116,7 +116,7 @@
 		limit #{startRowIndex} ,#{viewPostCntPerPage}
 	</select>
 
-	<resultMap type="com.finalProject.model.ProductVO"
+	<resultMap type="com.finalProject.model.admin.product.ProductVO"
 		id="productSearchResultMap">
 		<id column="product_no" property="product_no" javaType="int" />
 		<result column="product_name" property="product_name"
@@ -133,7 +133,7 @@
 			property="product_sell_count" javaType="int" />
 
 		<collection column="product_no" property="list"
-			ofType="com.finalProject.model.ProductImg" javaType="java.util.List"
+			ofType="com.finalProject.model.admin.product.ProductImg" javaType="java.util.List"
 			select="getAllImg" />
 	</resultMap>
 
@@ -188,6 +188,9 @@
 				image_url = #{sub_image}
 			</foreach>
 		</if>
-
+	</delete>
+	
+	<delete id="deleteProduct">
+		delete from product where product_no = #{productId}
 	</delete>
 </mapper>
