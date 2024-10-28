@@ -110,7 +110,7 @@ public class ProductController {
 		if (list != null) {
 			ps.updateProductImg(updateProduct.getProduct_no(), list);
 		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
+		return ResponseEntity.status(HttpStatus.OK).body("success");
 	}
 //
 //	@RequestMapping("/test")
