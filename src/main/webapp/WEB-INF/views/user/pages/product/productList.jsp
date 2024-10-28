@@ -30,6 +30,7 @@ function submitSortingForm() {
 </script>
 
 <body>
+
 <jsp:include page="/WEB-INF/views/user/header.jsp"></jsp:include>
 
     <!-- Preloader -->
@@ -161,23 +162,22 @@ function submitSortingForm() {
                                                 <h4 class="title">
                                                     <a href="/product/jewelry/detail?productNo=${product.product_no}">${product.product_name }</a>
                                                 </h4>
-                                                
 <div class="price">
-    <!-- dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
+<!--     dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
     <c:if test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
         <span style="text-decoration: line-through; color: #999;">
             <fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###"/>원
         </span>
     </c:if>
 
-    <!-- 할인율 (dc 타입이 P일 때만 표시) -->
+<!--     할인율 (dc 타입이 P일 때만 표시) -->
     <c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
         <span class="sale-tag" style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
             -${product.dc_rate}%
         </span>
     </c:if>
     
-    <!-- 최종 계산된 가격 표시 -->
+<!--     최종 계산된 가격 표시 -->
     <span>
         <fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###"/> 원
     </span>

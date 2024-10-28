@@ -21,13 +21,6 @@ public class UserProductDAOImpl implements ProductDAO {
 
 	   private static final String NS = "com.final_project.mappers.productMapper.";
 	   
-//	@Override
-//	public List<ProductDTO> selectAllProducts() throws Exception {
-////		int cnt = ses.selectOne(NS + "selectAllProducts");
-////		System.out.println(cnt);
-//		return ses.selectList(NS + "selectAllProducts");
-//	}
-
 	@Override
 	public List<ProductDTO> selectProductsByPage(int offset, int limit) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();

@@ -49,4 +49,8 @@ public class ProductDTO {
         return product_price; // 기본적으로 원래 가격 반환
     }
 
+	public void setCalculatedPrice(int calculatedPrice) {
+		
+	}
+
 }

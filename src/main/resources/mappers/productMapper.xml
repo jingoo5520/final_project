@@ -6,7 +6,7 @@
    <!-- 쿼리문 -->
 <!-- 생성일에 따른 모든 상품 나열 -->
 	<select id="selectProductsByPage" parameterType="map" resultType="ProductDTO">
-	    select p.product_no, p.product_name, p.product_price, p.product_category, p.dc_rate, p.product_dc_type,
+	    select p.product_no, p.product_name, p.product_price, p.product_category, p.dc_rate, p.product_dc_type, p.product_sell_count,
 	           max(pi.image_main_url) as image_main_url, c.category_name
 	    from products p
 	    join product_images pi on p.product_no = pi.product_no
@@ -28,9 +28,8 @@
 	
 <!-- 카테고리별 상품 조회 쿼리문: 정렬 기준 추가 -->
 <select id="selectProductsByCategoryAndPage" parameterType="map" resultType="ProductDTO">
-    select p.product_no, p.product_name, p.product_price, p.product_category, 
-           max(pi.image_main_url) as image_main_url, 
-           c.category_name
+    select p.product_no, p.product_name, p.product_price, p.product_category, p.dc_rate, p.product_dc_type, p.product_sell_count,
+	           max(pi.image_main_url) as image_main_url, c.category_name
     from products p
     left join product_images pi on p.product_no = pi.product_no
     join categories c on p.product_category = c.category_no
@@ -41,22 +40,32 @@
     group by p.product_no, p.product_name, p.product_price, p.product_category, c.category_name
     <!-- 정렬 기준 추가 -->
     <choose>
-        <when test="sortOrder == 'new'">
-            order by p.product_reg_date desc  <!-- 신상품순 -->
-        </when>
-        <when test="sortOrder == 'popular'">
-            order by p.product_sell_count desc  <!-- 인기상품순 (판매 수 기준) -->
-        </when>
-        <when test="sortOrder == 'lowPrice'">
-            order by p.product_price asc  <!-- 낮은가격순 -->
-        </when>
-        <when test="sortOrder == 'highPrice'">
-            order by p.product_price desc  <!-- 높은가격순 -->
-        </when>
-        <otherwise>
-            order by p.product_reg_date desc  <!-- 기본: 신상품순 -->
-        </otherwise>
-    </choose>
+    <when test="sortOrder == 'new'">
+        order by p.product_reg_date desc  <!-- 신상품순 -->
+    </when>
+    <when test="sortOrder == 'popular'">
+        order by p.product_sell_count desc  <!-- 인기상품순 (판매 수 기준) -->
+    </when>
+    <when test="sortOrder == 'lowPrice'">
+        order by 
+        CASE 
+            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - (p.dc_rate / 100)))
+            WHEN p.product_dc_type = 'M' THEN (p.product_price - IFNULL(p.dc_amount, 0))
+            ELSE p.product_price
+        END asc  <!-- 낮은가격순 -->
+    </when>
+    <when test="sortOrder == 'highPrice'">
+        order by 
+        CASE 
+            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - (p.dc_rate / 100)))
+            WHEN p.product_dc_type = 'M' THEN (p.product_price - IFNULL(p.dc_amount, 0))
+            ELSE p.product_price
+        END desc  <!-- 높은가격순 -->
+    </when>
+    <otherwise>
+        order by p.product_reg_date desc  <!-- 기본: 신상품순 -->
+    </otherwise>
+</choose>
     limit #{limit} offset #{offset}
 </select>
 

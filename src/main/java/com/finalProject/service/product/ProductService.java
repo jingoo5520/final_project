@@ -9,19 +9,19 @@ public interface ProductService {
 	// 상품 출력
 	List<ProductDTO> getProductsByPage(int page, int pageSize) throws Exception;
 	
-	// 상품개수가져오기
+	// 상품수 가져오기
 	int getProductCount() throws Exception;
 
 	// 카테고리별 상품 출력
 	List<ProductDTO> getProductsByCategoryAndPage(Integer category, int page, int pageSize, String sortOrder)throws Exception;
 
-	// 카테고리별 상품 수 계산
+	// 카테고리별 상품 수 검색
 	int getProductCountByCategory(Integer category)throws Exception;
 
 	
 	List<ProductDTO> getProductInfo(int productId) throws Exception;
 
-	// content 가져오는 메서드
+	// content 가져오는 메소드
 	ProductDTO getProductDetailById(int productId)throws Exception;
 	
 }

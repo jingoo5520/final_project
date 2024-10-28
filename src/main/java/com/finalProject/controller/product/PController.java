@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import com.finalProject.model.ProductDTO;
 import com.finalProject.service.product.ProductService;
-import com.mysql.cj.result.DefaultValueFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,33 +19,35 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/product")
 public class PController {
 
-	@Autowired
-	private ProductService service;
-	
-	// 1. ì „ì²´ ìƒí’ˆì„ ë³´ì—¬ì£¼ëŠ” ë©”ì„œë“œ (ì¹´í…Œê³ ë¦¬ ì—†ì´ ì „ì²´ ìƒí’ˆ í‘œì‹œ)
-	@GetMapping("/jewelry/all")
-	public String showProductList(
-			@RequestParam(value = "category", required = false) Integer category,
-			@RequestParam(value = "page", defaultValue = "1") int page, // í˜ì´ì§€ ì¼°ì„ë•Œ 1í˜ì´ì§€ ê³ ì •
-            @RequestParam(value = "pageSize", defaultValue = "18") int pageSize, // í•œ í˜ì´ì§€ì—ì„œ ë³´ì—¬ì¤„ ìƒí’ˆ ê°œìˆ˜
-            @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
-			Model model ) throws Exception {
-		
-		List<ProductDTO> products = service.getProductsByPage(page, pageSize);  // ì „ì²´ ìƒí’ˆ ê°€ì ¸ì˜¤ê¸°
-		
+    @Autowired
+    private ProductService service;
 
-        int totalProducts = service.getProductCount();  // ì „ì²´ ìƒí’ˆ ìˆ˜ ê³„ì‚°
+    // 1. ÀüÃ¼ »óÇ°À» º¸¿©ÁÖ´Â ¸Ş¼­µå (Ä«Å×°í¸® ¾øÀÌ ÀüÃ¼ »óÇ° Ç¥½Ã)
+    @GetMapping("/jewelry/all")
+    public String showProductList(
+            @RequestParam(value = "category", required = false) Integer category,
+            @RequestParam(value = "page", defaultValue = "1") int page, // ÆäÀÌÁö µğÆúÆ® °ª ¼³Á¤
+            @RequestParam(value = "pageSize", defaultValue = "18") int pageSize, // ÇÑ ÆäÀÌÁö¿¡¼­ º¸¿©ÁÙ »óÇ° °³¼ö
+            @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
+            Model model) throws Exception {
+
+        List<ProductDTO> products = service.getProductsByPage(page, pageSize);  // ÀüÃ¼ »óÇ° Á¶È¸
         
+        
+        int totalProducts = service.getProductCount();  // ÀüÃ¼ »óÇ° °³¼ö °è»ê
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         
-	     // í•œ ë²ˆì— ë³´ì—¬ì¤„ í˜ì´ì§€ ë²”ìœ„ ì„¤ì • (ì˜ˆ: 10í˜ì´ì§€ì”©)
+        
+     
+
+        // ÇÑ ¹ø¿¡ º¸¿©ÁÙ ÆäÀÌÁö ºí·Ï ¼³Á¤ (¿¹: 10ÆäÀÌÁö¾¿)
         int pageBlockSize = 10;
         int currentBlock = (int) Math.ceil((double) page / pageBlockSize);
         int startPage = (currentBlock - 1) * pageBlockSize + 1;
         int endPage = Math.min(startPage + pageBlockSize - 1, totalPages);
         int totalProductCount = service.getProductCount();
 
-        // Modelì— ë°ì´í„° ì¶”ê°€
+        // Model¿¡ µ¥ÀÌÅÍ Ãß°¡
         model.addAttribute("totalProductCount", totalProductCount);
         model.addAttribute("products", products);
         model.addAttribute("currentPage", page);
@@ -57,12 +57,11 @@ public class PController {
         model.addAttribute("hasPrevBlock", currentBlock > 1);
         model.addAttribute("hasNextBlock", endPage < totalPages);
         model.addAttribute("pageSize", pageSize);
-        model.addAttribute("sortOrder", sortOrder);  // ì •ë ¬ ê¸°ì¤€ ì¶”ê°€
-        model.addAttribute("category", category);  // ì¹´í…Œê³ ë¦¬ ì¶”ê°€
+        model.addAttribute("sortOrder", sortOrder);  // Á¤·Ä ±âÁØ Ãß°¡
+        model.addAttribute("category", category);  // Ä«Å×°í¸® Ãß°¡
         model.addAttribute("totalProducts", totalProducts);
-        
-        
-        // ê° ì¹´í…Œê³ ë¦¬ë³„ ìƒí’ˆ ê°œìˆ˜ ì „ë‹¬
+
+        // °¢ Ä«Å×°í¸®º° »óÇ° °³¼ö Àü´Ş
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -72,8 +71,8 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        
-        // ì¹´í…Œê³ ë¦¬ë³„ ìƒí’ˆ ê°œìˆ˜ ì „ë‹¬
+
+        // Ä«Å×°í¸®º° »óÇ° °³¼ö Àü´Ş
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
@@ -83,11 +82,11 @@ public class PController {
         model.addAttribute("couplingCount", couplingCount);
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
-		
-		return "/user/pages/product/productList"; // jsp
-	}
-	
-	// 2. ì¹´í…Œê³ ë¦¬ë³„ë¡œ ìƒí’ˆì„ ë³´ì—¬ì£¼ëŠ” ë©”ì„œë“œ
+
+        return "/user/pages/product/productList"; // jsp ÆÄÀÏ ¹İÈ¯
+    }
+
+    // 2. Ä«Å×°í¸®º°·Î »óÇ°À» º¸¿©ÁÖ´Â ¸Ş¼­µå
     @GetMapping("/jewelry")
     public String showProductList(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -96,25 +95,30 @@ public class PController {
             @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
             Model model) throws Exception {
 
-    	System.out.println("ì¹´í…Œê³ ë¦¬ ê°’ : " + category); 
-    	sortOrder = sortOrder.trim();
+        log.info("Ä«Å×°í¸® °ª : " + category);
+        sortOrder = sortOrder.trim();
 
         List<ProductDTO> products = service.getProductsByCategoryAndPage(category, page, pageSize, sortOrder);
         
+     // °¢ »óÇ°ÀÇ °è»êµÈ °¡°İÀ» ¼³Á¤
+        for (ProductDTO product : products) {
+            product.setCalculatedPrice(product.getCalculatedPrice());
+        }
+
         int totalProducts = service.getProductCountByCategory(category);
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         int totalProductCount = service.getProductCount();
-        
-        System.out.println(totalProducts);
-        System.out.println("Received sortOrder: '" + sortOrder + "'");
 
-        // í˜ì´ì§€ë„¤ì´ì…˜
+        log.info("ÀüÃ¼ »óÇ° ¼ö: " + totalProducts);
+        log.info("Received sortOrder: '" + sortOrder + "'");
+
+        // ÆäÀÌÁö³×ÀÌ¼Ç ¼³Á¤
         int pageBlockSize = 10;
         int currentBlock = (int) Math.ceil((double) page / pageBlockSize);
         int startPage = (currentBlock - 1) * pageBlockSize + 1;
         int endPage = Math.min(startPage + pageBlockSize - 1, totalPages);
-        
-        // ê° ì¹´í…Œê³ ë¦¬ë³„ ìƒí’ˆ ê°œìˆ˜ ê°€ì ¸ì˜¤ê¸°
+
+        // °¢ Ä«Å×°í¸®º° »óÇ° °³¼ö °¡Á®¿À±â
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -124,8 +128,8 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        
-        // ì¹´í…Œê³ ë¦¬ë³„ ìƒí’ˆ ê°œìˆ˜ ì „ë‹¬
+
+        // Ä«Å×°í¸®º° »óÇ° °³¼ö Àü´Ş
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
@@ -136,7 +140,7 @@ public class PController {
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
 
-        // Modelì— ë°ì´í„° ì¶”ê°€
+        // Model¿¡ µ¥ÀÌÅÍ Ãß°¡
         model.addAttribute("totalProductCount", totalProductCount);
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("category", category);
@@ -149,32 +153,26 @@ public class PController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("hasPrevBlock", currentBlock > 1);
         model.addAttribute("hasNextBlock", endPage < totalPages);
-        
 
-        return "/user/pages/product/productList";  // JSP íŒŒì¼
+        return "/user/pages/product/productList";  // JSP ÆÄÀÏ ¹İÈ¯
     }
-    
-    @GetMapping ("/jewelry/detail")
-    public String showProductDetail (
-    		@RequestParam("productNo") int productId,
-    		Model model) throws Exception {
-    	
-    	// ìƒí’ˆ ì •ë³´
-    	List<ProductDTO> products = service.getProductInfo(productId);
-    	
-    	// content ê°€ì ¸ì˜¤ëŠ” 
-    	ProductDTO product = service.getProductDetailById(productId);
-    	
-    	// ë¦¬ë·°ì •ë³´
-    	
-    	
-    	model.addAttribute("products", products);
-    	model.addAttribute("product_content", product.getProduct_content());
-    	model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // ê³„ì‚°ëœ ê°€ê²© ì¶”ê°€
-    	return "/user/pages/product/productDetail";
-    }
-   
-    
-	
 
+    // 3. »óÇ° »ó¼¼ Á¤º¸¸¦ º¸¿©ÁÖ´Â ¸Ş¼­µå
+    @GetMapping("/jewelry/detail")
+    public String showProductDetail(
+            @RequestParam("productNo") int productId,
+            Model model) throws Exception {
+
+        // »óÇ° Á¤º¸ °¡Á®¿À±â
+        List<ProductDTO> products = service.getProductInfo(productId);
+
+        // »ó¼¼ Á¤º¸ °¡Á®¿À±â
+        ProductDTO product = service.getProductDetailById(productId);
+
+        // Model¿¡ µ¥ÀÌÅÍ Ãß°¡
+        model.addAttribute("products", products);
+        model.addAttribute("product_content", product.getProduct_content());
+        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // °è»êµÈ °¡°İ Ãß°¡
+        return "/user/pages/product/productDetail";
+    }
 }
