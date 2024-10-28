@@ -1,10 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- ========================= CSS here ========================= -->
+    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+
+</head>
+
 <script type="text/javascript">
 function countUp(productNo) {
     let quantity = parseInt($("#" + productNo + "_quantity").text());
@@ -23,6 +40,37 @@ function countDown(productNo) {
 function addCart(productNo) {
 	let quantity = parseInt($("#" + productNo + "_quantity").text());
 	
+	$.ajax({
+	    url: '/addCartItem',
+	    type: 'POST',
+	    data: {
+	    	productNo : productNo,
+	    	quantity : quantity
+	    	},
+	    dataType: 'json',
+	    success: function(data) {
+	        console.log(data);
+	    },
+	    error: function() {
+	    },
+	    complete: function(data) {
+	    	if (data.status == 200) {
+	            // 모달을 보여주기
+	            $('#myModal').modal('show');
+
+	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
+	            $('#goCart').off('click').on('click', function() {
+	                location.href = "/cart";
+	            });
+	            
+	            $('#keepProduct').off('click').on('click', function() {
+	                location.reload();
+	            });
+	        } else if (data.responseText == 401) {
+	            alert("잘못된 접근입니다.");
+	        }
+	    }
+	});
 }
 </script>
 <style>
@@ -95,22 +143,6 @@ function addCart(productNo) {
 }
 
 </style>
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
-
-    <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
-
-</head>
 
 <body>
 
@@ -307,6 +339,7 @@ function addCart(productNo) {
     </section>
     <!-- End Item Details -->
 
+<jsp:include page="../cart/cartModal.jsp"></jsp:include>
 
 <jsp:include page="../footer.jsp"></jsp:include>
 

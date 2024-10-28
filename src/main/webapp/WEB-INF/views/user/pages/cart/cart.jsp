@@ -234,7 +234,20 @@ function removeCheckedItem() {
     }
 }
 
-
+$(window).scroll(function() {
+	var scrollTop = $(window).scrollTop(); // 현재 스크롤 위치
+	var documentHeight = $(document).height(); // 전체 문서의 높이
+	var windowHeight = $(window).height(); // 현재 창의 높이
+	var remainingScroll = documentHeight - (scrollTop + windowHeight); // 남은 스크롤 거리
+	
+	console.log('남은 스크롤 거리: ' + remainingScroll);
+	
+	if (remainingScroll <= 552) {
+        $('.total-amount.fixed-total').hide(); // 해당 요소 숨기기
+    } else {
+        $('.total-amount.fixed-total').show(); // 스크롤이 해당 거리 이상일 경우 요소 보여주기
+    }
+});
 
 </script>
 
@@ -319,6 +332,26 @@ input[type="checkbox"]:hover {
 
 #removeChecked:focus {
 	color: #807e6f;
+}
+
+.fixed-total {
+    position: fixed;
+    top: 442px;
+    right: 130px;
+    width: 300px;
+    height: 400px;
+    background-color: #a8a691;
+    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3), 0 10px 15px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    z-index: 1000;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 0;
+    padding-top: 0; /* 상단 패딩 제거 */
+}
+
+.right {
+    padding: 0;
+    margin-top: -20px; /* 상단 마진을 음수로 설정하여 빈 공간 줄이기 */
 }
 </style>
 
@@ -539,31 +572,23 @@ input[type="checkbox"]:hover {
 							</c:forEach>
 						</c:if>
 					</div>
-					<div class="row">
-						<div class="col-12">
-							<!-- Total Amount -->
-							<div class="total-amount">
-								<div class="row">
-									<div class="col-lg-4 col-md-6 col-12">
-										<div class="right">
-											<ul>
-												<li>총 상품금액<span>$2560.00</span></li>
-												<li>총 할인금액<span>Free</span></li>
-												<li class="last">총 결제금액<span>$2531.00</span></li>
-												<li>총 적립예정포인트<span>$29.00</span></li>
-											</ul>
-											<div class="button">
-												<a href="../order" class="btn">Checkout</a> <a
-													href="product-grids.html" class="btn btn-alt">Continue
-													shopping</a>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!--/ End Total Amount -->
-						</div>
-					</div>
+					<!-- Total Amount -->
+					<div class="total-amount fixed-total">
+						<div class="right">
+							<ul>
+								<li>총 상품금액<span>$2560.00</span></li>
+								<li>총 할인금액<span>Free</span></li>
+								<li class="last">총 결제금액<span>$2531.00</span></li>
+								<li>총 적립예정포인트<span>$29.00</span></li>
+							</ul>
+							<div class="button">
+								<a href="../order" class="btn">Checkout</a> <a
+									href="product-grids.html" class="btn btn-alt">Continue
+									shopping</a>
+						 	</div>
+						 </div>
+					 </div>
+					 <!--/ End Total Amount -->
 				</c:when>
 				<c:otherwise>
 					<h1>장바구니에 상품이 없습니다.</h1>
@@ -577,7 +602,6 @@ input[type="checkbox"]:hover {
 	<!--/ End Shopping Cart -->
 
 	<jsp:include page="../footer.jsp"></jsp:include>
-
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
