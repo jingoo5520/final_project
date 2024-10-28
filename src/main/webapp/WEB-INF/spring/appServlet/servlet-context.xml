@@ -55,6 +55,9 @@
 		<interceptor>
 			<mapping path="/test/auth" />
 			<mapping path="/member/myPage/modiInfo" />
+			<mapping path="/member/myPage/modiPwd" />
+			<mapping path="/member/myPage/withdraw" />
+			<mapping path="/member/myPage/history" />
 			<mapping path="/member/myPage/auth" />
 			<beans:ref bean="authInterceptor" />
 		</interceptor>

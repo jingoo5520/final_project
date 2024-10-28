@@ -72,7 +72,15 @@
 	<!-- 마이 페이지 비밀번호 변경 -->
 	<update id="updateMemberPwd">
 		update members
-		set member_pwd = sha2(#{member_pwd}, 256)
+		set member_pwd = sha2(#{member_pwd},
+		256)
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 마이 페이지 회원탈퇴 -->
+	<update id="withDrawMember">
+		update members
+		set member_status = 'withdrawn'
 		where member_id = #{member_id}
 	</update>
 

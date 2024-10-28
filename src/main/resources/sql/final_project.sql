@@ -32,3 +32,8 @@ where member_id = '1';
 update members
 set member_pwd = sha2('xptmxm12', 256)
 where member_id = '1';
+
+-- 회원 탈퇴(마이페이지)
+update members
+set member_status = 'withdrawn'
+where member_id = '1';

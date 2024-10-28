@@ -24,7 +24,7 @@
 		<jsp:include page="../myPage_side.jsp"></jsp:include>
 		<main class="right-pane">
 
-			<h1>비밀번호 변경</h1>
+			<h1>회원 정보 수정</h1>
 			<c:if test="${empty sessionScope.auth}">
 				<form class="row" action="/member/auth" method="post">
 					<div class="auth">

@@ -70,6 +70,12 @@ public class MemberServiceImpl implements MemberService {
 	public boolean updateMemberPwd(Map<String, String> map) throws Exception {
 		return memberDAO.updateMemberPwd(map);
 	}
+
+	// 마이 페이지 회원탈퇴
+	@Override
+	public boolean withDrawMember(String member_id) throws Exception {
+		return memberDAO.withDrawMember(member_id);
+	}
 	
 	
 

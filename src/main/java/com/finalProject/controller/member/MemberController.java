@@ -334,4 +334,41 @@ public class MemberController {
 		return result;
 	}
 
+	// 마이페이지 (회원 탈퇴)
+	@RequestMapping(value = "/myPage/withdraw")
+	public String myPage_withdraw() {
+		System.out.println("마이페이지로 이동");
+		return "/user/pages/member/myPage_withdraw";
+	}
+
+	// 마이페이지 (구매 내역)
+	@RequestMapping(value = "/myPage/history")
+	public String myPage_history() {
+		System.out.println("마이페이지로 이동");
+		return "/user/pages/member/myPage_history";
+	}
+	
+	// 회원탈퇴
+	@RequestMapping(value = "/withdraw", method = RequestMethod.POST)
+	public ResponseEntity<ResponseData> withdraw(HttpServletRequest request) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		String member_id = ses.getAttribute("auth")+"";
+		try {
+			// 회원 탈퇴 성공시
+			if(memberService.withDrawMember(member_id)) {
+				json = new ResponseData("success", "탈퇴 완료");
+			} else {
+				json = new ResponseData("fail", "탈퇴 실패");
+			}
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		return result;
+	}
+
 }

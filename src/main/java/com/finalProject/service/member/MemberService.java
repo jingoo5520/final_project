@@ -33,6 +33,9 @@ public interface MemberService {
 
 	// 마이 페이지 비밀번호 변경
 	boolean updateMemberPwd(Map<String, String> map)throws Exception;
+
+	// 마이 페이지 회원탈퇴
+	boolean withDrawMember(String member_id)throws Exception;
 	
 	
 	

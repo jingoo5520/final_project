@@ -103,4 +103,14 @@ public class MemberDAOImpl implements MemberDAO {
 		return result;
 	}
 
+	// 마이 페이지 회원탈퇴
+	@Override
+	public boolean withDrawMember(String member_id) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"withDrawMember", member_id)==1) {
+			result = true;
+		}
+		return result;
+	}
+
 }
