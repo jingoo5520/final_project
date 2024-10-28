@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class PagingInfo {
+public class PagingInfoNew {
 	// 기본 페이징 출력에 필요한 변수들
 	
 	private int pageNo; // 페이지 번호
@@ -21,7 +21,7 @@ public class PagingInfo {
 	private int startPageNoCurBloack; // 현재 페이징 블럭의 시작 페이지 번호
 	private int endPageNoCurBlock; // 현재 페이징 블럭의 마지막 페이지 번호
 	
-	public PagingInfo(PagingInfoDTO dto) {
+	public PagingInfoNew(PagingInfoNewDTO dto) {
 		this.pageNo = dto.getPageNo();
 		this.viewDataCntPerPage = dto.getPagingSize();
 		this.pageCntPerBlock = dto.getPageCntPerBlock();

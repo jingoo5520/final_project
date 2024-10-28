@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.finalProject.model.admin.MemberManageDTO;
 import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfo;
+import com.finalProject.model.admin.PagingInfoNew;
 
 public interface AdminMemberDAO {
 
@@ -15,9 +15,9 @@ public interface AdminMemberDAO {
 	int getTotalFilterdMemberCnt(MemberSearchFilterDTO memberSearchFilterDTO) throws Exception;
 	
 	// 전체 회원 조회
-	List<MemberManageDTO> selectAllMembers(PagingInfo pi) throws Exception;
+	List<MemberManageDTO> selectAllMembers(PagingInfoNew pi) throws Exception;
 
 	// 필터링 회원 조회
-	List<MemberManageDTO> selectFilteredMembers(MemberSearchFilterDTO memberSearchFilterDTO, PagingInfo pi) throws Exception;
+	List<MemberManageDTO> selectFilteredMembers(MemberSearchFilterDTO memberSearchFilterDTO, PagingInfoNew pi) throws Exception;
 
 }

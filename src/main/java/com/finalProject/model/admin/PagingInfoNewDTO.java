@@ -13,7 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PagingInfoDTO {
+public class PagingInfoNewDTO {
 	private int pageNo;
 	private int pagingSize; // 한 페이지에서 보여질 데이터의 개수
 	private int pageCntPerBlock; // 한 블럭에서 보여질 페이지 개수
