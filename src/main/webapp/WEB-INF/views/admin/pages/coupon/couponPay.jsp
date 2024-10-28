@@ -93,15 +93,14 @@
 					filteredData = formData;
 					
 					showFilterdMemberList(1);
-						
-				
+					
 				});
 		
 		// 체크 박스 설정
 		$(document).on('change', '[name="checkMember"]', function() {
 			let checkBoxId = $(this).attr("id");
 	        let memberId = checkBoxId.replace("checkbox-", "");
-	        
+	        	        
 	        if($(this).is(':checked')) {
 	        	checkedMemberIdList.push(memberId);	
 	        } else {
@@ -112,17 +111,59 @@
 	        	}
 	        }
 	        
+	        console.log(checkedMemberIdList);
+	        
 	        if(checkedMemberIdList.length == 0){
+	        	$('#payCouponAllBtn').prop('disabled', false);
 	        	$('#payCouponBtn').prop('disabled', true);
 	        } else {
+	        	$('#payCouponAllBtn').prop('disabled', true);
 	        	$('#payCouponBtn').prop('disabled', false)
 	        }
 	    });
 		
+		// 쿠폰 지급 취소(Close 버튼 클릭)
+		$('#couponPayModalCloseBtn').on('click', function() {
+			$('#couponPayModal').modal('hide');
+			resetCouponEditModal();
+		});
+		
+		
+		// 모달이 닫힐 때 이벤트를 처리
+	    $('#couponPayModal').on('hidden.bs.modal', function () {
+	    	let indexToRemove = checkedMemberIdList.indexOf("All");
+        	
+        	if (indexToRemove !== -1) {
+        		checkedMemberIdList.splice(indexToRemove, 1);
+        	}
+	    	
+	    	resetCouponEditModal();
+	    });
+		
+		// 성별 체크박스 최소 한개 선택
+	    $('input[name="genders"]').change(function() {
+	        // 체크된 체크박스 수 확인
+	        var checkedCount = $('input[name="genders"]:checked').length;
+	        
+	        // 체크박스가 하나도 체크되어 있지 않을 경우, 체크를 해제하지 않음
+	        if (checkedCount === 0) {
+	            $(this).prop('checked', true); // 체크를 유지
+	        }
+	    });
+		
+		// 레벨 체크박스 최소 한개 선택
+	    $('input[name="levels"]').change(function() {
+	        // 체크된 체크박스 수 확인
+	        var checkedCount = $('input[name="levels"]:checked').length;
+	        
+	        // 체크박스가 하나도 체크되어 있지 않을 경우, 체크를 해제하지 않음
+	        if (checkedCount === 0) {
+	            $(this).prop('checked', true); // 체크를 유지
+	        }
+	    });
+		
+		
 		getCouponList();
-		
-	
-		
 	});
 	
 	// 쿠폰 리스트 가져오기
@@ -130,7 +171,10 @@
 		$.ajax({
 			url : '/admin/coupon/getCouponList',
 			type : 'GET',
+			dataType: 'json',
 			success : function(data) {
+				console.log(data);
+				
 				let output = '';
 				
 				data.forEach(function(coupon){
@@ -153,10 +197,10 @@
 	
 	// 멤버 리스트 보여주기
 	function showMemberList(pageNo) {
-		
 		$.ajax({
 			url : '/admin/member/getAllMembers',
 			type : 'GET',
+			dataType: 'json',
 			data : {
 				"pageNo" : pageNo,
 				"pagingSize" : pagingSize,
@@ -252,12 +296,9 @@
 			url : '/admin/member/getFilteredMembers',
 			type : 'POST',
 			data : filteredData,
+			dataType: 'json',
 			success : function(data) {
-				
-				console.log(data.list.length);
-				
 				if(data.list.length != 0){
-					console.log(data);
 
 					let listOutput = '';
 					let paginationOutput = '';
@@ -332,8 +373,14 @@
 	}
 	
 	// 쿠폰 지급 버튼 클릭(모달창 열기)
-	function openPayCouponModal(){
-		$('#numberOfMembers').val(checkedMemberIdList.length);
+	function openPayCouponModal(member){
+		if(member == 'all'){
+			$('#numberOfMembers').val("All");
+			checkedMemberIdList = ["All"];
+			console.log(checkedMemberIdList);
+		} else {
+			$('#numberOfMembers').val(checkedMemberIdList.length);	
+		}
 	}
 	
 	// 쿠폰 설정
@@ -349,7 +396,10 @@
 			$('#couponDc').val(coupon.coupon_dc_rate);
 		}
 		
+		$('#couponUseDays').val(coupon.coupon_use_days);
+		
 		selectedCouponNo = coupon.coupon_no;
+		$("#couponPayBtn").prop("disabled", false);
 	}
 	
 	// 쿠폰 지급
@@ -364,15 +414,25 @@
 			}),
 			success : function(data) {
 				console.log(data);
+				$('#couponPayModal').modal('hide');
 			},
 			error : function(error) {
 				console.log(error);
 			}
 		
 		})
-		
-		
 	}
+	
+	// 모달 초기화
+	function resetCouponEditModal(){
+		$('#selectCouponBtn').text('쿠폰 선택');
+		$('#couponType').val('');
+		$('#couponDc').val('');
+		$('#couponUseDays').val('');
+		$("#couponPayBtn").prop('disabled', true);
+	}
+	
+	
 </script>
 </head>
 <style>
@@ -541,12 +601,8 @@ table td {
 												<td>${member.birthday}</td>
 												<td>${member.gender}</td>
 												<td>${member.member_level}</td>
-												<td>
-													<fmt:formatDate value="${member.reg_date}" pattern="yyyy-MM-dd" />
-												</td>
-												<td>
-													<input name="checkMember" class="form-check-input" type="checkbox" value="" id="checkbox-${member.member_id}" />
-												</td>
+												<td><fmt:formatDate value="${member.reg_date}" pattern="yyyy-MM-dd" /></td>
+												<td><input name="checkMember" class="form-check-input" type="checkbox" value="" id="checkbox-${member.member_id}" /></td>
 											</tr>
 										</c:forEach>
 
@@ -600,12 +656,13 @@ table td {
 
 						<!-- 쿠폰 지급 버튼 -->
 						<div id="payCouponBtnSapce">
-							<button id="payCouponBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#payCouponModal" onclick="openPayCouponModal()" disabled>쿠폰 지급</button>
+							<button id="payCouponAllBtn" type="button" class="btn btn-outline-primary mt-4 me-1" data-bs-toggle="modal" data-bs-target="#couponPayModal" onclick="openPayCouponModal('all')" >전체 지급</button>
+							<button id="payCouponBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#couponPayModal" onclick="openPayCouponModal()" disabled>쿠폰 지급</button>
 						</div>
 						<!-- / 쿠폰 지급 버튼 -->
 
 						<!-- 쿠폰 지급 확인 모달 -->
-						<div id="payCouponModal" class="modal fade" tabindex="-1" aria-hidden="true">
+						<div id="couponPayModal" class="modal fade" tabindex="-1" aria-hidden="true">
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
@@ -644,11 +701,18 @@ table td {
 												<input id="couponDc" type="text" name="" id="" class="form-control" placeholder="Amount / Rate" aria-label="" aria-describedby="" readonly />
 											</div>
 										</div>
+
+										<div class="row mb-3">
+											<label class="col col-form-label" for="">사용 기한</label>
+											<div class="col-sm-9">
+												<input id="couponUseDays" type="text" name="" id="" class="form-control" placeholder="Use Days" aria-label="" aria-describedby="" readonly />
+											</div>
+										</div>
 									</div>
 
 									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Close</button>
-										<button type="button" class="btn btn-primary" onclick="payCoupon()">Pay</button>
+										<button id="couponPayModalCloseBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Close</button>
+										<button id="couponPayBtn" type="button" class="btn btn-primary" onclick="payCoupon()" disabled>Pay</button>
 									</div>
 
 								</div>

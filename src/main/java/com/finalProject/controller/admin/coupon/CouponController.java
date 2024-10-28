@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.CouponDTO;
 import com.finalProject.model.admin.MemberManageDTO;
-import com.finalProject.model.admin.PagingInfoDTO;
+import com.finalProject.model.admin.PagingInfoNewDTO;
 import com.finalProject.service.admin.coupon.CouponService;
 import com.finalProject.service.admin.member.AdminMemberService;
 
@@ -33,7 +33,7 @@ public class CouponController {
 
 	@Inject
 	AdminMemberService amService;
-	
+
 	// 쿠폰 관리 - 쿠폰 페이지 이동
 	@GetMapping("/coupons")
 	public String couponPage(Model model) {
@@ -42,7 +42,7 @@ public class CouponController {
 		List<CouponDTO> list = null;
 
 		try {
-			data = cService.getCouponList(new PagingInfoDTO(1, 5, 3));
+			data = cService.getCouponList(new PagingInfoNewDTO(1, 5, 3));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +67,7 @@ public class CouponController {
 		List<MemberManageDTO> list = null;
 
 		try {
-			data = amService.getAllMembers(new PagingInfoDTO(1, 10, 10));
+			data = amService.getAllMembers(new PagingInfoNewDTO(1, 10, 10));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,6 +75,9 @@ public class CouponController {
 		model.addAttribute("memberData", data);
 		return "/admin/pages/coupon/couponPay";
 	}
+
+	/* ========================================================================== */
+	/* ========================================================================== */
 
 	// 쿠폰 리스트 가져오기
 	@GetMapping("/getCouponList")
@@ -92,7 +95,7 @@ public class CouponController {
 		return list;
 	}
 
-	// 쿠폰 리스트 가져오기
+	// 쿠폰 리스트 가져오기(페이지네이션)
 	@GetMapping("/getCouponListWithPi")
 	@ResponseBody
 	public Map<String, Object> getCouponList(@RequestParam int pageNo, @RequestParam int pagingSize,
@@ -101,7 +104,7 @@ public class CouponController {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		try {
-			data = cService.getCouponList(new PagingInfoDTO(pageNo, pagingSize, pageCntPerBlock));
+			data = cService.getCouponList(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -112,19 +115,13 @@ public class CouponController {
 	// 쿠폰 생성
 	@PostMapping("/createCoupon")
 	@ResponseBody
-	public ResponseEntity<String> createCoupon(@RequestParam String couponName, @RequestParam String couponType,
-			@RequestParam int couponDcAmount, @RequestParam float couponDcRate) {
+	public ResponseEntity<String> createCoupon(@RequestBody CouponDTO couponDTO) {
 		String result = "";
+
+		System.out.println(couponDTO);
 
 		System.out.println("/createCoupon");
 
-		System.out.println(couponName);
-		System.out.println(couponType);
-		System.out.println(couponDcAmount);
-		System.out.println(couponDcRate);
-
-		CouponDTO couponDTO = CouponDTO.builder().coupon_name(couponName).coupon_dc_type(couponType)
-				.coupon_dc_amount(couponDcAmount).coupon_dc_rate(couponDcRate).build();
 
 		try {
 			cService.createCoupon(couponDTO);
@@ -142,16 +139,10 @@ public class CouponController {
 	// 쿠폰 수정
 	@PostMapping("/updateCoupon")
 	@ResponseBody
-	public ResponseEntity<String> updateCoupon(@RequestParam int couponNo, @RequestParam String couponName,
-			@RequestParam String couponType, @RequestParam int couponDcAmount, @RequestParam float couponDcRate) {
+	public ResponseEntity<String> updateCoupon(@RequestBody CouponDTO couponDTO) {
 		String result = "";
 
 		System.out.println("/updateCoupon");
-
-		System.out.println(couponNo);
-
-		CouponDTO couponDTO = CouponDTO.builder().coupon_no(couponNo).coupon_name(couponName).coupon_dc_type(couponType)
-				.coupon_dc_amount(couponDcAmount).coupon_dc_rate(couponDcRate).build();
 
 		try {
 			cService.updateCoupon(couponDTO);
@@ -166,6 +157,7 @@ public class CouponController {
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 
+	// 쿠폰 삭제
 	@PostMapping("/deleteCoupon")
 	@ResponseBody
 	public ResponseEntity<String> deleteCoupon(@RequestParam int couponNo) {
@@ -182,6 +174,7 @@ public class CouponController {
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 
+	// 쿠폰 지급
 	@PostMapping("/payCoupon")
 	public ResponseEntity<String> payCoupon(@RequestBody Map<String, Object> params) {
 

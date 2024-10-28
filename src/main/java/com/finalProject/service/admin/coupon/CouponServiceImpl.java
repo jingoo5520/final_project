@@ -1,6 +1,8 @@
 package com.finalProject.service.admin.coupon;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +12,12 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.CouponDTO;
 import com.finalProject.model.admin.CouponPayDTO;
-import com.finalProject.model.admin.PagingInfo;
-import com.finalProject.model.admin.PagingInfoDTO;
+import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.PagingInfoNewDTO;
 import com.finalProject.persistence.admin.CouponDAO;
 
 @Service
@@ -29,9 +32,9 @@ public class CouponServiceImpl implements CouponService {
 	}
 	
 	@Override
-	public Map<String, Object> getCouponList(PagingInfoDTO pagingInfoDTO) throws Exception {
+	public Map<String, Object> getCouponList(PagingInfoNewDTO pagingInfoDTO) throws Exception {
 		
-		PagingInfo pi = makePagingInfo(pagingInfoDTO);
+		PagingInfoNew pi = makePagingInfo(pagingInfoDTO);
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<CouponDTO> list = cDao.selectCouponList(pi);
@@ -42,8 +45,8 @@ public class CouponServiceImpl implements CouponService {
 		return result;
 	}
 	
-	private PagingInfo makePagingInfo(PagingInfoDTO pagingInfoDTO) throws Exception {
-		PagingInfo pi = new PagingInfo(pagingInfoDTO);
+	private PagingInfoNew makePagingInfo(PagingInfoNewDTO pagingInfoDTO) throws Exception {
+		PagingInfoNew pi = new PagingInfoNew(pagingInfoDTO);
 		
 		// setter 호출
 		pi.setTotalDataCnt(cDao.getTotalCouponCnt());
@@ -75,14 +78,27 @@ public class CouponServiceImpl implements CouponService {
 	}
 
 	@Override
+	@Transactional
 	public int payCoupon(List<String> memberIdList, int couponNo) throws Exception {
 
 		List<CouponPayDTO> list = new ArrayList<CouponPayDTO>();
 		
+		CouponDTO coupon = cDao.selectCoupon(couponNo);
 		
 		// 전체 지급 쿠폰일 때
 		if(memberIdList.size() == 1 && memberIdList.get(0) == "All") {
+			String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+			String couponCode = uuid.substring(0, 16);
 			
+			Timestamp time = new Timestamp(System.currentTimeMillis());
+			System.out.println(time);
+			System.out.println(coupon.getCoupon_use_days());
+			
+			LocalDateTime dateTime = time.toLocalDateTime();
+			LocalDateTime newDateTime = dateTime.plus(25, ChronoUnit.DAYS);
+			Timestamp newTimestamp = Timestamp.valueOf(newDateTime);
+			
+			list.add(new CouponPayDTO(couponNo, couponCode, "All", newTimestamp));
 		} 
 		// 개인 지급 쿠폰일 때
 		else {
@@ -94,16 +110,18 @@ public class CouponServiceImpl implements CouponService {
 				
 				Timestamp time = new Timestamp(System.currentTimeMillis());
 				System.out.println(time);
+				System.out.println(coupon.getCoupon_use_days());
 				
-				list.add(new CouponPayDTO(couponNo, couponCode, memberId, time));
+				LocalDateTime dateTime = time.toLocalDateTime();
+				LocalDateTime newDateTime = dateTime.plus(25, ChronoUnit.DAYS);
+				Timestamp newTimestamp = Timestamp.valueOf(newDateTime);
+				
+				list.add(new CouponPayDTO(couponNo, couponCode, memberId, newTimestamp));
 				
 			}
-			
-			cDao.insertCouponPayLogs(list);
 		}
 		
-		
-		return 0;
+		return cDao.insertCouponPayLogs(list);
 	}
 
 	
