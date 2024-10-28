@@ -55,8 +55,8 @@
 
 								</div>
 								<ul class="user-login">
-									<li><a href="/pages/member/viewLogin">로그인</a></li>
-									<li><a href="/pages//member/viewSignUp">회원가입</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->
@@ -66,8 +66,8 @@
 									${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">
-									<li><a href="#">내 정보</a></li>
-									<li><a href="/member/logout">로그아웃</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/myPage/modiInfo">내 정보</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
 								</ul>
 							</c:if>
 						</div>
@@ -82,7 +82,7 @@
 				<div class="row align-items-center">
 					<div class="col-lg-3 col-md-3 col-7">
 						<!-- Start Header Logo -->
-						<a class="navbar-brand" href="/"> <img
+						<a class="navbar-brand" href="${pageContext.request.contextPath}/"> <img
 							src="/resources/assets/user/images/logo/logo.svg" alt="Logo">
 						</a>
 						<!-- End Header Logo -->
@@ -197,21 +197,38 @@
 				<div class="col-lg-8 col-md-6 col-12">
 					<div class="nav-inner">
 						<!-- Start Mega Category Menu -->
-                        <div class="mega-category-menu">
-                            <a href="/product/jewelry/all"><span class="cat-button"><i class="lni lni-menu"></i>JEWELRY</span></a>
-                            <ul class="sub-category">
-                                <li><a href="/product/jewelry?category=196">NACKLACE</a></li>
-                                <li><a href="/product/jewelry?category=195">EARRING</a></li>
-							    <li><a href="/product/jewelry?category=203">PIERCING</a></li>
-							    <li><a href="/product/jewelry?category=197">BANGLE</a></li>
-							    <li><a href="/product/jewelry?category=201">ANKLET</a></li>
-							    <li><a href="/product/jewelry?category=198">RING</a></li>
-							    <li><a href="/product/jewelry?category=200">COUPLING</a></li>
-							    <li><a href="/product/jewelry?category=202">PENDANT</a></li>
-							    <li><a href="/product/jewelry?category=204">기타</a></li>
-                            </ul>
-                        </div>
-                        <!-- End Mega Category Menu -->
+						<div class="mega-category-menu">
+							<span class="cat-button"><i class="lni lni-menu"></i>All
+								Categories</span>
+							<ul class="sub-category">
+								<li><a href="product-grids.html">Electronics <i
+										class="lni lni-chevron-right"></i></a>
+									<ul class="inner-sub-category">
+										<li><a href="product-grids.html">Digital Cameras</a></li>
+										<li><a href="product-grids.html">Camcorders</a></li>
+										<li><a href="product-grids.html">Camera Drones</a></li>
+										<li><a href="product-grids.html">Smart Watches</a></li>
+										<li><a href="product-grids.html">Headphones</a></li>
+										<li><a href="product-grids.html">MP3 Players</a></li>
+										<li><a href="product-grids.html">Microphones</a></li>
+										<li><a href="product-grids.html">Chargers</a></li>
+										<li><a href="product-grids.html">Batteries</a></li>
+										<li><a href="product-grids.html">Cables & Adapters</a></li>
+									</ul></li>
+								<li><a href="product-grids.html">accessories</a></li>
+								<li><a href="product-grids.html">Televisions</a></li>
+								<li><a href="product-grids.html">best selling</a></li>
+								<li><a href="product-grids.html">top 100 offer</a></li>
+								<li><a href="product-grids.html">sunglass</a></li>
+								<li><a href="product-grids.html">watch</a></li>
+								<li><a href="product-grids.html">man’s product</a></li>
+								<li><a href="product-grids.html">Home Audio & Theater</a></li>
+								<li><a href="product-grids.html">Computers & Tablets </a></li>
+								<li><a href="product-grids.html">Video Games </a></li>
+								<li><a href="product-grids.html">Home Appliances </a></li>
+							</ul>
+						</div>
+						<!-- End Mega Category Menu -->
 						<!-- Start Navbar -->
 						<nav class="navbar navbar-expand-lg">
 							<button class="navbar-toggler mobile-menu-btn" type="button"
@@ -237,12 +254,12 @@
 													Us</a></li>
 											<li class="nav-item"><a href="faq.html">Faq</a></li>
 											<c:if test="${empty sessionScope.loginMember }">
-											<li class="nav-item"><a href="member/viewLogin">로그인</a></li>
-											<li class="nav-item"><a href="member/viewSignUp">회원가입</a></li>
+											<li class="nav-item"><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+											<li class="nav-item"><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
 											</c:if>
 											<c:if test="${not empty sessionScope.loginMember }">
 											<li class="nav-item"><a href="#">내 정보</a></li>
-											<li class="nav-item"><a href="member/logout">로그아웃</a></li>
+											<li class="nav-item"><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
 											</c:if>
 											<li class="nav-item"><a href="mail-success.html">Mail
 													Success</a></li>

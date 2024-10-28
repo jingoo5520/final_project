@@ -1,5 +1,6 @@
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -40,22 +41,23 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
-
+<script>
+	
+</script>
 </head>
 
+ <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
 
-<body>
-	<!-- Layout wrapper -->
-	<div class="layout-wrapper layout-content-navbar">
-		<div class="layout-container">
-			
-			
-			<!-- Menu -->
+        <!-- Menu -->
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="pageName" value="dashboard" />
-	
+				<jsp:param name="event" value="event" />
+
 			</jsp:include>
 
 		<!-- / Menu -->
@@ -70,7 +72,9 @@
 						</a>
 					</div>
 
+
 				</nav>
+
 				<!-- / Navbar -->
 
 				<!-- Content wrapper -->
@@ -79,16 +83,92 @@
 
 					<div class="container-xxl flex-grow-1 container-p-y">
 
-
-
 						<!-- body  -->
-대시보드
-
-						
-
-					</div>
-				</div>
 				<!-- / Content -->
+	
+               <div class="container-xxl flex-grow-1 container-p-y">
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">공지 /</span> 이벤트 목록</h4>
+
+              <div class="row">
+              <!-- Bordered Table -->
+              <div class="card">
+                <h5 class="card-header"></h5>
+                <div class="card-body">
+                  <div class="table-responsive text-nowrap">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>번호</th>
+                          <th>구분</th>
+                          <th>제목</th>
+                          <th>작성자</th>
+                          <th>작성일자</th>
+                          <th>관리</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+	                      <c:choose>
+	                        <c:when test="${not empty events}">
+								<c:forEach var="event" items="${events}">
+								    <tr id="event-row-${event.notice_no}">
+								        <td>${event.notice_no}</td>
+								        <td>${event.notice_type}</td>
+								        <td><a href="viewEvent/${event.notice_no}">${event.notice_title}</a></td>
+								        <td>${event.admin_id}</td>
+								        <td>${event.reg_date}</td>
+								        <td>
+											<div>${event.notice_content}</div>
+											<a class="btn rounded-pill btn-outline-warning" href="editEvent/${event.notice_no}">수정</a>
+										    <a class="btn rounded-pill btn-outline-danger" onclick="confirmDelete(${event.notice_no});">삭제</a>
+										</td>
+									</tr>
+								</c:forEach>
+	                        </c:when>
+	                        <c:otherwise>
+	                        	<tr>
+	                            	<td colspan="6">등록된 이벤트가 없습니다.</td>
+	                            </tr>
+							</c:otherwise>
+	                      </c:choose>
+                      </tbody>
+                    </table>
+                    
+		<!-- 페이지네이션 -->
+		<p>현재 페이지: ${currentPage != null ? currentPage : 'N/A'} / 총 페이지: ${totalPages != null ? totalPages : 'N/A'}</p>
+		<div class="pagination">
+		    <c:if test="${currentPage > 1}">
+		        <a href="?page=${currentPage - 1}">이전</a>
+		    </c:if>
+		    
+		    <c:if test="${totalPages > 0}">
+		        <c:forEach var="i" begin="1" end="${totalPages}">
+		            <c:choose>
+		                <c:when test="${i == currentPage}">
+		                    <span>${i}</span> <!-- 현재 페이지는 그냥 숫자 표시 -->
+		                </c:when>
+		                <c:otherwise>
+		                    <a href="?page=${i}">${i}</a>
+		                </c:otherwise>
+		            </c:choose>
+		        </c:forEach>
+		    </c:if>
+		
+		    <c:if test="${currentPage < totalPages}">
+		        <a href="?page=${currentPage + 1}">다음</a>
+		    </c:if>
+		</div>
+                    
+      <!-- 이벤트 작성 버튼 -->
+      <div class="text-end mt-3">
+        <a class="btn rounded-pill btn-outline-primary" href="/admin/notices/createEvent">이벤트 작성</a>
+                  </div>
+                </div>
+              </div>
+ 
+ 
+            </div>
+            <!-- / Content -->
+
 
 				<!-- Footer -->
 				<footer class="content-footer footer bg-footer-theme">
@@ -140,7 +220,29 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-  </body>
+	<script type="text/javascript">
+	function confirmDelete(noticeNo) {
+	    if (confirm("정말 삭제하시겠습니까?")) {
+	        deleteEvent(noticeNo);
+	    }
+	}
 
+	function deleteEvent(noticeNo) {
+	    $.ajax({
+	        type: "POST",
+	        url: "/admin/notices/deleteEvent",
+	        data: { notice_no: noticeNo },
+	        success: function(response) {
+	            $("#event-row-" + noticeNo).remove(); // 공지사항 행 제거
+	            alert("이벤트 삭제 완료");
+	        },
+	        error: function(xhr, status, error) {
+	            alert("이벤트 삭제 실패");
+	            console.error(xhr.responseText);
+	        }
+	    });
+	}
+	</script>
+  </body>
 
 </html>
