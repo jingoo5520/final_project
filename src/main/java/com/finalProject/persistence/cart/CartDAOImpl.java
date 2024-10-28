@@ -106,4 +106,10 @@ public class CartDAOImpl implements CartDAO {
 		ses.update(ns + "updateQuantityWithCookieCart", cMap);
 	}
 
+	// 장바구니의 담긴 상품의 상품 번호를 조회
+	@Override
+	public List<Integer> selectProductNoOfCartList(int cartNo) {
+		return ses.selectList(ns + "selectProductNoOfCartList", cartNo);
+	}
+
 }

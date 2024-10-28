@@ -40,7 +40,7 @@
 	</div>
 	<!-- /End Preloader -->
 
-	<jsp:include page="header.jsp"></jsp:include>
+	<jsp:include page="./pages/header.jsp"></jsp:include>
 
 	<!-- Start Hero Area -->
 	<section class="hero-area">
@@ -1048,7 +1048,7 @@
 	</section>
 	<!-- End Shipping Info -->
 
-	<jsp:include page="footer.jsp"></jsp:include>
+	<jsp:include page="./pages/footer.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>

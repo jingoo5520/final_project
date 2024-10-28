@@ -44,4 +44,7 @@ public interface CartDAO {
 	// 장바구니의 쿠키와 중복 상품 수량 수정
 	void updateQuantityWithCookieCart(Map<String, Object> cMap);
 	
+	// 장바구니의 담긴 상품의 상품 번호를 조회
+	List<Integer> selectProductNoOfCartList(int cartNo);
+	
 }

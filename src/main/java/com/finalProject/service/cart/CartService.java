@@ -34,6 +34,8 @@ public interface CartService {
 
 	boolean removeCartList(List<Integer> productNoList, String member_id);
 
+	List<Integer> getProductNo(int cartNo);
+
 
 
 }

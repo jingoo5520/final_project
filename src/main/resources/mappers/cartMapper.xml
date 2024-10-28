@@ -29,11 +29,12 @@
 	</update>
 	
 	<delete id="deleteCartItem">
-		delete from cart_items 
-		where product_no = #{productNo} 
-		and cart_no = 
-		(select cart_no from carts
-		 where member_id = #{memberId})
+	    delete from cart_items 
+	    where cart_no = (select cart_no from carts where member_id = #{memberId}) 
+	    and product_no in 
+	    <foreach item="productNo" collection="productNos" open="(" separator="," close=")">
+	        #{productNo}
+	    </foreach>
 	</delete>
 	
 	<insert id="insertCartItem">
@@ -68,4 +69,8 @@
 	<update id="updateQuantityWithCookieCart">
 		update cart_items set product_count = product_count + #{quantity} where cart_no = #{cartNo} and product_no = #{productNo}
 	</update>
+	
+	<select id="selectProductNoOfCartList" resultType="Integer">
+		select product_no from cart_items where cart_no = #{cartNo}
+	</select>
 </mapper>

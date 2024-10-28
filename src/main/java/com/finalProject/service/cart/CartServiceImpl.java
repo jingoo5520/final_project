@@ -32,7 +32,6 @@ public class CartServiceImpl implements CartService {
 		cDAO.insertCartList(member_id);
 	}
 	
-	
 	@Override
 	public List<CartDTO> getCartList(int cartNo) {
 				
@@ -41,12 +40,10 @@ public class CartServiceImpl implements CartService {
 		return cartItems;
 	}
 
-
 	@Override
 	public int applyQuantity(Map<String, Object> cMap) {
 		return cDAO.updateQuantity(cMap);
 	}
-
 
 	@Override
 	public int removeCartItem(Map<String, Object> cMap) {
@@ -68,7 +65,6 @@ public class CartServiceImpl implements CartService {
 		// 생성된 장바구니에 상품 등록
 		cDAO.insertCartItem(cMap);
 		
-		
 	}
 	
 	@Override
@@ -88,12 +84,6 @@ public class CartServiceImpl implements CartService {
 		
 	}
 	
-	
-	
-
-
-	
-
 	private Map<String, Object> mappingData(int cartNo, int productNo, int quantity) {
 		
 		Map<String, Object> cMap = new HashMap<>();
@@ -143,6 +133,11 @@ public class CartServiceImpl implements CartService {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public List<Integer> getProductNo(int cartNo) {
+		return cDAO.selectProductNoOfCartList(cartNo);
 	}
 
 }

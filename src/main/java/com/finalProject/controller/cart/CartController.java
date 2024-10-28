@@ -113,7 +113,6 @@ public class CartController {
 						}
 					}
 				}
-				
 			}
 			
 		} else {
@@ -148,10 +147,6 @@ public class CartController {
 		
 		
 		}
-		
-		
-			
-		
 		
 		model.addAttribute("cookieCartItems", cookieCartList);
 		model.addAttribute("cartItems", cartList);
@@ -189,10 +184,7 @@ public class CartController {
 				return result = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 			}
 			
-			
 		} else {
-			System.out.println("cart : 로그인 안함");
-			
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("cartItem")) {
 					// 쿠키에 cartItem이 있음
@@ -212,9 +204,6 @@ public class CartController {
 							createCookie(response, newValue);
 						}
 					}
-					
-					
-					
 				} 
 			}
 			
@@ -224,41 +213,74 @@ public class CartController {
 	}
 	
 	@PostMapping("/removeCartItem")
-	@ResponseBody
-	public ResponseEntity<String> removeCartItem(@RequestParam("productNo") int productNo, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<String> removeCartItem(@RequestParam("productNo") int productNo,
+			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		ResponseEntity<String> result = null;
-		
 		Cookie[] cookies = request.getCookies();
-		
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		Map<String, Object> cMap = new HashMap<>();
-			
+		
+		List<Integer> productNos = new ArrayList<Integer>();
+		productNos.add(productNo);
+		
 		if (loginMember != null) {
 			
-			cMap.put("memberId", loginMember.getMember_id());
-			cMap.put("productNo", productNo);
-			
-			if (cService.removeCartItem(cMap) != 0) {
-				// delete 성공
-				return result = new ResponseEntity<String>(HttpStatus.OK);
-			} else {
-				// delete 실패
+			if (removeProduct(loginMember, productNos, cMap) == 0) {
 				return result = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 			}
 			
+			return result = new ResponseEntity<String>(HttpStatus.OK);
 			
 		} else {
 			System.out.println("cart : 로그인 안함");
 			
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("cartItem")) {
-					// 쿠키에 cartItem이 있음
-					String decodedValue = new String(Base64.getDecoder().decode(cookie.getValue()));
-					
-					String[] cartItems = decodedValue.split(";");
-					
-					String removeValue = "";
-					
+			removeProductOfCookie(productNos, response, cookies);
+			
+			return result = new ResponseEntity<String>(HttpStatus.OK);
+		}
+		
+	}
+	
+	@PostMapping("/removeCheckedItems")
+    public ResponseEntity<String> removeCheckedItems(@RequestBody List<Integer> productNos, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        ResponseEntity<String> result = null;
+        Cookie[] cookies = request.getCookies();
+        LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+        Map<String, Object> cMap = new HashMap<>();
+
+		if (loginMember != null) {
+			
+			if (removeProduct(loginMember, productNos, cMap) == 0) {
+				return result = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			}
+			
+		} else {
+			removeProductOfCookie(productNos, response, cookies);
+		}
+        
+        return result = new ResponseEntity<String>(HttpStatus.OK);
+    }
+	
+	private int removeProduct(LoginDTO loginMember, List<Integer> productNos, Map<String, Object> cMap) {
+		cMap.put("memberId", loginMember.getMember_id());
+		cMap.put("productNos", productNos);
+		if(cService.removeCartItem(cMap) == 0) {
+			return 0;
+		}
+		return 1;
+	}
+
+	private void removeProductOfCookie(List<Integer> productNos, HttpServletResponse response, Cookie[] cookies) {
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("cartItem")) {
+				// 쿠키에 cartItem이 있음
+				String decodedValue = new String(Base64.getDecoder().decode(cookie.getValue()));
+				
+				String[] cartItems = decodedValue.split(";");
+				
+				String removeValue = "";
+				
+				for (int productNo : productNos) {
 					for (String cartItem : cartItems) {
 						if (cartItem.contains(productNo + ":")) {
 							int quantity = Integer.parseInt(cartItem.split(":")[1]);
@@ -280,28 +302,19 @@ public class CartController {
 						decodedValue = decodedValue.replace(removeValue, "");
 						// 기존의 쿠키 update
 					}
-					if (!decodedValue.equals("")) {
-						createCookie(response, decodedValue);
-					} else {
-						// 쿠키에 남은 상품이 없을 때 쿠키 지우기
-						removeCookie(response);
-					}
 					
-				} 
-			}
-			
-			return result = new ResponseEntity<String>(HttpStatus.OK);
+				}
+				if (!decodedValue.equals("")) {
+					createCookie(response, decodedValue);
+				} else {
+					// 쿠키에 남은 상품이 없을 때 쿠키 지우기
+					removeCookie(response);
+				}
+				
+			} 
 		}
-		
 	}
-	
-	@PostMapping("removeCheckedItems")
-	@ResponseBody
-	public void removeCheckedItems(@RequestBody() ArrayList<Integer> productNos) {
-		System.out.println("removeCheckedItems 도착 : " + productNos);
-	}
-	
-	
+
 	@PostMapping("/addCartItem")
 	public ResponseEntity<String> addCartItem(@RequestParam("productNo") int productNo, @RequestParam(value = "quantity", required = false, defaultValue = "1") int quantity, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		ResponseEntity<String> result = null;

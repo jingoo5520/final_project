@@ -197,6 +197,7 @@ function addCart(productNo) {
 									            </div>
 									        </div>
 									    </div>
+									    <form action="/order" method="post">
 									    <div class="row align-items-center mt-3">
 									        <!-- 주문 개수 선택 드롭다운 -->
 									        <div class="col-lg-12 col-md-12 col-12">
@@ -210,10 +211,12 @@ function addCart(productNo) {
 									        <!-- 결제 버튼을 전체 너비로 배치 -->
 									        <div class="col-lg-12 col-md-12 col-12">
 									            <div class="wish-button">
-									                <button class="btn" style="width: 100%;"><i class="lni lni-credit-cards"></i> 결제</button>
+									            	<input type="hidden" name="productNo" value="${products[0].product_no }">
+									                <button type="submit" class="btn" style="width: 100%;"><i class="lni lni-credit-cards"></i> 결제</button>
 									            </div>
 									        </div>
 									    </div>
+									    </form>
 									</div>
 						        </div>
 						    </div>

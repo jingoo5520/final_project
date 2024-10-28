@@ -1,6 +1,7 @@
 package com.finalProject.controller.cart;
 
 import java.util.Base64;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.cart.CookieCartDTO;
-import com.finalProject.model.cart.CookieCartVO;
 import com.finalProject.service.cart.CartService;
 
 @ControllerAdvice
@@ -42,6 +41,36 @@ public class CartControllerAdvice {
 			} else {
 				// 장바구니가 없다면
 				cartItemCount = 0;
+			}
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					// 쿠키로 로그인하지 않았을 때 장바구니 정보를 조회
+					if (cookie.getName().equals("cartItem")) {
+						// 쿠키에 cartItem이 있음
+						String decodedValue = new String(Base64.getDecoder().decode(cookie.getValue()));
+						String[] cookieCartItems = decodedValue.split(";");
+						
+						List<Integer> cartProductNos = cService.getProductNo(cartNo);
+						
+						int matchedProductCount = 0;
+						
+						for (int cartProductNo : cartProductNos) {
+//							System.out.println(cartProductNo);
+							
+							for (String cookieCartItem : cookieCartItems) {
+								int productNoOfCookie = Integer.parseInt(cookieCartItem.split(":")[0]);
+								
+								if (cartProductNo == productNoOfCookie) {
+									matchedProductCount++;
+								}
+							}
+						}
+						
+						
+						
+						cartItemCount += cookieCartItems.length - matchedProductCount;
+					}
+				}
 			}
 		} else {
 			if (cookies != null) {
