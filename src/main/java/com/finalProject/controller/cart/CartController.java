@@ -151,7 +151,7 @@ public class CartController {
 		model.addAttribute("cookieCartItems", cookieCartList);
 		model.addAttribute("cartItems", cartList);
 		
-		return "user/cart/cart";
+		return "user/pages/cart/cart";
 	}
 
 

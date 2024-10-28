@@ -56,6 +56,6 @@ public class OrderController {
 			System.out.println("order 로그인 하지 않음");
 		}
 		
-		return "/user/order/order";
+		return "/user/pages/order/order";
 	}
 }

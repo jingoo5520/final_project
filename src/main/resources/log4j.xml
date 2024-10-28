@@ -11,7 +11,7 @@
 	</appender>
 	
 	<!-- Application Loggers -->
-	<logger name="com.myloa.controller">
+	<logger name="com.final_project.controller">
 		<level value="info" />
 	</logger>
 	
@@ -31,6 +31,11 @@
 	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
+	
+	<!-- MyBatis SQL Logger -->
+    <logger name="org.apache.ibatis">
+        <level value="DEBUG" />
+    </logger>
 
 	<!-- Root Logger -->
 	<root>

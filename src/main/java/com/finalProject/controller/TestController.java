@@ -12,18 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 
-import com.finalProject.model.TestVO;
-import com.finalProject.service.TestService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
 @RequestMapping(value="/test")
 public class TestController {
-
-	@Inject
-	private TestService service;
 
 	@RequestMapping(value = "/uuid")
 	public String uuid() {
@@ -40,6 +34,28 @@ public class TestController {
 		log.info("test session");
 		System.out.println(ses.getAttribute("loginMember"));
 
+		return "/testIndex";
+	}
+	
+	@RequestMapping(value = "/")
+	public String index() {
+		return "/testIndex";
+	}
+	
+	@RequestMapping(value = "/signUp")
+	public String signUp() {
+		return "/user/member/signUp2";
+	}
+	
+	@RequestMapping(value = "/getUri")
+	public String getUri(HttpServletRequest request) {
+		String uri = request.getRequestURI()+"";
+		System.out.println(uri);
+		return "/testIndex";
+	}
+	
+	@RequestMapping(value = "/auth")
+	public String auth() {
 		return "/testIndex";
 	}
 
