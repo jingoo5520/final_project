@@ -7,18 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @ToString
-@Builder
-public class CouponDTO {
-	private int coupon_no;
-	private String coupon_name;
-	private String coupon_dc_type;
-	private int coupon_dc_amount;
-	private float coupon_dc_rate;
-	private int coupon_use_days;
+public class PagingInfoNewDTO {
+	private int pageNo;
+	private int pagingSize; // 한 페이지에서 보여질 데이터의 개수
+	private int pageCntPerBlock; // 한 블럭에서 보여질 페이지 개수
 }

@@ -150,12 +150,12 @@
 					</a></li>
 				</ul></li>
 
-			<li class="menu-item"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%="banners".equals(request.getParameter("pageName")) ? "active open" : ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Admin Homepage">홈페이지 관리</div>
 			</a>
 				<ul class="menu-sub">
-					<li class="menu-item"><a href="/admin/coupon" class="menu-link">
-							<div data-i18n="banners">배너</div>
+					<li class="menu-item <%="banners".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/homepage/banners" class="menu-link">
+							<div data-i18n="Banners">배너</div>
 					</a></li>
 				</ul></li>
 		</ul>

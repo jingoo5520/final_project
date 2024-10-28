@@ -18,7 +18,8 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 	@GetMapping("/")
-	public String homePage(Locale locale, Model model, HttpServletRequest request) {
-		return "/user/pages/index";
-	}
+	   public String homePage(Locale locale, Model model) {
+		return "/user/index";
+
+}
 }
