@@ -2,9 +2,9 @@ package com.finalProject.persistence.admin.coupon;
 
 import java.util.List;
 
-import com.finalProject.model.admin.CouponDTO;
-import com.finalProject.model.admin.CouponPayDTO;
-import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.coupon.CouponDTO;
+import com.finalProject.model.admin.coupon.CouponPayDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
 
 public interface CouponDAO {
 

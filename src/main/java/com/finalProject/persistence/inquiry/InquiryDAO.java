@@ -2,7 +2,7 @@ package com.finalProject.persistence.inquiry;
 
 import java.util.List;
 
-import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.inquiry.InquiryDTO;
 
 public interface InquiryDAO {

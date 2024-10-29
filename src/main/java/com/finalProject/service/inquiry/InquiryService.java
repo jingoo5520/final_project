@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.finalProject.model.admin.PagingInfoNewDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 
 public interface InquiryService {

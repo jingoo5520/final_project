@@ -2,7 +2,7 @@ package com.finalProject.model.inquiry;
 
 import java.sql.Timestamp;
 
-import com.finalProject.model.admin.CouponDTO;
+import com.finalProject.model.admin.coupon.CouponDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

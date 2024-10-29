@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.finalProject.model.admin.PagingInfoNewDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.persistence.inquiry.InquiryImgDTO;
 import com.finalProject.service.inquiry.InquiryService;

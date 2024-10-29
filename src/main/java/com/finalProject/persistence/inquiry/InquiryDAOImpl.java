@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.inquiry.InquiryDTO;
 
 @Repository

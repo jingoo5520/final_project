@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfoNewDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.member.MemberSearchFilterDTO;
 import com.finalProject.service.admin.member.AdminMemberService;
 
 @Controller

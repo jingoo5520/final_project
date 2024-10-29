@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.finalProject.model.admin.PagingInfoNew;
-import com.finalProject.model.admin.PagingInfoNewDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.persistence.inquiry.InquiryDAO;

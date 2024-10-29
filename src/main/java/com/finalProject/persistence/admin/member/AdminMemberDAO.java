@@ -2,9 +2,9 @@ package com.finalProject.persistence.admin.member;
 
 import java.util.List;
 
-import com.finalProject.model.admin.MemberManageDTO;
-import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.member.MemberManageDTO;
+import com.finalProject.model.admin.member.MemberSearchFilterDTO;
 
 public interface AdminMemberDAO {
 
