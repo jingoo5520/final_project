@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.finalProject.model.ProductDTO;
+import com.finalProject.model.product.ProductDTO;
 import com.finalProject.persistence.ProductDAO;
 
 import lombok.extern.slf4j.Slf4j;

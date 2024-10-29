@@ -1,4 +1,4 @@
-package com.finalProject.model;
+package com.finalProject.model.product;
 
 import java.sql.Date;
 import lombok.AccessLevel;

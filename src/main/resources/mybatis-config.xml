@@ -10,6 +10,6 @@
 		<typeAlias type="com.finalProject.model.admin.CouponDTO" alias="CouponDTO" />
 		<typeAlias type="com.finalProject.model.admin.CouponPayDTO" alias="CouponPayDTO" />
 		<typeAlias type="com.finalProject.model.MemberDTO" alias="MemberDTO" />
-		<typeAlias type="com.finalProject.model.ProductDTO" alias="ProductDTO" />
+		<typeAlias type="com.finalProject.model.product.ProductDTO" alias="ProductDTO" />
 	</typeAliases>
 </configuration>

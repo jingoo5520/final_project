@@ -81,7 +81,7 @@ function submitSortingForm() {
                         <!-- Start Single Widget -->
                         <div class="single-widget search">
                             <h3>찾으실 상품을 검색해주세요.</h3>
-                            <form action="#">
+                            <form action="/product/jewelry/result" method="get">
                                 <input type="text" placeholder="Search Here...">
                                 <button type="submit"><i class="lni lni-search-alt"></i></button>
                             </form>
@@ -140,8 +140,10 @@ function submitSortingForm() {
 <!--                                         개수 -->
                                         <div class="single-product">
                                             <div class="product-image">
-                                                <a href = "/product/jewelry/detail?productNo=${product.product_no}"><img src="${product.image_main_url}" alt="${product.product_name}" width="300px" height="300px"></a> 
-                                                
+                                                	<a href="/product/jewelry/detail?productNo=${product.product_no}">
+													    <img 
+													        src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}"  alt="${product.product_name}" width="300px" height="300px">
+													</a>
                                                 <div class="button">
                                                     <a onclick="addCart(${product.product_no})" class="btn"><i class="lni lni-cart"></i></a>
                                                 </div>

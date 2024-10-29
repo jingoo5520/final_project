@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.finalProject.model.ProductDTO;
+import com.finalProject.model.product.ProductDTO;
 import com.finalProject.service.product.ProductService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class PController {
     public String showProductList(
             @RequestParam(value = "category", required = false) Integer category,
             @RequestParam(value = "page", defaultValue = "1") int page, // 페이지 디폴트 값 설정
-            @RequestParam(value = "pageSize", defaultValue = "18") int pageSize, // 한 페이지에서 보여줄 상품 개수
+            @RequestParam(value = "pageSize", defaultValue = "6") int pageSize, // 한 페이지에서 보여줄 상품 개수
             @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
             Model model) throws Exception {
 
@@ -90,12 +90,12 @@ public class PController {
     @GetMapping("/jewelry")
     public String showProductList(
             @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", defaultValue = "18") int pageSize,
+            @RequestParam(value = "pageSize", defaultValue = "6") int pageSize,
             @RequestParam(value = "category", required = false) Integer category,
             @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
             Model model) throws Exception {
 
-        log.info("카테고리 값 : " + category);
+        System.out.println("카테고리 값 : " + category);
         sortOrder = sortOrder.trim();
 
         List<ProductDTO> products = service.getProductsByCategoryAndPage(category, page, pageSize, sortOrder);
@@ -109,8 +109,8 @@ public class PController {
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         int totalProductCount = service.getProductCount();
 
-        log.info("전체 상품 수: " + totalProducts);
-        log.info("Received sortOrder: '" + sortOrder + "'");
+        System.out.println("전체 상품 수: " + totalProducts);
+        System.out.println("Received sortOrder: '" + sortOrder + "'");
 
         // 페이지네이션 설정
         int pageBlockSize = 10;
@@ -174,5 +174,14 @@ public class PController {
         model.addAttribute("product_content", product.getProduct_content());
         model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 계산된 가격 추가
         return "/user/pages/product/productDetail";
+    }
+    
+    // 4. 검색기능
+    @GetMapping("/jewelry/result")
+    public String search (
+    		
+    		Model model) {
+    	
+    	return "/user/pages/product/productList";
     }
 }
