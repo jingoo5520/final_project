@@ -50,30 +50,28 @@
 					</div>
 					<div class="col-lg-4 col-md-4 col-12">
 						<div class="top-end">
-						<!-- 로그인 안됬을 때 -->
+							<!-- 로그인 안됬을 때 -->
 							<c:if test="${empty sessionScope.loginMember }">
 								<div class="user">
 									<i class="lni lni-user"></i> 로그인하세요.
 
 								</div>
 								<ul class="user-login">
-									<li><a href="/member/viewLogin">로그인</a></li>
-									<li><a href="/member/viewSignUp">회원가입</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->
 							<c:if test="${not empty sessionScope.loginMember }">
 								<div class="user">
-									<i class="lni lni-user"></i>
-									${sessionScope.loginMember.member_name } 님
+									<i class="lni lni-user"></i> ${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">
-									<li><a href="#">내 정보</a></li>
-									<li><a href="/member/logout">로그아웃</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/myPage/modiInfo">내 정보</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
 								</ul>
 							</c:if>
 						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -84,8 +82,7 @@
 				<div class="row align-items-center">
 					<div class="col-lg-3 col-md-3 col-7">
 						<!-- Start Header Logo -->
-						<a class="navbar-brand" href="/"> <img
-							src="/resources/assets/user/images/logo/logo.svg" alt="Logo">
+						<a class="navbar-brand" href="${pageContext.request.contextPath}/"> <img src="/resources/assets/user/images/logo/logo.svg" alt="Logo">
 						</a>
 						<!-- End Header Logo -->
 					</div>
@@ -121,13 +118,8 @@
 						<!-- End Main Menu Search -->
 					</div>
 					<div class="col-lg-4 col-md-2 col-5">
-						<div class="middle-right-area">
-							<div class="nav-hotline">
-								<i class="lni lni-phone"></i>
-								<h3>
-									Hotline: <span>(+100) 123 456 7890</span>
-								</h3>
-							</div>
+						<div class="middle-right-area" style="flex-direction: row; justify-content: flex-end;">
+						
 							<div class="navbar-cart">
 								<div class="wishlist">
 									<a href="javascript:void(0)"> <i class="lni lni-heart"></i>
@@ -238,23 +230,13 @@
 						<!-- End Navbar -->
 					</div>
 				</div>
-				<div class="col-lg-4 col-md-6 col-12">
-					<!-- Start Nav Social -->
-					<div class="nav-social">
-						<h5 class="title">Follow Us:</h5>
-						<ul>
-							<li><a href="javascript:void(0)"><i
-									class="lni lni-facebook-filled"></i></a></li>
-							<li><a href="javascript:void(0)"><i
-									class="lni lni-twitter-original"></i></a></li>
-							<li><a href="javascript:void(0)"><i
-									class="lni lni-instagram"></i></a></li>
-							<li><a href="javascript:void(0)"><i
-									class="lni lni-skype"></i></a></li>
-						</ul>
-					</div>
-					<!-- End Nav Social -->
+				<div class="col-lg-2 col-md-6 col-6" style=" margin-block-end: 0em;">
+					<ul id="nav" class="navbar-nav ms-auto" style="flex-direction: row; justify-content: flex-end;">
+						<li class="nav-item"><a href="contact.html" aria-label="Toggle navigation" style="color: #B4B5B4">이벤트</a></li>
+						<li class="nav-item"><a href="contact.html" aria-label="Toggle navigation" style="color: #B4B5B4">공지사항</a></li>
+					</ul>
 				</div>
+				
 			</div>
 		</div>
 		<!-- End Header Bottom -->
