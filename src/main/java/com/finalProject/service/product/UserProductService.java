@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.finalProject.model.ProductDTO;
 
-public interface ProductService {
+public interface UserProductService {
 
 	// 상품 출력
 	List<ProductDTO> getProductsByPage(int page, int pageSize) throws Exception;

@@ -19,7 +19,7 @@ import com.finalProject.model.admin.product.ProductVO;
 import com.finalProject.persistence.admin.product.ProductDAO;
 
 @Service
-public class UserProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductDAO pDAO;
@@ -34,9 +34,9 @@ public class UserProductServiceImpl implements ProductService {
 		System.out.println(productId);
 		for (String imageUrl : list) {
 			if (imageUrl.contains("Main_")) {
-				mainImage = imageUrl; // "main"?´ ?¬?•¨?œ ?´ë¯¸ì??Š” ë©”ì¸ ?´ë¯¸ì?ë¡? ì²˜ë¦¬
+				mainImage = imageUrl; // "main"?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¯¸ï¿½??ï¿½ï¿½ ë©”ì¸ ?ï¿½ï¿½ë¯¸ï¿½?ï¿½? ì²˜ë¦¬
 			} else if (imageUrl.contains("Sub_")) {
-				subImages.add(imageUrl); // "sub"?´ ?¬?•¨?œ ?´ë¯¸ì??Š” ?„œë¸? ?´ë¯¸ì?ë¡? ì²˜ë¦¬
+				subImages.add(imageUrl); // "sub"?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ë¯¸ï¿½??ï¿½ï¿½ ?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ë¯¸ï¿½?ï¿½? ì²˜ë¦¬
 			}
 		}
 		if (mainImage != null) {
@@ -103,10 +103,10 @@ public class UserProductServiceImpl implements ProductService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalSearchCnt(map));
 
-		pi.setTotalPageCnt(); // ? „ì²? ?˜?´ì§? ?ˆ˜ ?„¸?Œ…
-		pi.setStartRowIndex(); // ?˜„?¬ ?˜?´ì§??—?„œ ë³´ì—¬ì£¼ê¸° ?‹œ?‘?•  ê¸??˜ indexë²ˆí˜¸
+		pi.setTotalPageCnt(); // ?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½
+		pi.setStartRowIndex(); // ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ï¿½??ï¿½ï¿½?ï¿½ï¿½ ë³´ì—¬ì£¼ê¸° ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ï¿½??ï¿½ï¿½ indexë²ˆí˜¸
 
-		// ?˜?´ì§? ë¸”ëŸ­
+		// ?ï¿½ï¿½?ï¿½ï¿½ï¿½? ë¸”ëŸ­
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
@@ -126,10 +126,10 @@ public class UserProductServiceImpl implements ProductService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalPostCnt());
 
-		pi.setTotalPageCnt(); // ? „ì²? ?˜?´ì§? ?ˆ˜ ?„¸?Œ…
-		pi.setStartRowIndex(); // ?˜„?¬ ?˜?´ì§??—?„œ ë³´ì—¬ì£¼ê¸° ?‹œ?‘?•  ê¸??˜ indexë²ˆí˜¸
+		pi.setTotalPageCnt(); // ?ï¿½ï¿½ï¿½? ?ï¿½ï¿½?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½
+		pi.setStartRowIndex(); // ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ï¿½??ï¿½ï¿½?ï¿½ï¿½ ë³´ì—¬ì£¼ê¸° ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ï¿½??ï¿½ï¿½ indexë²ˆí˜¸
 
-		// ?˜?´ì§? ë¸”ëŸ­
+		// ?ï¿½ï¿½?ï¿½ï¿½ï¿½? ë¸”ëŸ­
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();

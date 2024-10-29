@@ -8,16 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.finalProject.model.ProductDTO;
-import com.finalProject.persistence.ProductDAO;
+import com.finalProject.persistence.product.UserProductDAO;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class ProductServiceImpl implements ProductService {
+public class UserProductServiceImpl implements UserProductService {
 
     @Autowired
-    private ProductDAO pDao; 
+    private UserProductDAO pDao; 
 
 	@Override
 	public List<ProductDTO> getProductsByPage(int page, int pageSize) throws Exception {
