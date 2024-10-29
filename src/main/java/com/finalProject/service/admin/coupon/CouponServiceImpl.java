@@ -14,11 +14,11 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.finalProject.model.admin.CouponDTO;
-import com.finalProject.model.admin.CouponPayDTO;
-import com.finalProject.model.admin.PagingInfoNew;
-import com.finalProject.model.admin.PagingInfoNewDTO;
-import com.finalProject.persistence.admin.CouponDAO;
+import com.finalProject.model.admin.coupon.CouponDTO;
+import com.finalProject.model.admin.coupon.CouponPayDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.persistence.admin.coupon.CouponDAO;
 
 @Service
 public class CouponServiceImpl implements CouponService {

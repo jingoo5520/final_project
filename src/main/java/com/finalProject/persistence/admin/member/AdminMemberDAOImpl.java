@@ -1,4 +1,4 @@
-package com.finalProject.persistence.admin;
+package com.finalProject.persistence.admin.member;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,9 +9,9 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.admin.MemberManageDTO;
-import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.member.MemberManageDTO;
+import com.finalProject.model.admin.member.MemberSearchFilterDTO;
 
 @Repository
 public class AdminMemberDAOImpl implements AdminMemberDAO {

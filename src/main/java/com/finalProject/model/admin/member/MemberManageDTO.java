@@ -1,4 +1,4 @@
-package com.finalProject.model.admin;
+package com.finalProject.model.admin.member;
 
 import java.sql.Timestamp;
 

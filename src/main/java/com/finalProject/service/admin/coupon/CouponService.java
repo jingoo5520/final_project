@@ -3,8 +3,8 @@ package com.finalProject.service.admin.coupon;
 import java.util.List;
 import java.util.Map;
 
-import com.finalProject.model.admin.CouponDTO;
-import com.finalProject.model.admin.PagingInfoNewDTO;
+import com.finalProject.model.admin.coupon.CouponDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 
 public interface CouponService {
 	

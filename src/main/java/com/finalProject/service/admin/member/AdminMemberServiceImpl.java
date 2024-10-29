@@ -8,11 +8,11 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
-import com.finalProject.model.admin.MemberManageDTO;
-import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfoNew;
-import com.finalProject.model.admin.PagingInfoNewDTO;
-import com.finalProject.persistence.admin.AdminMemberDAO;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.member.MemberManageDTO;
+import com.finalProject.model.admin.member.MemberSearchFilterDTO;
+import com.finalProject.persistence.admin.member.AdminMemberDAO;
 
 @Service
 public class AdminMemberServiceImpl implements AdminMemberService {
