@@ -1,24 +1,28 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html>
+<html class="no-js" lang="zxx">
+
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>ELOLIA</title>
-<meta name="description" content="" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>주문 결제</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
-    <style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	
+	<style>
     #overlay {
 	    position: fixed;
 	    top: 0;
@@ -30,15 +34,49 @@
 	    display: none; /* 기본적으로 숨김 */
 	}
     </style>
+	
 </head>
+
+<script type="text/javascript">
+	
+	let productPrice = parseInt("${orderProduct.price }");
+	let productQuantity = parseInt("${orderProduct.quantity }");
+	let dcPrice = 0;
+	let memberPoint = 0;
+	let productDCType = null;
+	if ("${orderProduct.dcType }" !== "" ) {
+		productDCType = "${orderProduct.dcType }";
+		if (productDCType == "M") {
+			dcPrice = parseInt("${orderProduct.dcAmount }");
+		} else if (productDCType == 'P') {
+			dcPrice = Math.floor(productPrice * parseFloat("${orderProduct.dcRate }"));
+		}
+	}
+	
+	if ()
+	console.log(productPrice, productQuantity, dcPrice);
+	
+	$(function() {
+		
+		console.log(productPrice, productQuantity);
+		
+		if ($("#orderProductDC").text() !== "") {
+			let productDC = $("#orderProductDC").text().trim();
+			dcPrice = parseInt(productDC.replace(" 원", ""));
+			
+		}
+		$("#orderProductQuantity").keyup(function () {
+			productQuantity = parseInt($("#orderProductQuantity").val(), 10);
+			$(".allProductPrice").text((productPrice - dcPrice) * productQuantity);
+		});
+		
+		$(".allProductPrice").text((productPrice - dcPrice) * productQuantity);
+		$("#point").text((productPrice * productQuantity) * )
+	});
+
+</script>
+
 <body>
-    <!--[if lte IE 9]>
-      <p class="browserupgrade">
-        You are using an <strong>outdated</strong> browser. Please
-        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
-        your experience and security.
-      </p>
-    <![endif]-->
 
     <!-- Preloader -->
     <div class="preloader">
@@ -50,8 +88,8 @@
         </div>
     </div>
     <!-- /End Preloader -->
-    
-    <jsp:include page="../header.jsp"></jsp:include>
+
+	<jsp:include page="../header.jsp"></jsp:include>
 
     <!-- Start Breadcrumbs -->
     <div class="breadcrumbs">
@@ -59,14 +97,14 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 col-12">
                     <div class="breadcrumbs-content">
-                        <h1 class="page-title">checkout</h1>
+                        <h1 class="page-title">주문 결제</h1>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-12">
                     <ul class="breadcrumb-nav">
-                        <li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
-                        <li><a href="index.html">Shop</a></li>
-                        <li>결제하기</li>
+                        <li><a href="../"><i class="lni lni-home"></i> Home</a></li>
+                        <li><a href="../">Shop</a></li>
+                        <li>checkout</li>
                     </ul>
                 </div>
             </div>
@@ -81,105 +119,183 @@
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="checkout-steps-form-style-1">
+                     <form action="/order" method="post">
                         <ul id="accordionExample">
                             <li>
-                                <h6 class="title" data-bs-toggle="collapse" data-bs-target="#collapseThree"
-                                    aria-expanded="true" aria-controls="collapseThree">Your Personal Details </h6>
-                                <section class="checkout-steps-form-content collapse show" id="collapseThree"
+                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                    aria-expanded="false" aria-controls="collapseThree">주문 상품</h5>
+                                <section class="checkout-steps-form-content collapse" id="collapseThree"
                                     aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="row">
-                                        <div class="col-md-12">
+                                    <div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>상품 수량</label>
+												<input type="number" placeholder="quantity" id="orderProductQuantity" name="orderProductQuantity" value="${orderProduct.quantity }">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<img alt="productImg" src="${orderProduct.productImg }" width="67px;" height="67px;">
+												<label>상품 이름</label>
+												<label>${orderProduct.productName }</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>상품 가격</label>
+												<h3 id="orderProductPrice">${orderProduct.price } 원</h3>
+											</div>
+										</div>
+									</div>
+									<c:if test="${not empty orderProduct.dcType }">
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>할인</label>
+												<c:if test="${orderProduct.dcType == 'P' }">
+													<h3>${(orderProduct.price) * (orderProduct.dcRate) } 원</h3>
+												</c:if>
+												<c:if test="${orderProduct.dcType == 'M' }">
+													<h3>${orderProduct.dcAmount } 원</h3>
+												</c:if>
+											</div>
+										</div>
+									</div>
+									</c:if>
+                                </section>
+                            </li>
+                           	<c:if test="${empty orderMember }">
+                            	<li>
+                                	<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                    	aria-expanded="false" aria-controls="collapseFour">주문자 정보</h5>
+	                                	<section class="checkout-steps-form-content collapse" id="collapseFour"
+	                                    		aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+	                                        <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>이름</label>
+	                                                    <input type="text" placeholder="Name" name="name">
+	                                                </div>
+	                                            </div>
+	                                        </div>
+	                                        <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>휴대폰 번호</label>
+	                                                    <input type="text" placeholder="Phone Number" name="phoneNumber">
+	                                                </div>
+	                                            </div>
+	                                        </div>
+	                                        <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>이메일</label>
+	                                                    <input type="text" placeholder="Email Address" name="email">
+	                                                </div>
+	                                            </div>
+	                                        </div>
+	                                	</section>
+	                            </li>
+	                            <li>
+	                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
+	                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
+	                                <section class="checkout-steps-form-content collapse" id="collapsefive"
+	                                    aria-labelledby="headingfive" data-bs-parent="#accordionExample">
+		                                    <div class="col-md-6">
+		                                            <div class="single-form form-default">
+		                                                <div class="form-input form">
+		                                                	<label>배송지</label>
+		                                                    <input type="text" placeholder="Address" name="address">
+		                                                </div>
+		                                            </div>
+		                                    </div>
+	                                </section>
+                            </li>
+                            <li>
+                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSix"
+                                    aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
+                                <section class="checkout-steps-form-content collapse" id="collapseSix"
+                                    aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+	                                    <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>회원만 포인트 사용이 가능합니다.</label>
+	                                                </div>
+	                                            </div>
+	                                    </div>
+                                </section>
+							</c:if>
+                            <c:if test="${not empty orderMember }">
+                                <li>
+                                	<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                    	aria-expanded="false" aria-controls="collapseFour">주문자 정보</h5>
+	                                	<section class="checkout-steps-form-content collapse" id="collapseFour"
+	                                    		aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                        <div class="col-md-6">
                                             <div class="single-form form-default">
-                                                <label>User Name</label>
-                                                <div class="row">
-                                                    <div class="col-md-6 form-input form">
-                                                        <input type="text" placeholder="First Name">
-                                                    </div>
-                                                    <div class="col-md-6 form-input form">
-                                                        <input type="text" placeholder="Last Name">
-                                                    </div>
+                                                <div class="form-input form">
+                                                	<label>이름</label>
+                                                    <input type="text" placeholder="Name" name="name" value="${orderMember.member_name }" readonly>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="single-form form-default">
-                                                <label>Email Address</label>
                                                 <div class="form-input form">
-                                                    <input type="text" placeholder="Email Address">
+                                                	<label>휴대폰 번호</label>
+                                                    <input type="text" placeholder="Phone Number" name="phoneNumber" value="${orderMember.phone_number }" readonly>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="single-form form-default">
-                                                <label>Phone Number</label>
                                                 <div class="form-input form">
-                                                    <input type="text" placeholder="Phone Number">
+                                                	<label>이메일</label>
+                                                    <input type="text" placeholder="Email Address" name="email" value="${orderMember.email }" readonly>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <div class="single-form form-default">
-                                                <label>Mailing Address</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Mailing Address">
-                                                </div>
-                                            </div>
+                                    </section>
+	                            </li>
+	                            <li>
+	                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
+	                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
+	                                <section class="checkout-steps-form-content collapse" id="collapsefive"
+	                                    aria-labelledby="headingfive" data-bs-parent="#accordionExample">
+		                                    <div class="col-md-6">
+		                                            <div class="single-form form-default">
+		                                                <div class="form-input form">
+		                                                	<label>배송지</label>
+		                                                    <input type="text" placeholder="Address" name="address" value="${orderMember.address }" readonly>
+		                                                </div>
+		                                            </div>
+		                                    </div>
+	                                </section>
+                            </li>
+                            <li>
+                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSix"
+                                    aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
+                                <section class="checkout-steps-form-content collapse" id="collapseSix"
+                                    aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+	                                    <div class="col-md-6">
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<label>보유 포인트 : ${orderMember.member_point }</label>
+	                                                </div>
+	                                            </div>
+	                                    </div>
+                                </section>
+                                 	</c:if>
+                                <section>
+                                	<div>
+                                		<div class="single-form form-default button">
+                                        	<button class="btn" type="submit">정보 적용</button>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>City</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="City">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Post Code</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Post Code">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Country</label>
-                                                <div class="form-input form">
-                                                    <input type="text" placeholder="Country">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <label>Region/State</label>
-                                                <div class="select-items">
-                                                    <select class="form-control">
-                                                        <option value="0">select</option>
-                                                        <option value="1">select option 01</option>
-                                                        <option value="2">select option 02</option>
-                                                        <option value="3">select option 03</option>
-                                                        <option value="4">select option 04</option>
-                                                        <option value="5">select option 05</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="single-checkbox checkbox-style-3">
-                                                <input type="checkbox" id="checkbox-3">
-                                                <label for="checkbox-3"><span></span></label>
-                                                <p>My delivery and mailing addresses are the same.</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="single-form button">
-                                                <button class="btn" data-bs-toggle="collapse"
-                                                    data-bs-target="#collapseFour" aria-expanded="false"
-                                                    aria-controls="collapseFour">next
-                                                    step</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                	</div>
                                 </section>
                             </li>
                             <li>
@@ -251,156 +367,74 @@
                                     </div>
                                 </section>
                             </li>
-                            <li>
-                                <h6 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
-                                    aria-expanded="false" aria-controls="collapsefive">Payment Info</h6>
-                                <section class="checkout-steps-form-content collapse" id="collapsefive"
-                                    aria-labelledby="headingFive" data-bs-parent="#accordionExample">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="checkout-payment-form">
-                                                <div class="single-form form-default">
-                                                    <label>Cardholder Name</label>
-                                                    <div class="form-input form">
-                                                        <input type="text" placeholder="Cardholder Name">
-                                                    </div>
-                                                </div>
-                                                <div class="single-form form-default">
-                                                    <label>Card Number</label>
-                                                    <div class="form-input form">
-                                                        <input id="credit-input" type="text"
-                                                            placeholder="0000 0000 0000 0000">
-                                                        <img src="/resources/assets/user/images/payment/card.png" alt="card">
-                                                    </div>
-                                                </div>
-                                                <div class="payment-card-info">
-                                                    <div class="single-form form-default mm-yy">
-                                                        <label>Expiration</label>
-                                                        <div class="expiration d-flex">
-                                                            <div class="form-input form">
-                                                                <input type="text" placeholder="MM">
-                                                            </div>
-                                                            <div class="form-input form">
-                                                                <input type="text" placeholder="YYYY">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="single-form form-default">
-                                                        <label>CVC/CVV <span><i
-                                                                    class="mdi mdi-alert-circle"></i></span></label>
-                                                        <div class="form-input form">
-                                                            <input type="text" placeholder="***">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="single-form form-default button">
-                                                    <button class="btn">pay now</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-                            </li>
                         </ul>
+                        </form>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="checkout-sidebar">
                         <div class="checkout-sidebar-coupon">
-                            <p>Appy Coupon to get discount!</p>
+                            <p>쿠폰 입력</p>
                             <form action="#">
                                 <div class="single-form form-default">
                                     <div class="form-input form">
-                                        <input type="text" placeholder="Coupon Code">
+                                        <input type="text" placeholder="쿠폰 번호를 입력하세요" name="couponUse">
                                     </div>
                                     <div class="button">
-                                        <button class="btn">apply</button>
+                                        <button class="btn">쿠폰 적용</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="checkout-sidebar-price-table mt-30">
-                            <h5 class="title">Pricing Table</h5>
-
-                            <div class="sub-total-price">
+                            <div class="sub-total-price" style="color: black;">
                                 <div class="total-price">
-                                    <p class="value">Subotal Price:</p>
-                                    <p class="price">$144.00</p>
+                                    <p class="value">총 상품금액</p>
+                                    <p class="price allProductPrice">${orderProduct.price } 원</p>
+                                </div>
+                                 <div class="total-price discount">
+                                    <p class="value">총 할인금액</p>
+                                    <p class="price">- ${orderProduct.dcAmount }원</p>
                                 </div>
                                 <div class="total-price shipping">
-                                    <p class="value">Subotal Price:</p>
-                                    <p class="price">$10.50</p>
-                                </div>
-                                <div class="total-price discount">
-                                    <p class="value">Subotal Price:</p>
-                                    <p class="price">$10.00</p>
+                                    <p class="value">총 배송비</p>
+                                    <p class="price">0원</p>
                                 </div>
                             </div>
 
                             <div class="total-payable">
                                 <div class="payable-price">
-                                    <p class="value">Subotal Price:</p>
-                                    <p class="price">$164.50</p>
+                                    <h6 class="value bold" style="color: black;">총 결제금액</h6>
+                                    <h6 class="price allProductPrice" style="color: red;">${orderProduct.price } 원</h6>
                                 </div>
+	                                <div class="sub-total-price">
+	                                	<div class="total-price point mb-30">
+	                                    	<p class="value">총 적립예정 포인트</p>
+	                                    	<c:if test="${not empty orderMember }">
+	                                    		<p class="price" id="point">${orderProduct.price * orderProduct.quantity * orderMember.level_point } P</p>
+	                                    	</c:if>
+	                                    	<c:if test="${empty orderMember }">
+	                                    		<p class="price">0 P</p>
+	                                    	</c:if>
+	                                    </div>
+	                                </div>
+                            </div>
+                            <div class="price-table-btn button">
+                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) <span class="price allProductPrice">${orderProduct.price }</span> 원 결제하기</a>
                             </div>
                             <div class="price-table-btn button">
                                 <a href="javascript:void(0)" class="btn btn-alt" onclick="requestPayment()">
                                 결제하기</a>
                             </div>
                         </div>
-                        <div class="checkout-sidebar-banner mt-30">
-                            <a href="product-grids.html">
-                                <img src="https://via.placeholder.com/400x330" alt="#">
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-        <!-- 모달 (네이버페이 용)-->
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Launch demo modal
-        </button>
-        
-        <!-- 임시 실험-->
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" onclick="myTest()">
-            다른 페이지로 이동하기
-        </button>
-    
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <iframe src="https://www.naver.com"></iframe>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-                </div>
-            </div>
-        </div>
-    
-
-
-
-
     </section>
     <!--====== Checkout Form Steps Part Ends ======-->
-
-	<jsp:include page="../footer.jsp"></jsp:include>
-
-
-    <div id="overlay" style="display: none;"></div>
+    
+    <jsp:include page="../footer.jsp"></jsp:include>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">
@@ -412,7 +446,8 @@
     <script src="/resources/assets/user/js/tiny-slider.js"></script>
     <script src="/resources/assets/user/js/glightbox.min.js"></script>
     <script src="/resources/assets/user/js/main.js"></script>
-    <!--toss 결제 API-->
+    
+        <!--toss 결제 API-->
     <script src="https://js.tosspayments.com/v2/standard"></script>
 
     <!-- 결제 처리(toss) -->
@@ -595,19 +630,7 @@
                 })
             }
         }
-
-        function generateRandomString() {
-            return window.btoa(Math.random()).slice(0, 20);
-        }
-        
-        // TODO : 실험용 임시 function, 삭제 요망 
-        function myTest() {
-        	alert("테스트 중")
-        	$.ajax({
-        		url : "/myTest",
-        		type: "GET"
-        	})
-        }
-    </script>
+            </script>
 </body>
+
 </html>
