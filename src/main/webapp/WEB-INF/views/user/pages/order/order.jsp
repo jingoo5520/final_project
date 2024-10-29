@@ -39,40 +39,6 @@
 
 <script type="text/javascript">
 	
-	let productPrice = parseInt("${orderProduct.price }");
-	let productQuantity = parseInt("${orderProduct.quantity }");
-	let dcPrice = 0;
-	let memberPoint = 0;
-	let productDCType = null;
-	if ("${orderProduct.dcType }" !== "" ) {
-		productDCType = "${orderProduct.dcType }";
-		if (productDCType == "M") {
-			dcPrice = parseInt("${orderProduct.dcAmount }");
-		} else if (productDCType == 'P') {
-			dcPrice = Math.floor(productPrice * parseFloat("${orderProduct.dcRate }"));
-		}
-	}
-	
-	if ()
-	console.log(productPrice, productQuantity, dcPrice);
-	
-	$(function() {
-		
-		console.log(productPrice, productQuantity);
-		
-		if ($("#orderProductDC").text() !== "") {
-			let productDC = $("#orderProductDC").text().trim();
-			dcPrice = parseInt(productDC.replace(" 원", ""));
-			
-		}
-		$("#orderProductQuantity").keyup(function () {
-			productQuantity = parseInt($("#orderProductQuantity").val(), 10);
-			$(".allProductPrice").text((productPrice - dcPrice) * productQuantity);
-		});
-		
-		$(".allProductPrice").text((productPrice - dcPrice) * productQuantity);
-		$("#point").text((productPrice * productQuantity) * )
-	});
 
 </script>
 
@@ -124,22 +90,24 @@
                             <li>
                                <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree"
                                     aria-expanded="false" aria-controls="collapseThree">주문 상품</h5>
+                                <c:forEach var="orderProduct" items="orderProductList">
                                 <section class="checkout-steps-form-content collapse" id="collapseThree"
                                     aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                     <div class="col-md-6">
 										<div class="single-form form-default">
 											<div class="form-input form">
 												<label>상품 수량</label>
-												<input type="number" placeholder="quantity" id="orderProductQuantity" name="orderProductQuantity" value="${orderProduct.quantity }">
+												<label>${orderProduct.quantity }</label>
+												<%-- <input type="text" placeholder="quantity" id="orderProductQuantity" name="orderProductQuantity" value="${orderProduct.quantity }"> --%>
 											</div>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="single-form form-default">
 											<div class="form-input form">
-												<img alt="productImg" src="${orderProduct.productImg }" width="67px;" height="67px;">
+												<img alt="productImg" src="${orderProduct.image_main_url }" width="67px;" height="67px;">
 												<label>상품 이름</label>
-												<label>${orderProduct.productName }</label>
+												<label>${orderProduct.product_name }</label>
 											</div>
 										</div>
 									</div>
@@ -147,26 +115,24 @@
 										<div class="single-form form-default">
 											<div class="form-input form">
 												<label>상품 가격</label>
-												<h3 id="orderProductPrice">${orderProduct.price } 원</h3>
+												<h3 id="orderProductPrice">${orderProduct.product_price } 원</h3>
 											</div>
 										</div>
 									</div>
-									<c:if test="${not empty orderProduct.dcType }">
+									<c:if test="${not empty orderProduct.product_dc_type && orderProduct.product_dc_type != 'N' }">
 									<div class="col-md-6">
 										<div class="single-form form-default">
 											<div class="form-input form">
 												<label>할인</label>
-												<c:if test="${orderProduct.dcType == 'P' }">
-													<h3>${(orderProduct.price) * (orderProduct.dcRate) } 원</h3>
-												</c:if>
-												<c:if test="${orderProduct.dcType == 'M' }">
-													<h3>${orderProduct.dcAmount } 원</h3>
+												<c:if test="${orderProduct.product_dc_type == 'P' }">
+													<h3>${(orderProduct.product_price) * (orderProduct.dc_rate) } 원</h3>
 												</c:if>
 											</div>
 										</div>
 									</div>
 									</c:if>
                                 </section>
+                                </c:forEach>
                             </li>
                            	<c:if test="${empty orderMember }">
                             	<li>
@@ -390,28 +356,28 @@
                             <div class="sub-total-price" style="color: black;">
                                 <div class="total-price">
                                     <p class="value">총 상품금액</p>
-                                    <p class="price allProductPrice">${orderProduct.price } 원</p>
+                                    <p class="price allProductPrice">0 원</p>
                                 </div>
                                  <div class="total-price discount">
                                     <p class="value">총 할인금액</p>
-                                    <p class="price">- ${orderProduct.dcAmount }원</p>
+                                    <p class="price">- 0 원</p>
                                 </div>
                                 <div class="total-price shipping">
                                     <p class="value">총 배송비</p>
-                                    <p class="price">0원</p>
+                                    <p class="price">0 원</p>
                                 </div>
                             </div>
 
                             <div class="total-payable">
                                 <div class="payable-price">
                                     <h6 class="value bold" style="color: black;">총 결제금액</h6>
-                                    <h6 class="price allProductPrice" style="color: red;">${orderProduct.price } 원</h6>
+                                    <h6 class="price allProductPrice" style="color: red;">0 원</h6>
                                 </div>
 	                                <div class="sub-total-price">
 	                                	<div class="total-price point mb-30">
 	                                    	<p class="value">총 적립예정 포인트</p>
 	                                    	<c:if test="${not empty orderMember }">
-	                                    		<p class="price" id="point">${orderProduct.price * orderProduct.quantity * orderMember.level_point } P</p>
+	                                    		<p class="price" id="point">0 P</p>
 	                                    	</c:if>
 	                                    	<c:if test="${empty orderMember }">
 	                                    		<p class="price">0 P</p>
@@ -420,7 +386,7 @@
 	                                </div>
                             </div>
                             <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) <span class="price allProductPrice">${orderProduct.price }</span> 원 결제하기</a>
+                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) <span class="price allProductPrice">0</span> 원 결제하기</a>
                             </div>
                             <div class="price-table-btn button">
                                 <a href="javascript:void(0)" class="btn btn-alt" onclick="requestPayment()">

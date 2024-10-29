@@ -55,6 +55,7 @@ function orderProduct(productNo) {
         success: function(response) {
             console.log("Success:", response);
             // 필요한 경우 리다이렉트 또는 다른 작업 수행
+            window.location.href = response.redirectUrl;
         },
         error: function(error) {
             console.error("Error:", error);

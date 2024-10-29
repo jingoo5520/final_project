@@ -1,5 +1,6 @@
 package com.finalProject.controller.order;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Base64;
 import java.util.HashMap;
@@ -17,12 +18,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.order.OrderMemberDTO;
-import com.finalProject.model.order.OrderProductVO;
+import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.service.order.OrderService;
 import com.google.gson.Gson;
@@ -32,54 +34,68 @@ public class OrderController {
 	@Inject
 	private OrderService orderService;
 	
+	@GetMapping("/order")
+	public String showOrderPage(Model model) {
+	    // 모델에서 데이터가 포함되어 있으므로, 뷰를 렌더링
+	    return "/user/pages/order/order"; // 실제 주문 페이지의 뷰 이름
+	}
+	
+	
 	@PostMapping("/order")
-    public ResponseEntity<?> orderPage(@RequestBody List<OrderRequestDTO> productsInfo, Model model, HttpSession session) {
+	public String orderPage(@RequestParam String productInfos, Model model, HttpSession session) {
 		// 세션에서 login정보 가져오기
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		
-		
-        // productsInfo를 사용하여 DB 조회 및 처리
-        for (OrderRequestDTO orDTO : productsInfo) {
-            // 각 상품에 대한 처리 로직
-            System.out.println("Product No: " + orDTO.getProductNo());
-            System.out.println("Quantity: " + orDTO.getQuantity());
-       
-        
-        System.out.println("상품 : " + orDTO.getProductNo() + ", 수량 : " + orDTO.getQuantity());
-		int productNo = orDTO.getProductNo();
-		int quantity = orDTO.getQuantity();
-		
+		// JSON 문자열을 OrderRequestDTO 리스트로 변환
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    List<OrderRequestDTO> requestsInfo;
 
+	    try {
+	        requestsInfo = objectMapper.readValue(productInfos, new TypeReference<List<OrderRequestDTO>>() {});
 		
-		// 바인딩한 productNo로 상품 정보 조회
-		// 상품이름, 상품가격, 상품이미지, 상품할인정보
-		OrderProductVO orderProduct = orderService.getProductInfo(productNo, quantity);
-		
-		System.out.println(orderProduct.toString());
-		
-		model.addAttribute("orderProduct", orderProduct);
-		
-		if (loginMember != null) { // 로그인 했는지 안했는지 구분
-			System.out.println("order 로그인 상태, 회원 id : " + loginMember.getMember_id());
-			
-			String memberId = loginMember.getMember_id();
-			
-			// 로그인 했을 경우 회원아이디로 주문자 정보 조회
-			OrderMemberDTO orderMember = orderService.getMemberInfo(memberId);
-			
-			System.out.println(orderMember.toString());
-			
-			model.addAttribute("orderMember", orderMember);
-			
-		} else {
-			System.out.println("order 로그인 하지 않음");
-		}
-        }
-
-        // 처리 후 응답
-        return ResponseEntity.ok().body("Products ordered successfully.");
+	        // productsInfo를 사용하여 DB 조회 및 처리
+	        for (OrderRequestDTO orDTO : requestsInfo) {
+	            // 각 상품에 대한 처리 로직
+	        	System.out.println(orDTO.toString());
+	            System.out.println("Product No: " + orDTO.getProductNo());
+	            System.out.println("Quantity: " + orDTO.getQuantity());
+	        
+	            System.out.println("상품 : " + orDTO.getProductNo() + ", 수량 : " + orDTO.getQuantity());
+	        }
+	        
+	        List<OrderProductDTO> orderProductList = orderService.getProductInfo(requestsInfo);
+	        
+	        for (OrderProductDTO orderProduct : orderProductList) {
+	        	System.out.println(orderProduct.toString());
+	        }
+	        
+	    	// 바인딩한 productNo로 상품 정보 조회
+	 		// 상품이름, 상품가격, 상품이미지, 상품할인정보
+	 		
+	 		model.addAttribute("orderProductList", orderProductList);
+	 		
+	 		if (loginMember != null) { // 로그인 했는지 안했는지 구분
+	 			System.out.println("order 로그인 상태, 회원 id : " + loginMember.getMember_id());
+	 			
+	 			String memberId = loginMember.getMember_id();
+	 			
+	 			// 로그인 했을 경우 회원아이디로 주문자 정보 조회
+	 			OrderMemberDTO orderMember = orderService.getMemberInfo(memberId);
+	 			
+	 			System.out.println(orderMember.toString());
+	 			
+	 			model.addAttribute("orderMember", orderMember);
+	 			
+	 		} else {
+	 			System.out.println("order 로그인 하지 않음");
+	 		}
+	 		
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
         
-//        return "/user/pages/order/order";
+        
+ 		return "redirect:/order";
     }
 	
 	// NOTE : 결제가 성공하면 토스 결제 모듈이 쿼리스트링을 달고 페이지로 보낸다. 
