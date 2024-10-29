@@ -3,6 +3,7 @@ package com.finalProject.controller.order;
 import java.net.HttpURLConnection;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -27,17 +28,24 @@ import com.finalProject.service.order.OrderService;
 import com.google.gson.Gson;
 
 @Controller
-@RequestMapping("/user")
 public class OrderController {
 	@Inject
 	private OrderService orderService;
 	
 	@PostMapping("/order")
-	public String orderPage(OrderRequestDTO orDTO, Model model, HttpSession session) {
+    public ResponseEntity<?> orderPage(@RequestBody List<OrderRequestDTO> productsInfo, Model model, HttpSession session) {
 		// 세션에서 login정보 가져오기
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		
-		System.out.println("상품 : " + orDTO.getProductNo() + ", 수량 : " + orDTO.getQuantity());
+		
+        // productsInfo를 사용하여 DB 조회 및 처리
+        for (OrderRequestDTO orDTO : productsInfo) {
+            // 각 상품에 대한 처리 로직
+            System.out.println("Product No: " + orDTO.getProductNo());
+            System.out.println("Quantity: " + orDTO.getQuantity());
+       
+        
+        System.out.println("상품 : " + orDTO.getProductNo() + ", 수량 : " + orDTO.getQuantity());
 		int productNo = orDTO.getProductNo();
 		int quantity = orDTO.getQuantity();
 		
@@ -66,9 +74,13 @@ public class OrderController {
 		} else {
 			System.out.println("order 로그인 하지 않음");
 		}
-		
-		return "/user/pages/order/order";
-	}
+        }
+
+        // 처리 후 응답
+        return ResponseEntity.ok().body("Products ordered successfully.");
+        
+//        return "/user/pages/order/order";
+    }
 	
 	// NOTE : 결제가 성공하면 토스 결제 모듈이 쿼리스트링을 달고 페이지로 보낸다. 
 	// 보내주는 페이지의 주소는 자바스크립트에서 successUrl: window.location.origin + "/payment/success.html" 이런 식으로 설정할 수 있다.

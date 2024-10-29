@@ -37,6 +37,31 @@ function countDown(productNo) {
     }
 }
 
+function orderProduct(productNo) {
+	let productsInfo = [];
+
+	let quantity = parseInt($("#" + productNo + "_quantity").text());
+	
+	productsInfo.push({ productNo: parseInt(productNo), quantity: quantity });
+	
+	console.log(productsInfo);
+	
+	$.ajax({
+        url: '/order',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(productsInfo),
+        dataType: 'json',
+        success: function(response) {
+            console.log("Success:", response);
+            // 필요한 경우 리다이렉트 또는 다른 작업 수행
+        },
+        error: function(error) {
+            console.error("Error:", error);
+        }
+    });
+}
+
 function addCart(productNo) {
 	let quantity = parseInt($("#" + productNo + "_quantity").text());
 	
@@ -280,7 +305,7 @@ function addCart(productNo) {
 									        <!-- 결제 버튼을 전체 너비로 배치 -->
 									        <div class="col-lg-12 col-md-12 col-12">
 									            <div class="wish-button">
-									                <button class="btn" style="width: 100%;"><i class="lni lni-credit-cards"></i> 결제</button>
+									                <button class="btn" style="width: 100%;" onclick="orderProduct(${products[0].product_no});"><i class="lni lni-credit-cards"></i> 결제</button>
 									            </div>
 									        </div>
 									    </div>
@@ -338,6 +363,7 @@ function addCart(productNo) {
             </div>
     </section>
     <!-- End Item Details -->
+    
 
 <jsp:include page="../cart/cartModal.jsp"></jsp:include>
 
