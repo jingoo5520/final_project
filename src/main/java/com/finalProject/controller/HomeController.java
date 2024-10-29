@@ -19,7 +19,7 @@ public class HomeController {
 
 	@GetMapping("/")
 	   public String homePage(Locale locale, Model model) {
-		return "/user/pages/index";
+		return "/user/index";
 
 }
 }
