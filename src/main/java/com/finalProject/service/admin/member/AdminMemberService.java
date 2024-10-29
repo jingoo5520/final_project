@@ -2,8 +2,8 @@ package com.finalProject.service.admin.member;
 
 import java.util.Map;
 
-import com.finalProject.model.admin.MemberSearchFilterDTO;
-import com.finalProject.model.admin.PagingInfoNewDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.member.MemberSearchFilterDTO;
 
 public interface AdminMemberService {
 

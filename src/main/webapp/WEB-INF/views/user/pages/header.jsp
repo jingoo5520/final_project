@@ -62,6 +62,7 @@
 								<ul class="user-login">
 									<li><a href="${pageContext.request.contextPath}/member/myPage/modiInfo">내 정보</a></li>
 									<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
+									<li><a href="#">고객센터</a></li>
 								</ul>
 							</c:if>
 						</div>

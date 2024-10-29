@@ -1,4 +1,4 @@
-package com.finalProject.persistence.admin;
+package com.finalProject.persistence.admin.coupon;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
-import com.finalProject.model.admin.CouponDTO;
-import com.finalProject.model.admin.CouponPayDTO;
-import com.finalProject.model.admin.PagingInfoNew;
+import com.finalProject.model.admin.coupon.CouponDTO;
+import com.finalProject.model.admin.coupon.CouponPayDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNew;
 
 @Repository
 public class CouponDAOImpl implements CouponDAO {

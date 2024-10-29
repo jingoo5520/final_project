@@ -1,4 +1,4 @@
-package com.finalProject.model.admin;
+package com.finalProject.model.admin.coupon;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
