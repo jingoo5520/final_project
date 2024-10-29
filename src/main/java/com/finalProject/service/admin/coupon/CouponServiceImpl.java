@@ -18,7 +18,7 @@ import com.finalProject.model.admin.CouponDTO;
 import com.finalProject.model.admin.CouponPayDTO;
 import com.finalProject.model.admin.PagingInfoNew;
 import com.finalProject.model.admin.PagingInfoNewDTO;
-import com.finalProject.persistence.admin.CouponDAO;
+import com.finalProject.persistence.admin.coupon.CouponDAO;
 
 @Service
 public class CouponServiceImpl implements CouponService {

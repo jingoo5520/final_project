@@ -1,4 +1,4 @@
-package com.finalProject.persistence.admin;
+package com.finalProject.persistence.admin.member;
 
 import java.util.HashMap;
 import java.util.List;

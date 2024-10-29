@@ -1,4 +1,4 @@
-package com.finalProject.persistence.admin;
+package com.finalProject.persistence.admin.coupon;
 
 import java.util.List;
 

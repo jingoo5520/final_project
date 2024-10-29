@@ -12,7 +12,7 @@ import com.finalProject.model.admin.MemberManageDTO;
 import com.finalProject.model.admin.MemberSearchFilterDTO;
 import com.finalProject.model.admin.PagingInfoNew;
 import com.finalProject.model.admin.PagingInfoNewDTO;
-import com.finalProject.persistence.admin.AdminMemberDAO;
+import com.finalProject.persistence.admin.member.AdminMemberDAO;
 
 @Service
 public class AdminMemberServiceImpl implements AdminMemberService {

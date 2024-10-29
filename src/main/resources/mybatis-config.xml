@@ -11,5 +11,8 @@
 		<typeAlias type="com.finalProject.model.admin.CouponPayDTO" alias="CouponPayDTO" />
 		<typeAlias type="com.finalProject.model.MemberDTO" alias="MemberDTO" />
 		<typeAlias type="com.finalProject.model.ProductDTO" alias="ProductDTO" />
+		
+		<typeAlias type="com.finalProject.model.inquiry.InquiryDTO" alias="InquiryDTO" />
+		<typeAlias type="com.finalProject.model.inquiry.InquiryDetailDTO" alias="InquiryDetailDTO" />
 	</typeAliases>
 </configuration>
