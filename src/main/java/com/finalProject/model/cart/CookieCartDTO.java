@@ -18,4 +18,6 @@ public class CookieCartDTO {
 	private String product_name;
 	private int product_price;
 	private String image_main_url;
+	private String product_dc_type;
+	private float dc_rate;
 }

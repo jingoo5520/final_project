@@ -30,10 +30,79 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
+	
+	logWindowSize();
+	
+    // 창 크기가 변경될 때마다 크기를 찍기
+    $(window).resize(function() {
+        logWindowSize();
+    });
+	
+	
 	let productCount = $("div.cart-single-list").length;
+	let totalPrices = 0;
+	let totalPoints = 0;
+	
+	$(".productPrice").each(function() {
+		let productPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
+		totalPrices += productPriceText;
+	});
+	console.log(totalPrices);
+	
+	$(".totalPrice").text(totalPrices.toLocaleString() + " 원");
+	
+	$(".productPoint").each(function() {
+		let productPointText = parseInt($.trim($(this).text().replace(" P", "").replace(/,/g, "")));
+		totalPoints += productPointText;
+	});
+	console.log(totalPoints);
+	
+	$(".totalPoint").text(totalPoints.toLocaleString() + " P");
+	
+	var levelInfo = "${not empty levelInfo ? levelInfo : ''}";
+	
+	let levelDC = 0;
+	
+	if(levelInfo) {
+		levelDC = parseFloat("${levelInfo.level_dc }");
+		console.log(levelDC);
+	}
+	
+	let levelDCPrice = 0;
+	
+	if (levelDC != 0) {
+		levelDCPrice = Math.floor(totalPrices * levelDC / 10) * 10;
+	} else {
+		levelDCPrice = 0;
+	}
+	
+	$(".dcLevel").text(levelDCPrice.toLocaleString() + " 원");
+	
+	let productDCPrice = 0;
+	
+	$(".cart-single-list").each(function() {
+		let currentElement = $(this);
+		
+		let discountedPrice = parseInt($.trim(currentElement.find(".productDCPrice").text().replace(" 원", "").replace(/,/g, "")));
+		
+		let productPrice = parseInt($.trim(currentElement.find(".productPrice").text().replace(" 원", "").replace(/,/g, "")));
+		
+		if (discountedPrice != 0) {
+			productDCPrice += productPrice - discountedPrice;
+		}
+	});
+	
+	$(".dcProduct").text(productDCPrice.toLocaleString() + " 원");
+	
+	let totalPay = totalPrices - levelDCPrice - productDCPrice;
+	
+	$(".totalPay").text(totalPay.toLocaleString() + " 원");
+	
+	
+	
 	
 	const checkedCount = $('input[type="checkbox"].checkProduct').length;
-    $("#checkedProductCount").text(checkedCount + "개");
+    $(".checkedProductCount").text(checkedCount + "개");
     
     if (checkedCount <= 0) {
     	if ($("#removeChecked").hasClass("active-remove")) {
@@ -47,7 +116,7 @@ $(document).ready(function() {
 	
 	$('input[type="checkbox"].checkProduct').change(function() {
 		const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
-	    $("#checkedProductCount").text(checkedCount + "개");
+	    $(".checkedProductCount").text(checkedCount + "개");
 	    
 	    if (productCount == checkedCount) {
 			$('#allProductChecked').prop("checked", true);
@@ -80,7 +149,7 @@ $(document).ready(function() {
 	        }
         }
         const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
-	    $("#checkedProductCount").text(checkedCount + "개");
+	    $(".checkedProductCount").text(checkedCount + "개");
     });
 	
 });
@@ -161,8 +230,6 @@ function removeItem(productNo) {
 	
 	let isConfirmed = confirm("선택한 상품을 삭제 하시겠습니까?");
 	
-	console.log("상품 번호 : " + productNo);
-	
 	if (isConfirmed) {
 		$.ajax({
 		    url: 'removeCartItem',
@@ -172,12 +239,10 @@ function removeItem(productNo) {
 		    	},
 		    dataType: 'json',
 		    success: function(data) {
-		        console.log(data);
 		    },
 		    error: function() {
 		    },
 		    complete: function(xhr) {
-		        console.log(xhr);
 		        
 		        if (xhr.status == 200) {
 		            location.reload();
@@ -215,13 +280,10 @@ function removeCheckedItem() {
             data: JSON.stringify(productNos),  // 단순 배열로 전송
             dataType: 'json',
             success: function(data) {
-                console.log(data);
             },
             error: function() {
             },
             complete: function(data) {
-                console.log(data);
-                
                 if (data.status == 200) {
                     location.reload();
                 } else if (data.responseText == 400) {
@@ -234,19 +296,44 @@ function removeCheckedItem() {
     }
 }
 
-$(window).scroll(function() {
-	var scrollTop = $(window).scrollTop(); // 현재 스크롤 위치
-	var documentHeight = $(document).height(); // 전체 문서의 높이
-	var windowHeight = $(window).height(); // 현재 창의 높이
-	var remainingScroll = documentHeight - (scrollTop + windowHeight); // 남은 스크롤 거리
+function checkedOrder() {
+	console.log("체크한 상품들 주문페이지로 이동");
 	
-	console.log('남은 스크롤 거리: ' + remainingScroll);
 	
-	if (remainingScroll <= 552) {
-        $('.total-amount.fixed-total').hide(); // 해당 요소 숨기기
+}
+
+function logWindowSize() {
+   let width = $(window).width();
+    
+    if (width >= 1837) {
+        $('.hide-total').hide();
+        $('.total-amount.fixed-total').show();
     } else {
-        $('.total-amount.fixed-total').show(); // 스크롤이 해당 거리 이상일 경우 요소 보여주기
+        $('.hide-total').show();
+        $('.total-amount.fixed-total').hide();
     }
+}
+
+$(window).scroll(function() {
+	let width = $(window).width(); // 현재 문서의 너비
+	var scrollTop = $(window).scrollTop();
+	var documentHeight = $(document).height();
+	var windowHeight = $(window).height();
+	var remainingScroll = documentHeight - (scrollTop + windowHeight);
+	
+	 if (width >= 1837) {
+	        $('.hide-total').hide();
+	        
+	        if (remainingScroll <= 552) {
+	            $('.total-amount.fixed-total').hide();
+	        } else {
+	            $('.total-amount.fixed-total').show();
+	        }
+	    } else {
+	        $('.hide-total').show();
+	        $('.total-amount.fixed-total').hide();
+	    }
+	
 });
 
 </script>
@@ -337,22 +424,42 @@ input[type="checkbox"]:hover {
 .fixed-total {
     position: fixed;
     top: 442px;
-    right: 130px;
+    right: 60px;
     width: 300px;
-    height: 400px;
+    height: 404px;
     background-color: #a8a691;
     box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3), 0 10px 15px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
     z-index: 1000;
     padding: 20px;
     border-radius: 8px;
     margin: 0;
-    padding-top: 0; /* 상단 패딩 제거 */
+    padding: 0; /* 상단 패딩 제거 */
 }
 
-.right {
+.fixed-right {
     padding: 0;
-    margin-top: -20px; /* 상단 마진을 음수로 설정하여 빈 공간 줄이기 */
+    margin: 10px !important;/* 상단 마진을 음수로 설정하여 빈 공간 줄이기 */
 }
+
+.bingonggans {
+	height: 180px;
+	margin-bottom: 100px;
+}
+
+#instruction {
+	padding: 10px;
+	color: black;
+	font-weight: bold;
+	margin-bottom: 15px;
+}
+
+#instructionList li {
+	padding: 10px;
+	padding-left: 15px;
+	position: relative;
+	margin-bottom: 5px;
+}
+
 </style>
 
 <body>
@@ -396,12 +503,12 @@ input[type="checkbox"]:hover {
 			<c:choose>
 				<c:when test="${not empty cartItems || not empty cookieCartItems }">
 					<div class="row">
-						<div class="chkbox col-lg-11 col-12" id="allCheckDiv">
+						<div class="chkbox col-lg-11 col-md-2 col-12" id="allCheckDiv">
 							<input type="checkbox" class="form-check-input"
 								id="allProductChecked" checked> 전체선택 (<span
-								id="checkedProductCount"></span>)
+								class="checkedProductCount" id="checkedProductCount"></span>)
 						</div>
-						<div class="chkbox col-lg-1 col-12">
+						<div class="chkbox col-lg-1 col-md-10 col-12">
 							<a class="active-remove" href="#" onclick="removeCheckedItem();"
 								id="removeChecked"><u>선택삭제</u></a>
 						</div>
@@ -410,10 +517,10 @@ input[type="checkbox"]:hover {
 						<!-- Cart List Title -->
 						<div class="cart-list-title">
 							<div class="row">
-								<div class="col-lg-1 col-md-2 col-12">
+								<div class="col-lg-1 col-md-1 col-12">
 									<p></p>
 								</div>
-								<div class="col-lg-3 col-md-2 col-12">
+								<div class="col-lg-3 col-md-3 col-12">
 									<p>상품 이름</p>
 								</div>
 								<div class="col-lg-2 col-md-2 col-12">
@@ -422,12 +529,18 @@ input[type="checkbox"]:hover {
 								<div class="col-lg-2 col-md-2 col-12">
 									<p>적립예정포인트</p>
 								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>결제 금액</p>
+								<div class="col-lg-3 col-md-2 col-12 row">
+									<div class="col-lg-6 col-md-6 col-12">
+										<p>상품 금액</p>
+									</div>
+									<div class="col-lg-6 col-md-6 col-12">
+										<p>할인 금액</p>
+									</div>
 								</div>
-								<div class="col-lg-1 col-md-2 col-12">
+								<div class="col-lg-1 col-md-1 col-12">
 									<p>제거</p>
 								</div>
+								
 							</div>
 						</div>
 						<!-- End Cart List Title -->
@@ -445,7 +558,7 @@ input[type="checkbox"]:hover {
 												href="/product/productDetail?productNo=${item.product_no }"><img
 												src="${item.image_main_url }" alt="#"></a>
 										</div>
-										<div class="col-lg-3 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 											<h5 class="product-name">
 												<a
 													href="/product/productDetail?productNo=${item.product_no }">
@@ -455,7 +568,7 @@ input[type="checkbox"]:hover {
 												<span><em>Type:</em> Mirrorless</span>
 											</p>
 										</div>
-										<div class="count-input-div col-lg-2 col-md-1 col-12">
+										<div class="count-input-div col-lg-2 col-md-2 col-12">
 											<button class="btn countDown"
 												onclick="countDown(${item.product_no })">-</button>
 											<div class="count-div" id="${item.product_no }_quantity">${item.product_count }</div>
@@ -465,12 +578,9 @@ input[type="checkbox"]:hover {
 												onclick="applyQuantity(${item.product_no });">변경</button>
 										</div>
 										<c:if test="${not empty levelInfo }">
-											<div class="col-lg-2 col-md-3 col-12">
-												<p class="price">
-													<fmt:formatNumber
-														value="${Math.floor(item.product_price * item.product_count * levelInfo.level_point / 10) * 10}"
-														type="number" pattern="#,###" />
-													P
+											<div class="col-lg-2 col-md-2 col-12">
+												<p class="productPoint">
+													<fmt:formatNumber value="${Math.floor(item.product_price * item.product_count * levelInfo.level_point / 10) * 10}" type="number" pattern="#,###" />P
 												</p>
 												<p class="product-des">
 													<span><em>등급:</em> ${levelInfo.level_name }</span> <span><em>포인트적립:</em>
@@ -479,19 +589,28 @@ input[type="checkbox"]:hover {
 											</div>
 										</c:if>
 										<c:if test="${empty levelInfo }">
-											<div class="col-lg-2 col-md-3 col-12">
+											<div class="col-lg-2 col-md-2 col-12">
 												<p class="price">0</p>
 											</div>
 										</c:if>
-										<div class="col-lg-2 col-md-2 col-12">
-											<p class="price">
-												<fmt:formatNumber
-													value="${item.product_price * item.product_count}"
-													type="number" pattern="#,###" />
-												원
-											</p>
+										<div class="col-lg-3 col-md-2 col-12 row">
+											<div class="col-lg-6 col-md-6 col-12">
+												<p class="productPrice">
+													<fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원
+												</p>
+											</div>
+											<div class="col-lg-6 col-md-6 col-12">
+												<c:if test="${item.product_dc_type == 'P'}">
+													<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
+													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
+													<p class="product-des"><span><em>할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
+												</c:if>
+												<c:if test="${empty item.product_dc_type || item.product_dc_type == 'N'}">
+													<p class="productDCPrice">0</p>
+												</c:if>
+											</div>
 										</div>
-										<div class="col-lg-1 col-md-2 col-12">
+										<div class="col-lg-1 col-md-1 col-12">
 											<a class="remove-item" href="#"
 												onclick="removeItem(${item.product_no });"><i
 												class="lni lni-close"></i></a>
@@ -534,32 +653,27 @@ input[type="checkbox"]:hover {
 											<button class="btn countApply"
 												onclick="applyQuantity(${item.product_no });">변경</button>
 										</div>
-										<c:if test="${not empty levelInfo }">
-											<div class="col-lg-2 col-md-3 col-12">
-												<p class="price">
-													<fmt:formatNumber
-														value="${Math.floor(item.product_price * item.product_count * levelInfo.level_point / 10) * 10}"
-														type="number" pattern="#,###" />
-													P
-												</p>
-												<p class="product-des">
-													<span><em>등급:</em> ${levelInfo.level_name }</span> <span><em>포인트적립:</em>
-														${Math.round(levelInfo.level_point * 100) } %</span>
-												</p>
-											</div>
-										</c:if>
 										<c:if test="${empty levelInfo }">
 											<div class="col-lg-2 col-md-3 col-12">
-												<p class="price">0</p>
+												<p>0</p>
 											</div>
 										</c:if>
-										<div class="col-lg-2 col-md-2 col-12">
-											<p class="price">
-												<fmt:formatNumber
-													value="${item.product_price * item.product_count}"
-													type="number" pattern="#,###" />
-												원
-											</p>
+										<div class="col-lg-3 col-md-2 col-12 row">
+											<div class="col-lg-6 col-md-6 col-12">
+												<p class="productPrice">
+													<fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원
+												</p>
+											</div>
+											<div class="col-lg-6 col-md-6 col-12">
+												<c:if test="${item.product_dc_type == 'P'}">
+													<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
+													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
+													<p class="product-des"><span><em>할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
+												</c:if>
+												<c:if test="${empty item.product_dc_type || item.product_dc_type == 'N'}">
+													<p class="productDCPrice">0</p>
+												</c:if>
+											</div>
 										</div>
 										<div class="col-lg-1 col-md-2 col-12">
 											<a class="remove-item" href="#"
@@ -573,18 +687,19 @@ input[type="checkbox"]:hover {
 						</c:if>
 					</div>
 					<!-- Total Amount -->
-					<div class="total-amount fixed-total">
-						<div class="right">
+					<div class="total-amount fixed-total ">
+						<div class="right fixed-right">
 							<ul>
-								<li>총 상품금액<span>$2560.00</span></li>
-								<li>총 할인금액<span>Free</span></li>
-								<li class="last">총 결제금액<span>$2531.00</span></li>
-								<li>총 적립예정포인트<span>$29.00</span></li>
+								<li>총 상품금액<span class="totalPrice">0</span></li>
+								<li>상품 할인금액<span class="dcProduct">0</span></li>
+								<li>등급 할인금액<span class="dcLevel"></span></li>
+								<li class="last">총 결제금액<span class="totalPay">0</span></li>
+								<li>총 적립예정포인트<span class="totalPoint">0</span></li>
 							</ul>
 							<div class="button">
-								<a href="../order" class="btn">Checkout</a> <a
-									href="product-grids.html" class="btn btn-alt">Continue
-									shopping</a>
+								<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />
+								결제하기</a>
+								<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
 						 	</div>
 						 </div>
 					 </div>
@@ -593,13 +708,39 @@ input[type="checkbox"]:hover {
 				<c:otherwise>
 					<h1>장바구니에 상품이 없습니다.</h1>
 					<div class="button">
-						<a href="/product/jewelry/all" class="btn btn-alt">상품 보러 가기</a>
+						<a href="/product/jewelry/all" class="btn btn">상품 보러 가기</a>
 					</div>
 				</c:otherwise>
 			</c:choose>
+			<!-- Total Amount -->
+			<div class="total-amount hide-total">
+				<div class="right">
+					<ul>
+						<li>총 상품금액<span class="totalPrice">0</span></li>
+						<li>상품 할인금액<span class="dcProduct">0</span></li>
+						<li>등급 할인금액<span class="dcLevel"></span></li>
+						<li class="last">총 결제금액<span class="totalPay">0</span></li>
+						<li>총 적립예정포인트<span class="totalPoint">0</span></li>
+					</ul>
+					<div class="button">
+						<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />
+								결제하기</a>
+						<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
+				 	</div>
+				 </div>
+			 </div>
+			 <!--/ End Total Amount -->
 		</div>
 	</div>
 	<!--/ End Shopping Cart -->
+	<div class="bingonggans container">
+		<span id="instruction">장바구니 이용안내</span>
+		<ul id="instructionList">
+			<li>상품 옵션에 따라 결제 금액이 변경 될 수 있습니다.</li>
+			<li>쇼핑백 보관 기간 중 상품 가격이나 혜택이 변동 될수 있습니다.</li>
+			<li>쇼핑백의 상품을 찜 하시면 지속적으로 보실 수 있습니다.</li>
+		</ul>
+	</div>
 
 	<jsp:include page="../footer.jsp"></jsp:include>
 
