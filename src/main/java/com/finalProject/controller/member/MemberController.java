@@ -62,7 +62,6 @@ public class MemberController {
 					model.addAttribute("autologin", autologin); // 모델객체에 자동로그인 저장
 				}
 			}
-
 		} catch (Exception e) {
 
 			e.printStackTrace();
