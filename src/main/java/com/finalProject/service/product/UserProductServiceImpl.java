@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
-import com.finalProject.persistence.ProductDAO;
+import com.finalProject.persistence.product.UserProductDAO;
 
 import lombok.extern.slf4j.Slf4j;
 

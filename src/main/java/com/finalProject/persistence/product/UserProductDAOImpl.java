@@ -1,4 +1,4 @@
-package com.finalProject.persistence;
+package com.finalProject.persistence.product;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
-public class UserProductDAOImpl implements ProductDAO {
+public class UserProductDAOImpl implements UserProductDAO {
 
 	@Autowired
 	   private SqlSession ses;
@@ -28,14 +28,14 @@ public class UserProductDAOImpl implements ProductDAO {
 		params.put("offset", offset);
 		params.put("limit", limit);
 		List<ProductDTO> products = ses.selectList(ns + "selectProductsByPage", params);
-		System.out.println("상품 반환 : " + products.size());
+		System.out.println("�긽�뭹 諛섑솚 : " + products.size());
 		return ses.selectList(ns + "selectProductsByPage", params);
 	}
 
 	@Override
 	public int selectProductCount() throws Exception {
 		int productCount = ses.selectOne(ns + "selectProductCount");
-		System.out.println("db 에 총 상품 개수 : " + productCount);
+		System.out.println("db �뿉 珥� �긽�뭹 媛쒖닔 : " + productCount);
 		return ses.selectOne(ns + "selectProductCount");
 	}
 
