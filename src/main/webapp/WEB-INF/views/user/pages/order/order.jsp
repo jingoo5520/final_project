@@ -344,7 +344,7 @@
                                 </div>
                             </div>
                             <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn btn-alt" onclick="requestPayment()">
+                                <a href="javascript:void(0)" class="btn btn-alt" onclick="tryPayment()">
                                 결제하기</a>
                             </div>
                         </div>
@@ -424,10 +424,9 @@
         const tossPayments = TossPayments(clientKey);
         // 결제창 초기화
         const payment = tossPayments.payment({ customerKey });
-        // TODO : 현재 페이지에서 총 결제금액 읽어서 갱신하기, 지금은 100원 결제
-        const amount = {
+        let amount = {
             currency: "KRW",
-            value: 100,
+            value: 0,
         };
     </script>
 
@@ -485,23 +484,63 @@
             selectedPaymentMethod = method;
             console.log(method + "방법 선택")
         }
-
+        
+        function tryPayment() {
+        	// 토스와 연결된 세가지 결제방법이라면
+        	if (selectedPaymentMethod == "CARD" || selectedPaymentMethod == "TRANSFER" || selectedPaymentMethod == "VIRTUAL_ACCOUNT") {
+        		// TODO : 총 결제금액을 view에서 얻어오기, 여기서는 100원으로 임의로 설정
+        		amount.value = 200
+        		
+        		let response = sendAmountToServer(amount)
+        		if (response == null) {
+        			return;
+        		} else if (response.result == "fail") {
+        			// TODO : 잚못된 요청입니다 페이지 날리기
+        			alert("잘못된 요청입니다")
+        			return;
+        		}
+            	// TODO : 뷰에서 상품목록 조립해서 이름 만들기
+            	let orderName = "어쩌고저쩌고"
+            	requestPayment(response.orderId, orderName, amount)
+        	}
+        	
+        }
+        
+        // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하기 위해 서버에 저장
+        // orders 테이블에 insert가 이미 일어났으므로 orderId는 이미 서버에 저장되어 있음
+        function sendAmountToServer(amount) {
+        	let response = null
+            $.ajax({
+                async : false,
+            	type : 'POST',
+                url : "/payment/preventHack",
+                data: amount, // amount 객체의 예시 : {currency : "KRW", value : 100}
+                dataType: "json",
+                contentType : 'application/x-www-form-urlencoded',
+                // NOTE : cotentType을 application/json으로 지정하고 스프링 서버에서 @Requestbody + DTO 객체로 받아올 수도 있지만 DTO 만들기 싫어서 이렇게 함
+                success : function(res) {
+                	console.log("sendAmountToServer response : " + JSON.stringify(res));
+                	response = res
+                },
+                error : function(request, status, error) {
+            		console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+            	}
+        	})
+        	return response
+        }
+        
+        
         // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
         // @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
-        async function requestPayment() {
-            // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
-            // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+        async function requestPayment(orderId = null, orderName, amount) {            
             switch (selectedPaymentMethod) {
             case "CARD":
                 await payment.requestPayment({
                     method: "CARD", // 카드 및 간편결제
-                    amount: {
-                        currency: "KRW",
-                        value: 100,
-                    },
-                    orderId: generateRandomString(),
-                    orderName: "토스 티셔츠 외 2건",
-                    successUrl: window.location.origin + "/user/payment/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
+                    amount: amount,
+                    orderId: orderId,
+                    orderName: orderName,
+                    successUrl: window.location.origin + "/payment/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
                     failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
                     card: {
                         useEscrow: false,
@@ -513,13 +552,10 @@
             case "TRANSFER":
                 await payment.requestPayment({
                     method: "TRANSFER", // 계좌이체 결제
-                    amount: {
-                        currency: "KRW",
-                        value: 1000,
-                    },
-                    orderId: generateRandomString(),
-                    orderName: "토스 티셔츠 외 2건",
-                    successUrl: window.location.origin + "/user/payment/success.html",
+                    amount: amount,
+                    orderId: orderId,
+                    orderName: orderName,
+                    successUrl: window.location.origin + "/payment/success.html",
                     failUrl: window.location.origin + "/fail.html",
                     transfer: {
                         cashReceipt: {
@@ -531,13 +567,10 @@
             case "VIRTUAL_ACCOUNT":
                 await payment.requestPayment({
                     method: "VIRTUAL_ACCOUNT", // 가상계좌 결제
-                    amount: {
-                        currency: "KRW",
-                        value: 100,
-                    },
-                    orderId: generateRandomString(),
-                    orderName: "토스 티셔츠 외 2건",
-                    successUrl: window.location.origin + "/user/payment/success.html",
+                    amount: amount,
+                    orderId: orderId,
+                    orderName: orderName,
+                    successUrl: window.location.origin + "/payment/success.html",
                     failUrl: window.location.origin + "/fail.html",
                     virtualAccount: {
                         cashReceipt: {
@@ -560,7 +593,7 @@
                     "totalPayAmount": "100",
                     "taxScopeAmount": "100",
                     "taxExScopeAmount": "0",
-                    "returnUrl": window.location.origin + "/user/approveNaverPay"
+                    "returnUrl": window.location.origin + "/approveNaverPay"
                 });
             }
 
@@ -579,7 +612,7 @@
                 // NOTE : ajax 요청은 컨트롤러로부터 응답을 받아도 페이지를 이동시켜주지 않는다. 그래서 success 메서드를 붙어야 함 
                 $.ajax({
                   type : 'POST',
-                  url : "/user/kakaoPay/ready",
+                  url : "/kakaoPay/ready",
                   data: item,
                   dataType: "json",
                   contentType : 'application/x-www-form-urlencoded',

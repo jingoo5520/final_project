@@ -28,7 +28,6 @@ import com.finalProject.service.order.OrderService;
 import com.google.gson.Gson;
 
 @Controller
-@RequestMapping("/user")
 public class OrderController {
 	@Inject
 	private OrderService orderService;
@@ -39,18 +38,49 @@ public class OrderController {
 		return "/user/pages/order/order";
 	}
 	
+	@PostMapping("/payment/preventHack")
+	public ResponseEntity<Map<String, String>> saveAmount(
+			@RequestParam("value") int amount
+			) {
+		System.out.println("서버에 저장될 예상 결제 금액 : " + amount);
+		Map<String, String> resultMap = new HashMap<>();
+		try {
+			String orderId = orderService.saveExpectedTotalPrice(amount);
+			resultMap.put("orderId", orderId);
+			resultMap.put("result", "success");
+			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "fail");
+			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	// NOTE : 결제가 성공하면 토스 결제 모듈이 쿼리스트링을 달고 페이지로 보낸다. 
 	// 보내주는 페이지의 주소는 자바스크립트에서 successUrl: window.location.origin + "/payment/success.html" 이런 식으로 설정할 수 있다.
 	@GetMapping("/payment/success")
 	public String payAuthSuccess(
 			@RequestParam("orderId") String orderId,
 			@RequestParam("paymentKey") String paymentKey,
-			@RequestParam("amount") int amount
+			@RequestParam("amount") int amount,
+			Model model
 			) {
 		// 예시 : http://localhost:8080/user/payment/success.html?orderId=MC4wODExNjkzNzY1NTg1&paymentKey=tviva20241016183611gDY62&amount=10
 		System.out.println("결제 인증 성공");
-		// TODO : 쿼리 파라미터의 amount 값과 requestPayment()의 amount 파라미터 값이 같은지 반드시 확인하세요. 
+		// TODO : 쿼리 파라미터의 amount 값과 requestPayment()의 amount 파라미터 값이 같은지 반드시 확인함.
 		// 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다. 만약 값이 다르다면 결제를 취소하고 구매자에게 알려주세요.
+		System.out.println("클라이언트에서 결제 금액을 조작했는 지 확인");
+		int savedPrice = orderService.getExpectedTotalPrice(orderId);
+		int queryPrice = amount;
+		if (savedPrice != amount) {
+			model.addAttribute("message", "결제 금액 조작의 위험이 발견되었습니다. 다시 한번 결제를 시도해주세요.");
+			// TODO : 지금 로그인한 유저의 orderId로 orders 테이블 삭제하기, orderProducts의 테이블의 행들도 삭제하기
+			// (입력단에서 다시 테이블 삽입시켜야 함.)
+			// (입력단에서 테이블 삽입할 때 기존 아이디로 orders 테이블에 뭔가 있다면 삭제하고 다시 넣는 처리가 필요할 듯)
+			return "/user/pages/order/temp_02";
+		} else {
+			System.out.println("결제 금액 조작 체크 통과");
+		}
 		// TODO : 서버에 paymentKey, amount, orderId 값을 저장하세요. 
 		// paymentKey는 토스페이먼츠에서 각 주문에 발급하는 고유 키 값이에요. 결제 승인, 취소, 조회 등에 사용되기 때문에 꼭 저장해주세요.
 		// TODO : paymentKey는 DB에 넣자. 세션이 종료되도 나중에 언제든지 결제 취소를 할 수 있기 때문에 DB에 저장해야 한다.

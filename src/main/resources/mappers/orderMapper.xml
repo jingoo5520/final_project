@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.orderMapper">
+	<!-- 멤버 아이디로 오더 아이디 얻어오기 -->
+	<select id="selectOrderId" resultType="String">
+		select order_id from orders where orderer_id = #{memberId}
+	</select>
+	
+	<!-- 예상 결제금액 저장하기 -->
+	<update id="updateExpectedTotalPrice">
+		update orders set total_price_expected = #{amount} where order_id = #{orderId}
+	</update>
+	
+	<!-- 오더 아이디로 예상 결제금액 얻어오기 -->
+	<select id="selectExpectedTotalPrice" resultType="int">
+		select total_price_expected from orders where order_id = #{orderId};
+	</select>
+</mapper>

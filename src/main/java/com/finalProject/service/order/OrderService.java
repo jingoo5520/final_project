@@ -12,4 +12,8 @@ public interface OrderService {
 
 	Map<String, String> requestApproval(String base64SecretKey, String paymentKey, int amount, String orderId);
 
+	String saveExpectedTotalPrice(int amount) throws Exception;
+
+	int getExpectedTotalPrice(String orderId);
+
 }

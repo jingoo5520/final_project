@@ -9,12 +9,43 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.finalProject.persistence.order.OrderDAO;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+	
+	@Inject
+	private OrderDAO orderDAO;
+	
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	// 세션에 저장된 현재 로그인된 멤버의 아이디를 통해 현재 주문의 예상결제금액을 업데이트하고, 주문번호를 반환한다.
+	public String saveExpectedTotalPrice(int amount) throws Exception {
+		// TODO : 세션에 저장된 현재 로그인된 멤버의 아이디를 얻어와야 함, 여기서는 임의로 지정
+		String memberId = "whygari4321";
+		// TODO : orderId가 null이면 예외처리하기
+		String orderId = orderDAO.getOrderId(memberId);
+		if (orderId == null) {
+			throw new DataAccessException("주문번호 조회 실패") {};
+		}
+		System.out.println("현재 로그인된 멤버의 orderId : " + orderId);
+		if (orderDAO.updateExpectedTotalPrice(orderId, amount) != 1) {
+			throw new DataAccessException("DB 조작 실패") {};
+		}
+		return orderId;
+	}
+	
+	@Override
+	public int getExpectedTotalPrice(String orderId) {
+		return orderDAO.getExpectedTotalPrice(orderId);
+	}
 	
 	// 레퍼런스 : https://akku-dev.tistory.com/2
 	// 토스에서 예제코드로 쓰는 HttpClient는 java11 버전부터 사용가능하다.
