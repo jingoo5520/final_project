@@ -17,6 +17,6 @@ import lombok.ToString;
 public class PagingInfoDTO {
 
 	private int pageNo;
-	private int pagingSize;
+	private int pageSize;
 	
 }
