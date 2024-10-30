@@ -20,32 +20,32 @@ import lombok.extern.slf4j.Slf4j;
 public class PController {
 
     @Autowired
-    private ProductService service;
+    private UserProductService service;
 
-    // 1. ÀüÃ¼ »óÇ°À» º¸¿©ÁÖ´Â ¸Þ¼­µå (Ä«Å×°í¸® ¾øÀÌ ÀüÃ¼ »óÇ° Ç¥½Ã)
+    // 1. ï¿½ï¿½Ã¼ ï¿½ï¿½Ç°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ (Ä«ï¿½×°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½Ç° Ç¥ï¿½ï¿½)
     @GetMapping("/jewelry/all")
     public String showProductList(
             @RequestParam(value = "category", required = false) Integer category,
-            @RequestParam(value = "page", defaultValue = "1") int page, // ÆäÀÌÁö µðÆúÆ® °ª ¼³Á¤
-            @RequestParam(value = "pageSize", defaultValue = "6") int pageSize, // ÇÑ ÆäÀÌÁö¿¡¼­ º¸¿©ÁÙ »óÇ° °³¼ö
+            @RequestParam(value = "page", defaultValue = "1") int page, // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            @RequestParam(value = "pageSize", defaultValue = "6") int pageSize, // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½
             @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
             Model model) throws Exception {
 
-        List<ProductDTO> products = service.getProductsByPage(page, pageSize);  // ÀüÃ¼ »óÇ° Á¶È¸
+        List<ProductDTO> products = service.getProductsByPage(page, pageSize);  // ï¿½ï¿½Ã¼ ï¿½ï¿½Ç° ï¿½ï¿½È¸
         
         
-        // ÀüÃ¼ »óÇ° °³¼ö °è»ê
+        // ï¿½ï¿½Ã¼ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         int totalProducts = service.getProductCount();  
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 
-        // ÇÑ ¹ø¿¡ º¸¿©ÁÙ ÆäÀÌÁö ºí·Ï ¼³Á¤ (¿¹: 10ÆäÀÌÁö¾¿)
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½: 10ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         int pageBlockSize = 10;
         int currentBlock = (int) Math.ceil((double) page / pageBlockSize);
         int startPage = (currentBlock - 1) * pageBlockSize + 1;
         int endPage = Math.min(startPage + pageBlockSize - 1, totalPages);
         int totalProductCount = service.getProductCount();
 
-        // Model¿¡ µ¥ÀÌÅÍ Ãß°¡
+        // Modelï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         model.addAttribute("totalProductCount", totalProductCount);
         model.addAttribute("products", products);
         model.addAttribute("currentPage", page);
@@ -55,12 +55,12 @@ public class PController {
         model.addAttribute("hasPrevBlock", currentBlock > 1);
         model.addAttribute("hasNextBlock", endPage < totalPages);
         model.addAttribute("pageSize", pageSize);
-        model.addAttribute("sortOrder", sortOrder);  // Á¤·Ä ±âÁØ Ãß°¡
-        model.addAttribute("category", category);  // Ä«Å×°í¸® Ãß°¡
+        model.addAttribute("sortOrder", sortOrder);  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+        model.addAttribute("category", category);  // Ä«ï¿½×°ï¿½ ï¿½ß°ï¿½
         model.addAttribute("totalProducts", totalProducts);
         System.out.println("all : " + totalProducts);
         
-        // °¢ Ä«Å×°í¸®º° »óÇ° °³¼ö Àü´Þ
+        // ï¿½ï¿½ Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -70,7 +70,7 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        // Ä«Å×°í¸®º° »óÇ° °³¼ö Àü´Þ
+        // Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
@@ -81,10 +81,10 @@ public class PController {
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
 
-        return "/user/pages/product/productList"; // jsp ÆÄÀÏ ¹ÝÈ¯
+        return "/user/pages/product/productList"; // jsp ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     }
 
-    // 2. Ä«Å×°í¸®º°·Î »óÇ°À» º¸¿©ÁÖ´Â ¸Þ¼­µå
+    // 2. Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½
     @GetMapping("/jewelry")
     public String showProductList(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -93,7 +93,7 @@ public class PController {
             @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
             Model model) throws Exception {
 
-        System.out.println("Ä«Å×°í¸® °ª : " + category);
+        System.out.println("Ä«ï¿½×°ï¿½ï¿½ï¿½ ï¿½ï¿½ : " + category);
         sortOrder = sortOrder.trim();
 
         List<ProductDTO> products = service.getProductsByCategoryAndPage(category, page, pageSize, sortOrder);
@@ -102,16 +102,16 @@ public class PController {
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         int totalProductCount = service.getProductCount();
 
-        System.out.println("ÀüÃ¼ »óÇ° ¼ö: " + totalProducts);
+        System.out.println("ï¿½ï¿½Ã¼ ï¿½ï¿½Ç° ï¿½ï¿½: " + totalProducts);
         System.out.println("Received sortOrder: '" + sortOrder + "'");
 
-        // ÆäÀÌÁö³×ÀÌ¼Ç ¼³Á¤
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
         int pageBlockSize = 10;
         int currentBlock = (int) Math.ceil((double) page / pageBlockSize);
         int startPage = (currentBlock - 1) * pageBlockSize + 1;
         int endPage = Math.min(startPage + pageBlockSize - 1, totalPages);
 
-        // °¢ Ä«Å×°í¸®º° »óÇ° °³¼ö °¡Á®¿À±â
+        // ï¿½ï¿½ Ä«ï¿½×°ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -121,7 +121,7 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        // Ä«Å×°í¸®º° »óÇ° °³¼ö Àü´Þ
+        // Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
@@ -132,7 +132,7 @@ public class PController {
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
 
-        // Model¿¡ µ¥ÀÌÅÍ Ãß°¡
+        // Modelï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         model.addAttribute("totalProductCount", totalProductCount);
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("category", category);
@@ -148,94 +148,94 @@ public class PController {
         
 
 
-        System.out.println("Ä«Å×°í¸® : " + totalProducts);
-        return "/user/pages/product/productList";  // JSP ÆÄÀÏ ¹ÝÈ¯
+        System.out.println("Ä«ï¿½×°ï¿½ï¿½ï¿½ : " + totalProducts);
+        return "/user/pages/product/productList";  // JSP ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     }
 
-    // 3. »óÇ° »ó¼¼ Á¤º¸¸¦ º¸¿©ÁÖ´Â ¸Þ¼­µå
+    // 3. ï¿½ï¿½Ç° ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½
     @GetMapping("/jewelry/detail")
     public String showProductDetail(
             @RequestParam("productNo") int productId,
             Model model) throws Exception {
 
-        // »óÇ° Á¤º¸ °¡Á®¿À±â
+        // ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         List<ProductDTO> products = service.getProductInfo(productId);
 
-        // »ó¼¼ Á¤º¸ °¡Á®¿À±â
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         ProductDTO product = service.getProductDetailById(productId);
 
-        // Model¿¡ µ¥ÀÌÅÍ Ãß°¡
+        // Modelï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         model.addAttribute("products", products);
         model.addAttribute("product_content", product.getProduct_content());
-        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // °è»êµÈ °¡°Ý Ãß°¡
+        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         return "/user/pages/product/productDetail";
     }
     
-    // 4. °Ë»ö±â´É
+    // 4. ï¿½Ë»ï¿½ï¿½ï¿½ï¿½
     @GetMapping("/jewelry/result")
     public String search (
-    		@RequestParam(required = false) String search, // °Ë»ö¾î
-	        @RequestParam(required = false) Integer category, // Ä«Å×°í¸® (¼±ÅÃ)
-	        @RequestParam(defaultValue = "1") int page, // ÇöÀç ÆäÀÌÁö ¹øÈ£
+    		@RequestParam(required = false) String search, // ï¿½Ë»ï¿½ï¿½ï¿½
+	        @RequestParam(required = false) Integer category, // Ä«ï¿½×°ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½)
+	        @RequestParam(defaultValue = "1") int page, // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£
 	        @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
     		Model model) throws Exception {
     	
-    	System.out.println("°Ë»ö°Ë»ö : search=" + search + ", category=" + category + 
+    	System.out.println("ï¿½Ë»ï¿½ï¿½Ë»ï¿½ : search=" + search + ", category=" + category + 
                 ", page=" + page + ", sortOrder=" + sortOrder);
     	
 
     	
-        // 1. ÃÑ °Ô½Ã¹° ¼ö Á¶È¸
+        // 1. ï¿½ï¿½ ï¿½Ô½Ã¹ï¿½ ï¿½ï¿½ ï¿½ï¿½È¸
         int totalPostCnt = service.countSearchResults(search, category);
         
-        // 2. ÆäÀÌÂ¡ Á¤º¸ »ý¼º
-        PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 9); // ÇÑ ÆäÀÌÁö´ç 9°³¾¿ Á¶È¸
+        // 2. ï¿½ï¿½ï¿½ï¿½Â¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 9); // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 9ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
         PagingInfo pagingInfo = new PagingInfo(pagingInfoDTO, totalPostCnt);
 
-        // 3. °Ë»ö °á°ú Á¶È¸
+        // 3. ï¿½Ë»ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
         List<ProductDTO> searchResults = service.searchProducts(search, category, pagingInfo, sortOrder);
-        System.out.println("µ¥ÀÌÅÍ");
+        System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         System.out.println(searchResults);
         
         
-        // 4. ¸ðµ¨¿¡ °Ë»ö °á°ú ¹× ÆäÀÌÂ¡ Á¤º¸ ´ã±â
+        // 4. ï¿½ðµ¨¿ï¿½ ï¿½Ë»ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Â¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         model.addAttribute("products", searchResults);
         model.addAttribute("pagingInfo", pagingInfo);
         model.addAttribute("search", search);
         model.addAttribute("category", category);
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("searchProductCount", totalPostCnt);
-        model.addAttribute("startPage", pagingInfo.getStartPage()); // ½ÃÀÛ ÆäÀÌÁö Ãß°¡
-        model.addAttribute("endPage", pagingInfo.getEndPage()); // ³¡ ÆäÀÌÁö Ãß°¡
-        model.addAttribute("totalPages", pagingInfo.getTotalPages()); // ÀüÃ¼ ÆäÀÌÁö ¼ö Ãß°¡
-        model.addAttribute("currentPage", pagingInfo.getCurrentPage()); // ÀüÃ¼ ÆäÀÌÁö ¼ö Ãß°¡
+        model.addAttribute("startPage", pagingInfo.getStartPage()); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+        model.addAttribute("endPage", pagingInfo.getEndPage()); // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+        model.addAttribute("totalPages", pagingInfo.getTotalPages()); // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½
+        model.addAttribute("currentPage", pagingInfo.getCurrentPage()); // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½
         
         
-        System.out.println("°Ë»ö : " + totalPostCnt);
+        System.out.println("ï¿½Ë»ï¿½ : " + totalPostCnt);
         
         if (totalPostCnt == 0) {
         	model.addAttribute("noResult", true);
         }
         
         
-        // °ø¹éÀÌ³ª °Ë»ö¾î°¡ ¾øÀ» ¶§ Ã³¸®
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½Ë»ï¿½ï¿½î°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ã³ï¿½ï¿½
         if (search == null || search.trim().isEmpty()) {
             
-            // Ä«Å×°í¸® °ªÀÌ ÀÖÀ¸¸é ÇØ´ç Ä«Å×°í¸® ÆäÀÌÁö·Î ¸®µð·º¼Ç
+            // Ä«ï¿½×°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ Ä«ï¿½×°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ð·º¼ï¿½
             if (category != null) {
                 return "redirect:/product/jewelry?category=" + category;
             }
 
-            // Ä«Å×°í¸®°¡ ¾ø´Â °æ¿ì ±âº» ÀüÃ¼ ÆäÀÌÁö·Î ¸®µð·º¼Ç
+            // Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½âº» ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ð·º¼ï¿½
             return "redirect:/product/jewelry/all";
         }
         
         if (search != null) {
-            search = search.trim(); // ¾ÕµÚ °ø¹é Á¦°Å
-            search = search.replaceAll("[<>\"'&]", ""); // Æ¯¼ö ¹®ÀÚ Á¦°Å ¿¹½Ã (ÇÊ¿ä¿¡ µû¶ó ¼öÁ¤)
+            search = search.trim(); // ï¿½Õµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            search = search.replaceAll("[<>\"'&]", ""); // Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ê¿ä¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         }
         
-        // °¢ Ä«Å×°í¸®º° »óÇ° °³¼ö °¡Á®¿À±â
+        // ï¿½ï¿½ Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -245,7 +245,7 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        // Ä«Å×°í¸®º° »óÇ° °³¼ö Àü´Þ
+        // Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
