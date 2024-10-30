@@ -22,30 +22,30 @@ public class PController {
     @Autowired
     private UserProductService service;
 
-    // 1. 占쏙옙체 占쏙옙품占쏙옙 占쏙옙占쏙옙占쌍댐옙 占쌨쇽옙占쏙옙 (카占쌓곤옙 占쏙옙占쏙옙 占쏙옙체 占쏙옙품 표占쏙옙)
+    // 1. 전체 상품을 표시함 (카테고리 선택 없이 전체 상품 표시)
     @GetMapping("/jewelry/all")
     public String showProductList(
             @RequestParam(value = "category", required = false) Integer category,
-            @RequestParam(value = "page", defaultValue = "1") int page, // 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙트 占쏙옙 占쏙옙占쏙옙
-            @RequestParam(value = "pageSize", defaultValue = "6") int pageSize, // 占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙품 占쏙옙占쏙옙
+            @RequestParam(value = "page", defaultValue = "1") int page, // 페이지 기본 값 설정
+            @RequestParam(value = "pageSize", defaultValue = "6") int pageSize, // 한 페이지에서 보여줄 상품 개수
             @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
             Model model) throws Exception {
 
-        List<ProductDTO> products = service.getProductsByPage(page, pageSize);  // 占쏙옙체 占쏙옙품 占쏙옙회
+        List<ProductDTO> products = service.getProductsByPage(page, pageSize);  // 전체 상품 조회
         
         
-        // 占쏙옙체 占쏙옙품 占쏙옙占쏙옙 占쏙옙占�
+        // 전체 상품 개수 계산
         int totalProducts = service.getProductCount();  
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 
-        // 占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占� 占쏙옙占쏙옙 (占쏙옙: 10占쏙옙占쏙옙占쏙옙占쏙옙)
+        // 한 번에 보여줄 페이지 블록 설정 (예: 10페이지씩)
         int pageBlockSize = 10;
         int currentBlock = (int) Math.ceil((double) page / pageBlockSize);
         int startPage = (currentBlock - 1) * pageBlockSize + 1;
         int endPage = Math.min(startPage + pageBlockSize - 1, totalPages);
         int totalProductCount = service.getProductCount();
 
-        // Model占쏙옙 占쏙옙占쏙옙占쏙옙 占쌩곤옙
+        // Model에 데이터 추가
         model.addAttribute("totalProductCount", totalProductCount);
         model.addAttribute("products", products);
         model.addAttribute("currentPage", page);
@@ -55,12 +55,12 @@ public class PController {
         model.addAttribute("hasPrevBlock", currentBlock > 1);
         model.addAttribute("hasNextBlock", endPage < totalPages);
         model.addAttribute("pageSize", pageSize);
-        model.addAttribute("sortOrder", sortOrder);  // 占쏙옙占쏙옙 占쏙옙占쏙옙 占쌩곤옙
-        model.addAttribute("category", category);  // 카占쌓곤옙 占쌩곤옙
+        model.addAttribute("sortOrder", sortOrder);  // 정렬 기준 추가
+        model.addAttribute("category", category);  // 카테고리 추가
         model.addAttribute("totalProducts", totalProducts);
         System.out.println("all : " + totalProducts);
         
-        // 占쏙옙 카占쌓곤옙占쏙옙占쏙옙 占쏙옙품 占쏙옙占쏙옙 占쏙옙占쏙옙
+        // 각 카테고리별 상품 개수 조회
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -70,7 +70,7 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        // 카占쌓곤옙占쏙옙占쏙옙 占쏙옙품 占쏙옙占쏙옙 占쏙옙占쏙옙
+        // 각 카테고리별 상품 개수 추가
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
@@ -81,10 +81,10 @@ public class PController {
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
 
-        return "/user/pages/product/productList"; // jsp 占쏙옙占쏙옙 占쏙옙환
+        return "/user/pages/product/productList"; // jsp 페이지로 반환
     }
 
-    // 2. 카占쌓곤옙占쏙옙占쏙옙 占쏙옙품占쏙옙 占쏙옙占쏙옙占쌍댐옙 占쌨쇽옙占쏙옙
+    // 2. 카테고리별 상품을 표시함
     @GetMapping("/jewelry")
     public String showProductList(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -93,7 +93,7 @@ public class PController {
             @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
             Model model) throws Exception {
 
-        System.out.println("카占쌓곤옙占쏙옙 占쏙옙 : " + category);
+        System.out.println("카테고리 선택됨 : " + category);
         sortOrder = sortOrder.trim();
 
         List<ProductDTO> products = service.getProductsByCategoryAndPage(category, page, pageSize, sortOrder);
@@ -102,16 +102,16 @@ public class PController {
         int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
         int totalProductCount = service.getProductCount();
 
-        System.out.println("占쏙옙체 占쏙옙품 占쏙옙: " + totalProducts);
+        System.out.println("전체 상품 수: " + totalProducts);
         System.out.println("Received sortOrder: '" + sortOrder + "'");
 
-        // 占쏙옙占쏙옙占쏙옙占쏙옙占싱쇽옙 占쏙옙占쏙옙
+        // 페이지 블록 설정
         int pageBlockSize = 10;
         int currentBlock = (int) Math.ceil((double) page / pageBlockSize);
         int startPage = (currentBlock - 1) * pageBlockSize + 1;
         int endPage = Math.min(startPage + pageBlockSize - 1, totalPages);
 
-        // 占쏙옙 카占쌓곤옙占쏙옙 占쏙옙품 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙
+        // 각 카테고리별 상품 개수 조회
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -121,7 +121,7 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        // 카占쌓곤옙占쏙옙占쏙옙 占쏙옙품 占쏙옙占쏙옙 占쏙옙占쏙옙
+        // 각 카테고리별 상품 개수 추가
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
@@ -132,7 +132,7 @@ public class PController {
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
 
-        // Model占쏙옙 占쏙옙占쏙옙占쏙옙 占쌩곤옙
+        // Model에 데이터 추가
         model.addAttribute("totalProductCount", totalProductCount);
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("category", category);
@@ -146,96 +146,89 @@ public class PController {
         model.addAttribute("hasPrevBlock", currentBlock > 1);
         model.addAttribute("hasNextBlock", endPage < totalPages);
         
-
-
-        System.out.println("카占쌓곤옙占쏙옙 : " + totalProducts);
-        return "/user/pages/product/productList";  // JSP 占쏙옙占쏙옙 占쏙옙환
+        System.out.println("카테고리별 상품 수 : " + totalProducts);
+        return "/user/pages/product/productList";  // JSP 페이지로 반환
     }
 
-    // 3. 占쏙옙품 占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쌍댐옙 占쌨쇽옙占쏙옙
+    // 3. 상품의 세부 정보를 표시함
     @GetMapping("/jewelry/detail")
     public String showProductDetail(
             @RequestParam("productNo") int productId,
             Model model) throws Exception {
 
-        // 占쏙옙품 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙
+        // 상품 상세 정보 조회
         List<ProductDTO> products = service.getProductInfo(productId);
 
-        // 占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙
+        // 세부 상품 정보 조회
         ProductDTO product = service.getProductDetailById(productId);
 
-        // Model占쏙옙 占쏙옙占쏙옙占쏙옙 占쌩곤옙
+        // Model에 데이터 추가
         model.addAttribute("products", products);
         model.addAttribute("product_content", product.getProduct_content());
-        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 占쏙옙占쏙옙 占쏙옙占쏙옙 占쌩곤옙
+        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 계산된 가격 추가
         return "/user/pages/product/productDetail";
     }
     
-    // 4. 占싯삼옙占쏙옙占�
+    // 4. 검색기능
     @GetMapping("/jewelry/result")
     public String search (
-    		@RequestParam(required = false) String search, // 占싯삼옙占쏙옙
-	        @RequestParam(required = false) Integer category, // 카占쌓곤옙占쏙옙 (占쏙옙占쏙옙)
-	        @RequestParam(defaultValue = "1") int page, // 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙호
+    		@RequestParam(required = false) String search, // 검색어
+	        @RequestParam(required = false) Integer category, // 카테고리 (선택)
+	        @RequestParam(defaultValue = "1") int page, // 현재 페이지 번호
 	        @RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder,
     		Model model) throws Exception {
     	
-    	System.out.println("占싯삼옙占싯삼옙 : search=" + search + ", category=" + category + 
+    	System.out.println("검색검색 : search=" + search + ", category=" + category + 
                 ", page=" + page + ", sortOrder=" + sortOrder);
     	
-
-    	
-        // 1. 占쏙옙 占쌉시뱄옙 占쏙옙 占쏙옙회
+        // 1. 총 게시물 수 조회
         int totalPostCnt = service.countSearchResults(search, category);
         
-        // 2. 占쏙옙占쏙옙징 占쏙옙占쏙옙 占쏙옙占쏙옙
-        PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 9); // 占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙 9占쏙옙占쏙옙 占쏙옙회
+        // 2. 페이징 정보 생성
+        PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 9); // 한 페이지당 9개씩 조회
         PagingInfo pagingInfo = new PagingInfo(pagingInfoDTO, totalPostCnt);
 
-        // 3. 占싯삼옙 占쏙옙占� 占쏙옙회
+        // 3. 검색 결과 조회
         List<ProductDTO> searchResults = service.searchProducts(search, category, pagingInfo, sortOrder);
-        System.out.println("占쏙옙占쏙옙占쏙옙");
+        System.out.println("데이터");
         System.out.println(searchResults);
         
-        
-        // 4. 占쏜델울옙 占싯삼옙 占쏙옙占� 占쏙옙 占쏙옙占쏙옙징 占쏙옙占쏙옙 占쏙옙占�
+        // 4. 모델에 검색 결과 및 페이징 정보 담기
         model.addAttribute("products", searchResults);
         model.addAttribute("pagingInfo", pagingInfo);
         model.addAttribute("search", search);
         model.addAttribute("category", category);
         model.addAttribute("sortOrder", sortOrder);
         model.addAttribute("searchProductCount", totalPostCnt);
-        model.addAttribute("startPage", pagingInfo.getStartPage()); // 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쌩곤옙
-        model.addAttribute("endPage", pagingInfo.getEndPage()); // 占쏙옙 占쏙옙占쏙옙占쏙옙 占쌩곤옙
-        model.addAttribute("totalPages", pagingInfo.getTotalPages()); // 占쏙옙체 占쏙옙占쏙옙占쏙옙 占쏙옙 占쌩곤옙
-        model.addAttribute("currentPage", pagingInfo.getCurrentPage()); // 占쏙옙체 占쏙옙占쏙옙占쏙옙 占쏙옙 占쌩곤옙
+        model.addAttribute("startPage", pagingInfo.getStartPage()); // 시작 페이지 추가
+        model.addAttribute("endPage", pagingInfo.getEndPage()); // 끝 페이지 추가
+        model.addAttribute("totalPages", pagingInfo.getTotalPages()); // 전체 페이지 수 추가
+        model.addAttribute("currentPage", pagingInfo.getCurrentPage()); // 현재 페이지 추가
         
-        
-        System.out.println("占싯삼옙 : " + totalPostCnt);
+        System.out.println("검색 : " + totalPostCnt);
         
         if (totalPostCnt == 0) {
         	model.addAttribute("noResult", true);
         }
         
-        
-        // 占쏙옙占쏙옙占싱놂옙 占싯삼옙占쏘가 占쏙옙占쏙옙 占쏙옙 처占쏙옙
+        // 검색어가 없을 때 처리
         if (search == null || search.trim().isEmpty()) {
             
-            // 카占쌓곤옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쌔댐옙 카占쌓곤옙占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙占쏜렉쇽옙
+            // 카테고리가 선택된 상태에서 검색어가 없으면 해당 카테고리로 리디렉션
             if (category != null) {
                 return "redirect:/product/jewelry?category=" + category;
             }
 
-            // 카占쌓곤옙占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占� 占썩본 占쏙옙체 占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙占쏜렉쇽옙
+            // 카테고리가 없는 경우 전체 상품 페이지로 리디렉션
             return "redirect:/product/jewelry/all";
         }
         
         if (search != null) {
-            search = search.trim(); // 占쌌듸옙 占쏙옙占쏙옙 占쏙옙占쏙옙
-            search = search.replaceAll("[<>\"'&]", ""); // 특占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙 (占십요에 占쏙옙占쏙옙 占쏙옙占쏙옙)
+            search = search.trim(); // 검색어 공백 제거
+            search = search.replaceAll("[<>\"'&]", ""); // 특수 문자 필터링 (보안상의 이유로 필수)
         }
         
-        // 占쏙옙 카占쌓곤옙占쏙옙占쏙옙 占쏙옙품 占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙
+        // 각 카테고리별 상품 개수 조회
         int necklaceCount = service.getProductCountByCategory(196);
         int earringCount = service.getProductCountByCategory(195);
         int piercingCount = service.getProductCountByCategory(203);
@@ -245,7 +238,7 @@ public class PController {
         int couplingCount = service.getProductCountByCategory(200);
         int pendantCount = service.getProductCountByCategory(202);
         int otherCount = service.getProductCountByCategory(204);
-        // 카占쌓곤옙占쏙옙占쏙옙 占쏙옙품 占쏙옙占쏙옙 占쏙옙占쏙옙
+        // 각 카테고리별 상품 개수 추가
         model.addAttribute("necklaceCount", necklaceCount);
         model.addAttribute("earringCount", earringCount);
         model.addAttribute("piercingCount", piercingCount);
@@ -256,7 +249,6 @@ public class PController {
         model.addAttribute("pendantCount", pendantCount);
         model.addAttribute("otherCount", otherCount);
     	
-
     	return "/user/pages/product/productList";
     }
 }
