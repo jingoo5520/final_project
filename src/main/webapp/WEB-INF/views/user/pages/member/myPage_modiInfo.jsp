@@ -205,11 +205,11 @@ let tmpEmail = "tmpEmail";
 		    });
 		}
 		
-		// 0.1초뒤 동작
+		// 1초뒤 동작
 		setTimeout(function () {
 			checkEmail();
 			checkPhone();
-		},100);
+		},1000);
 		
 	});
 	

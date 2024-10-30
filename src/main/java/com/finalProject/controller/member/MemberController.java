@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import com.finalProject.model.MemberDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.util.ReceiveMailPOP3;
 import com.finalProject.util.RememberPath;
+import com.finalProject.util.SendMailUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +43,9 @@ public class MemberController {
 
 	@Inject
 	private MemberService memberService;
+
+	@Inject
+	private SendMailUtil sendMail;
 
 	@Inject
 	private ReceiveMailPOP3 remail;
@@ -254,7 +259,7 @@ public class MemberController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "redirect:"+rememberPath; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
+		return "redirect:" + rememberPath; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
 	}
 
 	// 회원 정보 받아오기(마이페이지 ajax)
@@ -380,6 +385,134 @@ public class MemberController {
 			json = new ResponseData("fail", "예외 발생");
 			result = new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+		return result;
+	}
+
+	// 인증메일 요청
+	@RequestMapping(value = "/mailRequest")
+	public ResponseEntity<ResponseData> mailRequest(HttpServletRequest request, @RequestParam("email") String email) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		Random random = new Random();
+		String authCode = random.nextInt(10) + "" + random.nextInt(10) + random.nextInt(10) + random.nextInt(10)
+				+ random.nextInt(10) + random.nextInt(10); // 0~9 사이의 숫자 6자리
+		long authTime = System.currentTimeMillis() + 180000; // 현재 시간 + 3분 (180000 밀리초)
+		System.out.println("인증코드 : " + authCode);
+		HttpSession ses = request.getSession();
+		ses.setAttribute("authCode", authCode);
+		ses.setAttribute("authTime", authTime);
+		try {
+			sendMail.sendMail(email, "ELOLIA 인증코드입니다", authCode);
+			json = new ResponseData("success", "메일 전송 성공");
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} catch (IOException e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "입출력 오류");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "이메일 전송 오류");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+
+		return result;
+	}
+
+	// 인증요청
+	@RequestMapping(value = "/mailAuth")
+	public ResponseEntity<ResponseData> mailAuth(HttpServletRequest request,
+			@RequestParam("inputAuthCode") String inputAuthCode) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		String authCode = ses.getAttribute("authCode") + "";
+		long authTime = (long) ses.getAttribute("authTime"); // 세션에 저장했던 시간
+		long now = System.currentTimeMillis(); // 현재 시간
+		if (authCode == null) { // 세션이 있는지 확인(인증메일을 발송하고 30분이 지나면 세션자체가 사라져서 nullpoint에러 발생
+			json = new ResponseData("fail", "세션 만료");
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} else {
+			if (authTime < now) { // 인증 메일을 보낸지 3분이 지난경우
+				System.out.println("세션이 만료되었습니다.");
+				json = new ResponseData("fail", "세션 만료");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} else {
+				if (inputAuthCode.equals(authCode)) {
+					System.out.println("인증 성공");
+					json = new ResponseData("success", "인증 성공");
+					result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+				} else {
+					System.out.println("인증 실패");
+					json = new ResponseData("fail", "코드 불일치");
+					result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+				}
+			}
+		}
+		return result;
+	}
+
+	// 아이디 찾기 페이지로 이동
+	@RequestMapping(value = "/find_id")
+	public String find_id() {
+		return "/user/pages/member/find_id";
+	}
+
+	// 비밀번호 찾기 페이지로 이동
+	@RequestMapping(value = "/find_pwd")
+	public String find_pwd() {
+		return "/user/pages/member/find_pwd";
+	}
+
+	// 아이디 찾기(이메일)
+	@RequestMapping(value = "/find/id")
+	public ResponseEntity<ResponseData> findMemberId(@RequestParam("email") String email) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		LoginDTO member_id = null;
+		try {
+			member_id = memberService.findIdbyEmail(email);
+			if (member_id != null) {
+				sendMail.sendMail(email, "ELOLIA 아이디 찾기 요청", "id : " + member_id.getMember_id());
+				json = new ResponseData("success", "메일 전송 완료");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} else {
+				json = new ResponseData("fail", "없는 이메일");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+
+		return result;
+	}
+
+	// 비밀번호 찾기(아이디, 이메일)
+	@RequestMapping(value = "/find/pwd")
+	public ResponseEntity<ResponseData> findMemberPwd(@RequestParam("email") String email,
+			@RequestParam("member_id") String member_id) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		Random random = new Random();
+		UUID uuid = UUID.randomUUID();
+		String member_pwd = random.nextInt(10000) + uuid.toString().substring(0, 7);
+
+		try {
+			if (memberService.findPwd(email, member_id, member_pwd)) {
+				sendMail.sendMail(email, "ELOLIA 임시 비밀번호", "pwd : " + member_pwd);
+				json = new ResponseData("success", "메일 전송 완료");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} else {
+				json = new ResponseData("fail", "아이디 또는 이메일 에러");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+
 		return result;
 	}
 

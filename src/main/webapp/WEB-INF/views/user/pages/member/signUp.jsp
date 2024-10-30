@@ -16,7 +16,7 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script
 	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-	
+
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet"
 	href="/resources/assets/user/css/bootstrap.min.css" />
@@ -115,14 +115,14 @@
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-id">*아이디</label> <input class="form-control"
-										type="text" name="member_id" id="member_id" required><span
+										type="text" name="member_id" id="member_id"><span
 										id="idStatus"></span> <input type="hidden" value="">
 								</div>
 							</div>
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-pw">*비밀번호</label> <input class="form-control"
-										type="password" name="member_pwd" id="member_pwd" required><span
+										type="password" name="member_pwd" id="member_pwd"><span
 										id="pwdStatus"></span><input type="hidden" value="">
 								</div>
 							</div>
@@ -130,28 +130,28 @@
 								<div class="form-group">
 									<label for="reg-pw2">*비밀번호 확인</label> <input
 										class="form-control" type="password" name="member_pwd2"
-										id="member_pwd2" required><span id="pwd2Status"></span><input
+										id="member_pwd2"><span id="pwd2Status"></span><input
 										type="hidden" value="">
 								</div>
 							</div>
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-n">*이름</label> <input class="form-control"
-										type="text" name="member_name" id="member_name" required><span
+										type="text" name="member_name" id="member_name"><span
 										id="nameStatus"></span> <input type="hidden" value="">
 								</div>
 							</div>
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-nn">별명</label> <input class="form-control"
-										type="text" name="nickname" id="nickname" required><span
+										type="text" name="nickname" id="nickname"><span
 										id="nicknameStatus"></span> <input type="hidden" value="">
 								</div>
 							</div>
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-bd">생일</label> <input class="form-control"
-										type="date" name="birthday" id="birthday" required><span
+										type="date" name="birthday" id="birthday"><span
 										id="birthdayStatus"></span> <input type="hidden" value="">
 								</div>
 							</div>
@@ -181,23 +181,50 @@
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-ad2">상세 주소</label> <input class="form-control"
-										type="text" name="address2" id="address2" required><span
+										type="text" name="address2" id="address2"><span
 										id="address2Status"></span> <input type="hidden" value="">
 								</div>
 							</div>
-							<div class="col-sm-12">
+
+
+							<div class="col-sm-7">
 								<div class="form-group">
 									<label for="reg-em">*이메일</label> <input class="form-control"
-										type="text" name="email" id="email" required><span
+										type="text" name="email" id="email"><span
 										id="emailStatus"></span> <input type="hidden" value="">
 								</div>
 							</div>
+							<div class="col-sm-5 button" id="requestArea">
+								<br> <input type="button" id="authTimer" class="btn"
+									value="인증메일 요청" onclick="mailRequest();"><span></span>
+								<input type="hidden" value="">
+							</div>
+							<div class="col-sm-7" style="margin-top: 10px">
+								<div class="form-group">
+									<input class="form-control" type="hidden" name="authCode"
+										id="authCode" placeholder="인증코드를 입력하세요"><span
+										id="authStatus"></span> <input type="hidden" value="">
+								</div>
+							</div>
+
+							<div class="col-sm-5 button">
+								<input type="hidden" id="mailRequest2" class="btn"
+									value="인증메일 재요청" onclick="mailRequest();"><span></span>
+								<input type="hidden" value="">
+							</div>
+
+							<div class="col-sm-12 button">
+								<input id="mailAuthBtn" class="btn" type="hidden"
+									onclick="mailVerify();" value="인증"><span></span> <input
+									type="hidden" value="">
+							</div>
+
+
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-ph">*휴대폰</label> <input class="form-control"
-										type="text" name="phone_number" id="phone_number" required><span
-										id="phoneStatus"></span> <input type="hidden" value=""><input
-										type="button" value="인증요청" onclick="phoneVerify();">
+										type="text" name="phone_number" id="phone_number"><span
+										id="phoneStatus"></span> <input type="hidden" value="">
 								</div>
 							</div>
 							<div class="col-sm-12">
@@ -226,7 +253,9 @@
 									onclick="return checkData();">회원 가입</button>
 							</div>
 							<p class="outer-link">
-								이미 ELOLIA의 회원이신가요? <a href="${pageContext.request.contextPath}/member/viewLogin">로그인 하기</a>
+								이미 ELOLIA의 회원이신가요? <a
+									href="${pageContext.request.contextPath}/member/viewLogin">로그인
+									하기</a>
 							</p>
 						</form>
 					</div>
@@ -265,7 +294,23 @@
 	var pwdExp = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/; // 비밀번호 정규식(영문자, 숫자를 포함한 8자이상 20자 이하)
 	var nameExp = /^[가-힣]{2,8}$/; // 이름 정규식(한글만 가능 2글자 이상 8자 이하)
 	var birthdayExp = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/; // 생일 정규식(1900년대 또는 2000년대,  01월부터 12월, 01일부터 31일)
+	let authTime = 0; // 메일인증 시간(0초)
+	let minute = 0;
+	let seconds = 0;
 	$(function() {
+		
+		setInterval(function e() {
+			if(authTime > 0 && authTime < 181) {
+				--authTime;
+				minute = Math.floor(authTime / 60);
+				seconds = authTime % 60;
+				let timer = minute + ":" + seconds;
+				isMsg("mailRequest2", timer, "gray", true);
+			} else {
+				isMsg("mailRequest2", "", "gray", false);
+			}
+		}, 1000);
+		
 		// 아이디 입력중
 		$("#member_id").keyup(function() {
 	        let tmp = $("#member_id").val();
@@ -433,63 +478,59 @@
 		let nameCheck = $("#member_name").next().next().val();
 		let birthdayCheck = $("#birthday").next().next().val();
 		//let genderCheck = $("#gender").next().next().val();
-		let addressCheck = $("#address").next().next().val() === "true";
+		let addressCheck = $("#address").next().next().val();
 		let emailCheck = $("#email").next().next().val();
 		let phoneCheck = $("#phone_number").next().next().val();
 		//let check1Check = $("#check1").next().next().next().val();
 		let check1Check = $("#check1").prop("checked");
+		let emailAuthCheck = $("#modiMail").next().next().val();
 		
 		let text = ""; // modal의 text영역에 들어갈 내용
 		
-		if(!idCheck) {
+		if(idCheck!="true") {
 			result = false;
 			text += "<div>아이디</div>";
 		}
-		if(!pwdCheck) {
+		if(pwdCheck!="true") {
 			result = false;
 			text += "<div>비밀번호</div>";
 		}
-		if(!pwd2Check) {
+		if(pwd2Check!="true") {
 			result = false;
 			text += "<div>비밀번호 확인</div>";
 		}
-		if(!nameCheck) {
+		if(nameCheck!="true") {
 			result = false;
 			text += "<div>이름</div>";
 		}
-		if(!birthdayCheck) {
+		if(birthdayCheck!="true") {
 			result = false;
 			text += "<div>생일</div>";
 		}
-		if(!addressCheck) {
+		if(addressCheck!="true") {
 			result = false;
 			text += "<div>주소</div>";
 		}
-		if(!emailCheck) {
+		if(emailCheck!="true") {
 			result = false;
 			text += "<div>이메일</div>";
 		}
-		if(!phoneCheck) {
+		if(phoneCheck!="true") {
 			result = false;
 			text += "<div>휴대폰번호</div>";
 		}
-		if(!check1Check) {
+		if(check1Check!=true) {
 			result = false;
 			text += "<div>약관 동의</div>";
 		}
 		
+		if(emailAuthCheck!="true") {
+			result = false;
+			text += "<div>이메일 인증</div>";
+		}
+		
 		if(!result) {
 			openModal("아래 항목들을 입력해야합니다.", text);
-			console.log("id : ",idCheck);
-			console.log("pwd : ",pwdCheck);
-			console.log("pwd2 : ",pwd2Check);
-			console.log("name : ",nameCheck);
-			console.log("birthday : ",birthdayCheck);
-			//console.log(genderCheck);
-			console.log("address : ",addressCheck);
-			console.log("email : ",emailCheck);
-			console.log("phone : ",phoneCheck);
-			console.log("check1 : ",check1Check);
 		}
 		
 		return result;
@@ -507,39 +548,89 @@
 		$("#modalcontainer").css("display", "none");
 	}
 	
-	// 휴대폰 인증
-	function phoneVerify() {
-		let randNum = Math.floor(Math.random()*8)+1;
-		let authCode = 0;
-		let result = $("#phone_number").next().next().val();
-		let success = `<img src="/resources/images/mobileQR.png" width="300px">`;
-		success += `<div><input type="button" onclick='verifyCheck(${phone});' value="인증요청" class="btn btn-info">`;
-		success += `<input type="button" onclick="closeModal();" value="취소" class="btn btn-danger"></div>`;		
-		let fail = "올바른 휴대폰번호를 입력하세요.";
-		if(result) {
-			openModal("휴대폰 인증", success);
-		} else {
-			openModal("에러", fail);
+	// 인증메일 요청
+	function mailRequest() {
+		let replaceTag = `<input type="button" id="modiMail" class="btn" value="메일 수정"><span></span> <input
+			type="hidden" value="">`;
+		let emailCheck = $("#email").next().next().val();
+		console.log(emailCheck);
+		console.log(replaceTag);
+		if(emailCheck=="true") {
+			if(authTime > 0) { // 인증메일 요청후 제한시간이 지나지 않았다면,
+				openModal("!", "아직 요청 시간이 남았습니다.")
+			} else {
+				let email = $("#email").val();
+				$("#email").attr("readonly", true); // 이메일을 입력한 input태그를 수정할수없도록 변경
+				// 인증메일 요청버튼을 없애고 인증코드를 입력하는 input태그로 변경
+				$("#requestArea").children("input").first().replaceWith(replaceTag);
+				isMsg("authCode", "인증메일을 발송했습니다. 메일을 확인하세요.", "blue", true);
+				authTime = 180;
+				console.log(authTime);
+				$("#mailAuthBtn").attr("type", "button");
+				$("#authCode").attr("type", "text");
+				$("#authCode").val("");
+				$("#mailRequest2").attr("type", "button");
+				// 메일 수정(재입력)
+				$("#modiMail").click(function () {
+					$("#mailAuthBtn").attr("type", "hidden");
+					$("#authCode").attr("type", "hidden");
+					$("#mailRequest2").attr("type", "hidden");
+					isMsg("authCode", "", "blue", false);
+					authTime = 0;
+					let restorationTag = `<input type="button" class="btn" value="인증메일 요청"
+						onclick="mailRequest();">`;
+					$("#requestArea").children("input").first().replaceWith(restorationTag);
+					$("#requestArea").children("input").eq(1).replaceWith("");
+					$("#requestArea").children("span").first().replaceWith("");
+					$("#email").attr("readonly", false); // 이메일을 입력한 input태그를 다시 수정가능하도록 변경
+					isMsg("modiMail", "", "blue", false); // 인증 상태를 다시 false로 변경
+				});
+				console.log(email);
+				$.ajax({
+					url: "/member/mailRequest",
+					type: "GET",
+					data: {email : email},
+					dataType: "json",
+					success: function (data) {
+						console.log(data);
+					},
+					error: function () {},
+					complete: function () {},
+				});
+			}
 		}
 	}
 	
-	// 휴대폰 인증메일 확인
-	function verifyCheck() {
-		let phone = $("#phone_number").val();
-		console.log(phone);
+	// 메일인증하기
+	function mailVerify() {
+		let inputAuthCode = $("#authCode").val();
 		$.ajax({
-	          url: "/member/verifyCheck", // 데이터가 송수신될 서버의 주소
-	          type: "POST", // 통신 방식 (GET, POST, PUT, DELETE)
-	          dataType: "json", // 수신 받을 데이터 타입 (MIME TYPE)
-	          data: { phone: phone }, // 보낼 데이터
-	          success: function (data) {
-	            // 통신이 성공하면 수행할 함수
-	            console.log("통신 성공");
-	          },
-	          error: function () {},
-	          complete: function () {},
-	        });
+			url: "/member/mailAuth",
+			type: "GET",
+			data: {inputAuthCode : inputAuthCode},
+			dataType: "json",
+			success: function (data) {
+				console.log(data);
+				if(data.status=="success") {
+					$("#mailAuthBtn").attr("type", "hidden");
+					$("#authCode").attr("type", "hidden");
+					$("#mailRequest2").attr("type", "hidden");
+					isMsg("authCode", "", "blue", false);
+					isMsg("modiMail", "메일인증 완료", "blue", true);
+					authTime = 0;
+					isMsg("mailRequest2", "", "gray", false);
+				} else if(data.status=="fail" && data.value=="코드 불일치") {
+					openModal("에러", "코드가 일치하지 않습니다.");
+				} else if(data.status=="fail" && data.value=="세션 만료") {
+					openModal("에러", "세션이 만료되었습니다. 인증코드를 다시 요청하세요.");
+				}
+			},
+			error: function () {},
+			complete: function () {},
+		});
 	}
+	
+
 	
 </script>
 

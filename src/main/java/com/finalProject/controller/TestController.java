@@ -58,5 +58,10 @@ public class TestController {
 	public String auth() {
 		return "/testIndex";
 	}
+	
+	@RequestMapping(value = "/jsp")
+	public String testjsp() {
+		return "/user/pages/member/testbar";
+	}
 
 }

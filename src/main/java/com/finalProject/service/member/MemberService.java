@@ -36,6 +36,12 @@ public interface MemberService {
 
 	// 마이 페이지 회원탈퇴
 	boolean withDrawMember(String member_id)throws Exception;
+
+	// 아이디 찾기
+	LoginDTO findIdbyEmail(String email)throws Exception;
+
+	// 비밀번호 찾기
+	boolean findPwd(String email, String member_id, String member_pwd)throws Exception;
 	
 	
 	

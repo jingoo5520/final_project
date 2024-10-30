@@ -37,4 +37,13 @@ public interface MemberDAO {
 	// 마이 페이지 회원탈퇴
 	boolean withDrawMember(String member_id)throws Exception;
 
+	// 아이디 찾기
+	LoginDTO findIdbyEmail(String email)throws Exception;
+
+	// 비밀번호 찾기
+	boolean findPwd(String email, String member_id)throws Exception;
+
+	// 비밀번호 찾기(랜덤 비밀번호 지정)
+	boolean updateRandomPwd(String member_pwd, String member_id)throws Exception;
+
 }

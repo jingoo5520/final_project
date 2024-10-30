@@ -8,7 +8,8 @@
 	<!-- 로그인 -->
 	<select id="login" resultType="LoginDTO">
 		select * from members where
-		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256) and member_status = 'active'
+		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256) and
+		member_status = 'active'
 	</select>
 
 	<!-- id, email, phone_number 중복 체크 -->
@@ -81,7 +82,30 @@
 	<update id="withDrawMember">
 		update members
 		set member_status = 'withdrawn'
-		where member_id = #{member_id}
+		where
+		member_id = #{member_id}
+	</update>
+
+	<!-- 아이디 찾기 -->
+	<select id="selectIdByEmail" resultType="LoginDTO">
+		select member_id from
+		members where email = #{email} and member_status = 'active'
+	</select>
+
+	<!-- 비밀번호 찾기 -->
+	<select id="selectPwd" resultType="LoginDTO">
+		select member_pwd from members
+		where member_id = #{member_id} and email = #{email} and
+		member_status =
+		'active'
+	</select>
+
+	<!-- 비밀번호 찾기(랜덤비밀번호 지정) -->
+	<update id="updateRandomPwd">
+		update members
+		set member_pwd = sha2(#{member_pwd}, 256)
+		where member_id = #{member_id} and
+		member_status = 'active'
 	</update>
 
 </mapper>

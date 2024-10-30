@@ -113,4 +113,41 @@ public class MemberDAOImpl implements MemberDAO {
 		return result;
 	}
 
+	// 아이디 찾기
+	@Override
+	public LoginDTO findIdbyEmail(String email) throws Exception {
+		LoginDTO member_id = null;
+		if(ses.selectOne(ns+"selectIdByEmail", email)!=null) {
+			member_id = ses.selectOne(ns+"selectIdByEmail", email);
+		}
+		return member_id;
+	}
+
+	// 비밀번호 찾기
+	@Override
+	public boolean findPwd(String email, String member_id) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("email", email);
+		map.put("member_id", member_id);
+		if(ses.selectOne(ns+"selectPwd", map)!=null) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 비밀번호 찾기 (랜덤비밀번호 지정)
+	@Override
+	public boolean updateRandomPwd(String member_pwd, String member_id) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		if(ses.update(ns+"updateRandomPwd", map)==1) {
+			result = true;
+		}
+		
+		return result;
+	}
+
 }

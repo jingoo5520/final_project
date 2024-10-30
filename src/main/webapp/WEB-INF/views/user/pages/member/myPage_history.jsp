@@ -24,7 +24,7 @@
 		<jsp:include page="../myPage_side.jsp"></jsp:include>
 		<main class="right-pane">
 
-			<h1>회원 정보 수정</h1>
+			<h1>구매 내역</h1>
 			<c:if test="${empty sessionScope.auth}">
 				<form class="row" action="/member/auth" method="post">
 					<div class="auth">
@@ -38,15 +38,6 @@
 			</c:if>
 			<c:if test="${not empty sessionScope.auth}">
 				<form id="form">
-					<div class="form-group input-group">
-						비밀번호 변경<input type="password" id="member_pwd" name="member_pwd"><span
-							id="pwdStatus"></span><input type="hidden" value="">
-					</div>
-					<div class="form-group input-group">
-						비밀번호 확인<input type="password" id="member_pwd2" name="member_pwd2"><span
-							id="pwd2Status"></span><input type="hidden" value="">
-					</div>
-					<button id="button" class="btn btn-info" type="button" value="수정하기">수정하기</button>
 				</form>
 			</c:if>
 		</main>
