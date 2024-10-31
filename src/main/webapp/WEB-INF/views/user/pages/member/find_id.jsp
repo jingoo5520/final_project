@@ -6,7 +6,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>로그인</title>
+<title>아이디 찾기</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet"
 	href="/resources/assets/user/css/bootstrap.min.css" />
@@ -47,14 +49,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">Login</h1>
+						<h1 class="page-title">Find Id</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
 						<li><a href="index.html"><i class="lni lni-home"></i>
 								Home</a></li>
-						<li>Login</li>
+						<li>Find Id</li>
 					</ul>
 				</div>
 			</div>
@@ -70,51 +72,25 @@
 					<form class="card login-form" action="/member/login" method="post">
 						<div class="card-body">
 							<div class="title">
-								<h3>로그인 하세요</h3>
-								<p>You can login using your social media account or email
-									address.</p>
-							</div>
-							<div class="social-login">
-								<div class="row">
-									<div class="col-lg-4 col-md-4 col-12">
-										<a class="btn facebook-btn" href="javascript:void(0)"><i
-											class="lni lni-facebook-filled"></i> 페이스북 로그인</a>
-									</div>
-									<div class="col-lg-4 col-md-4 col-12">
-										<a class="btn twitter-btn" href="javascript:void(0)"><i
-											class="lni lni-twitter-original"></i> 트위터 로그인</a>
-									</div>
-									<div class="col-lg-4 col-md-4 col-12">
-										<a class="btn google-btn" href="javascript:void(0)"><i
-											class="lni lni-google"></i> 구글 로그인</a>
-									</div>
-								</div>
-							</div>
-							<div class="alt-option">
-								<span>Or</span>
+								<p>회원가입때 입력한 이메일을 입력하세요.</p>
 							</div>
 							<div class="form-group input-group">
-								<label for="reg-fn">아이디</label> <input class="form-control"
-									type="text" name="member_id" id="member_id" required>
+								<label for="reg-fn">이메일</label> <input class="form-control"
+									type="text" name="email" id="email" required> <span></span>
+								<input type="hidden">
 							</div>
-							<div class="form-group input-group">
-								<label for="reg-fn">비밀번호</label> <input class="form-control"
-									type="password" name="member_pwd" id="member_pwd" required>
+							<div class="button">
+								<button class="btn" type="button" id="sendMailBtn" onclick="checkMail();">확인</button>
 							</div>
 							<div
 								class="d-flex flex-wrap justify-content-between bottom-content">
-								<div class="form-check">
-									<input type="checkbox" class="form-check-input width-auto"
-										name="autologin_code" id="autologin_code"> <label
-										class="form-check-label">자동 로그인</label>
-								</div>
-								<a class="lost-pass" href="${pageContext.request.contextPath}/member/find_id">아이디
-									찾기</a> <a class="lost-pass" href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
+								<a class="lost-pass"
+									href="${pageContext.request.contextPath}/member/viewLogin">로그인
+									하러가기</a> <a class="lost-pass"
+									href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
 									찾기</a>
 							</div>
-							<div class="button">
-								<button class="btn" type="submit">로그인</button>
-							</div>
+
 							<p class="outer-link">
 								아직 회원이 아니신가요? <a
 									href="${pageContext.request.contextPath}/member/viewSignUp">회원가입
@@ -140,5 +116,58 @@
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
 </body>
+<script type="text/javascript">
+	var emailExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 정규식(testuser@test.com)
+	function checkMail() {
+		let email = $("#email").val();
+		if (emailExp.test(email)) { // 이메일 정규식 검사
+			sendMail(email);
+			isMsg("email", "잠시만 기다려 주세요", "green", true);
+			$("#sendMailBtn").attr("disabled", true);
+			$("#email").attr("readonly", true);
+		} else {
+			isMsg("email", "이메일 형식이 아닙니다.", "red", false);
+		}
+
+	}
+	
+	// 입력값에 따라 msg출력
+	function isMsg(id, msg, color, result) {
+		$("#" + id).next().text(msg);
+		$("#" + id).next().css("color", color);
+		$("#" + id).next().next().val(result);
+	}
+
+	function sendMail(email) {
+		$.ajax({
+			url : "/member/find/id",
+			type : "GET",
+			data : {
+				email : email
+			},
+			dataType : "json",
+			success : function(data) {
+				console.log(data);
+				if(data.status=="success") {
+					isMsg("email", "이메일을 전송했습니다.", "blue", true);
+					$("#email").attr("readonly", true);
+					$("#sendMailBtn").attr("disabled", true);
+				} else if(data.status=="fail" && data.value=="없는 이메일") {
+					isMsg("email", "가입되지 않은 이메일 입니다.", "red", false);
+					$("#email").attr("readonly", false);
+					$("#sendMailBtn").attr("disabled", false);
+				} else {
+					isMsg("email", "알수없는 에러", "red", false);
+					$("#email").attr("readonly", false);
+					$("#sendMailBtn").attr("disabled", false);
+				}
+			},
+			error : function() {
+			},
+			complete : function() {
+			},
+		});
+	}
+</script>
 
 </html>
