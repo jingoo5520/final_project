@@ -67,8 +67,28 @@
 		    $('.single-payment-option')
 		    
 		    
+			$('input[name="phoneNumber"]').on('keyup', function() {
+			    // 숫자만 남기기 위해 숫자가 아닌 문자를 모두 제거
+			    let inputVal = $(this).val().replace(/[^0-9]/g, '');
+
+			    // 최대 11자리까지만 허용 (3자리-4자리-4자리 = 11자리 숫자)
+			    if (inputVal.length > 11) {
+			        inputVal = inputVal.slice(0, 11);
+			    }
+
+			    // 자릿수에 따라 하이픈 추가
+			    if (inputVal.length > 3 && inputVal.length <= 7) {
+			        inputVal = inputVal.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+			    } else if (inputVal.length > 7) {
+			        inputVal = inputVal.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+			    }
+
+			    // 인풋 필드에 포맷된 값 설정
+			    $(this).val(inputVal);
+			});
 			
 		})
+		
 	</script>
 	
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
