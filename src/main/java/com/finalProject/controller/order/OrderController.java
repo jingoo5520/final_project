@@ -37,13 +37,12 @@ public class OrderController {
 	
 	@GetMapping("/order")
 	public String showOrderPage(Model model) {
-	    // 모델에서 데이터가 포함되어 있으므로, 뷰를 렌더링
 		
-//		if (!model.containsAttribute("orderProductList")) {
-//			return 
-//		}
+		if (!model.containsAttribute("orderProductList")) {
+			return "/user/pages/warning";
+		}
 		
-	    return "/user/pages/order/order"; // 실제 주문 페이지의 뷰 이름
+	    return "/user/pages/order/order";
 	}
 	
 	
@@ -52,7 +51,6 @@ public class OrderController {
 		// 세션에서 login정보 가져오기
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		
-		// JSON 문자열을 OrderRequestDTO 리스트로 변환
 	    ObjectMapper objectMapper = new ObjectMapper();
 	    List<OrderRequestDTO> requestsInfo;
 
@@ -61,7 +59,6 @@ public class OrderController {
 		
 	        // productsInfo를 사용하여 DB 조회 및 처리
 	        for (OrderRequestDTO orDTO : requestsInfo) {
-	            // 각 상품에 대한 처리 로직
 	        	System.out.println(orDTO.toString());
 	            System.out.println("Product No: " + orDTO.getProductNo());
 	            System.out.println("Quantity: " + orDTO.getQuantity());

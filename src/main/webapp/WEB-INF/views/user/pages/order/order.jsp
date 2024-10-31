@@ -35,7 +35,77 @@
 			$("#totalProductCount").text(totalCount + " 개");
 			$("#totalProductPrice").text(totalPrices.toLocaleString('ko-KR') + " 원");
 			
+			$('.deliveryOption').change(function() {
+		        if ($(this).val() == 'userInput') {
+		            $('.deliveryRequest').show();
+		        } else {
+		            $('.deliveryRequest').hide();
+		        }
+		    });
+			
+			$('#saveDeliveryCheck').change(function() {
+	            if ($(this).is(':checked')) {
+	                $('.deliveryNameForm').show();
+	            } else {
+	                $('.deliveryNameForm').hide();
+	            }
+	        });
+			
+			$('.deliveryOption').css('color', '#888888');
+		    $('.deliveryOption').change(function() {
+		        if ($(this).val() === 'default') {
+		            // "선택해주세요"가 선택된 경우 모든 option 색상 #888888
+		            $('.deliveryOption option').css('color', '#888888');
+		            $('.deliveryOption').css('color', '#888888');
+		        } else {
+		            // 다른 옵션이 선택된 경우 모든 option 색상 #807E6F
+		            $('.deliveryOption option').css('color', 'black');
+		            $('.deliveryOption').css('color', 'black');
+		        }
+		    });
+		    
+		    $('.single-payment-option')
+		    
+		    
+			
 		})
+	</script>
+	
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+	    function sample6_execDaumPostcode() {
+	        new daum.Postcode({
+	            oncomplete: function(data) {
+	                var addr = ''; 
+	                var extraAddr = ''; 
+	
+	                if (data.userSelectedType === 'R') {
+	                    addr = data.roadAddress;
+	                } else { 
+	                    addr = data.jibunAddress;
+	                }
+	
+	                if(data.userSelectedType === 'R'){
+	                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                        extraAddr += data.bname;
+	                    }
+	                    if(data.buildingName !== '' && data.apartment === 'Y'){
+	                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	                    }
+	                    if(extraAddr !== ''){
+	                        extraAddr = ' (' + extraAddr + ')';
+	                    }
+	                }
+	
+	                document.getElementById('postcode').value = data.zonecode;
+	                document.getElementById("address").value = addr + extraAddr;
+	                document.getElementById("detailAddress").removeAttribute("readonly");
+	                document.getElementById("detailAddress").focus();
+	                document.getElementById("detailAddress").value = "";
+	                
+	            }
+	        }).open();
+	    }
 	</script>
 	
 	<style>
@@ -45,9 +115,9 @@
 	    left: 0;
 	    width: 100%;
 	    height: 100%;
-	    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 */
-	    z-index: 99999999; /* 다른 요소들보다 위에 표시되도록 설정 */
-	    display: none; /* 기본적으로 숨김 */
+	    background-color: rgba(0, 0, 0, 0.5);
+	    z-index: 99999999; 
+	    display: none;
 	}
 	
 	.ordererHeader {
@@ -109,9 +179,83 @@
 	}
 	
 	#accordionExample li {
-		margin: 40px 0 40px 0 !important;
+   		margin: 0 0 40px 0 !important;
 	}
 	
+	#nav-tab {
+		margin: 40px 0 40px 0;
+		border-color: #A8A691;
+	}
+	
+	#nav-tab button {
+		width: 200px;
+	}
+	
+	.nav-link.active {
+		font-size: 16px;
+		color: #A8A691 !important;
+		font-weight:bold;
+		border-color: #A8A691 !important;
+		border-bottom: none !important;
+	}
+	.nav-link:not(.active) {
+		font-size: 14px;
+		color: #888888;
+		border-color: #e6e6e6 !important;
+		border-bottom: none !important;
+	}
+	
+	.addressSearchArea {
+		display: flex;
+		flex-direction: row;
+	}
+	
+	.addressForm input {
+		margin: 10px 0 10px 0;
+	}
+	
+	.deliveryRequest {
+		margin: 10px 0 10px 0;
+	}
+	
+	.deliveryOption {
+		border-color: #e6e6e6 !important;
+		height: 46px;
+	}
+	
+	
+	.deliveryOption:focus {
+		border-color: #e6e6e6 !important;
+		box-shadow: none !important; 
+	}
+	
+	.form-check-input:focus {
+		border-color: #a8a691 !important;
+	}
+	
+	.form-check {
+		margin: 10px 0 20px 0;
+	}
+	
+	.deliveryNameForm {
+		margin: 20px 0 40px 0;
+	}
+	
+	.single-payment-option label {
+		border: 1px solid #e6e6e6 !important;
+	}
+	
+	input[name="paymentMethod"]:hover + label {
+		background-color: #d1cfc0 !important;
+	}
+	
+	input[name="paymentMethod"]:checked + label {
+	    background-color: #A8A691 !important;
+	}
+	
+	input[name="paymentMethod"]:checked + label p {
+	    color: #FFFFFF !important;
+	}
 	
     </style>
     
@@ -187,7 +331,7 @@
                                     </div>
                                 </h5>
                                 <section class="checkout-steps-form-content collapse" id="collapseThree"
-                                    aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                    aria-labelledby="headingThree">
                                     <div class="row align-items-center product-list-title">
                                     	<div class="col-lg-1 col-md-1 col-12">
 											<p></p>
@@ -217,8 +361,8 @@
 												<h6 class="product-name">
 													<a href="/product/productDetail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
 												</h6>
-												<p class="product-des">
-													<span><em>수량:</em> ${orderProduct.quantity } 개</span>
+												<p>
+													<span>수량: ${orderProduct.quantity } 개</span>
 												</p>
 											</div>
 											<div class="col-lg-2 col-md-2 col-12">
@@ -239,6 +383,11 @@
 												</c:choose>
 											</div>
 											<div class="col-lg-2 col-md-2 col-12">
+												<c:if test="${orderProduct.dc_rate != 0 }">
+													<p><span class="productPrice">
+														<em><del style="color: #b7b7b7;"><fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity }" type="number" pattern="#,###" /> 원</del></em>
+													</span></p>
+												</c:if>
 												<p><span class="productPrice">
 													<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity * (1 - orderProduct.dc_rate) }" type="number" pattern="#,###" /> 원
 												</span></p>
@@ -249,21 +398,21 @@
                             </li>
                            	<c:if test="${empty orderMember }">
                             	<li>
-                                	<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
-                                    	aria-expanded="false" aria-controls="collapseFour">
+                                	<h5 class="title" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                    	aria-expanded="true" aria-controls="collapseFour">
                                     	<div class="row">
 	                                    	<div class="left col-lg-2 col-md-2 col-12">
 			                                    <span>주문자 정보</span>
 	                                    	</div>
-	                                    	<div class="right col-lg-6 col-md-6 col-12">
+	                                    	<div class="right col-lg-6 col-md-8 col-12">
 			                                    <span>주문자 정보에 입력하신 정보로 비회원 주문조회 하실 수 있습니다.</span>
 	                                    	</div>
-	                                    	<div class="right col-lg-4 col-md-4 col-12">
+	                                    	<div class="right col-lg-4 col-md-2 col-12">
 	                                    	</div>
 	                                    </div>
 	                                </h5>
-                                	<section class="checkout-steps-form-content collapse" id="collapseFour"
-                                    		aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                                	<section class="checkout-steps-form-content collapse show" id="collapseFour"
+                                    		aria-labelledby="headingFour">
                                         <div class="col-md-6">
                                             <div class="single-form form-default">
                                                 <div class="row form-input form align-items-center">
@@ -303,33 +452,49 @@
                                 	</section>
 	                            </li>
 	                            <li>
-	                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
-	                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
-	                                <section class="checkout-steps-form-content collapse" id="collapsefive"
-	                                    aria-labelledby="headingfive" data-bs-parent="#accordionExample">
+	                               <h5 class="title" data-bs-toggle="collapse" data-bs-target="#collapsefive"
+	                                    aria-expanded="true" aria-controls="collapsefive">배송지 정보</h5>
+	                                <section class="checkout-steps-form-content collapse show" id="collapsefive"
+	                                    aria-labelledby="headingfive">
+	                                    	<nav>
+												<div class="nav nav-tabs" id="nav-tab" role="tablist">
+													<button class="nav-link active" id="nav-addressInput-tab" data-bs-toggle="tab" data-bs-target="#nav-addressInput" type="button" role="tab" aria-controls="nav-addressInput" aria-selected="false" disabled>신규입력</button>
+												</div>
+											</nav>
 		                                    <div class="col-md-6">
+												<div class="tab-content" id="nav-tabContent">
+													<div class="tab-pane fade show active" id="nav-addressInput" role="tabpanel" aria-labelledby="nav-addressInput-tab" tabindex="0">
+														<div class="single-form form-default">
+															<div class="form-input form addressForm">
+																<h5 class="ordererHeader">주소</h5>
+																<div class="addressSearchArea">
+																	<input class="postNumber" type="text" id="postcode" placeholder="우편번호">
+																	<input class="searchPost" type="button" onclick="sample6_execDaumPostcode()" value="검색"><br>
+																</div>
+																<input type="text" id="address" placeholder="주소"><br>
+																<input type="text" id="detailAddress" placeholder="상세주소">
+															</div>
+														</div>
+													</div>
+												</div>
 	                                            <div class="single-form form-default">
 	                                                <div class="form-input form">
-	                                                	<label>배송지</label>
-	                                                    <input type="text" placeholder="Address" name="address">
+	                                                	<label>배송 요청사항</label>
+	                                                	<select class="form-select deliveryOption">
+	                                                		<option value="default" selected>선택해주세요</option>
+	                                                		<option value="dr1">출발전에 전화 부탁드립니다.</option>
+	                                                		<option value="dr2">부재시 경비실에 맡겨주세요.</option>
+	                                                		<option value="dr3">부재시 문앞에 놓아주세요.</option>
+	                                                		<option value="dr4">부재시 휴대폰으로 연락주세요.</option>
+	                                                		<option value="dr5">부재시 문앞에 놓아주세요.</option>
+	                                                		<option value="userInput">직접입력</option>
+	                                                	</select>
+	                                                    <input class="deliveryRequest" type="text" name="deliveryRequest" style="display: none;">
 	                                                </div>
 	                                            </div>
 		                                    </div>
 	                                </section>
                             </li>
-                            <li>
-                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSix"
-                                    aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
-                                <section class="checkout-steps-form-content collapse" id="collapseSix"
-                                    aria-labelledby="headingSix" data-bs-parent="#accordionExample">
-	                                    <div class="col-md-6">
-	                                            <div class="single-form form-default">
-	                                                <div class="form-input form">
-	                                                	<label>회원만 포인트 사용이 가능합니다.</label>
-	                                                </div>
-	                                            </div>
-	                                    </div>
-                                </section>
 							</c:if>
                             <c:if test="${not empty orderMember }">
                                 <li>
@@ -346,7 +511,7 @@
 	                                    </div>
                                     </h5>
 	                                	<section class="checkout-steps-form-content collapse" id="collapseFour"
-	                                    		aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+	                                    		aria-labelledby="headingFour">
 	                                        <div class="col-md-6">
 	                                            <div class="single-form form-default">
 	                                                <div class="row form-input form align-items-center">
@@ -386,25 +551,84 @@
                                     	</section>
 	                            	</li>
 		                            <li>
-		                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
-		                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
-										<section class="checkout-steps-form-content collapse" id="collapsefive"
-										    aria-labelledby="headingfive" data-bs-parent="#accordionExample">
-										     <div class="col-md-6">
-										            <div class="single-form form-default">
-										                <div class="form-input form">
-										                	<label>배송지</label>
-										                    <input type="text" placeholder="Address" name="address" value="${orderMember.address }" readonly>
-										                </div>
-										            </div>
-										     </div>
-										</section>
+										<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive"
+	                                    aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
+	                                <section class="checkout-steps-form-content collapse" id="collapsefive"
+	                                    aria-labelledby="headingfive">
+	                                    	<nav>
+												<div class="nav nav-tabs" id="nav-tab" role="tablist">
+													<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">배송지 목록</button>
+													<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">신규입력</button>
+												</div>
+											</nav>
+		                                    <div class="col-md-6">
+												<div class="tab-content" id="nav-tabContent">
+													<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+														<div class="single-form form-default">
+															<div class="form-input form addressForm">
+																<h5 class="ordererHeader">주소</h5>
+																<div class="addressSearchArea">
+																	<input class="postNumber" type="text" id="postcode" placeholder="우편번호" readonly value="${orderMember.address.split('/')[0] }">
+																	<input class="searchPost" type="button" onclick="sample6_execDaumPostcode()" value="검색"><br>
+																</div>
+																<input type="text" id="address" placeholder="주소" value="${orderMember.address.split('/')[1] }" readonly><br>
+																<input type="text" id="detailAddress" placeholder="상세주소" value="${orderMember.address.split('/')[2] }" readonly>
+															</div>
+														</div>
+													</div>
+													<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+														<div class="single-form form-default">
+															<div class="form-input form addressForm">
+																<h5 class="ordererHeader">주소</h5>
+																<div class="addressSearchArea">
+																	<input class="postNumber" type="text" id="postcode" placeholder="우편번호">
+																	<input class="searchPost" type="button" onclick="sample6_execDaumPostcode()" value="검색"><br>
+																</div>
+																<input type="text" id="address" placeholder="주소"><br>
+																<input type="text" id="detailAddress" placeholder="상세주소">
+															</div>
+															<div class="form-check">
+																<div id="saveDeliveryDiv">
+																	<input type="checkbox" class="form-check-input" id="saveDeliveryCheck">
+																	<label for="saveDeliveryCheck">기본배송지로 저장</label>
+																</div>
+																<div id="saveAddressDiv">
+																	<input type="checkbox" class="form-check-input" id="saveAddressCheck">
+																	<label for="saveAddressCheck">회원정보 주소로 저장</label>
+																</div>
+															</div>
+														</div>
+														<div class="single-form form-default deliveryNameForm"  style="display: none;">
+															<div class="form-input form">
+																<h5 class="ordererHeader">배송지명</h5>
+																<input type="text" id="deliveryName" value="${orderMember.member_name }님 배송지">
+															</div>
+														</div>
+													</div>
+												</div>
+	                                            <div class="single-form form-default">
+	                                                <div class="form-input form">
+	                                                	<h5 class="ordererHeader">배송 요청사항</h5>
+	                                                	<select class="form-select deliveryOption">
+	                                                		<option value="default" selected>선택해주세요</option>
+	                                                		<option value="dr1">출발전에 전화 부탁드립니다.</option>
+	                                                		<option value="dr2">부재시 경비실에 맡겨주세요.</option>
+	                                                		<option value="dr3">부재시 문앞에 놓아주세요.</option>
+	                                                		<option value="dr4">부재시 휴대폰으로 연락주세요.</option>
+	                                                		<option value="dr5">부재시 문앞에 놓아주세요.</option>
+	                                                		<option value="userInput">직접입력</option>
+	                                                	</select>
+	                                                    <input class="deliveryRequest" type="text" name="deliveryRequest" style="display: none;">
+	                                                </div>
+	                                            </div>
+		                                    </div>
+	                                </section>
 	                            	</li>
                            		<li>
 	                              <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSix"
 	                                   aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
 	                               <section class="checkout-steps-form-content collapse" id="collapseSix"
-	                                   aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+	                                   aria-labelledby="headingSix">
 	                                    <div class="col-md-6">
 	                                            <div class="single-form form-default">
 	                                                <div class="form-input form">
@@ -416,28 +640,18 @@
 								</li>
 							</c:if>
                             <li>
-                                <h6 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSeven"
-                                    aria-expanded="false" aria-controls="collapseFour">결제 수단</h6>
-                                <section class="checkout-steps-form-content collapse" id="collapseSeven"
-                                    aria-labelledby="headingSeven" data-bs-parent="#accordionExample">
+                                <h6 class="title" data-bs-toggle="collapse" data-bs-target="#collapseSeven"
+                                    aria-expanded="true" aria-controls="collapseFour">결제 수단</h6>
+                                <section class="checkout-steps-form-content collapse show" id="collapseSeven"
+                                    aria-labelledby="headingSeven">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="checkout-payment-option">
-                                                <h6 class="heading-6 font-weight-400 payment-title">Select Delivery
-                                                    Option</h6>
+                                                <h6 class="heading-6 font-weight-400 payment-title">결제 수단을 선택해주세요.</h6>
                                                 <div class="payment-option-wrapper">
-                                                    <!-- <div class="single-payment-option">
-                                                        <input type="radio" name="shipping" id="shipping-2">
-                                                        <label for="shipping-2">
-                                                            <img src="https://via.placeholder.com/60x32"
-                                                                alt="Sipping">
-                                                            <p>Standerd Shipping</p>
-                                                            <span class="price">$10.50</span>
-                                                        </label>
-                                                    </div> -->
                                                     <div class="single-payment-option">
                                                         <input type="radio" name="paymentMethod" id="paymentMethod-1"
-                                                        onclick="selectPaymentMethod('CARD')">
+                                                        onclick="selectPaymentMethod('CARD')" checked>
                                                         <label for="paymentMethod-1">
                                                             <p>카드 결제</p>
                                                         </label>
@@ -471,14 +685,6 @@
                                                         </label>
                                                     </div>                        
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="steps-form-btn button">
-                                                <button class="btn" data-bs-toggle="collapse"
-                                                    data-bs-target="#collapseThree" aria-expanded="false"
-                                                    aria-controls="collapseThree">previous</button>
-                                                <a href="javascript:void(0)" class="btn btn-alt">Save & Continue</a>
                                             </div>
                                         </div>
                                     </div>
@@ -545,11 +751,7 @@
 	                                </div>
                             </div>
                             <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn btn-alt">(총 1개) <span class="price allProductPrice">0</span> 원 결제하기</a>
-                            </div>
-                            <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn btn-alt" onclick="requestPayment()">
-                                결제하기</a>
+                                <a href="javascript:void(0)" class="btn" onclick="requestPayment()">(총 1개) <span class="price allProductPrice">0</span> 원 결제하기</a>
                             </div>
                         </div>
                     </div>
