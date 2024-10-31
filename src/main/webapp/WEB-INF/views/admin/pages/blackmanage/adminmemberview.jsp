@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
 
@@ -43,8 +45,85 @@
 <script>
 let pageNo = 1;
 let pagingSize =10;
+let checkedMemberIdList = [];
+function PageNation(data) {
+	if (data.MemberList && data.MemberList.length != 0) {
+ let paginationOutput = "";
+    if (data.PagingInfo.pageNo == 1) {
+        paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
+    } else {
+        paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);"onclick="showMemberList(\${data.PagingInfo.pageNo - 1})"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
+    }
+
+    for (let i = data.PagingInfo.startPageNoCurBlock; i <= data.PagingInfo.endPageNoCurBlock; i++) {
+    	console.log(i);
+        if (i == data.PagingInfo.pageNo) {
+            paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showMemberList(\${i})">\${i}</a></li>`;
+        } else {
+            paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showMemberList(\${i})">\${i}</a></li>`;
+        }
+    }
+
+    if (data.PagingInfo.pageNo == data.PagingInfo.totalPageCnt) {
+        paginationOutput += `<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+    } else {
+        paginationOutput += `<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showMemberList(\${data.PagingInfo.pageNo + 1})"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+    }
+
+    $('.pagination').html(paginationOutput);
+
+} else {
+    $('#memberTableBody').html("");
+    $('.pagination').html("");
+}
+}
 $(function () {
+	
+	$(document).on('click','.memberCheckBox' , function() {
+		let value = $(this).val();
+		if($(this).is(':checked')) {
+			if(!checkedMemberIdList.includes(value)){
+				checkedMemberIdList.push(value);
+			}
+		} else {
+			checkedMemberIdList = checkedMemberIdList.filter(function(item) {
+	            return item !== value;
+	        });
+		}
+		console.log(checkedMemberIdList); 
+})
+	$(document).on('click', '#blackMember' , function () {
+		$('#selectedIds').empty();
+		const idListElement = $('#selectedIds');
+		$.each(checkedMemberIdList, function (i,id) {
+		   idListElement.append(`<li class="list-group-item">\${id}</li>`);
+	});	
+});
+
+	$("#confirmDeleteBtn").on('click', function() {
+		let list = [];
+		$.each(checkedMemberIdList, function(i,id) {
+			list.push(id);
+			
+		});
+
+		$.ajax({
+			url : '/admin/memberView/blackMembers' ,
+			type :'POST' ,
+			 contentType: 'application/json; charset=UTF-8',
+			 data: JSON.stringify({ MemberIdList: list }), 
+	
+			success: function(data) {
+				console.log(data);
+			} ,
+			error: function(error) {
+			    console.log("AJAX 에러:", error);
+			}	
+		});
+	});
+
 	$("#searchMember").on('click', function() {
+		pageNo =1;
 	var genderList = $('input[name="genders"]:checked').map(function() {
 		return $(this).val();
 	}).get();
@@ -53,20 +132,12 @@ $(function () {
 	}).get();
 	var memberId = $('input[name="member_id"]').val();
 	var member_name = $('input[name="member_name"]').val();
+	var isBlack = $('input[name="isBlack"]:checked').val();
 	var birthdayStart = $('input[name="birthday_start"]').val();
 	var birthdayEnd = $('input[name="birthday_end"]').val();
 	var regDateStart = $('input[name="reg_date_start"]').val();
 	var regDateEnd = $('input[name="reg_date_end"]').val();
-
-	console.log(genderList);
-	console.log(levelList);
-	console.log(memberId);
 	
-	console.log(birthdayStart);
-	console.log(birthdayEnd);
-	console.log(regDateStart);
-	console.log(regDateEnd);
-
 	$.ajax({
 		url : '/admin/memberView/searchMembers' ,	
 		type : 'POST' ,
@@ -74,6 +145,7 @@ $(function () {
 		data : JSON.stringify({
 			gender_list : genderList,
 			level_list : levelList,
+			black : isBlack, 
 			member_id : memberId,
 			member_name : member_name ,
 			birthday_start : birthdayStart,
@@ -83,18 +155,116 @@ $(function () {
 			pageNo : pageNo ,
 			pagingSize : pagingSize 
 		}) ,
-		success : function(data) {
-			console.log(data);
-			console.log(data.MemberList);
-			
-		},
-		error : function(error) {
-			console.log(error);
-		}
-	});
-	});
-})
+			success: function(data) {
+		
+			        let output = "";
+			    
 
+			        $.each(data.MemberList, function(index, member) {
+			        	 let checkBoxHtml = '';
+			                if (member.member_status != 'black') {
+			                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" \${checkedMemberIdList.includes(member.member_id) ? "checked" : ""}/>`;
+			                } else {
+			                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" disabled/>`; // 블랙 멤버는 체크박스를 비활성화
+			                }
+
+						
+			            const formattedDate = new Date(member.reg_date).toISOString().slice(0, 10);
+			            /* <input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="'+member.member_id+'"' + 
+		                    (checkedMemberIdList.includes(member.member_id) ? "checked" : "") + '/> */
+			            output += '<tr>' +
+			                '<td>'+checkBoxHtml+ '</td>' +
+			                '<td>' + member.member_id + '</td>' +
+			                '<td>' + member.member_name + '</td>' +
+			                '<td>' + member.phone_number + '</td>' +
+			                '<td>' + member.birthday + '</td>' +
+			                '<td>' + member.gender + '</td>' +
+			                '<td>' + member.member_level + '</td>' +
+			                '<td>' + formattedDate + '</td>' +
+			                '</tr>';
+			        });
+
+			        $("#memberTableBody").html(output);
+
+			        PageNation(data)
+			},
+			error: function(error) {
+			    console.log("AJAX 에러:", error);
+			}
+
+	});
+	
+	});
+	
+});  // $(function 끝)
+function showMemberList(pageNumber) {
+	
+	var genderList = $('input[name="genders"]:checked').map(function() {
+		return $(this).val();
+	}).get();
+	var levelList = $('input[name="levels"]:checked').map(function() {
+		return $(this).val();
+	}).get();
+	var memberId = $('input[name="member_id"]').val();
+	var member_name = $('input[name="member_name"]').val();
+	var isBlack = $('input[name="isBlack"]:checked').val();
+	var birthdayStart = $('input[name="birthday_start"]').val();
+	var birthdayEnd = $('input[name="birthday_end"]').val();
+	var regDateStart = $('input[name="reg_date_start"]').val();
+	var regDateEnd = $('input[name="reg_date_end"]').val();
+	pageNo = pageNumber;
+	$.ajax({
+		url : '/admin/memberView/searchMembers' ,	
+		type : 'POST' ,
+		contentType : 'application/json; charset=UTF-8',
+		data : JSON.stringify({
+			gender_list : genderList,
+			level_list : levelList,
+			member_id : memberId,
+			member_name : member_name ,
+			black : isBlack, 
+			birthday_start : birthdayStart,
+			birthday_end : birthdayEnd,
+			reg_date_start : regDateStart,
+			reg_date_end : regDateEnd,
+			pageNo : pageNo ,
+			pagingSize : pagingSize 
+		}) ,
+			success: function(data) {
+				   let output = "";
+			        $.each(data.MemberList, function(index, member) {
+			       	 let checkBoxHtml = '';
+		                if (member.member_status != 'black') {
+		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" \${checkedMemberIdList.includes(member.member_id) ? "checked" : ""}/>`;
+		                } else {
+		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" disabled/>`; // 블랙 멤버는 체크박스를 비활성화
+		                }
+				     
+			            const formattedDate = new Date(member.reg_date).toISOString().slice(0, 10);
+
+			            output += '<tr>' +
+		                '<td>'+checkBoxHtml+'</td>' +
+			                '<td>' + member.member_id + '</td>' +
+			                '<td>' + member.member_name + '</td>' +
+			                '<td>' + member.phone_number + '</td>' +
+			                '<td>' + member.birthday + '</td>' +
+			                '<td>' + member.gender + '</td>' +
+			                '<td>' + member.member_level + '</td>' +
+			                '<td>' + formattedDate + '</td>' +
+			                '</tr>';
+			        });
+
+			        $("#memberTableBody").html(output);
+
+			        PageNation(data);
+			},
+			error: function(error) {
+			    console.log("AJAX 에러:", error);
+			}
+			
+	});
+	
+	}
 
 </script>
 <body>
@@ -171,6 +341,17 @@ $(function () {
 										</div>
 									</div>
 									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label" for="basic-default-black">블랙 조회 여부</label>
+										<div class="col-sm-10 d-flex align-items-center">
+											<div class="form-check-inline">
+												<input name="isBlack" class="form-check-input" type="radio" value="Yes" id="black" /> <label class="form-check-label" for="level_bronze"> Y </label>
+											</div>
+											<div class="form-check-inline">
+												<input name="isBlack" class="form-check-input" type="radio" value="No" id="noneblacks" checked /> <label class="form-check-label" for="level_silver"> N </label>
+											</div>
+										</div>
+									</div>
+									<div class="row mb-3">
 										<label class="col-sm-2 col-form-label" for="member_id">회원 ID</label>
 										<div class="col-sm-10">
 											<input type="text" name="member_id" id="" class="form-control" placeholder="member_id" aria-label="" aria-describedby="" />
@@ -240,7 +421,7 @@ $(function () {
 									<tbody id="memberTableBody" class="table-border-bottom-0">
 										<c:forEach var="member" items="${memberList}">
 											<tr>
-												<td><input name="checkMember" class="form-check-input" type="checkbox" value="" id="checkbox-${member.member_id}" /></td>
+												<td><input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="${member.member_id}" <c:if test="${fn:contains(checkedMemberIdList , member.member_id)}">checked</c:if> /></td>
 												<td>${member.member_id}</td>
 												<td>${member.member_name}</td>
 												<td>${member.phone_number}</td>
@@ -313,11 +494,14 @@ $(function () {
 									</ul>
 								</nav>
 							</div>
+							<div align="center" class="mb-3">
+								<button id="blackMember" type="button" class="btn btn-outline-danger mt-3" data-bs-toggle="modal" data-bs-target="#blackMemberModal">선택한 회원 블랙</button>
+							</div>
 						</div>
 
 					</div>
 
-					<!-- 선택된 회원을 삭제할 수 있게하는 모달 창 -->
+
 
 					<!-- 
 					
@@ -326,10 +510,29 @@ $(function () {
 					 -->
 
 
+					<div class="modal fade" id="blackMemberModal" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none;" aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalToggleLabel">회원 블랙</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
 
+								<div class="modal-body">
+									<p>선택한 회원 아이디:</p>
+									<ul id="selectedIds" class="list-group"></ul>
 
-
-
+								</div>
+								<div class="modal-footer justify-content-center">
+									<h5>정말로 이 회원들을 블랙 처리하시겠습니까?</h5>
+									<div>
+										<button class="btn btn-primary" id="confirmDeleteBtn">확인</button>
+										<button class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
 					<!-- / Content -->
 					<!-- Footer -->
@@ -353,6 +556,7 @@ $(function () {
 					</footer>
 				</div>
 			</div>
+
 			<!-- / Footer -->
 			<!-- Core JS -->
 			<!-- build:js assets/vendor/js/core.js -->

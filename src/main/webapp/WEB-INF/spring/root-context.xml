@@ -6,9 +6,7 @@
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
 	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:batch="http://www.springframework.org/schema/batch"
-	xsi:schemaLocation="http://www.springframework.org/schema/batch https://www.springframework.org/schema/batch/spring-batch.xsd
-		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
 		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
@@ -59,61 +57,7 @@
 	<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	<tx:annotation-driven />
-<!-- 
-	 DB Writer 설정
-	<bean id="dbItemWriter"
-		class="org.springframework.batch.item.database.JdbcBatchItemWriter">
-		<property name="dataSource" ref="dataSource" />
-		<property name="sql"
-			value="INSERT INTO my_table (id, name, email) VALUES (:id, :name, :email)" />
-		<property name="itemSqlParameterSourceProvider">
-			<bean
-				class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
-		</property>
-	</bean>
 
-	CSV Reader 설정
-	<bean id="csvItemReader"
-		class="org.springframework.batch.item.file.FlatFileItemReader">
-		<property name="resource" value="classpath:input/data.csv" />
-		<property name="lineMapper">
-			<bean
-				class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
-				<property name="lineTokenizer">
-					<bean
-						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
-						<property name="names" value="id,name,email" />
-					</bean>
-				</property>
-				<property name="fieldSetMapper">
-					<bean class="com.finalProject.mappers.batchMapper" />
-				</property>
-			</bean>
-		</property>
-	</bean>
-	여러 Writer를 결합한 CompositeItemWriter
-	<bean id="compositeItemWriter"
-		class="org.springframework.batch.item.support.CompositeItemWriter">
-		<property name="delegates">
-			<list>
-				<ref bean="dbItemWriter" /> <ref bean="emailItemWriter" />
-			</list>
-		</property>
-	</bean>
-
-	<bean id="taskExecutor"
-		class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
-
-	<batch:job id="csvJob">
-		<batch:step id="csvStep"> Step 정의
-			<batch:tasklet task-executor="taskExecutor"
-				throttle-limit="20">
-				<batch:chunk reader="csvItemReader"
-					writer="compositeItemWriter" commit-interval="10" />
-			</batch:tasklet>
-		</batch:step>
-	</batch:job>
-	J -->
 
 	<context:component-scan
 		base-package="com.finalProject.persistence" />

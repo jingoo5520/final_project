@@ -17,6 +17,7 @@ public class BlackMemberDTO {
 	private List<String> gender_list;
 	private List<Integer> level_list;
 	private String member_id;
+	private String black;
 	private String member_name;
 	private String birthday_start;
 	private String birthday_end;

@@ -14,4 +14,10 @@ public interface BlackDAO {
 
 	List<BlackMemberVO> getSearchMember(Map<String, Object> mapperMap);
 
+	int getSearchTotalPostCnt(Map<String, Object> mapperMap);
+
+	void updateStatusMember(String memberId);
+
+	int blackMember(Map<String, List<String>> map);
+
 }

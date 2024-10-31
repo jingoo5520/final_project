@@ -1,6 +1,6 @@
 package com.finalProject.model.admin.black;
 
-import java.sql.Date;
+import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,7 @@ public class BlackMemberVO {
 	private String member_id;
 	private String member_name;
 	private String phone_number;
+	private String member_status;
 	private int birthday;
 	private String gender;
 	private int member_level;

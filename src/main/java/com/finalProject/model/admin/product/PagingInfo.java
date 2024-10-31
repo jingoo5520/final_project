@@ -1,5 +1,7 @@
 package com.finalProject.model.admin.product;
 
+import com.finalProject.model.admin.black.BlackMemberDTO;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,6 +29,11 @@ public class PagingInfo {
 	public PagingInfo(ProductPagingInfoDTO dto) {
 		this.pageNo = dto.getPageNo();
 		this.viewPostCntPerPage = dto.getPagingSize();
+	}
+
+	public PagingInfo(BlackMemberDTO bm) {
+		this.pageNo = bm.getPageNo();
+		this.viewPostCntPerPage = bm.getPagingSize();
 	}
 
 	public void setTotalPostCnt(int totalPostCnt) {

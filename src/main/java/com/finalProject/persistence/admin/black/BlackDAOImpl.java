@@ -36,4 +36,23 @@ public class BlackDAOImpl implements BlackDAO {
 		return ses.selectList(ns + "getSearchMember", mapperMap);
 	}
 
+	@Override
+	public int getSearchTotalPostCnt(Map<String, Object> mapperMap) {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getSearchAllMember", mapperMap);
+	}
+
+	@Override
+	public void updateStatusMember(String memberId) {
+		ses.delete(ns + "updateStatusMember", memberId);
+
+	}
+
+	@Override
+	public int blackMember(Map<String, List<String>> map) {
+
+		return ses.update(ns + "blackMember", map);
+
+	}
+
 }
