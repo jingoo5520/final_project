@@ -164,4 +164,22 @@ public class MemberDAOImpl implements MemberDAO {
 		return result;
 	}
 
+	// 찜 상태 확인(찜이 되있는지 안되있는지)
+	@Override
+	public int checkWishStatus(Map<String, Object> map) throws Exception {
+		return ses.selectOne(ns+"selectWish", map);
+	}
+
+	// 찜 정보 추가
+	@Override
+	public void insertWish(Map<String, Object> map) throws Exception {
+		ses.insert(ns+"insertWish", map);
+	}
+
+	// 찜 정보 삭제
+	@Override
+	public void deleteWish(Map<String, Object> map) throws Exception {
+		ses.delete(ns+"deleteWish", map);
+	}
+
 }

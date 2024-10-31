@@ -1,5 +1,6 @@
 package com.finalProject.service.member;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -101,6 +102,24 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int[] getWishList(String member_id) throws Exception {
 		return memberDAO.getWishList(member_id);
+	}
+
+	// 찜 토글 동작(찜하기, 찜해제)
+	@Transactional
+	@Override
+	public int saveWish(int product_no, String member_id) throws Exception {
+		int result = -1;
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("member_id", member_id);
+		map.put("product_no", product_no);
+		if(memberDAO.checkWishStatus(map)==0) { // 찜 상태를 확인 (0이면 insert 1이면 delete)
+			memberDAO.insertWish(map); // 찜 정보 추가
+			result = 0;
+		} else {
+			memberDAO.deleteWish(map); // 찜 정보 삭제
+			result = 1;
+		}
+		return result;
 	}
 	
 	

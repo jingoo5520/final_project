@@ -103,15 +103,35 @@
 	<!-- 비밀번호 찾기(랜덤비밀번호 지정) -->
 	<update id="updateRandomPwd">
 		update members
-		set member_pwd = sha2(#{member_pwd}, 256)
+		set member_pwd = sha2(#{member_pwd},
+		256)
 		where member_id = #{member_id} and
 		member_status = 'active'
 	</update>
-	
+
 	<!-- 찜 목록 조회 -->
 	<select id="selectWishListByMemberId" resultType="int">
-		select product_no from wishes where member_id = #{member_id}
+		select
+		product_no from wishes where member_id = #{member_id}
 	</select>
-	
+
+	<!-- 찜 상태 확인 -->
+	<select id="selectWish" resultType="int">
+		select count(*) from wishes
+		where member_id = #{member_id} and product_no = #{product_no}
+	</select>
+
+	<!-- 찜 정보 추가 -->
+	<insert id="insertWish">
+		insert into wishes (member_id, product_no)
+		values
+		(#{member_id}, #{product_no})
+	</insert>
+
+	<!-- 찜 정보 삭제 -->
+	<delete id="deleteWish">
+		delete from wishes where member_id = #{member_id} and
+		product_no = #{product_no}
+	</delete>
 
 </mapper>

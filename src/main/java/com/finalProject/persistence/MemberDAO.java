@@ -49,4 +49,15 @@ public interface MemberDAO {
 	// 회원의 찜목록 조회
 	int[] getWishList(String member_id)throws Exception;
 
+	// 찜 상태 확인(찜이 되있다면 1, 아니면 0)
+	int checkWishStatus(Map<String, Object> map)throws Exception;
+
+	// 찜 정보 추가
+	void insertWish(Map<String, Object> map)throws Exception;
+
+	// 찜 정보 삭제
+	void deleteWish(Map<String, Object> map)throws Exception;
+	
+
+
 }

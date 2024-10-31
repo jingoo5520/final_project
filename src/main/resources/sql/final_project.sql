@@ -51,3 +51,16 @@ select member_pwd from members where member_id = 'ckdgus12' and email = 'fhtkwhg
 -- 비밀번호 찾기(랜덤비밀번호 지정)
 update members
 set member_pwd = sha2('xptmxm12', 256) where member_id = 'ckdgus12' and member_status = 'active';
+
+-- 내 찜목록 불러오기
+select product_no from wishes where member_id = '1';
+
+-- 찜 상태 확인
+select count(*) from wishes where member_id = '1' and product_no = '226';
+
+-- 찜 정보 추가
+insert into wishes (member_id, product_no)
+values ('1', '240');
+
+-- 찜 정보 삭제
+delete wishes where member_id = '1' and product_no = '240';

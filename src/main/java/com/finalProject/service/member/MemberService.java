@@ -45,6 +45,9 @@ public interface MemberService {
 	
 	// 회원의 찜목록 조회
 	int[] getWishList(String member_id)throws Exception;
+
+	// 찜 토글 동작(찜하기, 찜해제)
+	int saveWish(int product_no, String member_id)throws Exception;
 	
 	
 	

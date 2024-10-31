@@ -522,10 +522,11 @@ public class MemberController {
 		ResponseData json = null;
 		HttpSession ses = request.getSession();
 		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인세션을 loginDTO로 받아옴
-		if(loginDTO != null) { // 로그인 상태인지 확인(세션이 있다면 로그인된 상태인 것)
+		if (loginDTO != null) { // 로그인 상태인지 확인(세션이 있다면 로그인된 상태인 것)
 			try {
 				int wishList[] = memberService.getWishList(loginDTO.getMember_id());
-				model.addAttribute("wishList", wishList); // 모델에 찜 목록 배열 저장(페이지가 열릴때 모델에 저장되는게 아니라서 해당 코드는 페이지가 열릴때 동작되도록 해야함)
+				model.addAttribute("wishList", wishList); // 모델에 찜 목록 배열 저장(페이지가 열릴때 모델에 저장되는게 아니라서 해당 코드는 페이지가 열릴때
+															// 동작되도록 해야함)
 				json = new ResponseData("success", "찜목록 받아옴", wishList);
 				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
 			} catch (Exception e) {
@@ -536,8 +537,43 @@ public class MemberController {
 			json = new ResponseData("fail", "로그인 세션 없음");
 			result = new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-		
+
 		return result;
 	}
-	
+
+	// 찜 하기(토글 동작)
+	// ajax요청 data에 찜하려는, 해제하려는 상품의 product_no를 받을수있도록 한다는 가정하에 만듦
+	@RequestMapping(value = "/saveWish", method=RequestMethod.GET)
+	public ResponseEntity<ResponseData> saveWish(@RequestParam(value = "product_no", defaultValue = "-1")int product_no, HttpServletRequest request) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인세션을 loginDTO로 받아옴
+		if(loginDTO != null) { // 로그인 상태인가?
+			System.out.println("로그인 상태 확인");
+			if(product_no != -1) { // 상품번호가 유효한가?(제대로 받아왔는가?)
+				System.out.println("상품 번호 유효");
+				try {
+					int tmp = memberService.saveWish(product_no, loginDTO.getMember_id()); // -1 : 에러, 0 : 찜추가, 1 : 찜취소
+					if(tmp == 0) {
+						System.out.println("찜 추가");
+						json = new ResponseData("success", "찜");
+					} else if(tmp == 1) {
+						System.out.println("찜 삭제");
+						json = new ResponseData("success", "찜 취소");
+					} else {
+						System.out.println("실패");
+						json = new ResponseData("fail", "실패");
+					}
+					result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+				} catch (Exception e) {
+					json = new ResponseData("error", "에러");
+					result = new ResponseEntity<>(HttpStatus.CONFLICT);
+					e.printStackTrace();
+				} 
+			}
+		}
+		return result;
+	}
+
 }
