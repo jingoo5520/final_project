@@ -1,6 +1,7 @@
 package com.finalProject.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -146,6 +147,19 @@ public class MemberDAOImpl implements MemberDAO {
 		if(ses.update(ns+"updateRandomPwd", map)==1) {
 			result = true;
 		}
+		
+		return result;
+	}
+
+	// 회원의 찜목록 조회
+	@Override
+	public int[] getWishList(String member_id) throws Exception {
+		List<Integer> list = ses.selectList(ns+"selectWishListByMemberId", member_id);
+		
+		int[] result = new int[list.size()]; // 배열 크기를 select문으로 찾은 찜의 갯수크기로 설정
+	    for (int i = 0; i < list.size(); i++) { // 찜 목록크기만큼 반복
+	    	result[i] = list.get(i); // int 배열에 list저장하기
+	    }
 		
 		return result;
 	}

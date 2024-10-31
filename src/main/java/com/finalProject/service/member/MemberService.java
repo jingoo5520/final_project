@@ -43,6 +43,9 @@ public interface MemberService {
 	// 비밀번호 찾기
 	boolean findPwd(String email, String member_id, String member_pwd)throws Exception;
 	
+	// 회원의 찜목록 조회
+	int[] getWishList(String member_id)throws Exception;
+	
 	
 	
 }

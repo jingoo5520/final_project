@@ -515,4 +515,29 @@ public class MemberController {
 		return result;
 	}
 
+	// 찜정보 받기
+	@RequestMapping(value = "/getWishList")
+	public ResponseEntity<ResponseData> getWishList(HttpServletRequest request, Model model) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인세션을 loginDTO로 받아옴
+		if(loginDTO != null) { // 로그인 상태인지 확인(세션이 있다면 로그인된 상태인 것)
+			try {
+				int wishList[] = memberService.getWishList(loginDTO.getMember_id());
+				model.addAttribute("wishList", wishList); // 모델에 찜 목록 배열 저장(페이지가 열릴때 모델에 저장되는게 아니라서 해당 코드는 페이지가 열릴때 동작되도록 해야함)
+				json = new ResponseData("success", "찜목록 받아옴", wishList);
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} catch (Exception e) {
+				json = new ResponseData("fail", "찜목록 받아오기 실패");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			}
+		} else {
+			json = new ResponseData("fail", "로그인 세션 없음");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		
+		return result;
+	}
+	
 }

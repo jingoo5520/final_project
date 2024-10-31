@@ -46,4 +46,7 @@ public interface MemberDAO {
 	// 비밀번호 찾기(랜덤 비밀번호 지정)
 	boolean updateRandomPwd(String member_pwd, String member_id)throws Exception;
 
+	// 회원의 찜목록 조회
+	int[] getWishList(String member_id)throws Exception;
+
 }

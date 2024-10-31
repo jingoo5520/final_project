@@ -25,7 +25,7 @@ public class TestController {
 		System.out.println(randomuuid);
 		System.out.println(randomuuid.toString().length());
 		System.out.println(randomuuid.toString().substring(0, 8));
-		return "/testIndex";
+		return "/user/pages/testIndex";
 	}
 	
 	@RequestMapping(value = "/session")
@@ -34,12 +34,12 @@ public class TestController {
 		log.info("test session");
 		System.out.println(ses.getAttribute("loginMember"));
 
-		return "/testIndex";
+		return "/user/pages/testIndex";
 	}
 	
 	@RequestMapping(value = "/")
 	public String index() {
-		return "/testIndex";
+		return "/user/pages/testIndex";
 	}
 	
 	@RequestMapping(value = "/signUp")
@@ -51,12 +51,12 @@ public class TestController {
 	public String getUri(HttpServletRequest request) {
 		String uri = request.getRequestURI()+"";
 		System.out.println(uri);
-		return "/testIndex";
+		return "/user/pages/testIndex";
 	}
 	
 	@RequestMapping(value = "/auth")
 	public String auth() {
-		return "/testIndex";
+		return "/user/pages/testIndex";
 	}
 	
 	@RequestMapping(value = "/jsp")

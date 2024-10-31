@@ -107,5 +107,11 @@
 		where member_id = #{member_id} and
 		member_status = 'active'
 	</update>
+	
+	<!-- 찜 목록 조회 -->
+	<select id="selectWishListByMemberId" resultType="int">
+		select product_no from wishes where member_id = #{member_id}
+	</select>
+	
 
 </mapper>

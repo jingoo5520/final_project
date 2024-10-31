@@ -96,6 +96,12 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return result;
 	}
+
+	// 회원의 찜목록 조회
+	@Override
+	public int[] getWishList(String member_id) throws Exception {
+		return memberDAO.getWishList(member_id);
+	}
 	
 	
 
