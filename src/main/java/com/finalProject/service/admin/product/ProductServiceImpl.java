@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.product.PagingInfo;
 import com.finalProject.model.admin.product.ProductDTO;
-import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
 import com.finalProject.model.admin.product.ProductVO;
 import com.finalProject.persistence.admin.product.ProductDAO;
@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 
-	public Map<String, Object> getAllProducts(ProductPagingInfoDTO dto) throws Exception {
+	public Map<String, Object> getAllProducts(adminPagingInfoDTO dto) throws Exception {
 		Map<String, Object> map = new HashMap<>();
 		Map<String, Object> resultMap = new HashMap<>();
 		PagingInfo pi = makePagingInfo(dto);
@@ -84,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Map<String, Object> searchProduct(Map<String, Object> map, ProductPagingInfoDTO dto) throws Exception {
+	public Map<String, Object> searchProduct(Map<String, Object> map, adminPagingInfoDTO dto) throws Exception {
 		// TODO Auto-generated method stub
 		Map<String, Object> resultMap = new HashMap<>();
 
@@ -99,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
 		return resultMap;
 	}
 
-	private PagingInfo makePagingInfo(ProductPagingInfoDTO dto, Map<String, Object> map) {
+	private PagingInfo makePagingInfo(adminPagingInfoDTO dto, Map<String, Object> map) {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalSearchCnt(map));
 
@@ -122,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
 		return plist;
 	}
 
-	private PagingInfo makePagingInfo(ProductPagingInfoDTO dto) throws Exception {
+	private PagingInfo makePagingInfo(adminPagingInfoDTO dto) throws Exception {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalPostCnt());
 

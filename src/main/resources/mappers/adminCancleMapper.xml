@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.adminCancleMapper">
+	<select id="getAllCancle"
+		resultType="com.finalProject.model.admin.order.AdminCancleVO">
+		select * from cancels limit #{startRowIndex} ,
+		#{viewPostCntPerPage}
+	</select>
+
+	<select id="getCountAllCancle" resultType="int">
+		select count(*) from
+		cancels;
+	</select>
+
+	<select id="getTopCancle"
+		resultType="com.finalProject.model.admin.order.AdminCancleVO">
+		select * from cancels order by cancel_apply_date desc limit
+		8
+	</select>
+
+	<select id="searchCancel"
+		resultType="com.finalProject.model.admin.order.AdminCancleVO">
+		select * from cancels where 1=1
+		<if test="cancel_type != null or cancel_type.size() > 0">
+			and cancel_type in
+			<foreach item="type" collection="cancel_type" open="("
+				separator="," close=")">
+				#{type}
+			</foreach>
+		</if>
+		<if test="cancel_status != null or cancel_status.size() > 0">
+			and cancel_status in
+			<foreach item="status" collection="cancel_status" open="("
+				separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<!-- <if test="cancel_apply_date_start != null or cancel_apply_date_start != ''">
+			and cancel_apply_date &gt;= #{cancel_apply_date_start}
+		</if>
+		<if test="cancel_apply_date_end != null or cancel_apply_date_end != ''">
+			and cancel_apply_date &lt;= #{cancel_apply_date_end}
+		</if> -->
+		order by cancel_apply_date desc
+		limit #{startRowIndex} , #{viewPostCntPerPage}
+	</select>
+</mapper>

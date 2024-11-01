@@ -26,7 +26,7 @@ public class PagingInfo {
 	private int startPageNoCurBlock; // 현재 페이징 블럭의 시작 페이지 번호
 	private int endPageNoCurBlock; // 현재 페이징 블럭의 마지막 페이지 번호
 
-	public PagingInfo(ProductPagingInfoDTO dto) {
+	public PagingInfo(adminPagingInfoDTO dto) {
 		this.pageNo = dto.getPageNo();
 		this.viewPostCntPerPage = dto.getPagingSize();
 	}

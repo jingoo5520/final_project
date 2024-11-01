@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.finalProject.model.admin.black.BlackMemberDTO;
-import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 
 public interface BlackService {
-	Map<String, Object> getAllMember(ProductPagingInfoDTO dto) throws Exception;
+	Map<String, Object> getAllMember(adminPagingInfoDTO dto) throws Exception;
 
 	Map<String, Object> getSearchMember(BlackMemberDTO bm) throws Exception;
 

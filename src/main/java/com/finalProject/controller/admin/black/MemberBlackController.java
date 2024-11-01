@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.black.BlackMemberDTO;
-import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.service.admin.black.BlackService;
 
 @Controller
@@ -29,7 +29,7 @@ public class MemberBlackController {
 	@RequestMapping("")
 	public String Home(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
-		ProductPagingInfoDTO dto = ProductPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		adminPagingInfoDTO dto = adminPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
 		try {
 			model.addAttribute("memberList", bs.getAllMember(dto).get("MemberList"));
 			model.addAttribute("PagingInfo", bs.getAllMember(dto).get("PagingInfo"));

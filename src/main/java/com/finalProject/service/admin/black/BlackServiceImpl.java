@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.black.BlackMemberDTO;
 import com.finalProject.model.admin.product.PagingInfo;
-import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.persistence.admin.black.BlackDAO;
 
 @Service
@@ -20,7 +20,7 @@ public class BlackServiceImpl implements BlackService {
 	private BlackDAO bDAO;
 
 	@Override
-	public Map<String, Object> getAllMember(ProductPagingInfoDTO dto) throws Exception {
+	public Map<String, Object> getAllMember(adminPagingInfoDTO dto) throws Exception {
 
 		PagingInfo pi = makePagingInfo(dto);
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -29,7 +29,7 @@ public class BlackServiceImpl implements BlackService {
 		return map;
 	}
 
-	private PagingInfo makePagingInfo(ProductPagingInfoDTO dto) throws Exception {
+	private PagingInfo makePagingInfo(adminPagingInfoDTO dto) throws Exception {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(bDAO.getTotalPostCnt());
 

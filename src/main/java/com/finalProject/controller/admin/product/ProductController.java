@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finalProject.model.admin.product.ProductDTO;
-import com.finalProject.model.admin.product.ProductPagingInfoDTO;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.model.admin.product.ProductSearchDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
 import com.finalProject.model.admin.product.ProductVO;
@@ -201,7 +201,7 @@ public class ProductController {
 	@RequestMapping("/productView")
 	public String GetAllProduct(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
-		ProductPagingInfoDTO dto = ProductPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		adminPagingInfoDTO dto = adminPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
 		Map<String, Object> maps = new HashMap<String, Object>();
 		try {
 			maps = ps.getAllProducts(dto);
@@ -218,7 +218,7 @@ public class ProductController {
 	public String getSearchProduct(ProductSearchDTO psd, Model model,
 			@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
-		ProductPagingInfoDTO dto = ProductPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		adminPagingInfoDTO dto = adminPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
 		List<ProductVO> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<>();
 		map.put("product_dc_type", psd.getProduct_dc_type());

@@ -87,19 +87,21 @@
 				</ul>
 			</li>
 
-			<li class="menu-item">
+			<li class="menu-item <%="adminordercancelview".equals(request.getParameter("pageName")) || "adminorderrefundview".equals(request.getParameter("pageName"))
+				? "active open"
+				: ""%>">
 				<a href="javascript:void(0);" class="menu-link menu-toggle">
 					<i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Admin Orders">주문 관리</div>
 				</a>
 				<ul class="menu-sub">
-					<li class="menu-item">
-						<a href="/admin/coupon" class="menu-link">
+					<li class="menu-item <%="adminordercancelview".equals(request.getParameter("pageName")) ? "active" : ""%>">
+						<a href="/admin/order/cancel" class="menu-link">
 							<div data-i18n="orders">주문</div>
 						</a>
 					</li>
-					<li class="menu-item">
-						<a href="pages-account-settings-connections.html" class="menu-link">
+					<li class="menu-item <%="adminorderrefundview".equals(request.getParameter("pageName")) ? "active" : ""%>">
+						<a href="/admin/order/refund" class="menu-link">
 							<div data-i18n="">temp</div>
 						</a>
 					</li>
