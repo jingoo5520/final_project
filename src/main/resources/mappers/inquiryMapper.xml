@@ -5,9 +5,10 @@
 <mapper namespace="com.finalProject.mappers.inquiryMapper">
 	<!-- 문의 총 개수 가져오기 -->
 	<select id="selectInquiryCnt" resultType="int">
-		select count(*) from inquiries;
+		select count(*) from
+		inquiries;
 	</select>
-	
+
 	<!-- 유저 뷰 문의 리스트 가져오기(with pagingInfo) -->
 	<select id="selectAllInquiryWithPi" resultType="InquiryDTO">
 		select
@@ -18,15 +19,109 @@
 		limit #{pi.startRowIndex}, #{pi.viewDataCntPerPage}
 	</select>
 
-	<!-- 문의 가져오기 -->
-	<!-- <select id="selectInquiry" resultType="InquiryDetailDTO">
-		select 
-		coupon_no, coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate, coupon_use_days
-		from coupons
-		where coupon_no = #{couponNo}
-	</select> -->
-	
+	<!-- 문의 작성 -->
+	<insert id="insertInquiry">
+		insert into inquiries
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="product_no != 0">
+				product_no,
+			</if>
+			member_id,
+			inquiry_title,
+			inquiry_content,
+			inquiry_type
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="product_no != 0">
+				#{product_no},
+			</if>
+			#{member_id},
+			#{inquiry_title},
+			#{inquiry_content},
+			#{inquiry_type}
+		</trim>
+	</insert>
 
+	<!-- 방금 작성된 문의 번호 가져오기 -->
+	<select id="selectMaxInquiryNo" resultType="int">
+		select
+		max(inquiry_no) from inquiries
+	</select>
+
+	<!-- 문의 작성시 이미지 추가 -->
+	<insert id="insertInquiryImages">
+		insert into inquiry_images (inquiry_no, inquiry_image_uri,
+		inquiry_image_name, inquiry_image_original_name)
+		values
+		<foreach collection="list" index="index" item="InquiryImgDTO"
+			separator=", ">
+			(
+			#{InquiryImgDTO.inquiry_no},
+			#{InquiryImgDTO.inquiry_image_uri},
+			#{InquiryImgDTO.inquiry_image_name},
+			#{InquiryImgDTO.inquiry_image_original_name}
+			)
+		</foreach>
+	</insert>
+
+
+	<!-- 문의 가져오기 -->
+	<select id="selectInquiry" resultType="InquiryDetailDTO">
+		select
+		i.inquiry_no,
+		i.member_id,
+		i.product_no,
+		i.inquiry_title,
+		i.inquiry_content,
+		i.inquiry_reg_date,
+		i.inquiry_status,
+		i.inquiry_type,
+		p.product_name
+		from inquiries i
+		left join products p on i.product_no = p.product_no
+		where i.inquiry_no = #{inquiry_no}
+	</select>
+
+	<!-- 문의 이미지 가져오기 -->
+	<select id="selectInquiryImgList" resultType="InquiryImgDTO">
+		select inquiry_no, inquiry_image_no,
+		inquiry_image_uri, inquiry_image_name, inquiry_image_original_name
+		from inquiry_images
+		where
+		inquiry_no = #{inquiry_no}
+	</select>
 	
+	<!-- 문의 이미지 모두 삭제하기  -->
+	<delete id="deleteInquiryImages">
+		delete from inquiry_images
+		where inquiry_no = #{inquiry_no}
+	</delete>
+	
+	<!-- 문의 이미지 일부 삭제하기  -->
+	<delete id="deleteInquiryImage">
+		delete from inquiry_images
+		where inquiry_image_no = #{inquiry_image_no}
+	</delete>
+	
+	<!-- 문의 삭제하기 -->
+	<delete id="deleteInquiry">
+		delete from inquiries
+		where inquiry_no = #{inquiry_no}
+	</delete>
+
+	<!-- 문의 수정 -->
+	<update id="updateInquiry">
+		update inquiries
+		set
+		<if test="product_no != 0">
+		product_no = #{product_no},
+		</if> 
+		inquiry_title = #{inquiry_title},  
+		inquiry_content = #{inquiry_content},
+		inquiry_type = #{inquiry_type}			
+		where inquiry_no = #{inquiry_no}
+	</update>
+
 
 </mapper>

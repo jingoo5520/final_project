@@ -13,6 +13,7 @@
 		
 		<typeAlias type="com.finalProject.model.inquiry.InquiryDTO" alias="InquiryDTO" />
 		<typeAlias type="com.finalProject.model.inquiry.InquiryDetailDTO" alias="InquiryDetailDTO" />
+		<typeAlias type="com.finalProject.model.inquiry.InquiryImgDTO" alias="InquiryImgDTO" />
 		
 		<typeAlias type="com.finalProject.model.admin.member.MemberManageDTO" alias="MemberManageDTO" />
 		<typeAlias type="com.finalProject.model.admin.coupon.CouponDTO" alias="CouponDTO" />

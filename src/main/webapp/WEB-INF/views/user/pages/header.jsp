@@ -56,6 +56,7 @@
 									<li><a
 										href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a>
 									</li>
+									<li><a href="/serviceCenter/inquiries">고객센터</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->
@@ -71,7 +72,7 @@
 									<li><a
 										href="${pageContext.request.contextPath}/member/logout">로그아웃</a>
 									</li>
-									<li><a href="#">고객센터</a></li>
+									<li><a href="/serviceCenter/inquiries">고객센터</a></li>
 								</ul>
 							</c:if>
 						</div>

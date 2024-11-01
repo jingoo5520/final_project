@@ -56,6 +56,9 @@
 			<mapping path="/test/auth" />
 			<mapping path="/member/myPage/modiInfo" />
 			<mapping path="/member/myPage/auth" />
+			<mapping path="/serviceCenter/inquiries" />
+			<mapping path="/serviceCenter/writeInquiry" />
+			
 			<beans:ref bean="authInterceptor" />
 		</interceptor>
 	</interceptors>
