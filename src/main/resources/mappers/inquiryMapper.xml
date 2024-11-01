@@ -122,6 +122,14 @@
 		inquiry_type = #{inquiry_type}			
 		where inquiry_no = #{inquiry_no}
 	</update>
+	
+	<!-- 문의 답글 가져오기 -->
+	<select id="selectInquiryReply" resultType="InquiryReplyDTO">
+		select
+		inquiry_reply_no, inquiry_no, reply_content, reply_reg_date, admin_id
+		from inquiry_replies
+		where inquiry_no = #{inquiry_no}
+	</select>
 
 
 </mapper>

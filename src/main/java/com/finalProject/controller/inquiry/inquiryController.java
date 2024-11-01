@@ -76,9 +76,12 @@ public class inquiryController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println("inquiry.get(\"inquiryReply\"): " + inquiry.get("inquiryReply"));
 
 		model.addAttribute("inquiryDetail", inquiry.get("inquiryDetail"));
 		model.addAttribute("inquiryImgList", inquiry.get("inquiryImgList"));
+		model.addAttribute("inquiryReply", inquiry.get("inquiryReply"));
 
 		return "/user/pages/inquiry/inquiryDetail";
 	}

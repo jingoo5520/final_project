@@ -62,7 +62,9 @@
 }
 
 .cart-list-title {
-	padding: 20px 0px !important;
+	padding: 0px !important;
+	padding-top: 20px !important;
+	border: none !important;
 }
 
 .remove-item {
@@ -161,70 +163,84 @@ textarea {
 						<section class="checkout-steps-form-content collapse show" id="collapseThree" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
 							<div class="cart-list-title">
 								<h5>문의</h5>
+								<hr class="mt-4" style="border: 1px solid black;">
 							</div>
 							<div class="row">
-								<form>
-									<div class="col-md-12">
+								<c:choose>
+									<c:when test="${inquiryDetail.inquiry_status == 'C'}">
 										<div class="single-form form-default">
-											<label>문의 번호</label>
+											<label>답변 내용</label>
 											<div class="form-input form">
-												<input id="inquiryTitle" value="${inquiryDetail.inquiry_no}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
+												<textarea id="replyContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readOnly>${inquiryReply.reply_content }</textarea>
 											</div>
 										</div>
-									</div>
 
-									<div class="col-md-12">
-										<div class="single-form form-default">
-											<label>문의 제목</label>
-											<div class="form-input form">
-												<input id="inquiryTitle" value="${inquiryDetail.inquiry_title}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
-											</div>
-										</div>
-									</div>
+										<hr class="mt-4" style="border: 1px solid black;">
+									</c:when>
+									<c:otherwise>
 
-									<div class="col-md-12">
-										<div class="single-form form-default">
-											<label>문의 타입</label>
-											<div class="select-items">
-												<div class="form-input form">
-													<input id="" value="${inquiryDetail.inquiry_type}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
-												</div>
-											</div>
-										</div>
-									</div>
+									</c:otherwise>
+								</c:choose>
 
-									<div class="col-md-12">
-										<div class="single-form form-default">
-											<label>주문 상품</label>
-											<div class="select-items">
-												<div class="form-input form">
-													<input id="" value="${inquiryDetail.product_name}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
-												</div>
-											</div>
-										</div>
-									</div>
-
+								<div class="col-md-12">
 									<div class="single-form form-default">
-										<label>문의 내용</label>
+										<label>문의 번호</label>
 										<div class="form-input form">
-											<textarea id="inquiryContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readOnly>${inquiryDetail.inquiry_content }</textarea>
+											<input id="inquiryTitle" value="${inquiryDetail.inquiry_no}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
 										</div>
 									</div>
+								</div>
 
-									<div class="col-md-12">
-										<div class="single-form form-default">
-											<label>첨부된 이미지</label>
-											<div class="row">
-												<c:forEach var="img" items="${inquiryImgList}">
-													<div class="col-6" style="padding: 5px;">
-														<img src="${img.inquiry_image_uri}" class="img-fluid">
-													</div>
-												</c:forEach>
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>문의 제목</label>
+										<div class="form-input form">
+											<input id="inquiryTitle" value="${inquiryDetail.inquiry_title}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>문의 타입</label>
+										<div class="select-items">
+											<div class="form-input form">
+												<input id="" value="${inquiryDetail.inquiry_type}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
 											</div>
 										</div>
 									</div>
+								</div>
 
-								</form>
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>주문 상품</label>
+										<div class="select-items">
+											<div class="form-input form">
+												<input id="" value="${inquiryDetail.product_name}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="single-form form-default">
+									<label>문의 내용</label>
+									<div class="form-input form">
+										<textarea id="inquiryContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readOnly>${inquiryDetail.inquiry_content }</textarea>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>첨부된 이미지</label>
+										<div class="row">
+											<c:forEach var="img" items="${inquiryImgList}">
+												<div class="col-lg-6 col-md-6 col-sm-12" style="padding: 5px;">
+													<img src="${img.inquiry_image_uri}" class="img-fluid">
+												</div>
+											</c:forEach>
+										</div>
+									</div>
+								</div>
 							</div>
 
 						</section>

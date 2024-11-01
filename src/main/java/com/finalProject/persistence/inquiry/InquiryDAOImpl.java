@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
@@ -82,6 +83,11 @@ public class InquiryDAOImpl implements InquiryDAO {
 	@Override
 	public int deleteInquiryImage(int inquiry_image_no) throws Exception {
 		return ses.delete(ns + "deleteInquiryImage", inquiry_image_no);
+	}
+
+	@Override
+	public InquiryReplyDTO selectInquiryReply(int inquiryNo) throws Exception {
+		return ses.selectOne(ns + "selectInquiryReply", inquiryNo);
 	}
 
 }

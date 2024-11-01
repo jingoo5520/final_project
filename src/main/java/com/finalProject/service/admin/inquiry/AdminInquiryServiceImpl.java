@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
+import com.finalProject.model.inquiry.InquiryImgDTO;
 import com.finalProject.persistence.admin.inquiry.AdminInquiryDAO;
 
 @Service
@@ -48,6 +50,34 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 		pi.setEndPageNoCurBlock();
 
 		return pi;
+	}
+
+	@Override
+	public Map<String, Object> getInquiry(int inquiryNo) throws Exception {
+		InquiryDetailDTO inquiryDetail = aiDao.selectInquiry(inquiryNo);
+		List<InquiryImgDTO> inquiryImages = aiDao.selectInquiryImages(inquiryNo);
+		InquiryReplyDTO inquiryReplyDTO = aiDao.selectInquiryReply(inquiryNo);
+
+		Map<String, Object> result = new HashMap<String, Object>();
+
+		result.put("inquiryDetail", inquiryDetail);
+		result.put("inquiryImgList", inquiryImages);
+		result.put("inquiryReply", inquiryReplyDTO);
+
+		return result;
+	}
+
+	@Override
+	public int writeInquiryReply(InquiryReplyDTO dto) throws Exception {
+		int result = 0;
+		
+		// 신규 작성
+		if(dto.getInquiry_reply_no() == 0) {
+			result = aiDao.insertInquiryReply(dto);
+		} else {
+			result = aiDao.updateInquiryReply(dto);
+		}
+		return result; 
 	}
 
 }

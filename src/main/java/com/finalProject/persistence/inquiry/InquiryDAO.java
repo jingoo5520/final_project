@@ -3,6 +3,7 @@ package com.finalProject.persistence.inquiry;
 import java.util.List;
 
 import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
@@ -41,6 +42,9 @@ public interface InquiryDAO {
 
 	// 문의 이미지 부분 삭제
 	int deleteInquiryImage(int inquiry_image_no) throws Exception;
+
+	// 문의 답글 가져오기
+	InquiryReplyDTO selectInquiryReply(int inquiryNo) throws Exception;
 	
 	
 }

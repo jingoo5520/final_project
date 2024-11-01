@@ -58,7 +58,7 @@
 						+ `<div class="col-lg-2 col-md-2 col-12">\${inquiry.inquiry_no }</div>`
 						+ `<div class="col-lg-6 col-md-6 col-12">\${inquiry.inquiry_title }</div>`
 						+ `<div class="col-lg-2 col-md-2 col-12">\${date}</div>`
-						+ `<div class="col-lg-2 col-md-2 col-12">\${inquiry.inquiry_status }</div>`
+						+ `<div class="col-lg-2 col-md-2 col-12">\${inquiry.inquiry_status == "W" ? "답변 대기" : "답변 완료"} </div>`
 						+ `</div>`
 						+ `</div>`;
 				});
@@ -215,7 +215,7 @@
 										<div class="col-lg-2 col-md-2 col-12">
 											<fmt:formatDate value="${inquiry.inquiry_reg_date}" pattern="yyyy-MM-dd" />
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">${inquiry.inquiry_status }</div>
+										<div class="col-lg-2 col-md-2 col-12">${inquiry.inquiry_status == "W" ? "답변 대기" : "답변 완료"} </div>
 									</div>
 								</div>
 							</c:forEach>

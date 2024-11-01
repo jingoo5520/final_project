@@ -42,88 +42,42 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
-	let pageNo = 1;
-	let pagingSize = 5;
-	let pageCntPerBlock = 10;
-
-	//문의 리스트 출력
-	function showInquiryList(pageNo) {
+	//문의 답글 저장
+	function saveInquiryReply(replyNo){
+		let inquiryReplyNo = 0;
+		
+		if((typeof replyNo) != 'undefined'){
+			inquiryReplyNo = replyNo;
+		}
+		
+		console.log(typeof inquiryReplyNo);
 		
 		$.ajax({
-			url : '/admin/inquiry/getInquiries',
-			type : 'GET',
-			dataType : 'json',
+			url : '/admin/inquiry/saveInquiryReply',
+			type : 'POST',
+			dataType: 'text',
 			data : {
-				"pageNo" : pageNo,
-				"pagingSize" : pagingSize,
-				"pageCntPerBlock" : pageCntPerBlock
+				"inquiryNo" : ${inquiryDetail.inquiry_no},
+				"replyContent" : $("#replyContent").val(),
+				"inquiryReplyNo" : inquiryReplyNo
 			},
 			success : function(data) {
 				console.log(data);
-	
-				let listOutput = '';
-				let paginationOutput = '';
-	
-				$.each(data.list, function(index, inquiry) {
-					let timestamp = inquiry.inquiry_reg_date;
-					let date = new Date(timestamp);
-					
-					let year = date.getFullYear();
-					let month = String(date.getMonth() + 1).padStart(2, '0'); 
-					let day = String(date.getDate()).padStart(2, '0'); 
-
-				    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
-					
-					listOutput += '<tr>' 
-						+ `<td>\${inquiry.inquiry_no}</td>`
-						+ `<td>\${inquiry.inquiry_title}</td>`
-						+ `<td>\${inquiry.member_id}</td>`
-						+ `<td>\${date}</td>`
-						+ `<td>\${inquiry.inquiry_type}</td>`
-						+ `<td>\${inquiry.inquiry_status}</td>`
-						+ '</tr>';
-				});
-	
-				$('#inquiryTableBody').html(listOutput);
-				
-				if(data.pi.pageNo == 1){
-					paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
-				} else {
-					paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} - 1)"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
-				}
-				
-				
-				for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
-					if(i == data.pi.pageNo) {
-						paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;
-					} else {
-						paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;	
-					}
-				}
-				
-				
-				if(data.pi.pageNo == data.pi.totalPageCnt){
-					paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-				} else {
-					paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} + 1)"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-				}
-				
-				$('.pagination').html(paginationOutput);
+				location.href = "/admin/inquiry/adminInquiries";
 			},
 			error : function(error) {
 				console.log(error);
 			}
 		});
 	}
-
 </script>
 </head>
 
 <style>
-table tr:hover {
-	background-color: rgba(0, 123, 255, 0.1);
-	transition: background-color 0.3s ease;
-	cursor: pointer;
+#saveInquiryReplyBtnArea {
+	display: flex;
+	flex-direction: row;
+	justify-content: right;
 }
 </style>
 
@@ -156,80 +110,79 @@ table tr:hover {
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
 						<div class="card">
-							<h5 class="card-header">문의 목록</h5>
-							<div class="table-responsive text-nowrap">
-								<table class="table">
-									<thead class="table-light">
-										<tr>
-											<th>번호</th>
-											<th>문의 제목</th>
-											<th>문의 회원</th>
-											<th>작성 시간</th>
-											<th>문의 타입</th>
-											<th>문의 상태</th>
-										</tr>
-									</thead>
-									<tbody id="inquiryTableBody" class="table-border-bottom-0">
+							<h5 class="card-header">문의 내용</h5>
+							<div class="card-body">
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 번호</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.inquiry_no }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 제목</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.inquiry_title }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 회원</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.member_id }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 날짜</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="<fmt:formatDate value='${inquiryDetail.inquiry_reg_date}' pattern='yyyy-MM-dd' />" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 타입</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.inquiry_type }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 상품</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.product_name }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 내용</label>
+									<div class="col-md-10">
+										<textarea rows="15" class="form-control" id="" readonly>${inquiryDetail.inquiry_content }</textarea>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 이미지</label>
+									<div class="col-md-10">
+										<div class="row">
+											<c:forEach var="img" items="${inquiryImgList}">
+												<div class="col-lg-6 col-md-6 col-sm-12 " style="padding: 5px;">
+													<img src="${img.inquiry_image_uri}" class="img-fluid">
+												</div>
+											</c:forEach>
+										</div>
+									</div>
+								</div>
 
-										<c:forEach var="inquiry" items="${inquiryData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
-											<tr onclick="location.href='/admin/inquiry/adminInquiryDetail?inquiryNo=${inquiry.inquiry_no}'">
-												<td class="">${inquiry.inquiry_no}</td>
-												<td class="">${inquiry.inquiry_title}</td>
-												<td class="">${inquiry.member_id}</td>
-												<td>
-													<fmt:formatDate value="${inquiry.inquiry_reg_date}" pattern="yyyy-MM-dd" />
-												</td>
-												<td class="">${inquiry.inquiry_type}</td>
-												<td class="">${inquiry.inquiry_status}</td>
-											</tr>
-										</c:forEach>
+								<hr class="mt-4">
 
-									</tbody>
-								</table>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 답글</label>
+									<div class="col-md-10">
+										<textarea id="replyContent" rows="15" class="form-control">${inquiryReply.reply_content }</textarea>
+									</div>
+								</div>
 							</div>
-
-							<!-- 페이지 네이션 -->
-							<div class="mt-4">
-								<nav aria-label="Page navigation">
-									<ul class="pagination justify-content-center">
-										<c:choose>
-											<c:when test="${inquiryData.pi.pageNo == 1}">
-												<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
-											</c:when>
-											<c:otherwise>
-												<li class="page-item prev"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
-											</c:otherwise>
-										</c:choose>
-
-										<c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
-											<c:choose>
-												<c:when test="${inquiryData.pi.pageNo == i}">
-													<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(${i})">${i}</a></li>
-												</c:when>
-												<c:otherwise>
-													<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(${i})">${i}</a></li>
-												</c:otherwise>
-											</c:choose>
-
-										</c:forEach>
-
-										<c:choose>
-											<c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
-												<li class="page-item disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
-											</c:when>
-											<c:otherwise>
-												<li class="page-item next"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
-											</c:otherwise>
-										</c:choose>
-
-									</ul>
-								</nav>
-							</div>
-							<!-- / 페이지 네이션 -->
 
 						</div>
-						
+
+						<div id="saveInquiryReplyBtnArea">
+							<button id="" type="button" class="btn btn-outline-primary mt-4 me-1" onclick="location.href='/admin/inquiry/adminInquiries'">목록으로 돌아가기</button>
+							<button id="saveInquiryReplyBtn" type="button" class="btn btn-outline-primary mt-4" onclick="saveInquiryReply(${inquiryReply.inquiry_reply_no})">답글 저장</button>
+						</div>
 
 					</div>
 				</div>

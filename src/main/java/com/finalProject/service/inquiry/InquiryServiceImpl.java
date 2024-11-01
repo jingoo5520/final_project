@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
@@ -96,11 +97,13 @@ public class InquiryServiceImpl implements InquiryService {
 	public Map<String, Object> getInquiry(int inquiryNo) throws Exception {
 		InquiryDetailDTO inquiryDetail = iDao.selectInquiry(inquiryNo);
 		List<InquiryImgDTO> inquiryImages = iDao.selectInquiryImages(inquiryNo);
+		InquiryReplyDTO inquiryReplyDTO = iDao.selectInquiryReply(inquiryNo);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 
 		result.put("inquiryDetail", inquiryDetail);
 		result.put("inquiryImgList", inquiryImages);
+		result.put("inquiryReply", inquiryReplyDTO);
 
 		return result;
 	}
