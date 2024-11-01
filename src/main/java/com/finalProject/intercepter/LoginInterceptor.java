@@ -55,12 +55,17 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					ses.setAttribute("loginMember", loginDTO); // 로그인 세션 생성(로그인 처리)
 					String rememberPath = ses.getAttribute("rememberPath") + "";
 					result = false; // postHandle과 컨트롤러 서블릿 동작을 하지 않도록 false반환
-					if (!rememberPath.equals("null")) { // rememberPath가 있다면
-						System.out.println("rememberPath있음 : " + rememberPath);
-						response.sendRedirect(rememberPath); // rememberPath로 보냄
+					if (loginDTO.getIs_admin().equals("1") || loginDTO.getIs_admin().equals("9")) { // 관리자 아이디인 경우
+						System.out.println("관리자 로그인 확인");
+						response.sendRedirect("/admin");
 					} else {
-						System.out.println("rememeberPath없음");
-						response.sendRedirect("/"); // 인덱스로 보냄
+						if (!rememberPath.equals("null")) { // rememberPath가 있다면
+							System.out.println("rememberPath있음 : " + rememberPath);
+							response.sendRedirect(rememberPath); // rememberPath로 보냄
+						} else {
+							System.out.println("rememeberPath없음");
+							response.sendRedirect("/"); // 인덱스로 보냄
+						}
 					}
 				} else {
 					System.out.println("자동 로그인 만료");
@@ -101,12 +106,17 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
 				}
 				String rememberPath = ses.getAttribute("rememberPath") + "";
-				if (!rememberPath.equals("null")) { // rememberPath가 있다면
-					response.sendRedirect(rememberPath); // rememberPath로 보냄
-					System.out.println("rememberPath있음 : " + rememberPath);
+				if (loginMember.getIs_admin().equals("1") || loginMember.getIs_admin().equals("9")) { // 관리자 아이디인 경우
+					System.out.println("관리자 로그인 확인");
+					response.sendRedirect("/admin");
 				} else {
-					System.out.println("rememeberPath없음");
-					response.sendRedirect("/"); // 인덱스로 보냄
+					if (!rememberPath.equals("null")) { // rememberPath가 있다면
+						response.sendRedirect(rememberPath); // rememberPath로 보냄
+						System.out.println("rememberPath있음 : " + rememberPath);
+					} else {
+						System.out.println("rememeberPath없음");
+						response.sendRedirect("/"); // 인덱스로 보냄
+					}
 				}
 			} else {
 				System.out.println("아이디 또는 비밀번호가 일치하지 않습니다.");

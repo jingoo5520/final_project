@@ -3,7 +3,8 @@ package com.finalProject.persistence.product;
 import java.util.List;
 import java.util.Map;
 
-import com.finalProject.model.ProductDTO;
+import com.finalProject.model.product.PagingInfo;
+import com.finalProject.model.product.ProductDTO;
 
 public interface UserProductDAO {
 	
@@ -22,4 +23,10 @@ public interface UserProductDAO {
 	List<ProductDTO> getProductById (int productId) throws Exception;
 
 	ProductDTO getProductDetailById(int productId) throws Exception;
+
+	// 총 게시물 수 조회
+	int countSearchResult(String search, Integer category) throws Exception;
+
+	// 검색된 상품 조회
+	List<ProductDTO> searchProducts(String search, Integer category, int startRowIndex, int pageSize, String sortOrder);
 }
