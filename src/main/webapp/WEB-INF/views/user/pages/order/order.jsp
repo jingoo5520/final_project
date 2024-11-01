@@ -24,16 +24,34 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
+			
+			// 값 출력을 위한 js
+			
 			let totalPrices = 0;
+			let totalOriginalPrices = 0;
 			let totalCount = $("div.product-list").length;
+			let totalPoints = 0;
+			
+			
 			
 			$(".productPrice").each(function() {
 				let productPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
 				totalPrices += productPriceText;
 			});
 			
+			$(".originalPrice").each(function() {
+				let originalPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
+				totalOriginalPrices += originalPriceText;
+			});
+			
+			
+			$("#totalOriginalPrices").text(totalOriginalPrices.toLocaleString('ko-KR') + " 원");
 			$("#totalProductCount").text(totalCount + " 개");
 			$("#totalProductPrice").text(totalPrices.toLocaleString('ko-KR') + " 원");
+			
+			
+			
+			// css 및 input 태그 값 수정 js
 			
 			$('.deliveryOption').change(function() {
 		        if ($(this).val() == 'userInput') {
@@ -64,9 +82,6 @@
 		        }
 		    });
 		    
-		    $('.single-payment-option')
-		    
-		    
 			$('input[name="phoneNumber"]').on('keyup', function() {
 			    // 숫자만 남기기 위해 숫자가 아닌 문자를 모두 제거
 			    let inputVal = $(this).val().replace(/[^0-9]/g, '');
@@ -87,7 +102,38 @@
 			    $(this).val(inputVal);
 			});
 			
+			$('input[name="point"]').on('keyup', function() {
+				
+			    // 숫자만 남기기 위해 숫자가 아닌 문자를 모두 제거
+			    let inputVal = $(this).val().replace(/[^0-9]/g, '');
+
+			    // orderMember가 비어 있는지 확인
+			    let memberPoint = typeof ${orderMember.member_point} !== 'undefined' ? ${orderMember.member_point} : null;
+			    let allProductPrice = Number($('.allProductPrice').text()); // 모든 제품 가격 (숫자형으로 변환)
+
+			    // 1. orderMember가 있을 경우만 조건 체크
+			    if (memberPoint !== null && Number(inputVal) > memberPoint) {
+			        inputVal = memberPoint;
+			    }
+
+			    // 2. 조건: inputVal이 .allProductPrice를 넘길 수 없음
+			    if (Number(inputVal) > allProductPrice) {
+			        alert('입력하신 값이 총 상품 가격을 초과할 수 없습니다.');
+			        inputVal = allProductPrice;
+			    }
+
+			    // 인풋 필드에 최종 값 설정
+			    $(this).val(inputVal);
+			});
+		    
 		})
+		
+		function pointUse() {
+			$("#pointDC").val(Number($('input[name="point"]').val()));
+			$("#usePoint").val(Number($('input[name="point"]').val()));
+			
+			console.log($("#usePoint").val());
+		}
 		
 	</script>
 	
@@ -277,6 +323,7 @@
 	    color: #FFFFFF !important;
 	}
 	
+	
     </style>
     
 </head>
@@ -328,35 +375,35 @@
 		<p> ${orderProduct } </p>
 	</c:forEach>
 	</c:if>
-	<c:if test="${empty orderProductList }">
-		<h1> 안넘어오는디;;</h1>
-	</c:if>
-    <section class="checkout-wrapper section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="checkout-steps-form-style-1">
-                        <ul id="accordionExample">
-                            <li>
-                               <h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree"
-                                    aria-expanded="false" aria-controls="collapseThree">
-                                    <div class="row">
-                                    	<div class="left col-lg-6 col-md-6 col-12">
-		                                    <span>주문 상품</span>
-                                    	</div>
-                                    	<div class="right col-lg-6 col-md-6 col-12">
-		                                    <span id="totalProductCount"></span>
-		                                    <span id="totalProductPrice"></span>
-                                    	</div>
-                                    </div>
-                                </h5>
-                                <section class="checkout-steps-form-content collapse" id="collapseThree"
-                                    aria-labelledby="headingThree">
-                                    <div class="row align-items-center product-list-title">
-                                    	<div class="col-lg-1 col-md-1 col-12">
+	
+	
+	<section class="checkout-wrapper section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-lg-8">
+				<!--====== 주문 정보 ======-->
+					<div class="checkout-steps-form-style-1">
+						<ul id="accordionExample">
+						<!--====== 주문 상품 정보 ======-->
+							<li>
+								<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+									<div class="row">
+										<div class="left col-lg-6 col-md-6 col-12">
+											<span>주문 상품</span>
+										</div>
+										<div class="right col-lg-6 col-md-6 col-12">
+											<span id="totalProductCount"></span>
+											<span id="totalProductPrice"></span>
+										</div>
+									</div>
+								</h5>
+								
+								<section class="checkout-steps-form-content collapse" id="collapseThree" aria-labelledby="headingThree">
+									<div class="row align-items-center product-list-title">
+										<div class="col-lg-1 col-md-1 col-12">
 											<p></p>
 										</div>
-                                    	<div class="col-lg-5 col-md-5 col-12">
+										<div class="col-lg-5 col-md-5 col-12">
 											<p>상품 / 수량 정보</p>
 										</div>
 										<div class="col-lg-2 col-md-2 col-12">
@@ -368,154 +415,387 @@
 										<div class="col-lg-2 col-md-2 col-12">
 											<p>결제금액</p>
 										</div>
-                                    </div>
+									</div>
                                     
-                                    <c:forEach var="orderProduct" items="${orderProductList }">
-                                    	<div class="row align-items-center product-list">
-                                    		<div class="col-lg-1 col-md-1 col-12">
-												<a href="/product/productDetail?productNo=${orderProduct.product_no }">
-													<img class="productImage" src="${orderProduct.image_main_url }" alt="productImage">
-												</a>
-											</div>
-	                                    	<div class="col-lg-5 col-md-5 col-12">
-												<h6 class="product-name">
-													<a href="/product/productDetail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
-												</h6>
-												<p>
-													<span>수량: ${orderProduct.quantity } 개</span>
-												</p>
-											</div>
-											<div class="col-lg-2 col-md-2 col-12">
-												<p><span>
-													<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity * orderProduct.dc_rate }" type="number" pattern="#,###" /> 원
-												</span></p>
-											</div>
-											<div class="col-lg-2 col-md-2 col-12">
-												<c:choose>
-													<c:when test="${not empty orderMember }">
-														<p><span>
-															<fmt:formatNumber value="${Math.floor(orderProduct.product_price * orderProduct.quantity * orderMember.level_point / 10) * 10}" type="number" pattern="#,###" /> P
-														</span></p>
-													</c:when>
-													<c:otherwise>
-														<p>0 P</p>
-													</c:otherwise>
-												</c:choose>
-											</div>
-											<div class="col-lg-2 col-md-2 col-12">
-												<c:if test="${orderProduct.dc_rate != 0 }">
-													<p><span class="productPrice">
-														<em><del style="color: #b7b7b7;"><fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity }" type="number" pattern="#,###" /> 원</del></em>
-													</span></p>
-												</c:if>
-												<p><span class="productPrice">
-													<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity * (1 - orderProduct.dc_rate) }" type="number" pattern="#,###" /> 원
-												</span></p>
-											</div>
-                                    	</div>
-	                                </c:forEach>
+								<c:forEach var="orderProduct" items="${orderProductList }">
+								
+									<div class="row align-items-center product-list">
+										<div class="col-lg-1 col-md-1 col-12">
+											<a href="/product/productDetail?productNo=${orderProduct.product_no }">
+												<img class="productImage" src="${orderProduct.image_main_url }" alt="productImage">
+											</a>
+										</div>
+										<div class="col-lg-5 col-md-5 col-12">
+											<h6 class="product-name">
+												<a href="/product/productDetail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
+											</h6>
+											<p>
+												<span>수량: ${orderProduct.quantity } 개</span>
+											</p>
+										</div>
+										<div class="col-lg-2 col-md-2 col-12">
+											<p><span class="dcPrice">
+												<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity * orderProduct.dc_rate }" type="number" pattern="#,###" /> 원
+											</span></p>
+										</div>
+										<div class="col-lg-2 col-md-2 col-12">
+										
+									<c:choose>
+										<c:when test="${not empty orderMember }">
+											<p><span class="earnedPoint">
+												<fmt:formatNumber value="${Math.floor(orderProduct.product_price * orderProduct.quantity * orderMember.level_point / 10) * 10}" type="number" pattern="#,###" /> P
+											</span></p>
+										</c:when>
+										<c:otherwise>
+												<p>0 P</p>
+										</c:otherwise>
+									</c:choose>
+									
+										</div>
+										<div class="col-lg-2 col-md-2 col-12">
+										
+										<c:if test="${orderProduct.dc_rate != 0 }">
+											<p><span class="originalPrice"><em><del style="color: #b7b7b7;">
+												<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity }" type="number" pattern="#,###" /> 원
+											</del></em></span></p>
+										</c:if>
+											
+											<p><span class="productPrice">
+												<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity * (1 - orderProduct.dc_rate) }" type="number" pattern="#,###" /> 원
+											</span></p>
+										</div>
+									</div>
+								</c:forEach>
+								
                                 </section>
                             </li>
-                           	<c:if test="${empty orderMember }">
-                            	<li>
-                                	<h5 class="title" data-bs-toggle="collapse" data-bs-target="#collapseFour"
-                                    	aria-expanded="true" aria-controls="collapseFour">
-                                    	<div class="row">
-	                                    	<div class="left col-lg-2 col-md-2 col-12">
-			                                    <span>주문자 정보</span>
-	                                    	</div>
-	                                    	<div class="right col-lg-6 col-md-8 col-12">
-			                                    <span>주문자 정보에 입력하신 정보로 비회원 주문조회 하실 수 있습니다.</span>
-	                                    	</div>
-	                                    	<div class="right col-lg-4 col-md-2 col-12">
-	                                    	</div>
-	                                    </div>
-	                                </h5>
-                                	<section class="checkout-steps-form-content collapse show" id="collapseFour"
-                                    		aria-labelledby="headingFour">
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="row form-input form align-items-center">
-	                                               	<div class="col-lg-4 col-md-4 col-12">
-	                                                	<h5 class="ordererHeader">이름</h5>
-	                                               	</div>
-	                                               	<div class="col-lg-8 col-md-8 col-12">
-	                                             		<input type="text" placeholder="이름을 입력해주세요" name="name">
-	                                           		</div>
-	                                           	</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="row form-input form align-items-center">
-	                                               	<div class="col-lg-4 col-md-4 col-12">
-	                                                	<h5 class="ordererHeader">휴대폰 번호</h5>
-	                                               	</div>
-	                                               	<div class="col-lg-8 col-md-8 col-12">
-	                                             		<input type="text" placeholder="휴대폰 번호를 입력해주세요" name="phoneNumber">
-	                                           		</div>
-	                                           	</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="single-form form-default">
-                                                <div class="row form-input form align-items-center">
-	                                               	<div class="col-lg-4 col-md-4 col-12">
-	                                                	<h5 class="ordererHeader">이메일</h5>
-	                                               	</div>
-	                                               	<div class="col-lg-8 col-md-8 col-12">
-	                                             		<input type="text" placeholder="이메일을 입력해주세요" name="email">
-	                                           		</div>
-	                                           	</div>
-                                            </div>
-                                        </div>
-                                	</section>
-	                            </li>
-	                            <li>
-	                               <h5 class="title" data-bs-toggle="collapse" data-bs-target="#collapsefive"
-	                                    aria-expanded="true" aria-controls="collapsefive">배송지 정보</h5>
-	                                <section class="checkout-steps-form-content collapse show" id="collapsefive"
-	                                    aria-labelledby="headingfive">
-	                                    	<nav>
-												<div class="nav nav-tabs" id="nav-tab" role="tablist">
-													<button class="nav-link active" id="nav-addressInput-tab" data-bs-toggle="tab" data-bs-target="#nav-addressInput" type="button" role="tab" aria-controls="nav-addressInput" aria-selected="false" disabled>신규입력</button>
+                            <!--====== 주문 상품 정보 끝 ======-->
+					<c:choose>
+						<c:when test="${not empty orderMember }">
+						<!--====== 주문자 정보 (회원) ======-->
+						
+							<li>
+								<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+									<div class="row">
+										<div class="left col-lg-6 col-md-6 col-12">
+											<span>주문자 정보</span>
+										</div>
+										<div class="right col-lg-6 col-md-6 col-12">
+											<span>${orderMember.member_name }</span>
+											<span>${orderMember.phone_number }</span>
+										</div>
+									</div>
+								</h5>
+								
+								<section class="checkout-steps-form-content collapse" id="collapseFour" aria-labelledby="headingFour">
+								<!--====== 주문자 이름 (회원) ======-->
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="row form-input form align-items-center">
+												<div class="col-lg-4 col-md-4 col-12">
+													<h5 class="ordererHeader">이름</h5>
 												</div>
-											</nav>
-		                                    <div class="col-md-6">
-												<div class="tab-content" id="nav-tabContent">
-													<div class="tab-pane fade show active" id="nav-addressInput" role="tabpanel" aria-labelledby="nav-addressInput-tab" tabindex="0">
-														<div class="single-form form-default">
-															<div class="form-input form addressForm">
-																<h5 class="ordererHeader">주소</h5>
-																<div class="addressSearchArea">
-																	<input class="postNumber" type="text" id="postcode" placeholder="우편번호">
-																	<input class="searchPost" type="button" onclick="sample6_execDaumPostcode()" value="검색"><br>
-																</div>
-																<input type="text" id="address" placeholder="주소"><br>
-																<input type="text" id="detailAddress" placeholder="상세주소">
-															</div>
+												<div class="col-lg-8 col-md-8 col-12">
+													<input type="text" placeholder="Name" name="name" value="${orderMember.member_name }" readonly>
+												</div>
+											</div>
+										</div>
+									</div>
+								<!--====== 주문자 이름 끝 (회원) ======-->
+								
+								<!--====== 주문자 휴대폰 번호 (회원) ======-->	
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="row form-input form align-items-center">
+												<div class="col-lg-4 col-md-4 col-12">
+													<h5 class="ordererHeader">휴대폰 번호</h5>
+												</div>
+												<div class="col-lg-8 col-md-8 col-12">
+													<input type="text" placeholder="Phone Number" name="phoneNumber" value="${orderMember.phone_number }" readonly>
+												</div>
+											</div>
+										</div>
+									</div>
+								<!--====== 주문자 휴대폰 번호 끝 (회원) ======-->
+								
+								<!--====== 주문자 이메일 (회원) ======-->
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="row form-input form align-items-center">
+												<div class="col-lg-4 col-md-4 col-12">
+													<h5 class="ordererHeader">이메일</h5>
+												</div>
+												<div class="col-lg-8 col-md-8 col-12">
+													<input type="text" placeholder="Email Address" name="email" value="${orderMember.email }" readonly>
+												</div>
+											</div>
+										</div>
+									</div>
+								<!--====== 주문자 이메일 끝 (회원) ======-->
+									
+								</section>
+							</li>
+							
+							
+						<!--====== 배송지 정보 (회원) ======-->
+							<li>
+								<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive" aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
+								
+								<section class="checkout-steps-form-content collapse" id="collapsefive" aria-labelledby="headingfive">
+								<!--====== 배송지 정보 헤더 (회원) ======-->
+									<nav>
+										<div class="nav nav-tabs" id="nav-tab" role="tablist">
+											<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">배송지 목록</button>
+											<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">신규입력</button>
+										</div>
+									</nav>
+								<!--====== 배송지 정보 헤더 끝 (회원) ======-->
+								
+									<div class="col-md-6">
+									
+										<div class="tab-content" id="nav-tabContent">
+										<!--====== 배송지 목록 (회원) ======-->
+											<div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+												<div class="single-form form-default">
+													<div class="form-input form addressForm">
+														<h5 class="ordererHeader">주소</h5>
+														<div class="addressSearchArea">
+															<input class="postNumber" type="text" id="postcode" placeholder="우편번호" readonly value="${orderMember.address.split('/')[0] }">
+															<input class="searchPost" type="button" onclick="sample6_execDaumPostcode()" value="검색"><br>
+														</div>
+														<input type="text" id="address" placeholder="주소" value="${orderMember.address.split('/')[1] }" readonly><br>
+														<input type="text" id="detailAddress" placeholder="상세주소" value="${orderMember.address.split('/')[2] }" readonly>
+													</div>
+												</div>
+											</div>
+										<!--====== 배송지 목록 끝 (회원) ======-->
+										
+										<!--====== 배송지 신규입력 (회원) ======-->
+											<div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+												<div class="single-form form-default">
+													<div class="form-input form addressForm">
+														<h5 class="ordererHeader">주소</h5>
+														<div class="addressSearchArea">
+															<input class="postNumber" type="text" id="postcode" placeholder="우편번호">
+															<input class="searchPost" type="button" onclick="sample6_execDaumPostcode()" value="검색"><br>
+														</div>
+														<input type="text" id="address" placeholder="주소"><br>
+														<input type="text" id="detailAddress" placeholder="상세주소">
+													</div>
+													<div class="form-check">
+														<div id="saveDeliveryDiv">
+															<input type="checkbox" class="form-check-input" id="saveDeliveryCheck">
+															<label for="saveDeliveryCheck">기본배송지로 저장</label>
+														</div>
+														<div id="saveAddressDiv">
+															<input type="checkbox" class="form-check-input" id="saveAddressCheck">
+															<label for="saveAddressCheck">회원정보 주소로 저장</label>
 														</div>
 													</div>
 												</div>
-	                                            <div class="single-form form-default">
-	                                                <div class="form-input form">
-	                                                	<label>배송 요청사항</label>
-	                                                	<select class="form-select deliveryOption">
-	                                                		<option value="default" selected>선택해주세요</option>
-	                                                		<option value="dr1">출발전에 전화 부탁드립니다.</option>
-	                                                		<option value="dr2">부재시 경비실에 맡겨주세요.</option>
-	                                                		<option value="dr3">부재시 문앞에 놓아주세요.</option>
-	                                                		<option value="dr4">부재시 휴대폰으로 연락주세요.</option>
-	                                                		<option value="dr5">부재시 문앞에 놓아주세요.</option>
-	                                                		<option value="userInput">직접입력</option>
-	                                                	</select>
-	                                                    <input class="deliveryRequest" type="text" name="deliveryRequest" style="display: none;">
-	                                                </div>
-	                                            </div>
-		                                    </div>
-	                                </section>
-                            </li>
-							</c:if>
+												<div class="single-form form-default deliveryNameForm"  style="display: none;">
+													<div class="form-input form">
+														<h5 class="ordererHeader">배송지명</h5>
+														<input type="text" id="deliveryName" value="${orderMember.member_name }님 배송지">
+													</div>
+												</div>
+											</div>
+										<!--====== 배송지 신규입력 끝 (회원) ======-->
+										</div>
+										
+										<!--====== 배송 요청사항 (회원) ======-->
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<h5 class="ordererHeader">배송 요청사항</h5>
+												<select class="form-select deliveryOption">
+													<option value="default" selected>선택해주세요</option>
+													<option value="dr1">출발전에 전화 부탁드립니다.</option>
+													<option value="dr2">부재시 경비실에 맡겨주세요.</option>
+													<option value="dr3">부재시 문앞에 놓아주세요.</option>
+													<option value="dr4">부재시 휴대폰으로 연락주세요.</option>
+													<option value="dr5">부재시 문앞에 놓아주세요.</option>
+													<option value="userInput">직접입력</option>
+												</select>
+												<input class="deliveryRequest" type="text" name="deliveryRequest" style="display: none;">
+											</div>
+										</div>
+										<!--====== 배송 요청사항 끝 (회원) ======-->
+									</div>
+								<!--====== 배송지 정보 끝 (회원) ======-->
+									
+								</section>
+							</li>
+							
+							<li>
+								<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
+								
+								<section class="checkout-steps-form-content collapse" id="collapseSix" aria-labelledby="headingSix">
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="row form-input form align-items-center">
+												<div class="col-lg-2 col-md-2 col-12">
+													<h5 class="ordererHeader">포인트</h5>
+												</div>
+												<div class="col-lg-6 col-md-6 col-12">
+													<input type="text" placeholder="point" name="point" value="0">
+												</div>
+												<input id="usePoint" type="hidden" value="0">
+												<div class="button col-lg-4 col-md-4 col-12">
+														<button class="btn" onclick="pointUse();">사용</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-md-12">
+										<div class="single-form form-default">
+											<div class="form-check row">
+												<div id="allPointsUse" class="col-lg-4 col-md-4 col-12">
+													<input type="checkbox" class="form-check-input" id="allPointsUse">
+													<label for="allPointsUse">포인트 모두 사용</label>
+												</div>
+												<div class="form-input form col-lg-4 col-md-4 col-12">
+													<label>(${orderMember.member_point }P 보유)</label>
+												</div>
+											</div>
+										</div>
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>할인 합계 : -<span id="pointDC">0</span>원</label>
+											</div>
+										</div>
+									</div>
+									
+								</section>
+							</li>
+						</c:when>
+						
+						<c:otherwise>
+						<!--====== 주문자 정보 (비회원) ======-->
+							<li>
+								<h5 class="title" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+									<div class="row">
+										<div class="left col-lg-2 col-md-2 col-12">
+											<span>주문자 정보</span>
+										</div>
+										<div class="right col-lg-6 col-md-8 col-12">
+											<span>주문자 정보에 입력하신 정보로 비회원 주문조회 하실 수 있습니다.</span>
+										</div>
+										<div class="right col-lg-4 col-md-2 col-12">
+											<p></p>
+										</div>
+									</div>
+								</h5>
+								
+								<section class="checkout-steps-form-content collapse show" id="collapseFour" aria-labelledby="headingFour">
+								<!--====== 주문자 이름 (비회원) ======-->
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="row form-input form align-items-center">
+												<div class="col-lg-4 col-md-4 col-12">
+													<h5 class="ordererHeader">이름</h5>
+												</div>
+												<div class="col-lg-8 col-md-8 col-12">
+													<input type="text" placeholder="이름을 입력해주세요" name="name">
+												</div>
+											</div>
+										</div>
+									</div>
+								<!--====== 주문자 이름 끝 (비회원) ======-->
+								
+								<!--====== 주문자 휴대폰 번호 (비회원) ======-->
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="row form-input form align-items-center">
+												<div class="col-lg-4 col-md-4 col-12">
+													<h5 class="ordererHeader">휴대폰 번호</h5>
+												</div>
+												<div class="col-lg-8 col-md-8 col-12">
+													<input type="text" placeholder="휴대폰 번호를 입력해주세요" name="phoneNumber">
+												</div>
+											</div>
+										</div>
+									</div>
+								<!--====== 주문자 휴대폰 번호 끝 (비회원) ======-->
+								
+								<!--====== 주문자 이메일 끝 (비회원) ======-->
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<div class="row form-input form align-items-center">
+												<div class="col-lg-4 col-md-4 col-12">
+													<h5 class="ordererHeader">이메일</h5>
+												</div>
+												<div class="col-lg-8 col-md-8 col-12">
+													<input type="text" placeholder="이메일을 입력해주세요" name="email">
+												</div>
+											</div>
+										</div>
+									</div>
+								<!--====== 주문자 이메일 끝 (비회원) ======-->
+									
+								</section>
+							</li>
+						<!--====== 주문자 정보 끝 (비회원) ======-->
+						
+						<!--====== 배송지 정보 (비회원) ======-->
+							<li>
+								<h5 class="title" data-bs-toggle="collapse" data-bs-target="#collapsefive" aria-expanded="true" aria-controls="collapsefive">배송지 정보</h5>
+								
+								<section class="checkout-steps-form-content collapse show" id="collapsefive" aria-labelledby="headingfive">
+								<!--====== 배송지 정보 헤더 (비회원) ======-->
+									<nav>
+										<div class="nav nav-tabs" id="nav-tab" role="tablist">
+											<button class="nav-link active" id="nav-addressInput-tab" data-bs-toggle="tab" data-bs-target="#nav-addressInput" type="button" role="tab" aria-controls="nav-addressInput" aria-selected="false" disabled>신규입력</button>
+										</div>
+									</nav>
+								<!--====== 배송지 정보 헤더 끝 (비회원) ======-->
+								
+								<!--====== 배송지 정보 (비회원) ======-->
+									<div class="col-md-6">
+									<!--====== 배송지 주소 입력 (비회원) ======-->
+										<div class="tab-content" id="nav-tabContent">
+											<div class="tab-pane fade show active" id="nav-addressInput" role="tabpanel" aria-labelledby="nav-addressInput-tab" tabindex="0">
+												<div class="single-form form-default">
+													<div class="form-input form addressForm">
+														<h5 class="ordererHeader">주소</h5>
+														<div class="addressSearchArea">
+															<input class="postNumber" type="text" id="postcode" placeholder="우편번호">
+															<input class="searchPost" type="button" onclick="sample6_execDaumPostcode()" value="검색"><br>
+														</div>
+														<input type="text" id="address" placeholder="주소"><br>
+														<input type="text" id="detailAddress" placeholder="상세주소">
+													</div>
+												</div>
+											</div>
+										</div>
+									<!--====== 배송지 주소 입력 끝 (비회원) ======-->
+									
+									<!--====== 배송요청사항 입력 (비회원) ======-->
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>배송 요청사항</label>
+												<select class="form-select deliveryOption">
+													<option value="default" selected>선택해주세요</option>
+													<option value="dr1">출발전에 전화 부탁드립니다.</option>
+													<option value="dr2">부재시 경비실에 맡겨주세요.</option>
+													<option value="dr3">부재시 문앞에 놓아주세요.</option>
+													<option value="dr4">부재시 휴대폰으로 연락주세요.</option>
+													<option value="dr5">부재시 문앞에 놓아주세요.</option>
+													<option value="userInput">직접입력</option>
+												</select>
+												<input class="deliveryRequest" type="text" name="deliveryRequest" style="display: none;">
+											</div>
+										</div>
+									<!--====== 배송요청사항 입력 끝(비회원) ======-->
+									
+									</div>
+								<!--====== 배송지 정보 끝(비회원) ======-->
+									
+								</section>
+							</li>
+							
+						</c:otherwise>
+					</c:choose>
                             <c:if test="${not empty orderMember }">
                                 <li>
                                 	<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapseFour"
@@ -649,12 +929,39 @@
 	                                   aria-expanded="false" aria-controls="collapseSix">포인트 정보</h5>
 	                               <section class="checkout-steps-form-content collapse" id="collapseSix"
 	                                   aria-labelledby="headingSix">
-	                                    <div class="col-md-6">
-	                                            <div class="single-form form-default">
-	                                                <div class="form-input form">
-	                                                	<label>보유 포인트 : ${orderMember.member_point }</label>
-	                                                </div>
-	                                            </div>
+	                                   	<div class="col-md-6">
+                                            <div class="single-form form-default">
+                                                <div class="row form-input form align-items-center">
+                                                	<div class="col-lg-2 col-md-2 col-12">
+	                                                	<h5 class="ordererHeader">포인트</h5>
+                                                	</div>
+                                                	<div class="col-lg-6 col-md-6 col-12">
+                                                    	<input type="text" placeholder="point" name="point" value="0">
+                                                    </div>
+                                                    <input id="usePoint" type="hidden" value="0">
+                                                    <div class="button col-lg-4 col-md-4 col-12">
+				                                        <button class="btn" onclick="pointUse();">사용</button>
+				                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+	                                    <div class="col-md-12">
+	                                    	<div class="single-form form-default">
+	                                    		<div class="form-check row">
+													<div id="allPointsUse" class="col-lg-4 col-md-4 col-12">
+														<input type="checkbox" class="form-check-input" id="allPointsUse">
+														<label for="allPointsUse">포인트 모두 사용</label>
+													</div>
+													<div class="form-input form col-lg-4 col-md-4 col-12">
+                                               			<label>(${orderMember.member_point }P 보유)</label>
+                                                    </div>
+												</div>
+                                            </div>
+                                            <div class="single-form form-default">
+                                                <div class="form-input form">
+                                                	<label>할인 합계 : -<span id="pointDC">0</span>원</label>
+                                                </div>
+                                            </div>
 	                                    </div>
 	                               </section>
 								</li>
@@ -741,28 +1048,28 @@
                             <div class="sub-total-price" style="color: black;">
                                 <div class="total-price">
                                     <p class="value">총 상품금액</p>
-                                    <p class="price allProductPrice">0 원</p>
+                                    <p class="price" id="totalOriginalPrices">0 원</p>
                                 </div>
                                  <div class="total-price discount">
                                     <p class="value">총 할인금액</p>
-                                    <p class="price">- 0 원</p>
+                                    <p class="price">- <span id="totalDCPrices">0 원</span></p>
                                 </div>
                                 <div class="total-price shipping">
                                     <p class="value">총 배송비</p>
-                                    <p class="price">0 원</p>
+                                    <p class="price">2500 원</p>
                                 </div>
                             </div>
 
                             <div class="total-payable">
                                 <div class="payable-price">
                                     <h6 class="value bold" style="color: black;">총 결제금액</h6>
-                                    <h6 class="price allProductPrice" style="color: red;">0 원</h6>
+                                    <h6 class="price totalPrice" style="color: red;">0 원</h6>
                                 </div>
 	                                <div class="sub-total-price">
 	                                	<div class="total-price point mb-30">
 	                                    	<p class="value">총 적립예정 포인트</p>
 	                                    	<c:if test="${not empty orderMember }">
-	                                    		<p class="price" id="point">0 P</p>
+	                                    		<p class="price" id="totalPoints">0 P</p>
 	                                    	</c:if>
 	                                    	<c:if test="${empty orderMember }">
 	                                    		<p class="price">0 P</p>
@@ -771,7 +1078,7 @@
 	                                </div>
                             </div>
                             <div class="price-table-btn button">
-                                <a href="javascript:void(0)" class="btn" onclick="requestPayment()">(총 1개) <span class="price allProductPrice">0</span> 원 결제하기</a>
+                                <a href="javascript:void(0)" class="btn" onclick="requestPayment()">(총 1개) <span class="price totalPrice">0 원</span> 결제하기</a>
                             </div>
                         </div>
                     </div>
@@ -780,6 +1087,8 @@
         </div>
     </section>
     <!--====== Checkout Form Steps Part Ends ======-->
+    
+    
     
     <jsp:include page="../footer.jsp"></jsp:include>
 
