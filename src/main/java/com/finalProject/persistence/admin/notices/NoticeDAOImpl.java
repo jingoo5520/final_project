@@ -113,7 +113,10 @@ public class NoticeDAOImpl implements NoticeDAO {
 
 	@Override
 	public List<NoticeDTO> getNoticesWithPagination(int offset, int limit) throws Exception {
-	    return ses.selectList(ns + "getAllNotices", Map.of("offset", offset, "limit", limit));
+		Map<String, Object> params = new HashMap<>();
+		params.put("offset", offset);
+		params.put("limit", limit);
+	    return ses.selectList(ns + "getAllNotices", params);
 	}
 
 //	@Override

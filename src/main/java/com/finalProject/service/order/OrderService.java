@@ -11,9 +11,14 @@ public interface OrderService {
 	Map<String, String> requestApprovalKakaopayPayment(String tid, String pg_token);
 
 	Map<String, String> requestApproval(String base64SecretKey, String paymentKey, int amount, String orderId);
-
-	String saveExpectedTotalPrice(int amount) throws Exception;
+	
+	void setPaymentModuleKey(String orderId, String key) throws Exception;
+	
+	String getPaymentModuleKey(String orderId);
 
 	int getExpectedTotalPrice(String orderId);
 
+	void saveExpectedTotalPrice(int amount, String orderId) throws Exception;
+
+	void makePayment(String orderId, Integer amount, String payModule, String method) throws Exception;
 }

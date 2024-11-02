@@ -26,20 +26,46 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	@Transactional(rollbackFor={Exception.class})
-	// 세션에 저장된 현재 로그인된 멤버의 아이디를 통해 현재 주문의 예상결제금액을 업데이트하고, 주문번호를 반환한다.
-	public String saveExpectedTotalPrice(int amount) throws Exception {
-		// TODO : 세션에 저장된 현재 로그인된 멤버의 아이디를 얻어와야 함, 여기서는 임의로 지정
-		String memberId = "whygari4321";
-		// TODO : orderId가 null이면 예외처리하기
-		String orderId = orderDAO.getOrderId(memberId);
-		if (orderId == null) {
-			throw new DataAccessException("주문번호 조회 실패") {};
+	public void makePayment(String orderId, Integer amount, String payModule, String method) throws Exception {
+		// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
+		// 쿠폰 사용
+		if (orderDAO.useCoupon(orderId) != 1) {
+			throw new DataAccessException("쿠폰 사용 실패") {};
+		};
+		// 포인트 적립
+		if (orderDAO.updatePoint(orderId) != true) {
+			throw new DataAccessException("포인트 적립 실패") {}; 
+		};
+		// 회원등급 수정
+		if (orderDAO.updateUserLevel(orderId) != true) {
+			throw new DataAccessException("회원등급 수정 실패") {}; 
+		};
+		
+		if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
+			throw new DataAccessException("결제 정보 생성 실패") {}; 
 		}
-		System.out.println("현재 로그인된 멤버의 orderId : " + orderId);
+		// TODO : 장바구니에서 결제한 물품 삭제
+	}
+	
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void setPaymentModuleKey(String orderId, String key) throws Exception {
+		if (orderDAO.setPaymentModuleKey(orderId, key) != 1) {
+			throw new DataAccessException("DB 조작 실패") {};
+		}
+	}
+	
+	@Override
+	public String getPaymentModuleKey(String orderId) {
+		return orderDAO.getPaymentModuleKey(orderId);
+	}
+	
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void saveExpectedTotalPrice(int amount, String orderId) throws Exception {
 		if (orderDAO.updateExpectedTotalPrice(orderId, amount) != 1) {
 			throw new DataAccessException("DB 조작 실패") {};
 		}
-		return orderId;
 	}
 	
 	@Override
@@ -168,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
 		    		+ "\"total_amount\": %d,"
 		    		+ "\"vat_amount\": 0,"
 		    		+ "\"tax_free_amount\": 0,"
-		    		+ "\"approval_url\": \"%s/user/kakaopay_payRequest\","
+		    		+ "\"approval_url\": \"%s/kakaopay_payRequest\","
 		    		+ "\"fail_url\": \"http://localhost:8080/user/temp_02\","
 		    		+ "\"cancel_url\": \"http://localhost:8080/user/temp_03\""	
 					+ "}", name, amount, baseUrl);

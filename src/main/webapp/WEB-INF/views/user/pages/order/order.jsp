@@ -301,6 +301,7 @@
                                     </div>
                                 </section>
                             </li>
+                            <p>orderId : <input type="text" id="testOrderIdInput"></input><button onclick="sendOrderIdForTest()">전송</button></p>
                         </ul>
                     </div>
                 </div>
@@ -487,7 +488,8 @@
         
         function tryPayment() {
         	// 토스와 연결된 세가지 결제방법이라면
-        	if (selectedPaymentMethod == "CARD" || selectedPaymentMethod == "TRANSFER" || selectedPaymentMethod == "VIRTUAL_ACCOUNT") {
+        	if (selectedPaymentMethod == "CARD" || selectedPaymentMethod == "TRANSFER" || selectedPaymentMethod == "VIRTUAL_ACCOUNT"
+        			|| selectedPaymentMethod == "NAVER_PAY" || selectedPaymentMethod == "KAKAO_PAY") {
         		// TODO : 총 결제금액을 view에서 얻어오기, 여기서는 100원으로 임의로 설정
         		amount.value = 200
         		
@@ -503,9 +505,35 @@
             	let orderName = "어쩌고저쩌고"
             	requestPayment(response.orderId, orderName, amount)
         	}
-        	
+/*         	// working... 네이버페이하고 카카오페이는 아직 테스트 안함
+        	// TODO : 뷰에서 상품목록 조립해서 이름 만들기
+        	let orderName = "어쩌고저쩌고"
+        	requestPayment(null, orderName, amount) */
         }
-        
+
+        // TODO : orders 테이블에 행을 삽입하는 시점에서 orderId가 서버의 session에 저장되어 있어야 함.
+        // 일단 여기서는 테스트를 위해 입력폼으로 orderId를 전송, **테스트가 끝나면 컨트롤러의 메소드를 삭제해야 함!!**
+        function sendOrderIdForTest() {
+            let orderId = $("#testOrderIdInput").val()
+            console.log("서버 세션에 저장할 orderId : " + orderId)
+            $.ajax({
+                async : false,
+            	type : 'POST',
+                url : "/payment/test/saveOrderId",
+                data: {
+                    "orderId": orderId
+                },
+                dataType: "text",
+                success : function(res) {
+                	console.log("saveOrderId 성공");
+                },
+                error : function(request, status, error) {
+            		console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    console.log("saveOrderId 실패")       
+            	}
+            })
+        }
+
         // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하기 위해 서버에 저장
         // orders 테이블에 insert가 이미 일어났으므로 orderId는 이미 서버에 저장되어 있음
         function sendAmountToServer(amount) {
@@ -513,7 +541,7 @@
             $.ajax({
                 async : false,
             	type : 'POST',
-                url : "/payment/preventHack",
+                url : "/payment/saveExpectedTotalPrice",
                 data: amount, // amount 객체의 예시 : {currency : "KRW", value : 100}
                 dataType: "json",
                 contentType : 'application/x-www-form-urlencoded',
@@ -588,15 +616,15 @@
                 console.log("네이버 페이 선택")
                 oPay.open({
                     "merchantPayKey": "202410179U6ds9",
-                    "productName": "머플러 외",
+                    "productName": orderName,
                     "productCount": "0",
-                    "totalPayAmount": "100",
-                    "taxScopeAmount": "100",
+                    "totalPayAmount": "" + amount.value,
+                    "taxScopeAmount": "" + amount.value,
                     "taxExScopeAmount": "0",
                     "returnUrl": window.location.origin + "/approveNaverPay"
                 });
             }
-
+            
             // TODO : 카카오페이
             // 레퍼런스 : https://developers.kakaopay.com/docs/payment/online/single-payment#payment-ready-sample-request
             if (selectedPaymentMethod == "KAKAO_PAY") {
@@ -605,8 +633,7 @@
                 // 그러므로 여기서는 POST 요청으로 서버의 컨트롤러에게 대신 요청을 보내도록 함.
                 // TODO : 보낼 겍체에 필요한 정보 별도로 채워넣기 (주문번호, 가격)
                 let item = {
-                    orderId: 1,
-                    amount: 100
+                    amount: amount.value
                 }
                 
                 // NOTE : ajax 요청은 컨트롤러로부터 응답을 받아도 페이지를 이동시켜주지 않는다. 그래서 success 메서드를 붙어야 함 
@@ -624,7 +651,10 @@
                       console.log("카카오페이 결제 팝업 호출")
                       console.log("response : " + JSON.stringify(response))
                 	  showKakaopayPaymentWindow(response.paymentURL)
-                  }
+                  },
+                  error : function(request, status, error) {
+              		console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+              	  }
                 })
             }
         }

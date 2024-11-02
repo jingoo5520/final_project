@@ -8,13 +8,78 @@
 		select order_id from orders where orderer_id = #{memberId}
 	</select>
 	
+	<!-- 오더 아이디로 예상 결제금액 얻어오기 -->
+	<select id="selectExpectedTotalPrice" resultType="int">
+		select total_price_expected from orders where order_id = #{orderId}
+	</select>
+	
 	<!-- 예상 결제금액 저장하기 -->
 	<update id="updateExpectedTotalPrice">
 		update orders set total_price_expected = #{amount} where order_id = #{orderId}
 	</update>
 	
-	<!-- 오더 아이디로 예상 결제금액 얻어오기 -->
-	<select id="selectExpectedTotalPrice" resultType="int">
-		select total_price_expected from orders where order_id = #{orderId};
+	<!-- 결제모듈 키 저장하기(결제취소 등에 쓰임) -->
+	<update id="updatePaymentModuleKey">
+		update orders set payment_module_key = #{key} where order_id = #{orderId}
+	</update>
+	
+	<select id="selectPaymentModuleKey" resultType="String">
+		select payment_module_key from orders where order_id = #{orderId}
 	</select>
+	
+	<select id="selectCouponNoOfOrder" resultType="int">
+		select coupon_no from orders where order_id = #{orderId}
+	</select>
+	
+	<insert id="insertToCouponUsed">
+		insert into coupon_used (member_id, coupon_code) values(
+			(select orderer_id from orders where order_id = #{orderId}),
+			(select coupon_code from coupon_paid where coupon_no = #{couponNo})
+		)
+	</insert>
+	
+	<insert id="insertToPointUsed">
+		insert into point_used (member_id, use_point) values(
+			(select orderer_id from orders where order_id = #{orderId}),
+			(select use_point from orders where order_id = #{orderId})
+		)
+	</insert>
+	
+	<update id="subtractUserPoint">
+		update members
+		set member_point = member_point - (select use_point from orders where order_id = #{orderId})  
+		where member_id = (select orderer_id from orders where order_id = #{orderId})
+	</update>
+	
+	<!-- 결제에 의한 포인트 적립 -->
+	<update id="addUserPoint">
+		update members m
+		set m.member_point = 
+			m.member_point + 
+			(
+				(select total_price_expected from orders where order_id = #{orderId})
+				* (select level_point from levels where level_no = m.member_level)
+			)
+		where m.member_id = (select orderer_id from orders where order_id = #{orderId})
+	</update>
+	
+	<!-- 회원등급 업데이트 -->
+ 	<update id="updateUserLevel">
+ 		<![CDATA[
+ 		update members m
+		set m.member_level = 
+			(
+				select l.level_no
+				from levels l
+				where m.member_price >= l.level_min and m.member_price < l.level_max	
+			)
+		where m.member_id = (select orderer_id from orders where order_id = #{orderId})
+		]]>
+	</update>
+	
+	<!-- 결제정보 저장 -->
+	<insert id="insertPaymentInfo">
+		insert into payments (order_id, payment_status, payment_method, total_price, deposit_name, deposit_bank, deposit_account) 
+		values (#{orderId}, #{status}, #{moduleName}, #{amount}, #{depositName}, #{depositBank}, #{depositAccount});
+	</insert>
 </mapper>
