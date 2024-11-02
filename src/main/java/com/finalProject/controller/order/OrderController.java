@@ -1,13 +1,10 @@
 package com.finalProject.controller.order;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -21,9 +18,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finalProject.model.LoginDTO;
+import com.finalProject.model.order.OrderMemberDTO;
+import com.finalProject.model.order.OrderProductDTO;
+import com.finalProject.model.order.OrderRequestDTO;
+import com.finalProject.model.order.PaymentRequestDTO;
 import com.finalProject.service.order.OrderService;
 import com.google.gson.Gson;
 
@@ -35,10 +39,79 @@ public class OrderController {
 	static private Gson gson = new Gson();
 	
 	@GetMapping("/order")
-	public String order() {
-		System.out.println("주문 페이지 접속");
-		return "/user/pages/order/order";
+	public String showOrderPage(Model model) {
+		
+		if (!model.containsAttribute("orderProductList")) {
+			return "/user/pages/warning";
+		}
+		
+	    return "/user/pages/order/order";
 	}
+	
+	@PostMapping("/order")
+	public String orderPage(@RequestParam String productInfos, RedirectAttributes redirectAttributes, HttpSession session) {
+		// 세션에서 login정보 가져오기
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    List<OrderRequestDTO> requestsInfo;
+
+	    try {
+	        requestsInfo = objectMapper.readValue(productInfos, new TypeReference<List<OrderRequestDTO>>() {});
+		
+	        // productsInfo를 사용하여 DB 조회 및 처리
+	        for (OrderRequestDTO orDTO : requestsInfo) {
+	        	System.out.println(orDTO.toString());
+	            System.out.println("Product No: " + orDTO.getProductNo());
+	            System.out.println("Quantity: " + orDTO.getQuantity());
+	        
+	            System.out.println("상품 : " + orDTO.getProductNo() + ", 수량 : " + orDTO.getQuantity());
+	        }
+	        
+	        List<OrderProductDTO> orderProductList = orderService.getProductInfo(requestsInfo);
+	        
+	        for (OrderProductDTO orderProduct : orderProductList) {
+	        	System.out.println(orderProduct.toString());
+	        }
+	        
+	    	// 바인딩한 productNo로 상품 정보 조회
+	 		// 상품이름, 상품가격, 상품이미지, 상품할인정보
+	        redirectAttributes.addFlashAttribute("orderProductList", orderProductList);
+	 		
+	 		if (loginMember != null) { // 로그인 했는지 안했는지 구분
+	 			System.out.println("order 로그인 상태, 회원 id : " + loginMember.getMember_id());
+	 			
+	 			String memberId = loginMember.getMember_id();
+	 			
+	 			// 로그인 했을 경우 회원아이디로 주문자 정보 조회
+	 			OrderMemberDTO orderMember = orderService.getMemberInfo(memberId);
+	 			
+	 			System.out.println(orderMember.toString());
+	 			
+	 			 redirectAttributes.addFlashAttribute("orderMember", orderMember);
+	 			
+	 		} else {
+	 			System.out.println("order 로그인 하지 않음");
+	 		}
+	 		
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+        
+        
+ 		return "redirect:/order";
+    }
+	
+	// 사용자가 설정한 데이터를 가지고 주문 테이블 튜플 생성
+	@PostMapping("/orderProducts")
+    public ResponseEntity<String> processPayment(@RequestBody PaymentRequestDTO paymentRequest) {
+        // paymentRequest 객체를 사용하여 결제 처리 로직을 구현
+        System.out.println("payment request : " + paymentRequest);
+        System.out.println("payment request.toString() : " + paymentRequest.toString());
+
+        // 성공적으로 처리된 경우
+        return ResponseEntity.ok("Payment processed successfully");
+    }
 
 	// 테스트용, 배포 환경에서는 사용되면 안됨
 	@PostMapping("/payment/test/saveOrderId")
@@ -295,12 +368,5 @@ public class OrderController {
 		System.out.println("주문번호는 " + orderNo);
 		model.addAttribute("orderNo", orderNo);
 		return "/user/pages/order/cancelOrder";
-	}
-	
-	@PostMapping("/order/requestCancel")
-	public void requestCancelOrder(
-			
-			) {
-		
 	}
 }

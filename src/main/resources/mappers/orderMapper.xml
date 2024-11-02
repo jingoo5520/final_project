@@ -3,6 +3,23 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.finalProject.mappers.orderMapper">
+
+	<select id="selectProductInfo" parameterType="list" resultType="com.finalProject.model.order.OrderProductDTO">
+	    <foreach item="item" index="index" collection="list" separator="UNION ALL">
+	        select p.*, i.image_main_url, #{item.quantity} AS quantity
+	        from products p inner join product_images i 
+	        on p.product_no = i.product_no 
+	        where p.product_no = #{item.productNo} and i.image_sub_url = "M"
+	    </foreach>
+	</select>
+
+	<select id="selectMemberInfo" resultType="com.finalProject.model.order.OrderMemberDTO">
+		select m.member_id, m.member_name, m.phone_number, m.email, m.address, m.member_point,  
+			   l.level_name, l.level_dc, l.level_point 
+			   from members m inner join levels l on l.level_no = m.member_level 
+			   where member_id = #{memberId}
+	</select>
+
 	<!-- 멤버 아이디로 오더 아이디 얻어오기 -->
 	<select id="selectOrderId" resultType="String">
 		select order_id from orders where orderer_id = #{memberId}

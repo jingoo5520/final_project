@@ -116,7 +116,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 		Map<String, Object> params = new HashMap<>();
 		params.put("offset", offset);
 		params.put("limit", limit);
-	    return ses.selectList(ns + "getAllNotices", params);
+		return ses.selectList(ns + "getAllNotices", params);
 	}
 
 //	@Override

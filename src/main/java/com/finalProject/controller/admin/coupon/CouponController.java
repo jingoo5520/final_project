@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.finalProject.model.admin.CouponDTO;
-import com.finalProject.model.admin.MemberManageDTO;
-import com.finalProject.model.admin.PagingInfoNewDTO;
+import com.finalProject.model.admin.coupon.CouponDTO;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.member.MemberManageDTO;
 import com.finalProject.service.admin.coupon.CouponService;
 import com.finalProject.service.admin.member.AdminMemberService;
 

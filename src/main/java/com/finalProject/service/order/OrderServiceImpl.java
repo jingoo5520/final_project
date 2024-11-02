@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -14,6 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
+import com.finalProject.model.order.OrderMemberDTO;
+import com.finalProject.model.order.OrderProductDTO;
+import com.finalProject.model.order.OrderRequestDTO;
+import com.finalProject.persistence.order.OrderDAO;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.persistence.order.OrderDAO;
@@ -71,6 +77,18 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public int getExpectedTotalPrice(String orderId) {
 		return orderDAO.getExpectedTotalPrice(orderId);
+	}
+	
+	@Override
+	public List<OrderProductDTO> getProductInfo(List<OrderRequestDTO> requestsInfo) {
+		
+		return orderDAO.selectProductInfo(requestsInfo);
+	}
+	
+	@Override
+	public OrderMemberDTO getMemberInfo(String memberId) {
+		
+		return orderDAO.selectMemberInfo(memberId);
 	}
 	
 	// 레퍼런스 : https://akku-dev.tistory.com/2

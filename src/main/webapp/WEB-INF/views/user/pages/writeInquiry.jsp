@@ -20,15 +20,162 @@
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
 
+let fileList = [];
+
+	$(function(){
+		$("#fileInput").on("change", function(){
+			
+			$.each(this.files, function(index, file){
+				// 중복 파일 거르기
+				if(!fileList.some(function(f){
+					return f.name === file.name
+				})) {
+					fileList.push(file);
+					console.log(fileList);
+				}
+			});
+			
+			showFiles();
+		});
+		
+		// 첨부파일 제거
+		$(document).on("click", ".remove-item", function(){
+			let parentLi = $(this).parent();
+			
+			for(let i = 0; i < fileList.length; i++){
+				if(fileList[i].name == parentLi.text().trim()){
+					console.log(fileList[i] + "삭제완료");		
+					fileList.splice(i, 1);
+					parentLi.remove();
+					break;
+				}
+			}
+			
+			console.log(fileList);
+			showFiles();
+		})
+		
+		// 문의 타입이 상품인 경우 주문 상품 리스트 가져와야함
+		$(".select-items select").on("change", function(){
+			if($(this).val() == "상품"){
+				let output = `<label>주문 상품(type = "상품")</label>
+					<div class="select-items">
+					<select class="form-control">
+						<option value="0">1</option>
+						<option value="0">2</option>
+						<option value="0">3</option>
+						<option value="0">4</option>
+					</select>
+				</div>`
+				
+				$(".orderList").html(output);
+			} else {
+				$(".orderList").html("");
+			}
+		});
+	});
+
+	// 첨부파일 리스트 보여주기
+	function showFiles(){
+		let listOutput = '';
+		
+		fileList.forEach(function(file){
+			listOutput += `<li>\${file.name} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;
+		});
+			
+		$(".fileList").html(listOutput);
+	}
+	
+	// 문의 작성
+	function writeInquiry(){
+		let inquiryTitle = $("#inquiryTitle").val();
+		let inquiryContent = $("#inquiryContent").val();
+		let inquiryType = $(".select-items select").val();
+		let productNo = null;
+		
+		let formData = new FormData();
+		
+		
+		formData.append('inquiryTitle', inquiryTitle);
+		formData.append('inquiryContent', inquiryContent);
+		formData.append('inquiryType', inquiryType);
+		formData.append('productNo', productNo);
+		
+		for (let i = 0; i < fileList.length; i++) {
+	        formData.append('files', fileList[i]);
+	    }
+		
+		$.ajax({
+			url : '/member/myPage/writeInquiry',
+			type : 'POST',
+			dataType: 'json',
+			processData: false,
+	        contentType: false, 
+			data : formData,
+			success : function(data) {
+				console.log(data);
+				
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		
+		});
+	}
+	
+</script>
 </head>
+
+<style>
+#writeInquiryBtnArea {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+.checkout-steps-form-style-1 .checkout-steps-form-content {
+	border: 1px solid rgb(230, 230, 230) !important;
+}
+
+.cart-list-title {
+	padding: 20px 0px !important;
+}
+
+.remove-item {
+	color: #fff;
+	background-color: #f44336;
+	font-size: 8px; height : 18px; width : 18px; line-height : 18px;
+	border-radius : 50%; text-align : center;
+	margin-left: 5px;
+	font-size: 8px;
+	height: 18px;
+	width: 18px;
+	line-height: 18px;
+	border-radius: 50%;
+	text-align: center;
+	height: 18px;
+	width: 18px;
+	line-height: 18px;
+	border-radius: 50%;
+	text-align: center;
+}
+
+.list li {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+</style>
 
 <body>
 	<!-- Preloader -->
 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
-				<span></span> <span></span>
+				<span></span>
+				<span></span>
 			</div>
 		</div>
 	</div>
@@ -68,12 +215,9 @@
 							<h3>고객센터</h3>
 							<ul class="list">
 								<li><a href="product-grids.html">공지사항 </a></li>
+								<li><a href="product-grids.html">이벤트 </a></li>
 								<li><a href="product-grids.html">문의</a></li>
-								<li><a href="product-grids.html">TV, Video & Audio</a><span>(420)</span></li>
-								<li><a href="product-grids.html">Cameras, Photo & Video</a><span>(874)</span></li>
-								<li><a href="product-grids.html">Headphones</a><span>(1239)</span></li>
-								<li><a href="product-grids.html">Wearable Electronics</a><span>(340)</span></li>
-								<li><a href="product-grids.html">Printers & Ink</a><span>(512)</span></li>
+								<li><a href="product-grids.html">멤버십 혜택</a></li>
 							</ul>
 						</div>
 						<!-- End Single Widget -->
@@ -83,148 +227,94 @@
 				</div>
 				<div class="col-lg-9 col-12">
 					<!-- Shopping Cart -->
-						<div class="cart-list-head">
+					<div class="checkout-steps-form-style-1">
+						<section class="checkout-steps-form-content collapse show" id="collapseThree" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
 							<div class="cart-list-title">
 								<h5>문의</h5>
 							</div>
-							<!-- Cart List Title -->
-							<div class="cart-list-title">
-								<div class="row">
-									<div class="col-lg-1 col-md-1 col-12"></div>
-									<div class="col-lg-4 col-md-3 col-12">
-										<p>Product Name</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>Quantity</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>Subtotal</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>Discount</p>
-									</div>
-									<div class="col-lg-1 col-md-2 col-12">
-										<p>Remove</p>
-									</div>
-								</div>
-							</div>
-							<!-- End Cart List Title -->
-							<!-- Cart Single List list -->
-							<div class="cart-single-list">
-								<div class="row align-items-center">
-									<div class="col-lg-1 col-md-1 col-12">
-										<a href="product-details.html"><img src="/220x200" alt="#"></a>
-									</div>
-									<div class="col-lg-4 col-md-3 col-12">
-										<h5 class="product-name">
-											<a href="product-details.html"> Canon EOS M50 Mirrorless Camera</a>
-										</h5>
-										<p class="product-des">
-											<span><em>Type:</em> Mirrorless</span> <span><em>Color:</em> Black</span>
-										</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<div class="count-input">
-											<select class="form-control">
-												<option>1</option>
-												<option>2</option>
-												<option>3</option>
-												<option>4</option>
-												<option>5</option>
-											</select>
+							<div class="row">
+								<form>
+									<div class="col-md-12">
+										<div class="single-form form-default">
+											<label>문의 제목</label>
+											<div class="form-input form">
+												<input id="inquiryTitle" type="text" placeholder="문의 제목을 입력하세요.">
+											</div>
 										</div>
 									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>$910.00</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>$29.00</p>
-									</div>
-									<div class="col-lg-1 col-md-2 col-12">
-										<a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a>
-									</div>
-								</div>
-							</div>
-							<!-- End Single List list -->
-							<!-- Cart Single List list -->
-							<div class="cart-single-list">
-								<div class="row align-items-center">
-									<div class="col-lg-1 col-md-1 col-12">
-										<a href="product-details.html"><img src="/220x200" alt="#"></a>
-									</div>
-									<div class="col-lg-4 col-md-3 col-12">
-										<h5 class="product-name">
-											<a href="product-details.html"> Apple iPhone X 256 GB Space Gray</a>
-										</h5>
-										<p class="product-des">
-											<span><em>Memory:</em> 256 GB</span> <span><em>Color:</em> Space Gray</span>
-										</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<div class="count-input">
-											<select class="form-control">
-												<option>1</option>
-												<option>2</option>
-												<option>3</option>
-												<option>4</option>
-												<option>5</option>
-											</select>
+
+									<div class="col-md-12">
+										<div class="single-form form-default">
+											<label>문의 타입</label>
+											<div class="select-items">
+												<select class="form-control">
+													<option value="상품">상품</option>
+													<option value="주문">주문</option>
+													<option value="회원">회원</option>
+													<option value="기타">기타</option>
+												</select>
+											</div>
 										</div>
 									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>$1100.00</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>—</p>
-									</div>
-									<div class="col-lg-1 col-md-2 col-12">
-										<a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a>
-									</div>
-								</div>
-							</div>
-							<!-- End Single List list -->
-							<!-- Cart Single List list -->
-							<div class="cart-single-list">
-								<div class="row align-items-center">
-									<div class="col-lg-1 col-md-1 col-12">
-										<a href="product-details.html"><img src="/220x200" alt="#"></a>
-									</div>
-									<div class="col-lg-4 col-md-3 col-12">
-										<h5 class="product-name">
-											<a href="product-details.html">HP LaserJet Pro Laser Printer</a>
-										</h5>
-										<p class="product-des">
-											<span><em>Type:</em> Laser</span> <span><em>Color:</em> White</span>
-										</p>
-									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<div class="count-input">
-											<select class="form-control">
-												<option>1</option>
-												<option>2</option>
-												<option>3</option>
-												<option>4</option>
-												<option>5</option>
-											</select>
+
+									<!-- 주문 상품 -->
+									<div class="col-md-12">
+										<div class="single-form form-default orderList">
+											<label>주문 상품(type = "상품")</label>
+											<div class="select-items">
+												<select class="form-control">
+													<option value="0">1</option>
+													<option value="0">2</option>
+													<option value="0">3</option>
+													<option value="0">4</option>
+												</select>
+											</div>
 										</div>
 									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>$550.00</p>
+
+									<div class="col-md-12">
+										<div class="single-form form-default">
+											<label>문의 내용</label>
+											<div class="form-input form">
+												<textarea id="inquiryContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;"></textarea>
+											</div>
+										</div>
 									</div>
-									<div class="col-lg-2 col-md-2 col-12">
-										<p>—</p>
+
+									<div class="col-md-6">
+										<div class="single-form form-default">
+											<label>이미지 첨부</label>
+											<div class="single-form form-default button" style="margin-top: 0px">
+												<input type="file" id="fileInput" name="files" multiple style="display: none;" />
+												<button class="btn" onclick="document.getElementById('fileInput').click(); return false;">이미지 첨부하기</button>
+											</div>
+										</div>
 									</div>
-									<div class="col-lg-1 col-md-2 col-12">
-										<a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a>
+
+									<div class="col-md-12">
+										<div class="single-form form-default">
+											<label>첨부된 이미지</label>
+											<ul class="fileList list mt-1">
+
+											</ul>
+										</div>
 									</div>
-								</div>
+
+								</form>
 							</div>
-							<!-- End Single List list -->
-						</div>
+
+						</section>
+
+					</div>
+					<!--/ End Shopping Cart -->
+
+					<div id="writeInquiryBtnArea" class="button mt-2">
+						<button class="btn" onclick="writeInquiry()">
+							작성 완료
+							<span class="dir-part"></span>
+						</button>
+					</div>
 				</div>
-				<!--/ End Shopping Cart -->
-
-
 			</div>
 		</div>
 	</section>
