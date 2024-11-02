@@ -27,6 +27,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
+import com.finalProject.model.order.PaymentRequestDTO;
 import com.finalProject.service.order.OrderService;
 import com.google.gson.Gson;
 
@@ -99,6 +100,23 @@ public class OrderController {
         
  		return "redirect:/order";
     }
+	
+	// 사용자가 설정한 데이터를 가지고 주문 테이블 튜플 생성
+	
+	@PostMapping("/orderProducts")
+    public ResponseEntity<String> processPayment(@RequestBody PaymentRequestDTO paymentRequest) {
+        // paymentRequest 객체를 사용하여 결제 처리 로직을 구현
+        System.out.println("payment request : " + paymentRequest);
+        System.out.println("payment request.toString() : " + paymentRequest.toString());
+
+        // 성공적으로 처리된 경우
+        return ResponseEntity.ok("Payment processed successfully");
+    }
+	
+	
+	
+	
+	
 	
 	// NOTE : 결제가 성공하면 토스 결제 모듈이 쿼리스트링을 달고 페이지로 보낸다. 
 	// 보내주는 페이지의 주소는 자바스크립트에서 successUrl: window.location.origin + "/payment/success.html" 이런 식으로 설정할 수 있다.

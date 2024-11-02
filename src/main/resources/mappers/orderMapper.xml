@@ -14,7 +14,7 @@
 	</select>
 	
 	<select id="selectMemberInfo" resultType="com.finalProject.model.order.OrderMemberDTO">
-		select m.member_name, m.phone_number, m.email, m.address, m.member_point,  
+		select m.member_id, m.member_name, m.phone_number, m.email, m.address, m.member_point,  
 			   l.level_name, l.level_dc, l.level_point 
 			   from members m inner join levels l on l.level_no = m.member_level 
 			   where member_id = #{memberId}
