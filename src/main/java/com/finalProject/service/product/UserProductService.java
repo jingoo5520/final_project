@@ -2,7 +2,8 @@ package com.finalProject.service.product;
 
 import java.util.List;
 
-import com.finalProject.model.admin.product.ProductDTO;
+import com.finalProject.model.product.PagingInfo;
+import com.finalProject.model.product.ProductDTO;
 
 public interface UserProductService {
 

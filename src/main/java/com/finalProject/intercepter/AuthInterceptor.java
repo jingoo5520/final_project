@@ -18,14 +18,15 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		boolean result = false;
 
 		HttpSession ses = request.getSession();
-		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		String uri = request.getRequestURI();
+		System.out.println(uri);
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		if (ses.getAttribute("loginMember") == null) { // 로그인이 안된경우
 			System.out.println("로그인 안됨");
 			response.sendRedirect("/member/viewLogin"); // 로그인 페이지로 이동
 			result = false;
 		} else { // 로그인이 되어있는 경우
-			if (uri.contains("/myPage/auth")) { // 마이페이지 인증요청인 경우
+			if (uri.contains("/member/auth")) { // 마이페이지 인증요청인 경우
 				result = true;
 				response.sendRedirect(uri); // 인증 요청한 페이지로 이동
 			} else {

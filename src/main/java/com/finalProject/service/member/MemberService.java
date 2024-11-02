@@ -30,6 +30,21 @@ public interface MemberService {
 
 	// 마이 페이지 회원 정보 수정
 	boolean updateMember(MemberDTO memberDTO)throws Exception;
+
+	// 마이 페이지 비밀번호 변경
+	boolean updateMemberPwd(Map<String, String> map)throws Exception;
+
+	// 마이 페이지 회원탈퇴
+	boolean withDrawMember(String member_id)throws Exception;
+
+	// 아이디 찾기
+	LoginDTO findIdbyEmail(String email)throws Exception;
+
+	// 비밀번호 찾기
+	boolean findPwd(String email, String member_id, String member_pwd)throws Exception;
+	
+	// 회원의 찜목록 조회
+	int[] getWishList(String member_id)throws Exception;
 	
 	
 	

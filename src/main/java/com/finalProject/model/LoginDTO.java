@@ -16,5 +16,6 @@ public class LoginDTO {
 	private String member_id;
 	private String member_pwd;
 	private String member_name; // 회원 이름
+	private String is_admin; // 회원구분(0: 일반회원, 1: 관리자:, 9: 총관리자)
 	
 }
