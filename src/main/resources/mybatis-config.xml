@@ -8,7 +8,8 @@
 		<typeAlias type="com.finalProject.model.admin.notices.NoticeDTO" alias="NoticeDTO" />
 		
 		<typeAlias type="com.finalProject.model.MemberDTO" alias="MemberDTO" />
-		<typeAlias type="com.finalProject.model.ProductDTO" alias="ProductDTO" />
+		<typeAlias type="com.finalProject.model.product.ProductDTO" alias="ProductDTO" />
+
 		
 		
 		<typeAlias type="com.finalProject.model.inquiry.InquiryDTO" alias="InquiryDTO" />
