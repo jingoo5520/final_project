@@ -9,6 +9,7 @@ import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderProductVO;
 import com.finalProject.model.order.OrderRequestDTO;
+import com.finalProject.model.order.PaymentRequestDTO;
 
 public interface OrderService {
 	
@@ -31,4 +32,6 @@ public interface OrderService {
 	void saveExpectedTotalPrice(int amount, String orderId) throws Exception;
 
 	void makePayment(String orderId, Integer amount, String payModule, String method) throws Exception;
+
+	String makeOrder(PaymentRequestDTO request) throws Exception;
 }

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
+import com.finalProject.model.order.PaymentRequestDTO;
 import com.finalProject.persistence.order.OrderDAO;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,18 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Inject
 	private OrderDAO orderDAO;
+	
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public String makeOrder(PaymentRequestDTO request) throws Exception {
+		// TODO : 로그인 여부로 회원, 비회원 여부 알아내기
+		// 일단 로그인한 회원이라고 가정하고 만듬
+		String orderId = orderDAO.makeOrder(request);
+		if (orderId == null) {
+			throw new DataAccessException("주문 정보 생성 실패") {};
+		}
+		return orderId;
+	}
 	
 	@Override
 	@Transactional(rollbackFor={Exception.class})

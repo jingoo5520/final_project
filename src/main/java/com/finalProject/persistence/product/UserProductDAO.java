@@ -3,7 +3,7 @@ package com.finalProject.persistence.product;
 import java.util.List;
 import java.util.Map;
 
-import com.finalProject.model.ProductDTO;
+import com.finalProject.model.admin.product.ProductDTO;
 
 public interface UserProductDAO {
 	

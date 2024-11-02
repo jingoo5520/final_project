@@ -5,6 +5,7 @@ import java.util.List;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
+import com.finalProject.model.order.PaymentRequestDTO;
 
 public interface OrderDAO {
 
@@ -24,8 +25,9 @@ public interface OrderDAO {
 
 	boolean updatePoint(String orderId);
 	
+	String makeOrder(PaymentRequestDTO request);
+	
 	boolean insertPaymentInfo(String orderId, Integer amount, String payModule, String method);
 
-	String getPaymentModuleKey(String orderId);
-	
+	String getPaymentModuleKey(String orderId);	
 }

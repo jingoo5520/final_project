@@ -80,17 +80,13 @@ public class OrderController {
 	 		
 	 		if (loginMember != null) { // 로그인 했는지 안했는지 구분
 	 			System.out.println("order 로그인 상태, 회원 id : " + loginMember.getMember_id());
-	 			
 	 			String memberId = loginMember.getMember_id();
-	 			
 	 			// 로그인 했을 경우 회원아이디로 주문자 정보 조회
 	 			OrderMemberDTO orderMember = orderService.getMemberInfo(memberId);
-	 			
 	 			System.out.println(orderMember.toString());
-	 			
-	 			 redirectAttributes.addFlashAttribute("orderMember", orderMember);
-	 			
+	 			redirectAttributes.addFlashAttribute("orderMember", orderMember);
 	 		} else {
+	 			// TODO : 로그인하지 않았을 때 비회원의 ID를 알아야 함
 	 			System.out.println("order 로그인 하지 않음");
 	 		}
 	 		
@@ -104,13 +100,26 @@ public class OrderController {
 	
 	// 사용자가 설정한 데이터를 가지고 주문 테이블 튜플 생성
 	@PostMapping("/orderProducts")
-    public ResponseEntity<String> processPayment(@RequestBody PaymentRequestDTO paymentRequest) {
+    public ResponseEntity<Map<String, String>> processPayment(
+    		@RequestBody PaymentRequestDTO paymentRequest,
+    		HttpSession session
+    		) {
         // paymentRequest 객체를 사용하여 결제 처리 로직을 구현
         System.out.println("payment request : " + paymentRequest);
-        System.out.println("payment request.toString() : " + paymentRequest.toString());
-
-        // 성공적으로 처리된 경우
-        return ResponseEntity.ok("Payment processed successfully");
+        Map<String, String> resultMap = new HashMap<>();
+        try {
+			session.setAttribute("orderId", orderService.makeOrder(paymentRequest));
+			System.out.println("세션에 저장된 orderId : " + session.getAttribute("orderId"));
+			resultMap.put("result", "success");
+			resultMap.put("message", "Payment processed successfully");
+			resultMap.put("orderId", (String) session.getAttribute("orderId"));
+			return ResponseEntity.ok(resultMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("result", "fail");
+			resultMap.put("message", "주문 생성 실패");
+			return ResponseEntity.badRequest().body(resultMap);
+		}        
     }
 
 	// 테스트용, 배포 환경에서는 사용되면 안됨
