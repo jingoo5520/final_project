@@ -20,6 +20,11 @@
 			   where member_id = #{memberId}
 	</select>
 	
+	<delete id="deleteOrder">
+		delete from orders
+		where order_id = #{order_id}
+	</delete>
+	
 	<delete id="deleteUncompletedOrder">
 		delete from orders 
 		where orderer_Id = #{ordererId} and ( 
@@ -28,18 +33,30 @@
 			)
 	</delete>
 	
+	<select id="getPrice" resultType="int">
+		select
+			case
+				when product_dc_type = 'P'
+				then cast((product_price - (1 - dc_rate)) as signed)
+				when product_dc_type = 'N'
+				then product_price
+			end
+		from products
+		where product_no = #{productNo}
+	</select>
+	
 	<!-- 회원용 주문 테이블 만들기 -->
 	<!-- TODO : 쿠폰을 사용하지 않았다고 가정, 수정 필요함, level_dc_amount도 계산 안함, 철회 가능도 그냥 "Y"로 함. -->
 	<insert id="makeOrderByMember">
 		insert into orders (
 			order_id, orderer_id, coupon_no,
 		    level_dc_rate, level_dc_amount, use_point, 
-		    withdraw_possible, order_delivery, deliver_cost, 
-		    order_status, order_request, total_price_expected
-		) select #{uuidv4}, #{request.ordererId}, null,
+		    withdraw_possible, order_delivery,
+		    order_status, order_request
+		) select #{orderId}, #{request.ordererId}, null,
 			l.level_dc, 0, #{request.pointDC},
-			"Y", #{request.deliveryAddress}, #{request.deliveryCost},
-			1, #{request.deliveryRequest}, #{request.totalPrice} 
+			"Y", #{request.deliveryAddress},
+			1, #{request.deliveryRequest}
 			from members m
 			left join levels l on m.member_level = l.level_no <!-- members에 데이터가 있으면  -->
 			where m.member_id = #{request.ordererId}
@@ -51,7 +68,6 @@
 //		    private String deliveryName; // 배송지 이름
 //		    private String deliveryAddress; // 배송지 주소
 //		    private String deliveryRequest; // 배송 요청사항
-			private int deliveryCost;
 //		    private String ordererId; // 주문자 ID
 //		    private String ordererName; // 주문자 이름
 //		    private String phoneNumber; // 주문자 전화번호
@@ -65,17 +81,23 @@
 	<insert id="makeOrderByNonMember">
 		insert into orders (
 			order_id, orderer_id,
-		    withdraw_possible, order_delivery, deliver_cost, 
-		    order_status, order_request, total_price_expected
+		    withdraw_possible, order_delivery,
+		    order_status, order_request
 		) values (
-			#{uuidv4}, #{request.ordererId},
-			"Y", #{request.deliveryAddress}, #{request.deliveryCost},
-			1, #{request.deliveryRequest}, #{request.totalPrice}
+			#{orderId}, #{request.ordererId},
+			'Y', #{request.deliveryAddress},
+			1, #{request.deliveryRequest}
 		)
+	</insert>
+	
+	<insert id="insertGuest">
+		insert into guests (guest_id, guest_name, guest_email, guest_phone_number)
+		select orderer_id, #{request.ordererName}, #{request.email}, #{request.phoneNumber}
+		from orders where order_id = #{orderId}
 	</insert>
 
 	<!-- 멤버 아이디로 오더 아이디 얻어오기 -->
-	<select id="selectUncopletedOrderId" resultType="String">
+	<select id="selectUncompletedOrderId" resultType="String">
 		select order_id from orders where orderer_id = #{memberId} and payment_module_key is null
 	</select>
 	
@@ -100,6 +122,10 @@
 	
 	<select id="selectCouponNoOfOrder" resultType="int">
 		select coupon_no from orders where order_id = #{orderId}
+	</select>
+	
+	<select id="selectDeliveryCost" resultType="int">
+		select deliver_cost from orders where order_id = #{orderId}
 	</select>
 	
 	<insert id="insertToCouponUsed">

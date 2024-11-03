@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -32,20 +33,58 @@ public class OrderServiceImpl implements OrderService {
 	private OrderDAO orderDAO;
 	
 	@Override
-	@Transactional(rollbackFor={Exception.class})
-	public String makeOrder(PaymentRequestDTO request) throws Exception {
-		// TODO : 로그인 여부로 회원, 비회원 여부 알아내기
-		// 일단 로그인한 회원이라고 가정하고 만듬
-		String orderId = orderDAO.makeOrder(request);
+	public void deleteOrder(String orderId) {
+		orderDAO.deleteOrder(orderId);
+	}
+	
+	@Override
+	public String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception {
+		System.out.println("orders 테이블 행 삽입 전 회원/비회원 확인. 회원? : " + isMember);
+		String orderId = orderDAO.makeOrder(request, isMember);
 		if (orderId == null) {
 			throw new DataAccessException("주문 정보 생성 실패") {};
 		}
+		this.saveExpectedTotalPrice(calculateTotalPrice(request, orderId, isMember), orderId); // 예상결제금액 저장
 		return orderId;
+	}
+	
+	private int calculateTotalPrice(PaymentRequestDTO request, String orderId, boolean isMember) {
+		int total = 0;
+		for (OrderRequestDTO product : request.getProductsInfo()) {
+			total += (orderDAO.getPrice(product.getProductNo()) * product.getQuantity());
+		}
+		total += orderDAO.selectDeliveryCost(orderId);
+		if (isMember == true) {
+			OrderMemberDTO memberInfo = orderDAO.selectMemberInfo(request.getOrdererId());
+			total = (int) (total * (1f - memberInfo.getLevel_dc()));
+			// TODO : 쿠폰 할인 적용해야 함
+		}
+		return total;
+	}
+	
+	@Override
+	public void makeGuest(PaymentRequestDTO request, String orderId) {
+		if (orderDAO.makeGuest(request, orderId) != 1) {
+			throw new DataAccessException("비회원 정보 생성 실패") {};
+		}
 	}
 	
 	@Override
 	@Transactional(rollbackFor={Exception.class})
-	public void makePayment(String orderId, Integer amount, String payModule, String method) throws Exception {
+	public void makePayment(String orderId, Integer amount, String payModule, String method, HttpSession session) throws Exception {
+		// NOTE : 이 트랜잭션에서 예외가 발생해도 이미 생성된 orders의 테이블의 행은 삭제되지 않음
+		// 그러므로 컨트롤러의 catch 블록에서 orders 테이블의 행을 삭제함
+		
+		boolean isMember = session.getAttribute("loginMember") == null ? false : true;
+		
+		// 비회원일 때
+		if (isMember == false) {
+			if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
+				throw new DataAccessException("결제 정보 생성 실패") {}; 
+			}
+			return;
+		}
+		
 		// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
 		// 쿠폰 사용
 		if (orderDAO.useCoupon(orderId) != 1) {
@@ -68,6 +107,14 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	@Transactional(rollbackFor={Exception.class})
+	public void saveExpectedTotalPrice(int amount, String orderId) throws Exception {
+		if (orderDAO.updateExpectedTotalPrice(orderId, amount) != 1) {
+			throw new DataAccessException("DB 조작 실패") {};
+		}
+	}
+	
+	@Override
+	@Transactional(rollbackFor={Exception.class})
 	public void setPaymentModuleKey(String orderId, String key) throws Exception {
 		if (orderDAO.setPaymentModuleKey(orderId, key) != 1) {
 			throw new DataAccessException("DB 조작 실패") {};
@@ -77,14 +124,6 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public String getPaymentModuleKey(String orderId) {
 		return orderDAO.getPaymentModuleKey(orderId);
-	}
-	
-	@Override
-	@Transactional(rollbackFor={Exception.class})
-	public void saveExpectedTotalPrice(int amount, String orderId) throws Exception {
-		if (orderDAO.updateExpectedTotalPrice(orderId, amount) != 1) {
-			throw new DataAccessException("DB 조작 실패") {};
-		}
 	}
 	
 	@Override
@@ -337,4 +376,5 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return resultMap;
 	}
+
 }

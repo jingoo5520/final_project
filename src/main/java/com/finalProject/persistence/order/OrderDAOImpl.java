@@ -37,8 +37,14 @@ public class OrderDAOImpl implements OrderDAO {
 	
 	// ++ 쿠폰테이블
 
+
 	@Override
-	public String makeOrder(PaymentRequestDTO request) {	
+	public void deleteOrder(String orderId) {
+		ses.delete(ns + "deleteOrder", orderId);
+	}
+	
+	@Override
+	public String makeOrder(PaymentRequestDTO request, boolean isMember) {	
 //		public class PaymentRequestDTO {
 //			private List<OrderRequestDTO> productsInfo; // 상품번호 + 수량 정보 리스트
 //			private int totalPrice; // 총 예상 결제 금액
@@ -54,14 +60,41 @@ public class OrderDAOImpl implements OrderDAO {
 //		    private int pointDC; // 사용 포인트
 //		    private String couponUse; // 사용 쿠폰코드
 //		}
-		ses.delete(ns + "deleteUncompletedOrder", request.getOrdererId());
+		// NOTE : 모든 컨트롤러 메소드의 예외에다가 행을 삭제하도록 하긴 했지만 미완료된 행이 혹시 남아있을 수 있음
+		// TODO : 그런데 이 메소드를 쓰더라도 비회원 주문은 아이디가 항상 새롭게 생성되기 때문에 안지워질 수 있음 
+		// 예를 들어 비회원 상태로 주문 결제하기 버튼을 반복해서 누르고 창을 닫는다면 orders 테이블에 행이 쌓이는 걸 못 막음
+		if (isMember == true) {
+			ses.delete(ns + "deleteUncompletedOrder", request.getOrdererId());
+		}
+		if (isMember == false) {
+			// 기본값으로 "non_member"가 지정되어 있는데 이걸 UUID로 바꿔준다.
+			request.setOrdererId(UUID.randomUUID().toString()); 
+		}
 		Map<String, Object> params = new HashMap<>();
 		params.put("request", request);
-		params.put("uuidv4", UUID.randomUUID().toString());
-		if (ses.insert(ns + "makeOrderByMember", params) != 1) {
+		params.put("orderId", UUID.randomUUID().toString());
+		if (ses.insert(isMember == true ? ns + "makeOrderByMember" : ns + "makeOrderByNonMember", params) != 1) {
 			return null;
 		};
-		return ses.selectOne(ns + "selectUncopletedOrderId", request.getOrdererId());
+		return ses.selectOne(ns + "selectUncompletedOrderId", request.getOrdererId());
+	}
+	
+	@Override
+	public int getPrice(int productNo) {
+		return ses.selectOne(ns + "getPrice", productNo);
+	}
+	
+	@Override
+	public int selectDeliveryCost(String orderId) {
+		return ses.selectOne(ns + "selectDeliveryCost", orderId);
+	}
+	
+	@Override
+	public int makeGuest(PaymentRequestDTO request, String orderId) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("request", request);
+		params.put("orderId", orderId);
+		return ses.insert(ns + "insertGuest", params);
 	}
 
 	@Override
@@ -148,4 +181,5 @@ public class OrderDAOImpl implements OrderDAO {
 		}
 		return true;
 	}
+
 }
