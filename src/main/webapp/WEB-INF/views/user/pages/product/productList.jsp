@@ -11,6 +11,7 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -21,6 +22,43 @@
 
 </head>
 <script type="text/javascript">
+	function addCart(productNo) {
+		
+		console.log(productNo);
+		
+		$.ajax({
+		    url: '/addCartItem',
+		    type: 'POST',
+		    data: {
+		    	productNo : productNo
+		    	},
+		    dataType: 'json',
+		    success: function(data) {
+		        console.log(data);
+		    },
+		    error: function() {
+		    },
+		    complete: function(data) {
+		    	if (data.status == 200) {
+		            // 모달을 보여주기
+		            $('#myModal').modal('show');
+	
+		            // 확인 버튼 클릭 시 장바구니 페이지로 이동
+		            $('#goCart').off('click').on('click', function() {
+		                location.href = "/cart";
+		            });
+		            
+		            $('#keepProduct').off('click').on('click', function() {
+		                location.reload();
+		            });
+		        } else if (data.responseText == 401) {
+		            alert("잘못된 접근입니다.");
+		        }
+		    }
+		});
+	}
+
+
     function submitSortingForm() {
         var sortingSelect = document.getElementById('sorting');
         sortingSelect.value = sortingSelect.value.trim(); // 선택된 값에서 공백 제거
@@ -184,10 +222,6 @@
                                                         <a onclick="addCart(${product.product_no})" class="btn"><i class="lni lni-cart"></i></a>
                                                     </div>
 
-                                                    <div class="button">
-                                                        <a href="#" class="btn"><i class="lni lni-cart"></i></a>
-                                                    </div>
-
                                                 </div>
 
                                                 <div class="product-info">
@@ -306,6 +340,7 @@
         </div>
     </section>
     <!-- End Product Grids -->
+    <jsp:include page="../cart/cartModal.jsp"></jsp:include>
 
     <jsp:include page="../footer.jsp"></jsp:include>
 
