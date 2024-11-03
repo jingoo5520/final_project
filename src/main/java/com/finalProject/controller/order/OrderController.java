@@ -23,11 +23,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.service.member.MemberService;
 import com.finalProject.service.order.OrderService;
 import com.google.gson.Gson;
 
@@ -35,6 +37,9 @@ import com.google.gson.Gson;
 public class OrderController {
 	@Inject
 	private OrderService orderService;
+	
+	@Inject
+	private MemberService memberService;
 	
 	static private Gson gson = new Gson();
 	
@@ -104,6 +109,48 @@ public class OrderController {
     		@RequestBody PaymentRequestDTO paymentRequest,
     		HttpSession session
     		) {
+		
+		if (!paymentRequest.getSaveDeliveryType().equals("none")) {
+			
+			DeliveryDTO deliveryDTO = DeliveryDTO.builder()
+					.delivery_address(paymentRequest.getDeliveryAddress())
+					.delivery_name(paymentRequest.getDeliveryName())
+					.member_id(paymentRequest.getOrdererId())
+					.is_main("M")
+					.build();
+			
+			if (paymentRequest.getSaveDeliveryType().contains("saveDelivery")) {
+				// 배송지 저장
+				System.out.println("배송지 저장 탭임");
+				System.out.println(deliveryDTO.toString());
+				
+				try {
+					memberService.saveDelivery(deliveryDTO);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} 
+			
+			if (paymentRequest.getSaveDeliveryType().contains("saveAddress")) {
+				// 회원 정보 주소 수정
+				System.out.println("회원 주소 정보 수정 탭임");
+				System.out.println(deliveryDTO.toString());
+				
+				try {
+					if (memberService.updateAddress(deliveryDTO)) {
+						System.out.println("회원 정보 수정 완료");
+					} else {
+						System.out.println("수정 안됨");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		
+		} else {
+			System.out.println("동작하면 안돼.");
+		}
+		
         // paymentRequest 객체를 사용하여 결제 처리 로직을 구현
         System.out.println("payment request : " + paymentRequest);
         Map<String, String> resultMap = new HashMap<>();

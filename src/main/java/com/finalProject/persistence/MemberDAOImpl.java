@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
 
@@ -162,6 +163,22 @@ public class MemberDAOImpl implements MemberDAO {
 	    }
 		
 		return result;
+	}
+	
+	// 주문페이지에서 입력한 주소로 회원 주소지 변경
+	@Override
+	public boolean updateAddress(DeliveryDTO deliveryDTO) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateAddress", deliveryDTO)==1) {
+			result = true;
+		}
+		return result;
+	}
+	
+	// 배송지 저장
+	@Override
+	public void insertDelivery(DeliveryDTO deliveryDTO) throws Exception {
+		ses.insert(ns+"insertDelivery", deliveryDTO);
 	}
 
 }

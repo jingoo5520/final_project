@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -75,23 +75,51 @@
 		    });
 			
 			$('#saveDeliveryCheck').change(function() {
+				let deliveryType = $("#saveDeliveryType").val();
+				
 	            if ($(this).is(':checked')) {
 	                $('.deliveryNameForm').show();
-	                $('#delivery_name').val($('.deliveryNameForm').val());
-	                $("#saveDeliveryType").val("saveDelivery");
+	                $('#deliveryName').val("${orderMember.member_name }님 배송지");
+	                
+	                if ($('#saveAddressCheck').is(':checked')) {
+	                	 $("#saveDeliveryType").val("saveDelivery,saveAddress");
+	                } else {
+	                	$("#saveDeliveryType").val("saveDelivery");
+	                }
+	                
 	            } else {
 	                $('.deliveryNameForm').hide();
-	                $('#delivery_name').val("");
-	                $("#saveDeliveryType").val("none");
+	                $('#deliveryName').val("");
+	                
+	                if ($('#saveAddressCheck').is(':checked')) {
+	                	 $("#saveDeliveryType").val("saveAddress");
+	                } else {
+	                	$("#saveDeliveryType").val("none");
+	                }
 	            }
+	            
+	            console.log($("#saveDeliveryType").val());
 	        });
 			
 			$('#saveAddressCheck').change(function() {
 	            if ($(this).is(':checked')) {
-	                $("#saveDeliveryType").val("saveAddress");
+	            	
+	                if ($('#saveDeliveryCheck').is(':checked')) {
+	                	 $("#saveDeliveryType").val("saveDelivery,saveAddress");
+	                } else {
+	                	$("#saveDeliveryType").val("saveAddress");
+	                }
+	                
 	            } else {
-	                $("#saveDeliveryType").val("none");
+	            	
+	            	 if ($('#saveDeliveryCheck').is(':checked')) {
+	                	 $("#saveDeliveryType").val("saveDelivery");
+	                } else {
+	                	$("#saveDeliveryType").val("none");
+	                }
 	            }
+	            
+	            console.log($("#saveDeliveryType").val());
 	        });
 			
 			$('.deliveryOption').css('color', '#888888');
@@ -169,6 +197,12 @@
 			});
 			
 		})
+		
+		function showDeliveryList() {
+			document.getElementById('getMemeberAddress').checked = false;
+		    document.getElementById('saveDeliveryCheck').checked = false;
+		    document.getElementById('saveAddressCheck').checked = false;
+		}
 		
 		function pointUse() {
 			let totalProductDcPrice = 0;
@@ -266,6 +300,38 @@
 					}
 				}
 			}).open();
+		}
+		
+		function getMemberAddress() {
+		    // orderMember 객체를 정의합니다. 실제 사용 환경에서는 서버에서 값을 받아오거나 변수로 설정합니다.
+		    const orderMember = {
+		        address: "${orderMember.address }" // 예시 데이터
+		    };
+		    
+		    console.log(orderMember);
+
+		    // 체크박스 요소와 주소 입력 필드를 가져옵니다.
+		    const checkbox = document.getElementById("getMemeberAddress");
+		    const postcode = document.getElementById("postcodeNew");
+		    const address = document.getElementById("addressNew");
+		    const detailAddress = document.getElementById("detailAddressNew");
+
+		    // 체크 상태에 따라 값 설정
+		    if (checkbox.checked) {
+		        const [postcodeValue, addressValue, detailAddressValue] = orderMember.address.split("/");
+		        postcode.value = postcodeValue;
+		        address.value = addressValue;
+		        detailAddress.value = detailAddressValue;
+		        document.getElementById('deliveryAddressHidden').value = 
+					document.getElementById('postcodeNew').value + '/' + 
+					document.getElementById('addressNew').value + '/';
+		    } else {
+		        // 체크 해제 시 빈 문자열로 초기화
+		        postcode.value = "";
+		        address.value = "";
+		        detailAddress.value = "";
+		        document.getElementById('deliveryAddressHidden').value = "";
+		    }
 		}
 	</script>
 	
@@ -417,6 +483,19 @@
 		input[name="paymentMethod"]:checked + label p {
 			color: #FFFFFF !important;
 		}
+		
+		#mainDelivery, #deliveryList {
+			width: 150px !important;
+		}
+		
+		.button.deliveryListTap {
+			margin: 30px 0;
+		    display: flex;
+		    justify-content: space-between;
+		    align-items: center;
+		    width: 100%;
+		}
+		
     </style>
 </head>
 
@@ -638,7 +717,7 @@
 								<!--====== 배송지 정보 헤더 (회원) ======-->
 									<nav>
 										<div class="nav nav-tabs" id="nav-tab" role="tablist">
-											<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">배송지 목록</button>
+											<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onclick="showDeliveryList()">배송지 목록</button>
 											<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">신규입력</button>
 										</div>
 									</nav>
@@ -650,14 +729,24 @@
 										    <!--====== 배송지 목록 (회원) ======-->
 										    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
 										        <div class="single-form form-default">
+										        	<div class="button deliveryListTap mb-30 row align-items-center">
+										                <div class="btn col-lg-6 col-md-6 col-12" id="mainDelivery">기본배송지</div>
+										                <div class="btn col-lg-6 col-md-6 col-12" id="deliveryList">배송지 목록</div>
+								            		</div>
 										            <div class="form-input form addressForm">
 										                <h5 class="ordererHeader">주소</h5>
 										                <div class="addressSearchArea">
-										                    <input class="postNumber" type="text" id="postcodeList" placeholder="우편번호" readonly value="${orderMember.address.split('/')[0] }">
+										                    <input class="postNumber" type="text" id="postcodeList" placeholder="우편번호" readonly value="${orderMember.delivery_address.split('/')[0] }">
 										                    <input class="searchPost" type="button" onclick="sample6_execDaumPostcode('List')" value="검색"><br>
 										                </div>
-										                <input type="text" id="addressList" placeholder="주소" value="${orderMember.address.split('/')[1] }" readonly><br>
-										                <input type="text" id="detailAddressList" placeholder="상세주소" value="${orderMember.address.split('/')[2] }" readonly>
+										                <input type="text" id="addressList" placeholder="주소" value="${orderMember.delivery_address.split('/')[1] }" readonly><br>
+										                <input type="text" id="detailAddressList" placeholder="상세주소" value="${orderMember.delivery_address.split('/')[2] }" readonly>
+										            </div>
+										        </div>
+										        <div class="single-form form-default">
+										            <div class="form-input form">
+										                <h5 class="ordererHeader">배송지명</h5>
+										                <input type="text" id="savedDeliveryName" value="${orderMember.delivery_name }" readonly>
 										            </div>
 										        </div>
 										    </div>
@@ -666,6 +755,12 @@
 										    <!--====== 배송지 신규입력 (회원) ======-->
 										    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
 										        <div class="single-form form-default">
+									        		<div class="form-check">
+										                <div id="getMemeberAddressDiv">
+										                    <input type="checkbox" class="form-check-input" id="getMemeberAddress" onclick="getMemberAddress();">
+										                    <label for="getMemeberAddress">주문자 정보와 동일</label>
+										                </div>
+								            		</div>
 										            <div class="form-input form addressForm">
 										                <h5 class="ordererHeader">주소</h5>
 										                <div class="addressSearchArea">

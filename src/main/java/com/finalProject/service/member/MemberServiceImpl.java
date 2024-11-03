@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
 import com.finalProject.persistence.MemberDAO;
@@ -101,6 +102,18 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int[] getWishList(String member_id) throws Exception {
 		return memberDAO.getWishList(member_id);
+	}
+	
+	// 주문페이지에서 입력한 주소로 회원 주소지 변경
+	@Override
+	public boolean updateAddress(DeliveryDTO deliveryDTO) throws Exception {
+		return memberDAO.updateAddress(deliveryDTO);
+	}
+	
+	// 주문페이지에서 입력한 주소 배송지로 저장
+	@Override
+	public void saveDelivery(DeliveryDTO deliveryDTO) throws Exception {
+		memberDAO.insertDelivery(deliveryDTO);
 	}
 	
 	

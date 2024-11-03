@@ -113,5 +113,14 @@
 		select product_no from wishes where member_id = #{member_id}
 	</select>
 	
+	<update id="updateAddress">
+		update members 
+		set address = #{delivery_address} 
+		where member_id = #{member_id}
+	</update>
+	
+	<insert id="insertDelivery">
+		insert into delivery_addrs (delivery_name, delivery_address, is_main, member_id) values (#{delivery_name}, #{delivery_address}, #{is_main}, #{member_id})
+	</insert>
 
 </mapper>
