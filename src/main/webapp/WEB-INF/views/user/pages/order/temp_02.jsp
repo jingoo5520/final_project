@@ -8,5 +8,6 @@
 </head>
 <body>
 	<h1>결제 실패했습니다...</h1>
+	<h2>${message }</h2>
 </body>
 </html>

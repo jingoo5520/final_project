@@ -211,228 +211,216 @@
 		    
 		    console.log(input);
 		}
-		
-		
-		
 	</script>
 	
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script>
-    function sample6_execDaumPostcode(type) {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                var addr = '';
-                var extraAddr = '';
-                
-                if (data.userSelectedType === 'R') {
-                    addr = data.roadAddress;
-                } else {
-                    addr = data.jibunAddress;
-                }
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+		function sample6_execDaumPostcode(type) {
+			new daum.Postcode({
+				oncomplete: function(data) {
+					var addr = '';
+					var extraAddr = '';
+					
+					if (data.userSelectedType === 'R') {
+						addr = data.roadAddress;
+					} else {
+						addr = data.jibunAddress;
+					}
 
-                if (data.userSelectedType === 'R') {
-                    if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
-                        extraAddr += data.bname;
-                    }
-                    if (data.buildingName !== '' && data.apartment === 'Y') {
-                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                    }
-                    if (extraAddr !== '') {
-                        extraAddr = ' (' + extraAddr + ')';
-                    }
-                }
+					if (data.userSelectedType === 'R') {
+						if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+							extraAddr += data.bname;
+						}
+						if (data.buildingName !== '' && data.apartment === 'Y') {
+							extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+						}
+						if (extraAddr !== '') {
+							extraAddr = ' (' + extraAddr + ')';
+						}
+					}
 
-                if (type === 'List') {
-                    document.getElementById('postcodeList').value = data.zonecode;
-                    document.getElementById('addressList').value = addr + extraAddr;
-                    document.getElementById('detailAddressList').removeAttribute("readonly");
-                    document.getElementById('detailAddressList').focus();
-                    document.getElementById('detailAddressList').value = "";
-                    
-                    // Set hidden input value
-                    document.getElementById('deliveryAddressHidden').value = 
-                        document.getElementById('postcodeList').value + '/' + 
-                        document.getElementById('addressList').value + '/' + 
-                        document.getElementById('detailAddressList').value;
-                } else if (type === 'New') {
-                    document.getElementById('postcodeNew').value = data.zonecode;
-                    document.getElementById('addressNew').value = addr + extraAddr;
-                    document.getElementById('detailAddressNew').removeAttribute("readonly");
-                    document.getElementById('detailAddressNew').focus();
-                    document.getElementById('detailAddressNew').value = "";
-                    
-                    // Set hidden input value
-                    document.getElementById('deliveryAddressHidden').value = 
-                        document.getElementById('postcodeNew').value + '/' + 
-                        document.getElementById('addressNew').value + '/' + 
-                        document.getElementById('detailAddressNew').value;
-                }
-            }
-        }).open();
-    }
-</script>
+					if (type === 'List') {
+						document.getElementById('postcodeList').value = data.zonecode;
+						document.getElementById('addressList').value = addr + extraAddr;
+						document.getElementById('detailAddressList').removeAttribute("readonly");
+						document.getElementById('detailAddressList').focus();
+						document.getElementById('detailAddressList').value = "";
+						
+						// Set hidden input value
+						document.getElementById('deliveryAddressHidden').value = 
+							document.getElementById('postcodeList').value + '/' + 
+							document.getElementById('addressList').value + '/' + 
+							document.getElementById('detailAddressList').value;
+					} else if (type === 'New') {
+						document.getElementById('postcodeNew').value = data.zonecode;
+						document.getElementById('addressNew').value = addr + extraAddr;
+						document.getElementById('detailAddressNew').removeAttribute("readonly");
+						document.getElementById('detailAddressNew').focus();
+						document.getElementById('detailAddressNew').value = "";
+						
+						// Set hidden input value
+						document.getElementById('deliveryAddressHidden').value = 
+							document.getElementById('postcodeNew').value + '/' + 
+							document.getElementById('addressNew').value + '/' + 
+							document.getElementById('detailAddressNew').value;
+					}
+				}
+			}).open();
+		}
+	</script>
 	
 	<style>
-    #overlay {
-	    position: fixed;
-	    top: 0;
-	    left: 0;
-	    width: 100%;
-	    height: 100%;
-	    background-color: rgba(0, 0, 0, 0.5);
-	    z-index: 99999999; 
-	    display: none;
-	}
-	
-	.ordererHeader {
-		font-size: 15px;
-		color: black !important;
-	}
-	
-	.product-name {
-		font-size: 15px !important;
-		color: black !important;
-	}
-	
-	.product-list-title div p{
-		color: black !important;
-	}
-	.product-list-title {
-		margin-top: 35px !important;
-		margin-bottom: 35px !important;
-		height: 50px !important;
-		padding: 15px !important;
-		border-bottom: 1px solid #E6E6E6;
-	}
-	.product-list div{
-		margin-bottom: 35px !important;
-		height: 50px !important;
-	}
-	.product-list {
-		margin-bottom: 35px !important;
-		padding-bottom: 20px !important;
-		border-bottom: 1px solid #E6E6E6;
-	}
-	
-	.productImage {
-	    width: 80px;
-	    height: 80px;
-	}
-	
-	.right {
-		text-align: right;
-		font-size: 12px;
-	}
-	
-	.right span{
-		padding-right: 10px;
-		padding-left: 10px;
-		color: #888888;
-	}
-	
-	.left {
-		text-align: left;
-	}
-	
-	.orderGuide {
-		margin: 80px 0 120px 25px;
-	}
-	
-	.orderGuide li{
-		margin: 15px;
-	}
-	
-	#accordionExample li {
-   		margin: 0 0 40px 0 !important;
-	}
-	
-	#nav-tab {
-		margin: 40px 0 40px 0;
-		border-color: #A8A691;
-	}
-	
-	#nav-tab button {
-		width: 200px;
-	}
-	
-	.nav-link.active {
-		font-size: 16px;
-		color: #A8A691 !important;
-		font-weight:bold;
-		border-color: #A8A691 !important;
-		border-bottom: none !important;
-	}
-	.nav-link:not(.active) {
-		font-size: 14px;
-		color: #888888;
-		border-color: #e6e6e6 !important;
-		border-bottom: none !important;
-	}
-	
-	.addressSearchArea {
-		display: flex;
-		flex-direction: row;
-	}
-	
-	.addressForm input {
-		margin: 10px 0 10px 0;
-	}
-	
-	.deliveryRequest {
-		margin: 10px 0 10px 0;
-	}
-	
-	.deliveryOption {
-		border-color: #e6e6e6 !important;
-		height: 46px;
-	}
-	
-	
-	.deliveryOption:focus {
-		border-color: #e6e6e6 !important;
-		box-shadow: none !important; 
-	}
-	
-	.form-check-input:focus {
-		border-color: #a8a691 !important;
-	}
-	
-	.form-check {
-		margin: 10px 0 20px 0;
-	}
-	
-	.deliveryNameForm {
-		margin: 20px 0 40px 0;
-	}
-	
-	.single-payment-option label {
-		border: 1px solid #e6e6e6 !important;
-	}
-	
-	input[name="paymentMethod"]:hover + label {
-		background-color: #d1cfc0 !important;
-	}
-	
-	input[name="paymentMethod"]:checked + label {
-	    background-color: #A8A691 !important;
-	}
-	
-	input[name="paymentMethod"]:checked + label p {
-	    color: #FFFFFF !important;
-	}
-	
-	
+		#overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			z-index: 99999999; 
+			display: none;
+		}
+		
+		.ordererHeader {
+			font-size: 15px;
+			color: black !important;
+		}
+		
+		.product-name {
+			font-size: 15px !important;
+			color: black !important;
+		}
+		
+		.product-list-title div p{
+			color: black !important;
+		}
+		.product-list-title {
+			margin-top: 35px !important;
+			margin-bottom: 35px !important;
+			height: 50px !important;
+			padding: 15px !important;
+			border-bottom: 1px solid #E6E6E6;
+		}
+		.product-list div{
+			margin-bottom: 35px !important;
+			height: 50px !important;
+		}
+		.product-list {
+			margin-bottom: 35px !important;
+			padding-bottom: 20px !important;
+			border-bottom: 1px solid #E6E6E6;
+		}
+		
+		.productImage {
+			width: 80px;
+			height: 80px;
+		}
+		
+		.right {
+			text-align: right;
+			font-size: 12px;
+		}
+		
+		.right span{
+			padding-right: 10px;
+			padding-left: 10px;
+			color: #888888;
+		}
+		
+		.left {
+			text-align: left;
+		}
+		
+		.orderGuide {
+			margin: 80px 0 120px 25px;
+		}
+		
+		.orderGuide li{
+			margin: 15px;
+		}
+		
+		#accordionExample li {
+			margin: 0 0 40px 0 !important;
+		}
+		
+		#nav-tab {
+			margin: 40px 0 40px 0;
+			border-color: #A8A691;
+		}
+		
+		#nav-tab button {
+			width: 200px;
+		}
+		
+		.nav-link.active {
+			font-size: 16px;
+			color: #A8A691 !important;
+			font-weight:bold;
+			border-color: #A8A691 !important;
+			border-bottom: none !important;
+		}
+		.nav-link:not(.active) {
+			font-size: 14px;
+			color: #888888;
+			border-color: #e6e6e6 !important;
+			border-bottom: none !important;
+		}
+		
+		.addressSearchArea {
+			display: flex;
+			flex-direction: row;
+		}
+		
+		.addressForm input {
+			margin: 10px 0 10px 0;
+		}
+		
+		.deliveryRequest {
+			margin: 10px 0 10px 0;
+		}
+		
+		.deliveryOption {
+			border-color: #e6e6e6 !important;
+			height: 46px;
+		}
+		
+		
+		.deliveryOption:focus {
+			border-color: #e6e6e6 !important;
+			box-shadow: none !important; 
+		}
+		
+		.form-check-input:focus {
+			border-color: #a8a691 !important;
+		}
+		
+		.form-check {
+			margin: 10px 0 20px 0;
+		}
+		
+		.deliveryNameForm {
+			margin: 20px 0 40px 0;
+		}
+		
+		.single-payment-option label {
+			border: 1px solid #e6e6e6 !important;
+		}
+		
+		input[name="paymentMethod"]:hover + label {
+			background-color: #d1cfc0 !important;
+		}
+		
+		input[name="paymentMethod"]:checked + label {
+			background-color: #A8A691 !important;
+		}
+		
+		input[name="paymentMethod"]:checked + label p {
+			color: #FFFFFF !important;
+		}
     </style>
-    
 </head>
 
-<script type="text/javascript">
-	
-
-</script>
-
 <body>
-
     <!-- Preloader -->
     <div class="preloader">
         <div class="preloader-inner">
@@ -1001,7 +989,7 @@
 								</div>
 								<div class="total-price shipping">
 									<p class="value">총 배송비</p>
-									<p class="price">2500 원</p>
+									<p class="price" id="deliveryCost">2500 원</p>
 								</div>
 							</div>
 
@@ -1072,6 +1060,8 @@
                 </div>
             </div>
         </div>
+        
+        <div id="overlay"></div>
     </section>
     <!--====== Checkout Form Steps Part Ends ======-->
 
@@ -1088,7 +1078,7 @@
     <script src="/resources/assets/user/js/glightbox.min.js"></script>
     <script src="/resources/assets/user/js/main.js"></script>
     
-        <!--toss 결제 API-->
+    <!--toss 결제 API-->
     <script src="https://js.tosspayments.com/v2/standard"></script>
 
     <!-- 결제 처리(toss) -->
@@ -1119,31 +1109,32 @@
              // "openType" : "popup",
         });
     </script>
-    
-    <!-- 결제 처리(카카오페이) -->
-    <script>
+    	  
+  	<!-- 결제 처리(카카오페이) -->
+	<script>
 	var kakaopay = {
-        ref: null,
-    };
+		ref: null,
+	};
 	
 	function showKakaopayPaymentWindow(url) {
 		kakaopay.ref = window.open('', 'paypopup', 'width=426,height=510,toolbar=no');
 		const overlay = document.getElementById("overlay");
 		
-	    if (kakaopay.ref) {
-	        // 팝업 창이 열렸을 때, 배경을 반투명 검은색으로 변경하고 입력을 막는다.
+		if (kakaopay.ref) {
+			// 팝업 창이 열렸을 때, 배경을 반투명 검은색으로 변경하고 입력을 막는다.
 			overlay.style.display = "block"; 
-	        // NOTE : 왠지는 모르겠는데 이걸로 입력 차단 안됨
-        	// overlay.style.pointerEvents = 'none';
-	        $(".container").css("pointerEvents", "none")
-	        
-	        setTimeout(function(){
-	            kakaopay.ref.location.href=url
-	        }, 0);
-	    } else {
-	    	throw new Error("popup을 열 수 없습니다!(cannot open popup)");
-	    }
-	    // TODO : 창이 띄워진 동안에는 배경 반투명 검은색으로 가리고 입력 막아야 할 것 같음
+			// NOTE : 왠지는 모르겠는데 이걸로 입력 차단 안됨
+			// overlay.style.pointerEvents = 'none';
+			$(".container").css("pointerEvents", "none")
+			console.log("카카오페이 URL : " + url)
+			
+			setTimeout(function(){
+				kakaopay.ref.location.href=url
+			}, 0);
+		} else {
+			throw new Error("popup을 열 수 없습니다!(cannot open popup)");
+		}
+		// TODO : 창이 띄워진 동안에는 배경 반투명 검은색으로 가리고 입력 막아야 할 것 같음
 	}
 	
 	function releaseInputBlock() {
@@ -1152,21 +1143,18 @@
 		$(".container").css("pointerEvents", "auto")
 	}
 	</script>
-    
-    <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
-	<script>
-        let selectedPaymentMethod = null;
+  
+  <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
+  <script>
+	  let selectedPaymentMethod = null;
 
-        function selectPaymentMethod(method) {
-            selectedPaymentMethod = method;
-            console.log(method + "방법 선택")
-            
-            // form태그 밸류 설정
-            $("#payment_type").val(method);
-        }
+	  function selectPaymentMethod(method) {
+		selectedPaymentMethod = method;
+		console.log(method + "방법 선택")
+		$("#payment_type").val(method); // form태그 밸류 설정
+	  }
 
-        function requestPayment() {
-        	
+	  async function requestPayment() {
         	let productsInfo = [];
 			let productNo = 0;
 			let quantity = 0;
@@ -1181,6 +1169,7 @@
 		    }
 
             const paymentType = document.querySelector("#payment_type").value;
+            const totalPrice = parseInt(document.querySelector(".totalPrice").textContent.replace(/\D/g, "")) // 예) "453,000원" -> 453000
             const saveDeliveryType = document.querySelector("#saveDeliveryType").value;
             const deliveryName = document.querySelector("#deliveryName").value;
             const pointDCText = document.querySelector("#pointDC").textContent;
@@ -1188,6 +1177,7 @@
             const couponUse = document.querySelector("#couponUse").value;
             const deliveryAddress = document.querySelector("#deliveryAddressHidden").value + document.querySelector("#detailAddressNew").value;
             const deliveryRequest = document.querySelector("input[name='deliveryRequest']").value;
+            const deliveryCost = parseInt(document.querySelector("#deliveryCost").textContent.replace(/\D/g, "")) // 예) "2500 원" -> 2500
             const ordererId = document.querySelector("input[name='ordererId']").value;
             const ordererName = document.querySelector("input[name='ordererName']").value;
             const phoneNumber = document.querySelector("input[name='phoneNumber']").value;
@@ -1195,11 +1185,13 @@
 
             const paymentData = {
                 productsInfo,
+                totalPrice,
                 paymentType,
                 saveDeliveryType,
                 deliveryName,
                 deliveryAddress,
                 deliveryRequest,
+                deliveryCost,
                 ordererId,
                 ordererName,
                 phoneNumber,
@@ -1210,21 +1202,306 @@
 
             console.log(paymentData);
            
+			// 주문 테이블 생성
+			let isOrderMade = false
+			let orderId = null
             $.ajax({
+            	async: false,
                 url: '/orderProducts',
                 type: 'POST',
                 contentType: 'application/json',
+                dataType: "json",
                 data: JSON.stringify(paymentData), // 전체 paymentData를 JSON으로 변환하여 전송
-                success: function(data) {
-                    console.log('Success:', data);
+                success: function(response) {
+                    console.log('Success:', response);
+                    orderId = response.orderId
+					isOrderMade = true
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
+					isOrderMade = false;
                 }
             });
+            if (isOrderMade == false) {return} // 주문 테이블 생성이 제대로 안되었을 때 함수 종료
+            
+            console.log("now here")
+			// @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
+			let amount = {
+				currency: "KRW",
+				value: totalPrice,
+			}
+			let orderName =  $(".product-name").find("a").text()
+			if ($(".product-name").length > 1) {
+				orderName += ("외 " + ($(".product-name").length - 1) + "건")
+			}
+            console.log("amount : " + amount)
+            console.log("orderName : " + orderName)
+			
+			switch (selectedPaymentMethod) {
+			case "CARD":
+				await payment.requestPayment({
+					method: "CARD", // 카드 및 간편결제
+					amount: amount,
+					orderId: orderId,
+					orderName: orderName,
+					successUrl: window.location.origin + "/payment/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
+					failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
+					card: {
+						useEscrow: false,
+						flowMode: "DEFAULT",
+						useCardPoint: false,
+						useAppCardOnly: false,
+					},
+				});
+			case "TRANSFER":
+				await payment.requestPayment({
+					method: "TRANSFER", // 계좌이체 결제
+					amount: amount,
+					orderId: orderId,
+					orderName: orderName,
+					successUrl: window.location.origin + "/payment/success.html",
+					failUrl: window.location.origin + "/fail.html",
+					transfer: {
+						cashReceipt: {
+						type: "소득공제",
+						},
+						useEscrow: false,
+					},
+				});
+			case "VIRTUAL_ACCOUNT":
+				await payment.requestPayment({
+					method: "VIRTUAL_ACCOUNT", // 가상계좌 결제
+					amount: amount,
+					orderId: orderId,
+					orderName: orderName,
+					successUrl: window.location.origin + "/payment/success.html",
+					failUrl: window.location.origin + "/fail.html",
+					virtualAccount: {
+						cashReceipt: {
+						type: "소득공제",
+						},
+						useEscrow: false,
+						validHours: 24,
+					},
+				});
+			}
+
+			// 네이버페이
+			// 레퍼런스 : https://developers.pay.naver.com/docs/v2/api#etc-etc_pay_reserve
+			if (selectedPaymentMethod == "NAVER_PAY") {
+				console.log("네이버 페이 선택")
+				oPay.open({
+					"merchantPayKey": "202410179U6ds9",
+					"productName": orderName,
+					"productCount": "0",
+					"totalPayAmount": "" + amount.value,
+					"taxScopeAmount": "" + amount.value,
+					"taxExScopeAmount": "0",
+					"returnUrl": window.location.origin + "/approveNaverPay"
+				});
+			}
+			
+			// TODO : 카카오페이
+			// 레퍼런스 : https://developers.kakaopay.com/docs/payment/online/single-payment#payment-ready-sample-request
+			if (selectedPaymentMethod == "KAKAO_PAY") {
+				console.log("카카오 페이 선택")
+				// NOTE : http 요청으로 카카오페이 서버에 직접 보내면 유저가 브라우저의 개발자 도구를 통해 cid, partner_order_id 같은 중요한 정보를 직접 확인 가능
+				// 그러므로 여기서는 POST 요청으로 서버의 컨트롤러에게 대신 요청을 보내도록 함.
+				// TODO : 보낼 겍체에 필요한 정보 별도로 채워넣기 (주문번호, 가격)
+				let item = {
+					amount: amount.value
+				}
+				
+				// NOTE : ajax 요청은 컨트롤러로부터 응답을 받아도 페이지를 이동시켜주지 않는다. 그래서 success 메서드를 붙어야 함 
+				$.ajax({
+					type : 'POST',
+					url : "/kakaoPay/ready",
+					data: item,
+					dataType: "json",
+					contentType : 'application/x-www-form-urlencoded',
+					// NOTE : cotentType을 application/json으로 지정하고 스프링 서버에서 @Requestbody + DTO 객체로 받아올 수도 있지만 DTO 만들기 싫어서 이렇게 함
+					success : function(response) {
+						// console.log("response : " + response)
+						// NOTE : 성공하면 페이지 이동해서 그 페이지에서 자바스크립트를 호출하여 카카오페이 결제 팝업을 바꾸는 방식에서
+						// 페이지 이동하지 않고 그냥 주문 페이지에서 팝업 띄우는 방식으로 변경하였다.
+						console.log("카카오페이 결제 팝업 호출")
+						console.log("response : " + JSON.stringify(response))
+						showKakaopayPaymentWindow(response.paymentURL)
+					},
+					error : function(request, status, error) {
+						console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+					}
+				})
+			}
         }
+	  
+/* 	  function tryPayment() {
+		  // TODO : 총 결제금액을 view에서 얻어오기, 여기서는 100원으로 임의로 설정
+		  amount.value = 200
+		  let response = sendAmountToServer(amount)
+		  if (response == null) {
+			  return;
+		  } else if (response.result == "fail") {
+			  // TODO : 잚못된 요청입니다 페이지 날리기
+			  alert("잘못된 요청입니다")
+			  return;
+		  }
+		  // TODO : 뷰에서 상품목록 조립해서 이름 만들기
+		  let orderName = "어쩌고저쩌고"
+		  // requestPayment(response.orderId, orderName, amount)
+	  } */
+
+	  // TODO : orders 테이블에 행을 삽입하는 시점에서 orderId가 서버의 session에 저장되어 있어야 함.
+	  // 일단 여기서는 테스트를 위해 입력폼으로 orderId를 전송, **테스트가 끝나면 컨트롤러의 메소드를 삭제해야 함!!**
+	  function sendOrderIdForTest() {
+		  let orderId = $("#testOrderIdInput").val()
+		  console.log("서버 세션에 저장할 orderId : " + orderId)
+		  $.ajax({
+			  async : false,
+			  type : 'POST',
+			  url : "/payment/test/saveOrderId",
+			  data: {
+				  "orderId": orderId
+			  },
+			  dataType: "text",
+			  success : function(res) {
+				  console.log("saveOrderId 성공");
+			  },
+		      error : function(request, status, error) {
+				  console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+				  console.log("saveOrderId 실패")       
+			  }
+		  })
+	  }
+
+	  // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하기 위해 서버에 저장
+	  // orders 테이블에 insert가 이미 일어났으므로 orderId는 이미 서버에 저장되어 있음
+	  function sendAmountToServer(amount) {
+		  let response = null
+		  $.ajax({
+			  async : false,
+			  type : 'POST',
+			  url : "/payment/saveExpectedTotalPrice",
+			  data: amount, // amount 객체의 예시 : {currency : "KRW", value : 100}
+			  dataType: "json",
+			  contentType : 'application/x-www-form-urlencoded',
+			  // NOTE : cotentType을 application/json으로 지정하고 스프링 서버에서 @Requestbody + DTO 객체로 받아올 수도 있지만 DTO 만들기 싫어서 이렇게 함
+			  success : function(res) {
+				  console.log("sendAmountToServer response : " + JSON.stringify(res));
+				  response = res
+			  },
+		      error : function(request, status, error) {
+				  console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+			  }
+		  })
+		  return response
+	  }
+	  
+	  
+/*	  // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+	  // @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
+	  async function requestPayment(orderId = null, orderName, amount) {            
+		  switch (selectedPaymentMethod) {
+		  case "CARD":
+			  await payment.requestPayment({
+				  method: "CARD", // 카드 및 간편결제
+				  amount: amount,
+				  orderId: orderId,
+				  orderName: orderName,
+				  successUrl: window.location.origin + "/payment/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
+				  failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
+				  card: {
+					  useEscrow: false,
+					  flowMode: "DEFAULT",
+					  useCardPoint: false,
+					  useAppCardOnly: false,
+				  },
+			  });
+		  case "TRANSFER":
+			  await payment.requestPayment({
+				  method: "TRANSFER", // 계좌이체 결제
+				  amount: amount,
+				  orderId: orderId,
+				  orderName: orderName,
+				  successUrl: window.location.origin + "/payment/success.html",
+				  failUrl: window.location.origin + "/fail.html",
+				  transfer: {
+					  cashReceipt: {
+					  type: "소득공제",
+					  },
+					  useEscrow: false,
+				  },
+			  });
+		  case "VIRTUAL_ACCOUNT":
+			  await payment.requestPayment({
+				  method: "VIRTUAL_ACCOUNT", // 가상계좌 결제
+				  amount: amount,
+				  orderId: orderId,
+				  orderName: orderName,
+				  successUrl: window.location.origin + "/payment/success.html",
+				  failUrl: window.location.origin + "/fail.html",
+				  virtualAccount: {
+					  cashReceipt: {
+					  type: "소득공제",
+					  },
+					  useEscrow: false,
+					  validHours: 24,
+				  },
+			  });
+		  }
+
+		  // 네이버페이
+		  // 레퍼런스 : https://developers.pay.naver.com/docs/v2/api#etc-etc_pay_reserve
+		  if (selectedPaymentMethod == "NAVER_PAY") {
+			  console.log("네이버 페이 선택")
+			  oPay.open({
+				  "merchantPayKey": "202410179U6ds9",
+				  "productName": orderName,
+				  "productCount": "0",
+				  "totalPayAmount": "" + amount.value,
+				  "taxScopeAmount": "" + amount.value,
+				  "taxExScopeAmount": "0",
+				  "returnUrl": window.location.origin + "/approveNaverPay"
+			  });
+		  }
+		  
+		  // TODO : 카카오페이
+		  // 레퍼런스 : https://developers.kakaopay.com/docs/payment/online/single-payment#payment-ready-sample-request
+		  if (selectedPaymentMethod == "KAKAO_PAY") {
+			  console.log("카카오 페이 선택")
+			  // NOTE : http 요청으로 카카오페이 서버에 직접 보내면 유저가 브라우저의 개발자 도구를 통해 cid, partner_order_id 같은 중요한 정보를 직접 확인 가능
+			  // 그러므로 여기서는 POST 요청으로 서버의 컨트롤러에게 대신 요청을 보내도록 함.
+			  // TODO : 보낼 겍체에 필요한 정보 별도로 채워넣기 (주문번호, 가격)
+			  let item = {
+				  amount: amount.value
+			  }
+			  
+			  // NOTE : ajax 요청은 컨트롤러로부터 응답을 받아도 페이지를 이동시켜주지 않는다. 그래서 success 메서드를 붙어야 함 
+			  $.ajax({
+				type : 'POST',
+				url : "/kakaoPay/ready",
+				data: item,
+				dataType: "json",
+				contentType : 'application/x-www-form-urlencoded',
+				// NOTE : cotentType을 application/json으로 지정하고 스프링 서버에서 @Requestbody + DTO 객체로 받아올 수도 있지만 DTO 만들기 싫어서 이렇게 함
+				success : function(response) {
+					// console.log("response : " + response)
+					// NOTE : 성공하면 페이지 이동해서 그 페이지에서 자바스크립트를 호출하여 카카오페이 결제 팝업을 바꾸는 방식에서
+					// 페이지 이동하지 않고 그냥 주문 페이지에서 팝업 띄우는 방식으로 변경하였다.
+					console.log("카카오페이 결제 팝업 호출")
+					console.log("response : " + JSON.stringify(response))
+					showKakaopayPaymentWindow(response.paymentURL)
+				},
+				error : function(request, status, error) {
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+				  }
+			  })
+		  }
+	  }*/
+
+	  function generateRandomString() {
+		  return window.btoa(Math.random()).slice(0, 20);
+	  }
 	</script>
-
 </body>
-
 </html>

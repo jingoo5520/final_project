@@ -1,0 +1,19 @@
+[33m79d63d5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/payment[m[33m)[m HEAD@{0}: commit: 결제 기능 DB 코드 추가 중
+[33mb2f97a9[m HEAD@{1}: commit: 결제 기능(DB 조작) 구현 중
+[33mdc98e97[m HEAD@{2}: pull origin developer: Fast-forward
+[33m4cc956e[m HEAD@{3}: commit: 주문목록 조회, 주문취소/반품/환불 페이지 UI 작성중
+[33m4a71956[m HEAD@{4}: commit (merge): developer 브랜치 머지 완료
+[33ma17b12f[m HEAD@{5}: commit (merge): devloper 브랜치와 merge 충돌 해결
+[33m9dca1b7[m HEAD@{6}: commit: 일부 수정
+[33m8b47f4f[m HEAD@{7}: commit (merge): merge 충돌 해결
+[33me5e03e1[m HEAD@{8}: commit: 간편결제(네이버페이, 카카오페이) 기능 구현 중
+[33m90ceee6[m HEAD@{9}: pull origin developer: updating HEAD
+[33m90ceee6[m HEAD@{10}: checkout: moving from developer to feat/payment
+[33me3af6c8[m[33m ([m[1;32mdeveloper[m[33m)[m HEAD@{11}: checkout: moving from feat/payment to developer
+[33m90ceee6[m HEAD@{12}: commit (merge): developer 브랜치 땡겨옴
+[33m3c78884[m HEAD@{13}: reset: moving to 3c788846e1427638a150afdcb71fea0d06605684
+[33m71e8c19[m HEAD@{14}: pull origin developer: Merge made by the 'ort' strategy.
+[33m3c78884[m HEAD@{15}: commit: 신용카드, 무통장입금, 계좌이체 결제 기능 구현 중
+[33me3af6c8[m[33m ([m[1;32mdeveloper[m[33m)[m HEAD@{16}: checkout: moving from developer to feat/payment
+[33me3af6c8[m[33m ([m[1;32mdeveloper[m[33m)[m HEAD@{17}: pull origin developer: Fast-forward
+[33m1e8074c[m HEAD@{18}: clone: from https://github.com/jingoo5520/final_project.git
