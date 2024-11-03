@@ -76,7 +76,7 @@ public class inquiryController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("inquiry.get(\"inquiryReply\"): " + inquiry.get("inquiryReply"));
 
 		model.addAttribute("inquiryDetail", inquiry.get("inquiryDetail"));
@@ -101,8 +101,8 @@ public class inquiryController {
 		}
 
 		model.addAttribute("inquiryDetail", inquiry.get("inquiryDetail"));
-		System.out.println("get " +inquiry.get("inquiryDetail"));
-		
+		System.out.println("get " + inquiry.get("inquiryDetail"));
+
 		model.addAttribute("inquiryImgList", inquiryImgList);
 
 		return "/user/pages/inquiry/modifyInquiry";
@@ -179,13 +179,11 @@ public class inquiryController {
 
 	// 문의 수정
 	@PostMapping("/modifyInquiry")
-	public ResponseEntity<String> modifyInquiry(
-			@RequestParam("inquiryNo") int inquiryNo,
-			@RequestParam("inquiryTitle") String title,
-			@RequestParam("inquiryContent") String content, @RequestParam("inquiryType") String type,
-			@RequestParam("productNo") String productNo, @RequestParam(value = "files", required = false) MultipartFile[] files,
-			@RequestParam(value = "existFiles", required = false) String[] existFiles,
-			HttpServletRequest request) {
+	public ResponseEntity<String> modifyInquiry(@RequestParam("inquiryNo") int inquiryNo,
+			@RequestParam("inquiryTitle") String title, @RequestParam("inquiryContent") String content,
+			@RequestParam("inquiryType") String type, @RequestParam("productNo") String productNo,
+			@RequestParam(value = "files", required = false) MultipartFile[] files,
+			@RequestParam(value = "existFiles", required = false) String[] existFiles, HttpServletRequest request) {
 
 		String result = "";
 
@@ -200,8 +198,8 @@ public class inquiryController {
 			newProductNo = Integer.parseInt(productNo);
 		}
 
-		InquiryDetailDTO dto = InquiryDetailDTO.builder().inquiry_no(inquiryNo).inquiry_title(title).inquiry_content(content)
-				.inquiry_type(type).product_no(newProductNo).member_id(memberId).build();
+		InquiryDetailDTO dto = InquiryDetailDTO.builder().inquiry_no(inquiryNo).inquiry_title(title)
+				.inquiry_content(content).inquiry_type(type).product_no(newProductNo).member_id(memberId).build();
 
 		try {
 			iService.modifyInquiry(dto, files, existFiles, request);
