@@ -68,13 +68,16 @@
             <h6>반품 신청(아니면 주문취소 신청)</h6>
             <p>주문번호 : ${orderNo}</p>
             <p>신청사유 : </p>
-            <form>
+            <form action="" method="POST">
             	<textarea name="content" cols=100 rows=6 required></textarea>
+            	<p>계좌 정보</p>
+            	<span>예금주 : </span><input type="text" name="depositName"></input>
+            	<span>은행 : </span><input type="text" name="depositBank"></input>
+            	<span>계좌번호 : </span><input type="text" name="depositAccount"></input>
             	<div>
             		<button>취소</button>
             		<input type="submit" value="확인"></button>
             	</div>
-            	
             </form>
         </div>
     

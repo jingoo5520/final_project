@@ -4,10 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
@@ -28,6 +31,8 @@ import com.finalProject.model.ResponseData;
 import com.finalProject.model.MemberDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.util.ReceiveMailPOP3;
+import com.finalProject.util.RememberPath;
+import com.finalProject.util.SendMailUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,6 +43,9 @@ public class MemberController {
 
 	@Inject
 	private MemberService memberService;
+
+	@Inject
+	private SendMailUtil sendMail;
 
 	@Inject
 	private ReceiveMailPOP3 remail;
@@ -203,9 +211,34 @@ public class MemberController {
 
 	// 마이페이지 (내정보수정 페이지)
 	@RequestMapping(value = "/myPage/modiInfo")
-	public String myPage() {
+	public String myPage(HttpServletRequest request) {
 		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_modiInfo";
+	}
+
+	// 마이페이지 (비밀번호 변경 페이지)
+	@RequestMapping(value = "/myPage/modiPwd")
+	public String myPage_pwd(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_modiPwd";
+	}
+
+	// 마이페이지 (회원 탈퇴)
+	@RequestMapping(value = "/myPage/withdraw")
+	public String myPage_withdraw(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_withdraw";
+	}
+
+	// 마이페이지 (구매 내역)
+	@RequestMapping(value = "/myPage/history")
+	public String myPage_history(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_history";
 	}
 
 	// 마이페이지 인증(정보 수정시 비밀번호를 확인함.)
@@ -214,6 +247,7 @@ public class MemberController {
 		HttpSession ses = request.getSession();
 		LoginDTO loginMember = (LoginDTO) ses.getAttribute("loginMember");
 		String member_id = loginMember.getMember_id(); // 세션에 저장된 member_id 저장
+		String rememberPath = ses.getAttribute("rememberPath") + "";
 		try {
 			// 로그인된 아이디와 입력한 비밀번호가 일치하는지 DB조회
 			if (memberService.auth(member_id, member_pwd)) {
@@ -225,7 +259,7 @@ public class MemberController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "/user/pages/member/myPage_modiInfo"; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
+		return "redirect:" + rememberPath; // 임의로 지정한 반환페이지, 실제로 반환되는 view는 authInterceptor에서 결정됨
 	}
 
 	// 회원 정보 받아오기(마이페이지 ajax)
@@ -288,7 +322,7 @@ public class MemberController {
 				System.out.println("변경 실패");
 				json = new ResponseData("fail", "변경 실패");
 			}
-			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);				
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			json = new ResponseData("fail", "예외 발생");
@@ -297,4 +331,214 @@ public class MemberController {
 		return result;
 	}
 
+	// 비밀번호 변경하기
+	@RequestMapping(value = "/modiPwd", method = RequestMethod.POST)
+	public ResponseEntity<ResponseData> modiInfo(@RequestParam("member_pwd") String member_pwd,
+			HttpServletRequest request) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		String member_id = ses.getAttribute("auth") + "";
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		try {
+			// 비밀번호 변경 update문이 정상적으로 동작했다면
+			if (memberService.updateMemberPwd(map)) {
+				System.out.println("변경 완료");
+				json = new ResponseData("success", "변경 성공");
+			} else {
+				System.out.println("변경 실패");
+				json = new ResponseData("fail", "변경 실패");
+			}
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		System.out.println(member_pwd);
+		return result;
+	}
+
+	// 회원탈퇴
+	@RequestMapping(value = "/withdraw", method = RequestMethod.POST)
+	public ResponseEntity<ResponseData> withdraw(HttpServletRequest request, HttpServletResponse response) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		String member_id = ses.getAttribute("auth") + "";
+		try {
+			// 회원 탈퇴 성공시
+			if (memberService.withDrawMember(member_id)) {
+				json = new ResponseData("success", "탈퇴 완료");
+				Cookie cookie = new Cookie("al", ""); // 쿠키객체 생성
+				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)
+				cookie.setPath("/"); // 모든 경로에서 사용 가능
+				response.addCookie(cookie); // 쿠키 저장(삭제)
+			} else {
+				json = new ResponseData("fail", "탈퇴 실패");
+			}
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		return result;
+	}
+
+	// 인증메일 요청
+	@RequestMapping(value = "/mailRequest")
+	public ResponseEntity<ResponseData> mailRequest(HttpServletRequest request, @RequestParam("email") String email) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		Random random = new Random();
+		String authCode = random.nextInt(10) + "" + random.nextInt(10) + random.nextInt(10) + random.nextInt(10)
+				+ random.nextInt(10) + random.nextInt(10); // 0~9 사이의 숫자 6자리
+		long authTime = System.currentTimeMillis() + 180000; // 현재 시간 + 3분 (180000 밀리초)
+		System.out.println("인증코드 : " + authCode);
+		HttpSession ses = request.getSession();
+		ses.setAttribute("authCode", authCode);
+		ses.setAttribute("authTime", authTime);
+		try {
+			sendMail.sendMail(email, "ELOLIA 인증코드입니다", authCode);
+			json = new ResponseData("success", "메일 전송 성공");
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} catch (IOException e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "입출력 오류");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "이메일 전송 오류");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+
+		return result;
+	}
+
+	// 인증요청
+	@RequestMapping(value = "/mailAuth")
+	public ResponseEntity<ResponseData> mailAuth(HttpServletRequest request,
+			@RequestParam("inputAuthCode") String inputAuthCode) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		String authCode = ses.getAttribute("authCode") + "";
+		long authTime = (long) ses.getAttribute("authTime"); // 세션에 저장했던 시간
+		long now = System.currentTimeMillis(); // 현재 시간
+		if (authCode == null) { // 세션이 있는지 확인(인증메일을 발송하고 30분이 지나면 세션자체가 사라져서 nullpoint에러 발생
+			json = new ResponseData("fail", "세션 만료");
+			result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+		} else {
+			if (authTime < now) { // 인증 메일을 보낸지 3분이 지난경우
+				System.out.println("세션이 만료되었습니다.");
+				json = new ResponseData("fail", "세션 만료");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} else {
+				if (inputAuthCode.equals(authCode)) {
+					System.out.println("인증 성공");
+					json = new ResponseData("success", "인증 성공");
+					result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+				} else {
+					System.out.println("인증 실패");
+					json = new ResponseData("fail", "코드 불일치");
+					result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+				}
+			}
+		}
+		return result;
+	}
+
+	// 아이디 찾기 페이지로 이동
+	@RequestMapping(value = "/find_id")
+	public String find_id() {
+		return "/user/pages/member/find_id";
+	}
+
+	// 비밀번호 찾기 페이지로 이동
+	@RequestMapping(value = "/find_pwd")
+	public String find_pwd() {
+		return "/user/pages/member/find_pwd";
+	}
+
+	// 아이디 찾기(이메일)
+	@RequestMapping(value = "/find/id")
+	public ResponseEntity<ResponseData> findMemberId(@RequestParam("email") String email) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		LoginDTO member_id = null;
+		try {
+			member_id = memberService.findIdbyEmail(email);
+			if (member_id != null) {
+				sendMail.sendMail(email, "ELOLIA 아이디 찾기 요청", "id : " + member_id.getMember_id());
+				json = new ResponseData("success", "메일 전송 완료");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} else {
+				json = new ResponseData("fail", "없는 이메일");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+
+		return result;
+	}
+
+	// 비밀번호 찾기(아이디, 이메일)
+	@RequestMapping(value = "/find/pwd")
+	public ResponseEntity<ResponseData> findMemberPwd(@RequestParam("email") String email,
+			@RequestParam("member_id") String member_id) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		Random random = new Random();
+		UUID uuid = UUID.randomUUID();
+		String member_pwd = random.nextInt(10000) + uuid.toString().substring(0, 7);
+
+		try {
+			if (memberService.findPwd(email, member_id, member_pwd)) {
+				sendMail.sendMail(email, "ELOLIA 임시 비밀번호", "pwd : " + member_pwd);
+				json = new ResponseData("success", "메일 전송 완료");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} else {
+				json = new ResponseData("fail", "아이디 또는 이메일 에러");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			json = new ResponseData("fail", "예외 발생");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+
+		return result;
+	}
+
+	// 찜정보 받기
+	@RequestMapping(value = "/getWishList")
+	public ResponseEntity<ResponseData> getWishList(HttpServletRequest request, Model model) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인세션을 loginDTO로 받아옴
+		if(loginDTO != null) { // 로그인 상태인지 확인(세션이 있다면 로그인된 상태인 것)
+			try {
+				int wishList[] = memberService.getWishList(loginDTO.getMember_id());
+				model.addAttribute("wishList", wishList); // 모델에 찜 목록 배열 저장(페이지가 열릴때 모델에 저장되는게 아니라서 해당 코드는 페이지가 열릴때 동작되도록 해야함)
+				json = new ResponseData("success", "찜목록 받아옴", wishList);
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			} catch (Exception e) {
+				json = new ResponseData("fail", "찜목록 받아오기 실패");
+				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+			}
+		} else {
+			json = new ResponseData("fail", "로그인 세션 없음");
+			result = new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		
+		return result;
+	}
+	
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
@@ -64,5 +65,44 @@ public class MemberServiceImpl implements MemberService {
 	public boolean updateMember(MemberDTO memberDTO) throws Exception {
 		return memberDAO.updateMember(memberDTO);
 	}
+
+	// 마이 페이지 비밀번호 변경
+	@Override
+	public boolean updateMemberPwd(Map<String, String> map) throws Exception {
+		return memberDAO.updateMemberPwd(map);
+	}
+
+	// 마이 페이지 회원탈퇴
+	@Override
+	public boolean withDrawMember(String member_id) throws Exception {
+		return memberDAO.withDrawMember(member_id);
+	}
+
+	// 아이디 찾기
+	@Override
+	public LoginDTO findIdbyEmail(String email) throws Exception {
+		return memberDAO.findIdbyEmail(email);
+	}
+
+	// 비밀번호 찾기
+	@Transactional
+	@Override
+	public boolean findPwd(String email, String member_id, String member_pwd) throws Exception {
+		boolean result = false;
+		if(memberDAO.findPwd(email, member_id)) {
+			if(memberDAO.updateRandomPwd(member_pwd, member_id)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	// 회원의 찜목록 조회
+	@Override
+	public int[] getWishList(String member_id) throws Exception {
+		return memberDAO.getWishList(member_id);
+	}
+	
+	
 
 }

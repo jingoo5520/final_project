@@ -39,7 +39,7 @@
 	<!-- /End Preloader -->
 
 	<jsp:include page="../header.jsp"></jsp:include>
-	
+
 
 	<!-- Start Breadcrumbs -->
 	<div class="breadcrumbs">
@@ -108,14 +108,17 @@
 										name="autologin_code" id="autologin_code"> <label
 										class="form-check-label">자동 로그인</label>
 								</div>
-								<a class="lost-pass" href="account-password-recovery.html">비밀번호
+								<a class="lost-pass" href="${pageContext.request.contextPath}/member/find_id">아이디
+									찾기</a> <a class="lost-pass" href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
 									찾기</a>
 							</div>
 							<div class="button">
 								<button class="btn" type="submit">로그인</button>
 							</div>
 							<p class="outer-link">
-								아직 회원이 아니신가요? <a href="${pageContext.request.contextPath}/member/viewSignUp"">회원가입 하기 </a>
+								아직 회원이 아니신가요? <a
+									href="${pageContext.request.contextPath}/member/viewSignUp">회원가입
+									하기 </a>
 							</p>
 						</div>
 					</form>

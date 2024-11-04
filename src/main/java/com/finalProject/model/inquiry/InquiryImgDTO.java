@@ -1,4 +1,4 @@
-package com.finalProject.persistence.inquiry;
+package com.finalProject.model.inquiry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +16,7 @@ import lombok.ToString;
 public class InquiryImgDTO {
 	private int inquiry_image_no;
 	private int inquiry_no;
-	private String base64Img;
-	private String path;
+	private String inquiry_image_uri;
+	private String inquiry_image_name;
+	private String inquiry_image_original_name;
 }

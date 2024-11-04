@@ -1,25 +1,42 @@
 package com.finalProject.controller;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.finalProject.service.home.HomeService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 public class HomeController {
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+	@Inject
+	HomeService hService;
+	
+	
 	@GetMapping("/")
-	   public String homePage(Locale locale, Model model) {
+	public String homePage(Model model) {
+		
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		try {
+			data = hService.getHomeData();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(data);
+		
+		model.addAttribute("newProducts", data.get("newProducts"));
 		return "/user/index";
+	}
+	
 
-}
 }
