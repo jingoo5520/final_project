@@ -5,17 +5,29 @@
 <mapper namespace="com.finalProject.mappers.productMapper">
    <!-- 쿼리문 -->
 <!-- 생성일에 따른 모든 상품 나열 -->
-	<select id="selectProductsByPage" parameterType="map" resultType="ProductDTO">
-	    select p.product_no, p.product_name, p.product_price, p.product_category, p.dc_rate, p.product_dc_type, p.product_sell_count,
-	           max(pi.image_main_url) as image_main_url, c.category_name
-	    from products p
-	    join product_images pi on p.product_no = pi.product_no
-	    join categories c on p.product_category = c.category_no
-	    where p.product_delete = 'N'
-	    group by p.product_no, p.product_name, p.product_price, p.product_category, c.category_name
-	    order by p.product_reg_date desc
-	    limit #{limit} offset #{offset}
-	</select>
+<select id="selectProductsByPage" parameterType="map" resultType="ProductDTO">
+    select p.product_no, 
+           p.product_name, 
+           p.product_price, 
+           p.product_category, 
+           p.dc_rate, 
+           p.product_dc_type, 
+           p.product_sell_count,
+           max(pi.image_main_url) as image_main_url, 
+           c.category_name
+    from products p
+    left join product_images pi on p.product_no = pi.product_no
+    join categories c on p.product_category = c.category_no
+    where p.product_delete = 'N'
+    group by p.product_no, 
+             p.product_name, 
+             p.product_price, 
+             p.product_category, 
+             c.category_name
+    order by p.product_reg_date desc
+    limit #{limit} offset #{offset}
+</select>
+
 	
 	<select id="selectProductCount" resultType="int">
 	        select count(*) 
@@ -49,16 +61,14 @@
     <when test="sortOrder == 'lowPrice'">
         order by 
         CASE 
-            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - (p.dc_rate / 100)))
-            WHEN p.product_dc_type = 'M' THEN (p.product_price - IFNULL(p.dc_amount, 0))
+            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate ))
             ELSE p.product_price
         END asc  <!-- 낮은가격순 -->
     </when>
     <when test="sortOrder == 'highPrice'">
         order by 
         CASE 
-            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - (p.dc_rate / 100)))
-            WHEN p.product_dc_type = 'M' THEN (p.product_price - IFNULL(p.dc_amount, 0))
+            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
             ELSE p.product_price
         END desc  <!-- 높은가격순 -->
     </when>
@@ -116,7 +126,7 @@
         p.dc_rate, 
         p.product_dc_type, 
         p.product_sell_count,
-        COALESCE(MAX(pi.image_main_url), 'noP_image.png') AS image_main_url, 
+        COALESCE(MAX(pi.image_main_url), '/resources/images/noP_image.png') AS image_main_url, 
         c.category_name
     FROM 
         products p
@@ -146,10 +156,16 @@
                 p.product_sell_count DESC
             </when>
             <when test="'lowPrice'.equals(sortOrder)">
-                p.product_price ASC
+                CASE 
+                    WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+                    ELSE p.product_price
+                END ASC
             </when>
             <when test="'highPrice'.equals(sortOrder)">
-                p.product_price DESC
+                CASE 
+                    WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+                    ELSE p.product_price
+                END DESC
             </when>
             <otherwise>
                 p.product_reg_date DESC
@@ -158,6 +174,7 @@
     LIMIT 
         #{limit} OFFSET #{offset}
 </select>
+
 
 
 

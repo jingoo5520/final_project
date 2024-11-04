@@ -35,7 +35,7 @@
 	<!-- /End Preloader -->
 	
     <jsp:include page="../header.jsp"></jsp:include>
-<div>${reviews }</div>
+
 
 	<!-- Start Breadcrumbs -->
 	<div class="breadcrumbs">
@@ -82,55 +82,7 @@
 					</div>
 					<!-- End Product Sidebar -->
 				</div>
-				<div class="col-lg-9 col-12">
-					<!-- Shopping Cart -->
-					<div class="cart-list-head" style="border: none">
-						<div class="cart-list-title">
-							<h5 style = "text-align : center;"> <a href = "/review/writableReview">작성 가능 리뷰</a>  / <a href = "/review/writtenByReview">작성 한 리뷰</a></h5>
-						</div>
-						<!-- Cart List Title -->
-						<div class="cart-list-title">
-							<div class="row">
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>상품 사진</p>
-								</div>
-								<div class="col-lg-6 col-md-6 col-12">
-									<p>상품 이름</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>배송 완료일</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>작업</p>
-								</div>
-							</div>
-						</div>
-						<!-- End Cart List Title -->
-
-<c:forEach var="review" items="${reviews}">
-    <div class="cart-single-list">
-        <div class="row align-items-center">
-            <div class="col-lg-2 col-md-2 col-12">
-                <c:choose>
-                    <c:when test="${not empty review.image_main_url}">
-                        <img src="${review.image_main_url}" alt="Product Image" class="img-fluid">
-                    </c:when>
-                    <c:otherwise>
-                        <img src="/images/noP_image.png" alt="Default Image" class="img-fluid">
-                    </c:otherwise>
-                </c:choose>
-            </div>
-            <div class="col-lg-6 col-md-6 col-12">${review.product_name}</div>
-            <div class="col-lg-2 col-md-2 col-12">
-                <fmt:formatDate value="${review.product_reg_date}" pattern="yyyy-MM-dd" />
-            </div>
-            <div class="col-lg-2 col-md-2 col-12">
-                <a href="/review/writeReview?product_no=${review.product_no}">리뷰작성</a>
-            </div>
-        </div>
-    </div>
-</c:forEach>
-
+				
 
 						<div class="pagination center">
 							<ul class="pagination-list">
@@ -144,11 +96,8 @@
 
 
 					</div>
-
 				</div>
 				<!--/ End Shopping Cart -->
-			</div>
-		</div>
 	</section>
 	<!-- End Product Grids -->
 

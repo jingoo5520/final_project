@@ -41,7 +41,7 @@ public class ProductDTO {
     public int getCalculatedPrice() {
         if ("P".equalsIgnoreCase(product_dc_type)) {
             // 퍼센트 할인의 경우: 비율만큼 할인된 금액 계산
-            return (int) (product_price * (1 - (dc_rate / 100)));
+        	return (int) (product_price * (1 - dc_rate));
         } else if ("N".equalsIgnoreCase(product_dc_type) || product_dc_type == null) {
             // 할인 타입이 'N'이거나 null인 경우 원래 가격 반환
             return product_price;

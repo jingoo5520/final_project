@@ -11,7 +11,6 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -22,43 +21,6 @@
 
 </head>
 <script type="text/javascript">
-	function addCart(productNo) {
-		
-		console.log(productNo);
-		
-		$.ajax({
-		    url: '/addCartItem',
-		    type: 'POST',
-		    data: {
-		    	productNo : productNo
-		    	},
-		    dataType: 'json',
-		    success: function(data) {
-		        console.log(data);
-		    },
-		    error: function() {
-		    },
-		    complete: function(data) {
-		    	if (data.status == 200) {
-		            // 모달을 보여주기
-		            $('#myModal').modal('show');
-	
-		            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-		            $('#goCart').off('click').on('click', function() {
-		                location.href = "/cart";
-		            });
-		            
-		            $('#keepProduct').off('click').on('click', function() {
-		                location.reload();
-		            });
-		        } else if (data.responseText == 401) {
-		            alert("잘못된 접근입니다.");
-		        }
-		    }
-		});
-	}
-
-
     function submitSortingForm() {
         var sortingSelect = document.getElementById('sorting');
         sortingSelect.value = sortingSelect.value.trim(); // 선택된 값에서 공백 제거
@@ -80,10 +42,26 @@
         // 폼 제출
         form.submit();
     }
-</script>
 
+    function toggleHeart(element) {
+        const icon = element.querySelector('i');
+        icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
+    }
+</script>
+<style>
+.product-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 최대 줄 수를 2로 설정 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 글자가 넘치는 경우 ... 표시 */
+    white-space: normal;
+
+}
+</style>
 <body>
     <jsp:include page="../header.jsp"></jsp:include>
+
 
     <!-- Preloader -->
     <div class="preloader">
@@ -214,14 +192,23 @@
                                             <!-- Start Single Product -->
                                             <!--                                         개수 -->
                                             <div class="single-product">
-                                                <div class="product-image" >
-                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}">
-                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" height= "300px">
+                                                <div class="product-image" style="height:300px;">
+                                                
+                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}" >
+                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
                                                     </a>
-                                                    <div class="button">
-                                                        <a onclick="addCart(${product.product_no})" class="btn"><i class="lni lni-cart"></i></a>
+
+                                                    <div class="button" style="position: absolute; bottom: 10px; left: 90px;">
+                                                        <a onclick="toggleHeart(this)" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
+                                                            <i class="lni lni-heart"></i>
+                                                        </a>
                                                     </div>
 
+                                                    <div class="button" style="position: absolute; bottom: 10px; right: 140px;">
+                                                        <a onclick="addCart(${product.product_no})" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
+                                                            <i class="lni lni-cart"></i>
+                                                        </a>
+                                                    </div>
                                                 </div>
 
                                                 <div class="product-info">
@@ -232,7 +219,7 @@
                                                     </span>
 
                                                     <h4 class="title">
-                                                        <a href="/product/jewelry/detail?productNo=${product.product_no}">${product.product_name }</a>
+                                                        <a href="/product/jewelry/detail?productNo=${product.product_no}" class="product-name">${product.product_name }</a>
                                                     </h4>
                                                     <div class="price">
                                                         <!--     dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
@@ -242,12 +229,14 @@
                                                             </span>
                                                         </c:if>
 
-                                                        <!--     할인율 (dc 타입이 P일 때만 표시) -->
+                                                        <!-- 할인율 (dc 타입이 P일 때만 표시) -->
                                                         <c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
                                                             <span class="sale-tag" style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-                                                                -${product.dc_rate}%
+                                                                -
+                                                                <fmt:formatNumber value="${product.dc_rate * 100}" type="number" maxFractionDigits="0" />%
                                                             </span>
                                                         </c:if>
+
 
                                                         <!--     최종 계산된 가격 표시 -->
                                                         <span>
@@ -271,15 +260,15 @@
                                                 <c:if test="${hasPrevBlock}">
                                                     <li>
                                                         <a href="<c:choose>
-                                    <c:when test='${not empty search}'>
-                                        /product/jewelry/result?search=${search}&page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:when>
-                                    <c:otherwise>
-                                        /product/jewelry?page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:otherwise>
-                                </c:choose>">
+						                                    <c:when test='${not empty search}'>
+						                                        /product/jewelry/result?search=${search}&page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:when>
+						                                    <c:otherwise>
+						                                        /product/jewelry?page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:otherwise>
+						                                </c:choose>">
                                                             <i class="lni lni-chevron-left"></i> 이전
                                                         </a>
                                                     </li>
@@ -310,15 +299,15 @@
                                                 <c:if test="${hasNextBlock}">
                                                     <li>
                                                         <a href="<c:choose>
-                                    <c:when test='${not empty search}'>
-                                        /product/jewelry/result?search=${search}&page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:when>
-                                    <c:otherwise>
-                                        /product/jewelry?page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:otherwise>
-                                 </c:choose>">
+						                                    <c:when test='${not empty search}'>
+						                                        /product/jewelry/result?search=${search}&page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:when>
+						                                    <c:otherwise>
+						                                        /product/jewelry?page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:otherwise>
+						                                 </c:choose>">
                                                             다음 <i class="lni lni-chevron-right"></i>
                                                         </a>
                                                     </li>
@@ -340,7 +329,6 @@
         </div>
     </section>
     <!-- End Product Grids -->
-    <jsp:include page="../cart/cartModal.jsp"></jsp:include>
 
     <jsp:include page="../footer.jsp"></jsp:include>
 
