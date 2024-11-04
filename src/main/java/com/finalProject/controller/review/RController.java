@@ -18,7 +18,6 @@ import com.finalProject.model.review.ReviewPagingInfo;
 import com.finalProject.model.review.ReviewPagingInfoDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.service.review.ReviewService;
-import com.mysql.cj.Session;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,41 +33,38 @@ public class RController {
 	private MemberService MService;
 
 	
-	// ÀÛ¼º °¡´ÉÇÑ ¸®ºä
+	// ì‘ì„± ê°€ëŠ¥í•œ ë¦¬ë·°
 	@GetMapping("/writableReview")
 	public String WritableReview(@RequestParam(defaultValue = "1") int page, HttpServletRequest request, ReviewPagingInfoDTO pagingInfoDTO, Model model) throws Exception {
 	    
 	    HttpSession session = request.getSession();
 	    LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 	    
-	    System.out.println("µ¥ÀÌÅÍ");
+	    System.out.println("ë°ì´í„°");
 	    System.out.println(loginMember);
 
 	    if (loginMember != null) {
 	    	
-	        // 1. ÃÑ ÀÛ¼º °¡´ÉÇÑ ¸®ºä °³¼ö¸¦ °¡Á®¿È
+	        // 1. ì´ ì‘ì„± ê°€ëŠ¥í•œ ë¦¬ë·° ê°œìˆ˜ë¥¼ ê°€ì ¸ì˜´
 	        int totalWritableReviews = service.countWritableReviews(loginMember.getMember_id());
-	        
-	        
-	        
-	        // 2. ÆäÀÌÂ¡ Á¤º¸ »ı¼º 
-	        pagingInfoDTO.setTotalPostCnt(totalWritableReviews); // ÀÌ¹Ì ¸Ş¼­µå ÆÄ¶ó¹ÌÅÍ·Î Àü´Ş¹Ş¾ÒÀ¸¹Ç·Î Àç»ı¼º ºÒÇÊ¿ä
+	        pagingInfoDTO.setTotalPostCnt(totalWritableReviews); // ì´ë¯¸ ë©”ì„œë“œ íŒŒë¼ë¯¸í„°ë¡œ ì „ë‹¬ë°›ì•˜ìœ¼ë¯€ë¡œ ì¬ìƒì„± ë¶ˆí•„ìš”
 	        ReviewPagingInfo pagingInfo = new ReviewPagingInfo(pagingInfoDTO, totalWritableReviews);
 	        
-	        // 3. ÀÛ¼º °¡´ÉÇÑ ¸®ºä ¸ñ·Ï Á¶È¸ ¹× ¸ğµ¨¿¡ Ãß°¡
-	        model.addAttribute("reviews", service.getWritableReviews(loginMember.getMember_id(), pagingInfo));
+	        // 2. ì¡°íšŒê°€ëŠ¥ ë¦¬ë·°
+	        List<ReviewDTO> writableReviews = service.getWritableReviews(loginMember.getMember_id(), pagingInfo);
+	        
+	        // 3. ì‘ì„± ê°€ëŠ¥í•œ ë¦¬ë·° ëª©ë¡ ì¡°íšŒ ë° ëª¨ë¸ì— ì¶”ê°€
+	        model.addAttribute("reviews", writableReviews);
 	        model.addAttribute("pagingInfo", pagingInfo);
 	        
-	        System.out.println("ÀÌ°Å ¶ß¸é ·Î±×ÀÎ µÈ°ÅÀÓ");
-	        System.out.println(service.getWritableReviews(loginMember.getMember_id(), pagingInfo));
-	        System.out.println("·Î±×ÀÎµÈ È¸¿ø ID: " + loginMember.getMember_id());
-	        System.out.println("ÃÑ ÀÛ¼º °¡´ÉÇÑ ¸®ºä °³¼ö: " + totalWritableReviews);
-	        System.out.println("ÆäÀÌÂ¡ ½ÃÀÛ ÀÎµ¦½º: " + pagingInfo.getStartRowIndex());
-	        System.out.println("ÆäÀÌÁö´ç Á¶È¸ °³¼ö: " + pagingInfo.getPageSize());
+	        System.out.println("Cì´ê±° ëœ¨ë©´ ë¡œê·¸ì¸ ëœê±°ì„");
+	        System.out.println(writableReviews);
+	        System.out.println("Cë¡œê·¸ì¸ëœ íšŒì› ID: " + loginMember.getMember_id());
+	        System.out.println("Cì´ ì‘ì„± ê°€ëŠ¥í•œ ë¦¬ë·° ê°œìˆ˜: " + totalWritableReviews);
 
 	    } else {
-	        System.out.println("·Î±×ÀÎ Á¤º¸ ¾øÀ½");
-	        return "redirect:/member/viewLogin"; // ·Î±×ÀÎ Á¤º¸°¡ ¾øÀ» °æ¿ì ·Î±×ÀÎÆäÀÌÁö
+	        System.out.println("ë¡œê·¸ì¸ ì •ë³´ ì—†ìŒ");
+	        return "redirect:/member/viewLogin"; // ë¡œê·¸ì¸ ì •ë³´ê°€ ì—†ì„ ê²½ìš° ë¡œê·¸ì¸í˜ì´ì§€
 	    }
 	    
 	    return "/user/pages/review/review";
@@ -76,7 +72,7 @@ public class RController {
 
 	
 	
-	// ÀÛ¼º ÇÑ ¸®ºä
+	// ì‘ì„± í•œ ë¦¬ë·°
 	@GetMapping("/writtenByReview")
 	public String WrittenByReview () {
 		
@@ -85,7 +81,7 @@ public class RController {
 		return "/user/pages/review/review"; 
 	}
 	
-	// ¸®ºä ÀÛ¼º ÆäÀÌÁö
+	// ë¦¬ë·° ì‘ì„± í˜ì´ì§€
 	@RequestMapping ("/writeReview")
 	public String WriteReview () {
 		

@@ -7,10 +7,10 @@ import com.finalProject.model.review.ReviewDTO;
 
 public interface ReviewService {
 
-	// ÀÛ¼º °¡´É ¸®ºä °³¼ö
+	// ìž‘ì„± ê°€ëŠ¥ ë¦¬ë·° ê°œìˆ˜
 	int countWritableReviews(String member_id) throws Exception;
 
-	// ÀÛ¼º °¡´É ¸®ºä Á¶È¸
+	// ìž‘ì„± ê°€ëŠ¥ ë¦¬ë·° ì¡°íšŒ
 	List<ReviewDTO> getWritableReviews(String member_id, ReviewPagingInfo pagingInfo) throws Exception;
 
 }

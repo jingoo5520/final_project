@@ -15,16 +15,22 @@ public class ReviewServiceImpl implements ReviewService {
 	@Autowired
 	private ReviewDAO RDao;
 
-	// ÀÛ¼º °¡´É ¸®ºä °³¼ö
+	// ì‘ì„± ê°€ëŠ¥ ë¦¬ë·° ê°œìˆ˜
 	@Override
 	public int countWritableReviews(String member_id) throws Exception {
 		return RDao.selectCountWritableReviews(member_id);
 	}
 
-	// ÀÛ¼º °¡´É ¸®ºä Á¶È¸
+	// ì‘ì„± ê°€ëŠ¥ ë¦¬ë·° ì¡°íšŒ
 	@Override
 	public List<ReviewDTO> getWritableReviews(String member_id, ReviewPagingInfo pagingInfo) throws Exception {
-		return RDao.selectWritableReviews(member_id, pagingInfo);
+		System.out.println("Sì„œë¹„ìŠ¤ì—ì„œ ì „ë‹¬ë°›ì€ member_id: " + member_id);
+		System.out.println("Sì„œë¹„ìŠ¤ì—ì„œ ì „ë‹¬ë°›ì€ PagingInfo: " + pagingInfo);
+
+		List<ReviewDTO> result = RDao.selectWritableReviews(member_id, pagingInfo);
+		System.out.println("DAOì—ì„œ ë°˜í™˜ëœ ê²°ê³¼: " + result);
+		
+		return result;
 	}
 	
 }
