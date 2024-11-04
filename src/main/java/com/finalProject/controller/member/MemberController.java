@@ -30,6 +30,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.ResponseData;
 import com.finalProject.model.MemberDTO;
 import com.finalProject.service.member.MemberService;
+import com.finalProject.util.KakaoUtil;
 import com.finalProject.util.ReceiveMailPOP3;
 import com.finalProject.util.RememberPath;
 import com.finalProject.util.SendMailUtil;
@@ -49,6 +50,9 @@ public class MemberController {
 
 	@Inject
 	private ReceiveMailPOP3 remail;
+
+	@Inject
+	private KakaoUtil kakao;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
 	public String viewLogin() {
@@ -126,43 +130,54 @@ public class MemberController {
 		return result;
 	}
 
-	@RequestMapping(value = "/signUp", method = RequestMethod.POST) // 회원가입 처리
-	public String signUp(MemberDTO signUpDTO, RedirectAttributes rttr) {
+	// 회원가입 처리
+	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
+	public String signUp(MemberDTO memberDTO, RedirectAttributes rttr,
+			@RequestParam(value = "basicAddress", required = false) String basicAddress,
+			@RequestParam(value = "addressName", required = false) String addressName) {
 		System.out.println("회원가입 요청");
-		System.out.println(signUpDTO.toString());
+		System.out.println(memberDTO.toString());
 		String result = "redirect:/viewSignUp";
 		// 입력받은 생일 형식을 DB에 저장될 형식으로 변경
-		String birtday = signUpDTO.getBirthday().replace("-", "");
-		signUpDTO.setBirthday(birtday);
+		String birtday = memberDTO.getBirthday().replace("-", "");
+		memberDTO.setBirthday(birtday);
 
 		// 입력받은 폰번호 형식을 DB에 저장될 형식으로 변경
 		// 01012345678 의 형식(-가 없는 형식이 경우)
-		if (signUpDTO.getPhone_number().length() == 11) {
-			String phone = signUpDTO.getPhone_number().substring(0, 3) + "-"
-					+ signUpDTO.getPhone_number().substring(3, 7) + "-" + signUpDTO.getPhone_number().substring(7, 11);
-			signUpDTO.setPhone_number(phone);
+		if (memberDTO.getPhone_number().length() == 11) {
+			String phone = memberDTO.getPhone_number().substring(0, 3) + "-"
+					+ memberDTO.getPhone_number().substring(3, 7) + "-" + memberDTO.getPhone_number().substring(7, 11);
+			memberDTO.setPhone_number(phone);
 		}
 
 		// 별명(nickname)을 입력하지 않았을 경우
-		if (signUpDTO.getNickname().equals("")) {
+		if (memberDTO.getNickname().equals("")) {
 			UUID randomuuid = UUID.randomUUID();
 			// member_name + 무작위 8글자로 닉네임 저장
 			// ex : 홍길동_44a9d39b
-			signUpDTO.setNickname(signUpDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
+			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
 		// 입력받은 주소+상세주소
 		// 우편번호/주소/상세주소
-		signUpDTO.setAddress(signUpDTO.getAddress() + "/" + signUpDTO.getAddress2());
+		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
 
 		// 성별 미선택시 null로 들어오는 데이터 처리
-		if (signUpDTO.getGender() == null) {
-			signUpDTO.setGender("N");
+		if (memberDTO.getGender() == null) {
+			memberDTO.setGender("N");
 		}
 
 		try {
-			if (memberService.signUp(signUpDTO) == 1) {
+			if (memberService.signUp(memberDTO) == 1) {
 				System.out.println("insert성공");
+				// 기본 주소 체크 여부 확인
+				if (basicAddress != null) {
+					try {
+						memberService.saveAdddress(memberDTO, addressName);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 				result = "redirect:/";
 			} else {
 				System.out.println("insert실패");
@@ -273,7 +288,8 @@ public class MemberController {
 			ObjectMapper objectMapper = new ObjectMapper(); // jackson 메서드
 			if (memberDTO != null) {
 				String address[] = memberDTO.getAddress().split("/");
-				memberDTO.setAddress(address[0] + "/" + address[1]);
+				memberDTO.setZipCode(address[0]);
+				memberDTO.setAddress(address[1]);
 				memberDTO.setAddress2(address[2]);
 				String result = objectMapper.writeValueAsString(memberDTO);
 				response.getWriter().write(result);
@@ -308,9 +324,9 @@ public class MemberController {
 			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
-		// 입력받은 주소+상세주소
+		// 입력받은 우편번호+주소+상세주소
 		// 우편번호/주소/상세주소
-		memberDTO.setAddress(memberDTO.getAddress() + "/" + memberDTO.getAddress2());
+		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
 		System.out.println(memberDTO.toString());
 		try {
 			// update가 정상적으로 됬다면
@@ -543,22 +559,23 @@ public class MemberController {
 
 	// 찜 하기(토글 동작)
 	// ajax요청 data에 찜하려는, 해제하려는 상품의 product_no를 받을수있도록 한다는 가정하에 만듦
-	@RequestMapping(value = "/saveWish", method=RequestMethod.GET)
-	public ResponseEntity<ResponseData> saveWish(@RequestParam(value = "product_no", defaultValue = "-1")int product_no, HttpServletRequest request) {
+	@RequestMapping(value = "/saveWish", method = RequestMethod.GET)
+	public ResponseEntity<ResponseData> saveWish(
+			@RequestParam(value = "product_no", defaultValue = "-1") int product_no, HttpServletRequest request) {
 		ResponseEntity<ResponseData> result = null;
 		ResponseData json = null;
 		HttpSession ses = request.getSession();
 		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인세션을 loginDTO로 받아옴
-		if(loginDTO != null) { // 로그인 상태인가?
+		if (loginDTO != null) { // 로그인 상태인가?
 			System.out.println("로그인 상태 확인");
-			if(product_no != -1) { // 상품번호가 유효한가?(제대로 받아왔는가?)
+			if (product_no != -1) { // 상품번호가 유효한가?(제대로 받아왔는가?)
 				System.out.println("상품 번호 유효");
 				try {
 					int tmp = memberService.saveWish(product_no, loginDTO.getMember_id()); // -1 : 에러, 0 : 찜추가, 1 : 찜취소
-					if(tmp == 0) {
+					if (tmp == 0) {
 						System.out.println("찜 추가");
 						json = new ResponseData("success", "찜");
-					} else if(tmp == 1) {
+					} else if (tmp == 1) {
 						System.out.println("찜 삭제");
 						json = new ResponseData("success", "찜 취소");
 					} else {
@@ -570,10 +587,36 @@ public class MemberController {
 					json = new ResponseData("error", "에러");
 					result = new ResponseEntity<>(HttpStatus.CONFLICT);
 					e.printStackTrace();
-				} 
+				}
 			}
 		}
 		return result;
 	}
 
+	// 카카오 redirectUri 처리
+	@RequestMapping(value = "/kakao")
+	public String viewKakaoLogin() {
+		System.out.println("카카오 로그인 진행중");
+		return "/user/pages/member/kakao";
+	}
+	// 카카오 로그인(인가코드 받기)
+	@RequestMapping(value = "/kakao/code")
+	public String getkakaoCode(HttpServletResponse response) {
+		try {
+			kakao.login(response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		return "/user/index";
+	}
+	
+	// 카카오 로그인
+	@RequestMapping(value = "/kakao/login", method = RequestMethod.POST)
+	public String kakaoLogin(@RequestParam("code")String accessCode) {
+		System.out.println("코드 받음");
+		// 토큰 받기
+		String accessToken = kakao.getAccessToken(accessCode);
+		
+		return "/user/index";
+	}
 }

@@ -57,6 +57,9 @@ public interface MemberDAO {
 
 	// 찜 정보 삭제
 	void deleteWish(Map<String, Object> map)throws Exception;
+
+	// 기본주소로 저장(회원가입)
+	void saveAddress(MemberDTO memberDTO, String addressName)throws Exception;
 	
 
 

@@ -134,4 +134,11 @@
 		product_no = #{product_no}
 	</delete>
 
+	<!-- 기본주소로 저장(회원가입) -->
+	<insert id="saveAddressBySignUp">
+		insert into delivery_addrs (delivery_name,
+		delivery_address, is_main, member_id)
+		values (#{addressName}, #{address}, 'M', #{member_id})
+	</insert>
+
 </mapper>

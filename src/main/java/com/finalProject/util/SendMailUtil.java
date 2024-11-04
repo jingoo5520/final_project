@@ -59,7 +59,7 @@ public class SendMailUtil {
 
 		// 해당 경로의 properties를 받음.
 		prop.load(new FileReader("D:\\my\\coding\\Flnal_2team\\final_project\\src\\main\\resources\\gmail.properties"));
-		;
+		
 		// 필요한 값 저장
 		this.host = prop.get("host") + "";
 		this.user = prop.get("user") + "";

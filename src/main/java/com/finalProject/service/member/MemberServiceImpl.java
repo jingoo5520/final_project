@@ -121,6 +121,12 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return result;
 	}
+
+	// 기본주소로 저장(회원가입)
+	@Override
+	public void saveAdddress(MemberDTO memberDTO, String addressName) throws Exception {
+		memberDAO.saveAddress(memberDTO, addressName);
+	}
 	
 	
 

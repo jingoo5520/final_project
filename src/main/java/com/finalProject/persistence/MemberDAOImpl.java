@@ -182,4 +182,13 @@ public class MemberDAOImpl implements MemberDAO {
 		ses.delete(ns+"deleteWish", map);
 	}
 
+	@Override
+	public void saveAddress(MemberDTO memberDTO, String addressName) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("addressName", addressName);
+		map.put("member_id", memberDTO.getMember_id());
+		map.put("address", memberDTO.getAddress());
+		ses.insert(ns+"saveAddressBySignUp", map);
+	}
+
 }

@@ -48,6 +48,9 @@ public interface MemberService {
 
 	// 찜 토글 동작(찜하기, 찜해제)
 	int saveWish(int product_no, String member_id)throws Exception;
+
+	// 기본주소로 저장(회원가입)
+	void saveAdddress(MemberDTO memberDTO, String addressName)throws Exception;
 	
 	
 	
