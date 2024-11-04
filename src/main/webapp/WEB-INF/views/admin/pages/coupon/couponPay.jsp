@@ -223,7 +223,7 @@
 				    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
 					
 					listOutput += '<tr>' 
-							+ `<td>\${member.member_id}`
+							+ `<td>\${member.member_id}</td>`
 							+ `<td>\${member.member_name}</td>` 
 							+ `<td>\${member.phone_number}</td>` 
 							+ `<td>\${member.birthday}</td>`

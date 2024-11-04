@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -40,21 +41,89 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
-
 <script>
+	let pageNo = 1;
+	let pagingSize = 5;
+	let pageCntPerBlock = 10;
+
+	//문의 리스트 출력
+	function showInquiryList(pageNo) {
+		
+		$.ajax({
+			url : '/admin/inquiry/getInquiries',
+			type : 'GET',
+			dataType : 'json',
+			data : {
+				"pageNo" : pageNo,
+				"pagingSize" : pagingSize,
+				"pageCntPerBlock" : pageCntPerBlock
+			},
+			success : function(data) {
+				console.log(data);
 	
+				let listOutput = '';
+				let paginationOutput = '';
+	
+				$.each(data.list, function(index, inquiry) {
+					let timestamp = inquiry.inquiry_reg_date;
+					let date = new Date(timestamp);
+					
+					let year = date.getFullYear();
+					let month = String(date.getMonth() + 1).padStart(2, '0'); 
+					let day = String(date.getDate()).padStart(2, '0'); 
+
+				    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
+					
+					listOutput += '<tr>' 
+						+ `<td>\${inquiry.inquiry_no}</td>`
+						+ `<td>\${inquiry.inquiry_title}</td>`
+						+ `<td>\${inquiry.member_id}</td>`
+						+ `<td>\${date}</td>`
+						+ `<td>\${inquiry.inquiry_type}</td>`
+						+ `<td>\${inquiry.inquiry_status}</td>`
+						+ '</tr>';
+				});
+	
+				$('#inquiryTableBody').html(listOutput);
+				
+				if(data.pi.pageNo == 1){
+					paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
+				} else {
+					paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} - 1)"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
+				}
+				
+				
+				for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
+					if(i == data.pi.pageNo) {
+						paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;
+					} else {
+						paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;	
+					}
+				}
+				
+				
+				if(data.pi.pageNo == data.pi.totalPageCnt){
+					paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+				} else {
+					paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} + 1)"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+				}
+				
+				$('.pagination').html(paginationOutput);
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+
 </script>
 </head>
 
 <style>
-#addBannerBtnArea {
-	display: flex;
-	flex-direction: row;
-	justify-content: right;
-}
-
-.table>thead {
-	vertical-align: middle;
+table tr:hover {
+	background-color: rgba(0, 123, 255, 0.1);
+	transition: background-color 0.3s ease;
+	cursor: pointer;
 }
 </style>
 
@@ -65,7 +134,7 @@
 			<!-- Menu -->
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="pageName" value="banners" />
+				<jsp:param name="pageName" value="adminInquiries" />
 
 			</jsp:include>
 			<!-- / Menu -->
@@ -86,59 +155,82 @@
 					<!-- Content -->
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
-
-
-
 						<div class="card">
-							<h5 class="card-header">메인 배너 목록</h5>
+							<h5 class="card-header">문의 목록</h5>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
 									<thead class="table-light">
 										<tr>
-
+											<th>번호</th>
+											<th>문의 제목</th>
+											<th>문의 회원</th>
+											<th>작성 시간</th>
+											<th>문의 타입</th>
+											<th>문의 상태</th>
 										</tr>
 									</thead>
-									<tbody id="couponTableBody" class="table-border-bottom-0">
+									<tbody id="inquiryTableBody" class="table-border-bottom-0">
 
-										<c:forEach var="coupon" items="${couponData.list}">
+										<c:forEach var="inquiry" items="${inquiryData.list}">
 											<!-- couponList에서 쿠폰 반복 -->
-											<tr>
-
+											<tr onclick="location.href='/admin/inquiry/adminInquiryDetail?inquiryNo=${inquiry.inquiry_no}'">
+												<td class="">${inquiry.inquiry_no}</td>
+												<td class="">${inquiry.inquiry_title}</td>
+												<td class="">${inquiry.member_id}</td>
+												<td>
+													<fmt:formatDate value="${inquiry.inquiry_reg_date}" pattern="yyyy-MM-dd" />
+												</td>
+												<td class="">${inquiry.inquiry_type}</td>
+												<td class="">${inquiry.inquiry_status}</td>
 											</tr>
 										</c:forEach>
 
 									</tbody>
 								</table>
 							</div>
-						</div>
-						
-						<div class="card mt-4">
-							<h5 class="card-header">서브 배너 목록</h5>
-							<div class="table-responsive text-nowrap">
-								<table class="table">
-									<thead class="table-light">
-										<tr>
 
-										</tr>
-									</thead>
-									<tbody id="couponTableBody" class="table-border-bottom-0">
+							<!-- 페이지 네이션 -->
+							<div class="mt-4">
+								<nav aria-label="Page navigation">
+									<ul class="pagination justify-content-center">
+										<c:choose>
+											<c:when test="${inquiryData.pi.pageNo == 1}">
+												<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
+											</c:when>
+											<c:otherwise>
+												<li class="page-item prev"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
+											</c:otherwise>
+										</c:choose>
 
-										<c:forEach var="coupon" items="${couponData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
-											<tr>
+										<c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
+											<c:choose>
+												<c:when test="${inquiryData.pi.pageNo == i}">
+													<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(${i})">${i}</a></li>
+												</c:when>
+												<c:otherwise>
+													<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(${i})">${i}</a></li>
+												</c:otherwise>
+											</c:choose>
 
-											</tr>
 										</c:forEach>
 
-									</tbody>
-								</table>
+										<c:choose>
+											<c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
+												<li class="page-item disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
+											</c:when>
+											<c:otherwise>
+												<li class="page-item next"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
+											</c:otherwise>
+										</c:choose>
+
+									</ul>
+								</nav>
 							</div>
+							<!-- / 페이지 네이션 -->
+
 						</div>
 						
-						<!-- 배너 추가 버튼 -->
-						<div id="addBannerBtnArea">
-							<button id="addBannerBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="">배너 추가</button>
-						</div>
+
 					</div>
 				</div>
 				<!-- / Content -->

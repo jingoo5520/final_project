@@ -46,7 +46,7 @@
 	let selectedCouponNo = 0;
 	let pageNo = 1;
 	let pagingSize = 5;
-	let pageCntPerBlock = 3;
+	let pageCntPerBlock = 10;
 	
 
 	$(function() {
