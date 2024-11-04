@@ -1,6 +1,7 @@
 package com.finalProject.persistence.order;
 
 import java.util.List;
+import java.util.Map;
 
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
@@ -29,7 +30,7 @@ public interface OrderDAO {
 
 	boolean updatePoint(String orderId);
 	
-	String makeOrder(PaymentRequestDTO request, boolean isMember);
+	String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception;
 	
 	boolean insertPaymentInfo(String orderId, Integer amount, String payModule, String method);
 
@@ -38,5 +39,11 @@ public interface OrderDAO {
 	void deleteOrder(String orderId);
 
 	int makeGuest(PaymentRequestDTO request, String orderId);
+
+	List<String> getOrderIdList(String memberId);
+
+	List<OrderProductDTO> getProductList(String orderId);
+
+	Map<String, Object> getOrderInfo(String orderId);
 
 }

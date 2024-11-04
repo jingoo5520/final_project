@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +20,13 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
+import com.finalProject.model.order.OrderProductsDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
-import com.finalProject.persistence.order.OrderDAO;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.finalProject.persistence.order.OrderDAO;
 
 @Service
@@ -41,9 +44,6 @@ public class OrderServiceImpl implements OrderService {
 	public String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception {
 		System.out.println("orders 테이블 행 삽입 전 회원/비회원 확인. 회원? : " + isMember);
 		String orderId = orderDAO.makeOrder(request, isMember);
-		if (orderId == null) {
-			throw new DataAccessException("주문 정보 생성 실패") {};
-		}
 		this.saveExpectedTotalPrice(calculateTotalPrice(request, orderId, isMember), orderId); // 예상결제금액 저장
 		return orderId;
 	}
@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
 	private int calculateTotalPrice(PaymentRequestDTO request, String orderId, boolean isMember) {
 		int total = 0;
 		for (OrderRequestDTO product : request.getProductsInfo()) {
+			System.out.println("product : " + product.toString());
 			total += (orderDAO.getPrice(product.getProductNo()) * product.getQuantity());
 		}
 		total += orderDAO.selectDeliveryCost(orderId);
@@ -375,6 +376,32 @@ public class OrderServiceImpl implements OrderService {
 			e.printStackTrace();
 		}
 		return resultMap;
+	}
+
+	@Override
+	public List<OrderProductsDTO> getOrderListOfMember(String memberId) {
+		List<OrderProductsDTO> result = new ArrayList<>();
+		List<String> orders = orderDAO.getOrderIdList(memberId);
+		System.out.println(memberId + "의 order id 리스트 : " + orders);
+		for (String orderId : orders) {
+			OrderProductsDTO order = new OrderProductsDTO();
+			Map<String, Object> orderInfo = orderDAO.getOrderInfo(orderId);
+			Timestamp time = (Timestamp) orderInfo.get("order_date");
+			order.setOrderDate(time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")));
+			Map<String, String> dict = new HashMap<>();
+			dict.put("1", "결제대기");
+			dict.put("2", "결제완료");
+			dict.put("3", "상품준비중");
+			dict.put("4", "배송준비중");
+			dict.put("5", "배송중");
+			dict.put("6", "배송완료");
+			order.setOrderStatus(dict.get((String) orderInfo.get("order_status")));
+			List<OrderProductDTO> products = orderDAO.getProductList(orderId);
+			order.setProducts(products);
+			System.out.println("order : " + order);
+			result.add(order);
+		}
+		return result;
 	}
 
 }

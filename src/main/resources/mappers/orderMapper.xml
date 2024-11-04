@@ -40,6 +40,8 @@
 				then cast((product_price - (1 - dc_rate)) as signed)
 				when product_dc_type = 'N'
 				then product_price
+				when product_dc_type is null
+				then product_price
 			end
 		from products
 		where product_no = #{productNo}
@@ -95,6 +97,33 @@
 		select orderer_id, #{request.ordererName}, #{request.email}, #{request.phoneNumber}
 		from orders where order_id = #{orderId}
 	</insert>
+	
+	<!-- working -->
+	<insert id="insertOrderProduct">
+		insert into order_products (order_id, product_no, product_dc_rate, product_dc_amount, order_count, product_price)
+		<foreach collection="productInfoList" separator=" UNION ALL " item="product">
+		select
+			#{orderId},
+			#{product.product_no},
+			case
+				when product_dc_type = 'P'
+				then dc_rate
+				when product_dc_type = 'N' or product_dc_type is null
+				then 0.0
+			end,
+			case
+				when product_dc_type = 'P'
+				then cast((dc_rate * product_price) as signed)
+				when product_dc_type = 'N' or product_dc_type is null
+				then 0
+			end,
+			#{orderCount}, 
+			#{product_price}
+		from products
+		where product_no = #{productNo}
+		</foreach>
+	</insert>
+	
 
 	<!-- 멤버 아이디로 오더 아이디 얻어오기 -->
 	<select id="selectUncompletedOrderId" resultType="String">
@@ -179,4 +208,20 @@
 		insert into payments (order_id, payment_status, payment_method, total_price, deposit_name, deposit_bank, deposit_account) 
 		values (#{orderId}, #{status}, #{moduleName}, #{amount}, #{depositName}, #{depositBank}, #{depositAccount});
 	</insert>
+	
+	<select id="selectOrderId" resultType="String">
+		select order_id from orders where orderer_id = #{memberId}
+	</select>
+	
+	<select id="selectProductList" resultType="com.finalProject.model.order.OrderProductDTO">
+		select p.product_name, pi.image_main_url 
+		from order_products o
+		join products p on p.product_no = o.product_no
+		join product_images pi on (pi.product_no = p.product_no and pi.image_sub_url = 'M')
+		where o.order_id = #{orderId}
+	</select>
+	
+	<select id="selectOrderInfo" resultType="java.util.Map">
+		select order_id, order_date, order_status from orders where order_id = #{orderId}
+	</select>
 </mapper>

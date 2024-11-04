@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
-import com.finalProject.model.order.OrderProductVO;
+import com.finalProject.model.order.OrderProductsDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
 
@@ -39,4 +39,6 @@ public interface OrderService {
 	String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception;
 
 	void makeGuest(PaymentRequestDTO request, String orderId);
+
+	List<OrderProductsDTO> getOrderListOfMember(String memberId);
 }

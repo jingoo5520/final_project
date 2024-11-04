@@ -135,6 +135,15 @@
 			<version>8.0.15</version>
 		</dependency>
 
+		<!-- mariaDB driver -->
+		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+		<dependency>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    <artifactId>mariadb-java-client</artifactId>
+		    <version>3.5.0</version>
+		</dependency>
+
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>

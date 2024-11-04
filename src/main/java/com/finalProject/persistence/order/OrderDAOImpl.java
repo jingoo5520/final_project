@@ -1,5 +1,6 @@
 package com.finalProject.persistence.order;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +8,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.order.OrderMemberDTO;
@@ -44,7 +45,7 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 	
 	@Override
-	public String makeOrder(PaymentRequestDTO request, boolean isMember) {	
+	public String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception {	
 //		public class PaymentRequestDTO {
 //			private List<OrderRequestDTO> productsInfo; // 상품번호 + 수량 정보 리스트
 //			private int totalPrice; // 총 예상 결제 금액
@@ -60,6 +61,13 @@ public class OrderDAOImpl implements OrderDAO {
 //		    private int pointDC; // 사용 포인트
 //		    private String couponUse; // 사용 쿠폰코드
 //		}
+		
+//		public class OrderRequestDTO {
+//			// 주문 상품 번호, 주문 상품 수량
+//			private int productNo;
+//			private int quantity;
+//		}
+		
 		// NOTE : 모든 컨트롤러 메소드의 예외에다가 행을 삭제하도록 하긴 했지만 미완료된 행이 혹시 남아있을 수 있음
 		// TODO : 그런데 이 메소드를 쓰더라도 비회원 주문은 아이디가 항상 새롭게 생성되기 때문에 안지워질 수 있음 
 		// 예를 들어 비회원 상태로 주문 결제하기 버튼을 반복해서 누르고 창을 닫는다면 orders 테이블에 행이 쌓이는 걸 못 막음
@@ -70,17 +78,43 @@ public class OrderDAOImpl implements OrderDAO {
 			// 기본값으로 "non_member"가 지정되어 있는데 이걸 UUID로 바꿔준다.
 			request.setOrdererId(UUID.randomUUID().toString()); 
 		}
+		String orderId = UUID.randomUUID().toString();
 		Map<String, Object> params = new HashMap<>();
 		params.put("request", request);
-		params.put("orderId", UUID.randomUUID().toString());
+		params.put("orderId", orderId);
 		if (ses.insert(isMember == true ? ns + "makeOrderByMember" : ns + "makeOrderByNonMember", params) != 1) {
-			return null;
+			System.out.println("makeOrderByMember or makeOrderByNonMember에서 에러 발생");
+			throw new DataAccessException("주문 정보 생성 실패") {};
+			// return null;
 		};
+		// order_products에 insert
+		
+		// params 초기화
+		params = new HashMap<>();
+		List<Object> productInfoList = new ArrayList<>();
+		for (OrderRequestDTO product : request.getProductsInfo()) {
+			Map<String, Object> productParams = new HashMap<>();
+			productParams.put("product_no", product.getProductNo());
+			productParams.put("order_count", product.getQuantity());
+			productInfoList.add(productParams);
+		}
+		System.out.println("productInfoList : " + productInfoList);
+		// working...
+		params.put("productInfoList", productInfoList);
+		params.put("orderId", orderId);
+		int insertedRowNum = ses.insert(ns + "insertOrderProduct", params);
+		System.out.println("insertedRowNum : " + insertedRowNum);
+		if (insertedRowNum != productInfoList.size()) {
+			System.out.println("insertOrderProduct에서 에러 발생");
+			throw new DataAccessException("주문 정보 생성 실패") {};
+			// return null;
+		}
 		return ses.selectOne(ns + "selectUncompletedOrderId", request.getOrdererId());
 	}
 	
 	@Override
 	public int getPrice(int productNo) {
+		System.out.println("getPrice 쿼리 결과 : " + ses.selectOne(ns + "getPrice", productNo));
 		return ses.selectOne(ns + "getPrice", productNo);
 	}
 	
@@ -180,6 +214,22 @@ public class OrderDAOImpl implements OrderDAO {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public List<String> getOrderIdList(String memberId) {
+		return ses.selectList(ns + "selectOrderId", memberId);
+	}
+
+
+	@Override
+	public Map<String, Object> getOrderInfo(String orderId) {
+		return ses.selectOne(ns + "selectOrderInfo", orderId);
+	}
+	
+	@Override
+	public List<OrderProductDTO> getProductList(String orderId) {
+		return ses.selectList(ns + "selectProductList", orderId);
 	}
 
 }

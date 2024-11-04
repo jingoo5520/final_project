@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
+import com.finalProject.model.order.OrderProductsDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
 import com.finalProject.service.order.OrderService;
@@ -128,7 +130,7 @@ public class OrderController {
 			resultMap.put("result", "fail");
 			resultMap.put("message", "주문 생성 실패");
 			return ResponseEntity.badRequest().body(resultMap);
-		}        
+		}
     }
 
 	// 테스트용, 배포 환경에서는 사용되면 안됨
@@ -399,4 +401,31 @@ public class OrderController {
 		model.addAttribute("orderNo", orderNo);
 		return "/user/pages/order/cancelOrder";
 	}
+	
+	// 회원의 모든 주문과 주문마다의 상품을 반환
+	@GetMapping("/orderProducts")
+	@ResponseBody
+	public List<OrderProductsDTO> getOrderProducts(
+			@RequestParam("memberId") String memberId) {
+		return orderService.getOrderListOfMember(memberId);
+	}
+	
+	
+	@GetMapping("/cancelAPItest")
+	public String cancelAPItest() {
+		return "/user/pages/order/cancelAPItest";
+	}
+	
+	@GetMapping("/getLoginedId")
+	@ResponseBody
+	public String getLoginedId(HttpSession session) {
+		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
+		return loginDTO.getMember_id();
+	}
+	
+//	@GetMapping("/cancelAPItest/")
+//	public String cancelAPItest() {
+//		return "/user/pages/order/cancelAPItest";
+//	}
+	
 }

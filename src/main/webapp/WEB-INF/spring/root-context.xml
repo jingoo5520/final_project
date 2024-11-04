@@ -25,8 +25,8 @@
 		</property> <property name="username" value="root"></property> <property 
 		name="password" value="1234"></property> </bean> -->
 
-	<!-- DB log4jdbc -->
-	<bean id="dataSource"
+	<!-- DB log4jdbc(로컬) -->
+<!-- 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
 			value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy">
@@ -36,7 +36,19 @@
 		</property>
 		<property name="username" value="root"></property>
 		<property name="password" value="1234"></property>
-	</bean>
+	</bean> -->
+	
+	<bean id="dataSource"
+      class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName"
+         value="org.mariadb.jdbc.Driver">
+      </property>
+      <property name="url"
+         value="jdbc:mariadb://aabbcc1121.cafe24.com:3306/aabbcc1121?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true">
+      </property>
+      <property name="username" value="aabbcc1121"></property>
+      <property name="password" value="Abc123!!"></property>
+   	</bean>
 
 	<bean id="sqlSessionFactory"
 		class="org.mybatis.spring.SqlSessionFactoryBean">
