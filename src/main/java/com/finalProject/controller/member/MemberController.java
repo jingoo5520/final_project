@@ -593,30 +593,29 @@ public class MemberController {
 		return result;
 	}
 
-	// 카카오 redirectUri 처리
-	@RequestMapping(value = "/kakao")
-	public String viewKakaoLogin() {
-		System.out.println("카카오 로그인 진행중");
-		return "/user/pages/member/kakao";
-	}
-	// 카카오 로그인(인가코드 받기)
-	@RequestMapping(value = "/kakao/code")
-	public String getkakaoCode(HttpServletResponse response) {
+	// 카카오 로그인(인가코드 api)
+	@GetMapping("/kakao/login")
+	public String kakao(HttpServletResponse response) {
 		try {
-			kakao.login(response);
+			kakao.getCode(response);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 		return "/user/index";
 	}
-	
-	// 카카오 로그인
-	@RequestMapping(value = "/kakao/login", method = RequestMethod.POST)
-	public String kakaoLogin(@RequestParam("code")String accessCode) {
-		System.out.println("코드 받음");
-		// 토큰 받기
-		String accessToken = kakao.getAccessToken(accessCode);
+
+	// 카카오 로그인(토큰 api)
+	@RequestMapping(value = "/kakao")
+	public String kakaoLogin(HttpServletResponse response, Model model,
+			@RequestParam(value = "code", defaultValue = "false") String code,
+			@RequestParam(value = "state", defaultValue = "false") String state,
+			@RequestParam(value = "client_secret", defaultValue = "false") String client_secret) {
+		String accessToken = kakao.getAccessToken(code); // 인가코드로 토큰을 받아오기
+		Map<String, Object> userInfo = kakao.getUserInfo(accessToken); // 토큰으로 유저정보 받아오기
+		String email = (String)userInfo.get("email"); // 받아온 유저정보에서 email저장
+        String nickname = (String)userInfo.get("nickname"); // 받아온 유저정보에서 별명 저장
 		
 		return "/user/index";
 	}
+
 }

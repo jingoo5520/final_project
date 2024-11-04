@@ -78,7 +78,7 @@
 								<div class="row">
 									<div class="col-lg-4 col-md-4 col-12">
 										<a
-											href="${pageContext.request.contextPath}/member/kakao/code"><img
+											href="${pageContext.request.contextPath}/member/kakao/login"><img
 											src="/resources/images/kakao_login_medium.png"></a>
 									</div>
 									<div class="col-lg-4 col-md-4 col-12">
