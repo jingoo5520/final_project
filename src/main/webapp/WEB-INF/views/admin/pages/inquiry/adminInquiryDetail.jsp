@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -40,21 +41,43 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
-
 <script>
-	
+	//문의 답글 저장
+	function saveInquiryReply(replyNo){
+		let inquiryReplyNo = 0;
+		
+		if((typeof replyNo) != 'undefined'){
+			inquiryReplyNo = replyNo;
+		}
+		
+		console.log(typeof inquiryReplyNo);
+		
+		$.ajax({
+			url : '/admin/inquiry/saveInquiryReply',
+			type : 'POST',
+			dataType: 'text',
+			data : {
+				"inquiryNo" : ${inquiryDetail.inquiry_no},
+				"replyContent" : $("#replyContent").val(),
+				"inquiryReplyNo" : inquiryReplyNo
+			},
+			success : function(data) {
+				console.log(data);
+				location.href = "/admin/inquiry/adminInquiries";
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
 </script>
 </head>
 
 <style>
-#addBannerBtnArea {
+#saveInquiryReplyBtnArea {
 	display: flex;
 	flex-direction: row;
 	justify-content: right;
-}
-
-.table>thead {
-	vertical-align: middle;
 }
 </style>
 
@@ -65,7 +88,7 @@
 			<!-- Menu -->
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="pageName" value="banners" />
+				<jsp:param name="pageName" value="adminInquiries" />
 
 			</jsp:include>
 			<!-- / Menu -->
@@ -86,59 +109,81 @@
 					<!-- Content -->
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
-
-
-
 						<div class="card">
-							<h5 class="card-header">메인 배너 목록</h5>
-							<div class="table-responsive text-nowrap">
-								<table class="table">
-									<thead class="table-light">
-										<tr>
+							<h5 class="card-header">문의 내용</h5>
+							<div class="card-body">
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 번호</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.inquiry_no }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 제목</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.inquiry_title }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 회원</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.member_id }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 날짜</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="<fmt:formatDate value='${inquiryDetail.inquiry_reg_date}' pattern='yyyy-MM-dd' />" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 타입</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.inquiry_type }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 상품</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${inquiryDetail.product_name }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 내용</label>
+									<div class="col-md-10">
+										<textarea rows="15" class="form-control" id="" readonly>${inquiryDetail.inquiry_content }</textarea>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 이미지</label>
+									<div class="col-md-10">
+										<div class="row">
+											<c:forEach var="img" items="${inquiryImgList}">
+												<div class="col-lg-6 col-md-6 col-sm-12 " style="padding: 5px;">
+													<img src="${img.inquiry_image_uri}" class="img-fluid">
+												</div>
+											</c:forEach>
+										</div>
+									</div>
+								</div>
 
-										</tr>
-									</thead>
-									<tbody id="couponTableBody" class="table-border-bottom-0">
+								<hr class="mt-4">
 
-										<c:forEach var="coupon" items="${couponData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
-											<tr>
-
-											</tr>
-										</c:forEach>
-
-									</tbody>
-								</table>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">문의 답글</label>
+									<div class="col-md-10">
+										<textarea id="replyContent" rows="15" class="form-control">${inquiryReply.reply_content }</textarea>
+									</div>
+								</div>
 							</div>
+
 						</div>
-						
-						<div class="card mt-4">
-							<h5 class="card-header">서브 배너 목록</h5>
-							<div class="table-responsive text-nowrap">
-								<table class="table">
-									<thead class="table-light">
-										<tr>
 
-										</tr>
-									</thead>
-									<tbody id="couponTableBody" class="table-border-bottom-0">
-
-										<c:forEach var="coupon" items="${couponData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
-											<tr>
-
-											</tr>
-										</c:forEach>
-
-									</tbody>
-								</table>
-							</div>
+						<div id="saveInquiryReplyBtnArea">
+							<button id="" type="button" class="btn btn-outline-primary mt-4 me-1" onclick="location.href='/admin/inquiry/adminInquiries'">목록으로 돌아가기</button>
+							<button id="saveInquiryReplyBtn" type="button" class="btn btn-outline-primary mt-4" onclick="saveInquiryReply(${inquiryReply.inquiry_reply_no})">답글 저장</button>
 						</div>
-						
-						<!-- 배너 추가 버튼 -->
-						<div id="addBannerBtnArea">
-							<button id="addBannerBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="">배너 추가</button>
-						</div>
+
 					</div>
 				</div>
 				<!-- / Content -->

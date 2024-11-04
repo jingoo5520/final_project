@@ -15,6 +15,15 @@ public interface InquiryService {
 	Map<String, Object> getInquiryList(PagingInfoNewDTO pagingInfoDTO, String memberId) throws Exception;
 	
 	// 문의 작성하기
-	void writeInquiry(InquiryDetailDTO inquiryDetailDTO, MultipartFile[] files, HttpServletRequest request) throws Exception;
+	int writeInquiry(InquiryDetailDTO inquiryDetailDTO, MultipartFile[] files, HttpServletRequest request) throws Exception;
+
+	// 문의 상세 가져오기
+	Map<String, Object> getInquiry(int inquiryNo) throws Exception;
+
+	// 문의 삭제
+	int deleteInquiry(int inquiryNo, HttpServletRequest request) throws Exception;
+
+	// 문의 수정
+	int modifyInquiry(InquiryDetailDTO inquiryDetailDTO, MultipartFile[] files, String[] existFiles, HttpServletRequest request) throws Exception;
 	
 }
