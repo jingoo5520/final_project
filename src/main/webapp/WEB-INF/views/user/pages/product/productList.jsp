@@ -214,9 +214,9 @@
                                             <!-- Start Single Product -->
                                             <!--                                         개수 -->
                                             <div class="single-product">
-                                                <div class="product-image">
+                                                <div class="product-image" >
                                                     <a href="/product/jewelry/detail?productNo=${product.product_no}">
-                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" width="300px" height="300px">
+                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" height= "300px">
                                                     </a>
                                                     <div class="button">
                                                         <a onclick="addCart(${product.product_no})" class="btn"><i class="lni lni-cart"></i></a>

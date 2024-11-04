@@ -21,115 +21,37 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-
-let fileList = [];
-
-	$(function(){
-		$("#fileInput").on("change", function(){
-			
-			$.each(this.files, function(index, file){
-				// 중복 파일 거르기
-				if(!fileList.some(function(f){
-					return f.name === file.name
-				})) {
-					fileList.push(file);
-					console.log(fileList);
-				}
-			});
-			
-			showFiles();
-		});
-		
-		// 첨부파일 제거
-		$(document).on("click", ".remove-item", function(){
-			let parentLi = $(this).parent();
-			
-			for(let i = 0; i < fileList.length; i++){
-				if(fileList[i].name == parentLi.text().trim()){
-					console.log(fileList[i] + "삭제완료");		
-					fileList.splice(i, 1);
-					parentLi.remove();
-					break;
-				}
-			}
-			
-			console.log(fileList);
-			showFiles();
-		})
-		
-		// 문의 타입이 상품인 경우 주문 상품 리스트 가져와야함
-		$(".select-items select").on("change", function(){
-			if($(this).val() == "상품"){
-				let output = `<label>주문 상품(type = "상품")</label>
-					<div class="select-items">
-					<select class="form-control">
-						<option value="0">1</option>
-						<option value="0">2</option>
-						<option value="0">3</option>
-						<option value="0">4</option>
-					</select>
-				</div>`
-				
-				$(".orderList").html(output);
-			} else {
-				$(".orderList").html("");
-			}
-		});
-	});
-
-	// 첨부파일 리스트 보여주기
-	function showFiles(){
-		let listOutput = '';
-		
-		fileList.forEach(function(file){
-			listOutput += `<li>\${file.name} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;
-		});
-			
-		$(".fileList").html(listOutput);
-	}
+	// 첨부 이미지 미리보기
 	
-	// 문의 작성
-	function writeInquiry(){
-		let inquiryTitle = $("#inquiryTitle").val();
-		let inquiryContent = $("#inquiryContent").val();
-		let inquiryType = $(".select-items select").val();
-		let productNo = null;
-		
-		let formData = new FormData();
-		
-		
-		formData.append('inquiryTitle', inquiryTitle);
-		formData.append('inquiryContent', inquiryContent);
-		formData.append('inquiryType', inquiryType);
-		formData.append('productNo', productNo);
-		
-		for (let i = 0; i < fileList.length; i++) {
-	        formData.append('files', fileList[i]);
-	    }
-		
+	// 문의 삭제
+	function deleteInquiry(){
 		$.ajax({
-			url : '/member/myPage/writeInquiry',
+			url : '/serviceCenter/deleteInquiry',
 			type : 'POST',
-			dataType: 'json',
-			processData: false,
-	        contentType: false, 
-			data : formData,
+			dataType: 'text',
+			data : {
+				"inquiryNo" : ${inquiryDetail.inquiry_no},
+			},
 			success : function(data) {
 				console.log(data);
-				
+				location.href = "/serviceCenter/inquiries";
 			},
 			error : function(error) {
 				console.log(error);
 			}
-		
 		});
+	}
+
+	// 문의 삭제 모달창 닫기
+	function deleteInquiryModalClose(){
+		$('#deleteInquiryModal').modal('hide');
 	}
 	
 </script>
 </head>
 
 <style>
-#writeInquiryBtnArea {
+#btnArea {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
@@ -140,14 +62,20 @@ let fileList = [];
 }
 
 .cart-list-title {
-	padding: 20px 0px !important;
+	padding: 0px !important;
+	padding-top: 20px !important;
+	border: none !important;
 }
 
 .remove-item {
 	color: #fff;
 	background-color: #f44336;
-	font-size: 8px; height : 18px; width : 18px; line-height : 18px;
-	border-radius : 50%; text-align : center;
+	font-size: 8px;
+	height: 18px;
+	width: 18px;
+	line-height: 18px;
+	border-radius: 50%;
+	text-align: center;
 	margin-left: 5px;
 	font-size: 8px;
 	height: 18px;
@@ -166,6 +94,10 @@ let fileList = [];
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+}
+
+textarea {
+	font-family:
 }
 </style>
 
@@ -207,100 +139,97 @@ let fileList = [];
 	<section class="product-grids section">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-3 col-12">
-					<!-- Start Product Sidebar -->
-					<div class="product-sidebar">
-						<!-- Start Single Widget -->
-						<div class="single-widget">
-							<h3>고객센터</h3>
-							<ul class="list">
-								<li><a href="product-grids.html">공지사항 </a></li>
-								<li><a href="product-grids.html">이벤트 </a></li>
-								<li><a href="product-grids.html">문의</a></li>
-								<li><a href="product-grids.html">멤버십 혜택</a></li>
-							</ul>
-						</div>
-						<!-- End Single Widget -->
+				<!-- sideBar -->
+				<jsp:include page="/WEB-INF/views/user/pages/serviceCenterSideBar.jsp">
 
-					</div>
-					<!-- End Product Sidebar -->
-				</div>
+					<jsp:param name="pageName" value="inquiries" />
+
+				</jsp:include>
+				<!-- / sideBar -->
 				<div class="col-lg-9 col-12">
 					<!-- Shopping Cart -->
 					<div class="checkout-steps-form-style-1">
 						<section class="checkout-steps-form-content collapse show" id="collapseThree" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
 							<div class="cart-list-title">
 								<h5>문의</h5>
+								<hr class="mt-4" style="border: 1px solid black;">
 							</div>
 							<div class="row">
-								<form>
-									<div class="col-md-12">
+								<c:choose>
+									<c:when test="${inquiryDetail.inquiry_status == 'C'}">
 										<div class="single-form form-default">
-											<label>문의 제목</label>
+											<label>답변 내용</label>
 											<div class="form-input form">
-												<input id="inquiryTitle" type="text" placeholder="문의 제목을 입력하세요.">
+												<textarea id="replyContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readOnly>${inquiryReply.reply_content }</textarea>
 											</div>
 										</div>
-									</div>
 
-									<div class="col-md-12">
-										<div class="single-form form-default">
-											<label>문의 타입</label>
-											<div class="select-items">
-												<select class="form-control">
-													<option value="상품">상품</option>
-													<option value="주문">주문</option>
-													<option value="회원">회원</option>
-													<option value="기타">기타</option>
-												</select>
-											</div>
+										<hr class="mt-4" style="border: 1px solid black;">
+									</c:when>
+									<c:otherwise>
+
+									</c:otherwise>
+								</c:choose>
+
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>문의 번호</label>
+										<div class="form-input form">
+											<input id="inquiryTitle" value="${inquiryDetail.inquiry_no}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
 										</div>
 									</div>
+								</div>
 
-									<!-- 주문 상품 -->
-									<div class="col-md-12">
-										<div class="single-form form-default orderList">
-											<label>주문 상품(type = "상품")</label>
-											<div class="select-items">
-												<select class="form-control">
-													<option value="0">1</option>
-													<option value="0">2</option>
-													<option value="0">3</option>
-													<option value="0">4</option>
-												</select>
-											</div>
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>문의 제목</label>
+										<div class="form-input form">
+											<input id="inquiryTitle" value="${inquiryDetail.inquiry_title}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
 										</div>
 									</div>
+								</div>
 
-									<div class="col-md-12">
-										<div class="single-form form-default">
-											<label>문의 내용</label>
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>문의 타입</label>
+										<div class="select-items">
 											<div class="form-input form">
-												<textarea id="inquiryContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;"></textarea>
+												<input id="" value="${inquiryDetail.inquiry_type}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
 											</div>
 										</div>
 									</div>
+								</div>
 
-									<div class="col-md-6">
-										<div class="single-form form-default">
-											<label>이미지 첨부</label>
-											<div class="single-form form-default button" style="margin-top: 0px">
-												<input type="file" id="fileInput" name="files" multiple style="display: none;" />
-												<button class="btn" onclick="document.getElementById('fileInput').click(); return false;">이미지 첨부하기</button>
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>주문 상품</label>
+										<div class="select-items">
+											<div class="form-input form">
+												<input id="" value="${inquiryDetail.product_name}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
 											</div>
 										</div>
 									</div>
+								</div>
 
-									<div class="col-md-12">
-										<div class="single-form form-default">
-											<label>첨부된 이미지</label>
-											<ul class="fileList list mt-1">
+								<div class="single-form form-default">
+									<label>문의 내용</label>
+									<div class="form-input form">
+										<textarea id="inquiryContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readOnly>${inquiryDetail.inquiry_content }</textarea>
+									</div>
+								</div>
 
-											</ul>
+								<div class="col-md-12">
+									<div class="single-form form-default">
+										<label>첨부된 이미지</label>
+										<div class="row">
+											<c:forEach var="img" items="${inquiryImgList}">
+												<div class="col-lg-6 col-md-6 col-sm-12" style="padding: 5px;">
+													<img src="${img.inquiry_image_uri}" class="img-fluid">
+												</div>
+											</c:forEach>
 										</div>
 									</div>
-
-								</form>
+								</div>
 							</div>
 
 						</section>
@@ -308,11 +237,26 @@ let fileList = [];
 					</div>
 					<!--/ End Shopping Cart -->
 
-					<div id="writeInquiryBtnArea" class="button mt-2">
-						<button class="btn" onclick="writeInquiry()">
-							작성 완료
+					<div id="btnArea" class="button mt-2">
+						<button class="btn" onclick="location.href='/serviceCenter/inquiries'">
+							목록으로 돌아가기
 							<span class="dir-part"></span>
 						</button>
+						<c:choose>
+							<c:when test="${inquiryDetail.inquiry_status == 'W'}">
+								<button class="btn" onclick="location.href='/serviceCenter/modifyInquiry?inquiryNo=${inquiryDetail.inquiry_no}'">
+									수정하기
+									<span class="dir-part"></span>
+								</button>
+								<button type="button" class="btn review-btn" data-bs-toggle="modal" data-bs-target="#deleteInquiryModal">삭제하기</button>
+							</c:when>
+							<c:otherwise>
+								<button class="btn" onclick="location.href = '/serviceCenter/writeInquiry'">
+									추가 문의
+									<span class="dir-part"></span>
+								</button>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
 			</div>
@@ -320,7 +264,28 @@ let fileList = [];
 	</section>
 	<!-- End Product Grids -->
 
-
+	<div class="modal fade review-modal" id="deleteInquiryModal" tabindex="-1" aria-labelledby="deleteInquiryModal" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">문의 삭제</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="">
+							<div class="form-group">문의를 삭제하시겠습니까?</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer button">
+					<button type="button" class="btn" onclick="deleteInquiryModalClose()">Close</button>
+					<button type="button" class="btn" onclick="deleteInquiry()">Delete</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Review Modal -->
 
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
 

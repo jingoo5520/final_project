@@ -110,7 +110,8 @@
 		desc
 		limit #{pi.startRowIndex},
 		#{pi.viewDataCntPerPage}
-
 	</select>
+	
+	
 
 </mapper>
