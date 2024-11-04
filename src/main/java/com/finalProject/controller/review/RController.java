@@ -49,6 +49,8 @@ public class RController {
 	        // 1. 총 작성 가능한 리뷰 개수를 가져옴
 	        int totalWritableReviews = service.countWritableReviews(loginMember.getMember_id());
 	        
+	        
+	        
 	        // 2. 페이징 정보 생성 
 	        pagingInfoDTO.setTotalPostCnt(totalWritableReviews); // 이미 메서드 파라미터로 전달받았으므로 재생성 불필요
 	        ReviewPagingInfo pagingInfo = new ReviewPagingInfo(pagingInfoDTO, totalWritableReviews);
