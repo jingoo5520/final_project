@@ -35,7 +35,7 @@
       </property>
       <property name="username" value="aabbcc1121"></property>
       <property name="password" value="Abc123!!"></property>
-   	</bean>
+   </bean>
 
 	<bean id="sqlSessionFactory"
 		class="org.mybatis.spring.SqlSessionFactoryBean">

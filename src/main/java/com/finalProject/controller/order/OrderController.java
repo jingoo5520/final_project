@@ -25,12 +25,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finalProject.model.DeliveryDTO;
+import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderProductsDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.service.member.MemberService;
 import com.finalProject.service.order.OrderService;
 import com.google.gson.Gson;
 
@@ -38,6 +41,9 @@ import com.google.gson.Gson;
 public class OrderController {
 	@Inject
 	private OrderService orderService;
+	
+	@Inject
+	private MemberService memberService;
 	
 	static private Gson gson = new Gson();
 	
@@ -108,6 +114,48 @@ public class OrderController {
     		@RequestBody PaymentRequestDTO paymentRequest,
     		HttpSession session
     		) {
+		
+		if (!paymentRequest.getSaveDeliveryType().equals("none")) {
+			
+			DeliveryVO deliveryVO = DeliveryVO.builder()
+					.deliveryAddress(paymentRequest.getDeliveryAddress())
+					.deliveryName(paymentRequest.getDeliveryName())
+					.memberId(paymentRequest.getOrdererId())
+					.isMain("M")
+					.build();
+			
+			if (paymentRequest.getSaveDeliveryType().contains("saveDelivery")) {
+				// 배송지 저장
+				System.out.println("배송지 저장 탭임");
+				System.out.println(deliveryVO.toString());
+				
+				try {
+					memberService.saveDelivery(deliveryVO);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (paymentRequest.getSaveDeliveryType().contains("saveAddress")) {
+				// 회원 정보 주소 수정
+				System.out.println("회원 주소 정보 수정 탭임");
+				System.out.println(deliveryVO.toString());
+				
+				try {
+					if (memberService.updateAddress(deliveryVO)) {
+						System.out.println("회원 정보 수정 완료");
+					} else {
+						System.out.println("수정 안됨");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		
+		} else {
+			System.out.println("동작하면 안돼.");
+		}
+		
         // paymentRequest 객체를 사용하여 결제 처리 로직을 구현
         System.out.println("payment request : " + paymentRequest);
         Map<String, String> resultMap = new HashMap<>();
@@ -132,6 +180,26 @@ public class OrderController {
 			return ResponseEntity.badRequest().body(resultMap);
 		}
     }
+	
+	@PostMapping("/showDeliveryList")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> showDeliveryList(@RequestParam("memberId") String memberId) {
+		System.out.println("memberId: " + memberId);
+		List<DeliveryDTO> deliveryList = null;
+
+		try {
+			deliveryList = memberService.getDeliveryList(memberId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("status", "success");
+		response.put("memberId", memberId);
+		response.put("deliveryList", deliveryList);
+
+	    return ResponseEntity.ok(response);
+	}
 
 	// 테스트용, 배포 환경에서는 사용되면 안됨
 	@PostMapping("/payment/test/saveOrderId")
