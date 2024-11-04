@@ -228,6 +228,12 @@
 		    <artifactId>jstl</artifactId>
 		    <version>1.2</version>
 		</dependency>
+<!-- 		마리아디비연결 -->
+		<dependency>
+    <groupId>org.mariadb.jdbc</groupId>
+    <artifactId>mariadb-java-client</artifactId>
+    <version>3.0.7</version> <!-- 사용 가능한 최신 버전을 사용하세요 -->
+</dependency>
 		
 		<dependency>
 		    <groupId>javax.annotation</groupId>

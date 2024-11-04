@@ -204,6 +204,8 @@ public class PController {
         model.addAttribute("endPage", pagingInfo.getEndPage()); // 끝 페이지 추가
         model.addAttribute("totalPages", pagingInfo.getTotalPages()); // 전체 페이지 수 추가
         model.addAttribute("currentPage", pagingInfo.getCurrentPage()); // 현재 페이지 추가
+        model.addAttribute("hasPrevBlock", pagingInfo.hasPrevBlock()); // 이전 페이지 추가
+        model.addAttribute("hasNextBlock", pagingInfo.hasNextBlock()); // 다음 페이지 추가
         
         System.out.println("검색 : " + totalPostCnt);
         
