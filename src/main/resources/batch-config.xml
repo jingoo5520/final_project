@@ -1,0 +1,70 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="
+           http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/batch 
+           http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<!-- Job 설정 -->
+	<bean id="csvToDbJob"
+		class="org.springframework.batch.core.job.builder.JobBuilderFactory">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="jobSteps">
+			<list>
+				<ref bean="step1" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Step 설정 -->
+	<bean id="step1"
+		class="org.springframework.batch.core.step.builder.StepBuilderFactory">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="chunk">
+			<bean
+				class="org.springframework.batch.core.step.item.SimpleStepBuilder">
+				<property name="reader" ref="csvReader" />
+				<property name="writer" ref="userEmailWriter" />
+				<property name="commitInterval" value="10" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- CSV Reader -->
+	<bean id="csvReader"
+		class="org.springframework.batch.item.file.FlatFileItemReader">
+		<property name="resource" value="classpath:input/users.csv" />
+		<property name="lineMapper">
+			<bean
+				class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="names" value="name,age,email" />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="com.example.batch.UserFieldSetMapper" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<!-- UserEmailWriter 설정 -->
+	<bean id="userEmailWriter"
+		class="com.example.batch.UserEmailWriter" />
+
+	<!-- DataSource 설정 -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.mysql.cj.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/kjb?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="1234"></property>
+	</bean>
+
+</beans>

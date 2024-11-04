@@ -2,6 +2,116 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.springbasic.mappers.memberMapper">
-   <!-- 쿼리문 -->
+<mapper namespace="com.finalProject.mappers.memberMapper">
+	<!-- 쿼리문 -->
+
+	<!-- 로그인 -->
+	<select id="login" resultType="LoginDTO">
+		select * from members where
+		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256) and
+		member_status = 'active'
+	</select>
+
+	<!-- id, email, phone_number 중복 체크 -->
+	<select id="autoDuplicate" resultType="int">
+		select count(*) from members
+		<choose>
+			<when test="key == 'id'">
+				where member_id = #{value}
+			</when>
+			<when test="key == 'email'">
+				where email = #{value}
+			</when>
+			<when test="key == 'phone'">
+				where phone_number = #{value}
+			</when>
+		</choose>
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="signUpMember">
+		insert into members(member_id, member_name,
+		member_pwd, phone_number, birthday, gender, email, address, nickname)
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256),
+		#{phone_number},
+		#{birthday}, #{gender}, #{email}, #{address},
+		#{nickname})
+	</insert>
+
+	<!-- 자동 로그인 정보 저장 -->
+	<update id="updateAutoLoginData">
+		update members
+		set autologin_code = #{autologin_code},
+		autologin_date = DATE_ADD(NOW(), INTERVAL #{autologin_date} DAY)
+		where
+		member_id = #{member_id}
+	</update>
+
+	<!-- 자동 로그인 정보 조회 -->
+	<select id="selectAutoLoginData" resultType="LoginDTO">
+		select * from
+		members where autologin_code = #{autologin_code} and autologin_date >
+		now()
+	</select>
+
+	<!-- 마이 페이지 회원 정보 조회 -->
+	<select id="selectMemberById" resultType="MemberDTO">
+		select * from members
+		where member_id = #{member_id}
+	</select>
+
+	<!-- 마이 페이지 회원 정보 수정 -->
+	<update id="updateMember">
+		update members
+		set nickname = #{nickname}, gender =
+		#{gender}, phone_number = #{phone_number}
+		, address = #{address}, email
+		= #{email}
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 마이 페이지 비밀번호 변경 -->
+	<update id="updateMemberPwd">
+		update members
+		set member_pwd = sha2(#{member_pwd},
+		256)
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 마이 페이지 회원탈퇴 -->
+	<update id="withDrawMember">
+		update members
+		set member_status = 'withdrawn'
+		where
+		member_id = #{member_id}
+	</update>
+
+	<!-- 아이디 찾기 -->
+	<select id="selectIdByEmail" resultType="LoginDTO">
+		select member_id from
+		members where email = #{email} and member_status = 'active'
+	</select>
+
+	<!-- 비밀번호 찾기 -->
+	<select id="selectPwd" resultType="LoginDTO">
+		select member_pwd from members
+		where member_id = #{member_id} and email = #{email} and
+		member_status =
+		'active'
+	</select>
+
+	<!-- 비밀번호 찾기(랜덤비밀번호 지정) -->
+	<update id="updateRandomPwd">
+		update members
+		set member_pwd = sha2(#{member_pwd}, 256)
+		where member_id = #{member_id} and
+		member_status = 'active'
+	</update>
+	
+	<!-- 찜 목록 조회 -->
+	<select id="selectWishListByMemberId" resultType="int">
+		select product_no from wishes where member_id = #{member_id}
+	</select>
+	
+
 </mapper>

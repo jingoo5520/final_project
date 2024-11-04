@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.statisticsMapper">
+
+<!-- 한 달 간의 총 매출 금액 조회 -->
+  <select id="getTotalSalesLastMonth" resultType="int">
+  	<![CDATA[
+  	select coalesce(sum(total_price), 0) as total_sales from payments
+  	where pay_date >= date_format(curdate() - interval 1 month, '%Y-%m-01')
+  	and pay_date < date_format(curdate(), '%Y-%m-01')
+  	]]>
+  </select>
+
+<!-- 오늘의 주문 수 조회 -->
+	<select id="getTodayOrderCount" resultType="int">
+	 <![CDATA[
+		select count(*) as order_count
+		from payments
+		where date(pay_date) = curdate()
+	 ]]>
+	</select>
+	
+<!-- 이번 달 주문 수 조회 -->
+	<select id="getTotalOrdersThisMonth" resultType="int">
+	 <![CDATA[
+		select count(*) as order_count
+		from payments
+		where month(pay_date) = month(current_date)
+		and year(pay_date) = year(current_date)
+	 ]]>
+	</select>
+	
+<!-- 이번 달 취소율 조회 -->
+	<select id="getCancelOrdersThisMonth" resultType="double">
+        <![CDATA[
+            select count(case when cancel_type = 'cancel' then 1 end) / count(*) * 100 as cancel_rate
+            from cancels where cancel_apply_date >= date_sub(now(), interval 1 month)
+        ]]>
+	</select>
+
+<!-- 이번 달 반품율 조회 -->
+	<select id="getReturnOrdersThisMonth" resultType="double">
+        <![CDATA[
+            select count(case when cancel_type = 'return' then 1 end) / count(*) * 100 as cancel_rate
+            from cancels where cancel_apply_date >= date_sub(now(), interval 1 month)    
+        ]]>
+	</select>
+	
+<!-- 카테고리 별 매출 통계 -->
+<select id="getSalesByCategory" resultType="map">
+    select c.category_name AS category, 
+           COALESCE(sum(p.total_price), 0) as total_sales
+    from categories c
+    left join products prod on c.category_no = prod.product_category
+    left join order_products op on prod.product_no = op.product_no
+    left join orders o on op.order_id = o.order_id
+    left join payments p on o.order_id = p.order_id and p.payment_status = 'S'
+    group by c.category_name
+    order by total_sales DESC;
+</select>
+
+    
+<!-- 가격대 별 매출 통계 -->
+	<select id="getSalesByPriceRange" resultType="map">
+    SELECT
+        CASE
+            WHEN total_price BETWEEN 0 AND 100000 THEN '0-100000'
+            WHEN total_price BETWEEN 100001 AND 200000 THEN '100001-200000'
+            WHEN total_price BETWEEN 200001 AND 300000 THEN '200001-300000'
+            WHEN total_price BETWEEN 300001 AND 400000 THEN '300001-400000'
+            WHEN total_price BETWEEN 400001 AND 500000 THEN '400001-500000'
+            WHEN total_price BETWEEN 500001 AND 600000 THEN '500001-600000'
+            WHEN total_price BETWEEN 600001 AND 700000 THEN '600001-700000'
+            WHEN total_price BETWEEN 700001 AND 800000 THEN '700001-800000'
+            WHEN total_price BETWEEN 800001 AND 900000 THEN '800001-900000'
+            ELSE '1000000 이상'
+        END AS price_range,
+        SUM(total_price) AS total_sales
+    FROM orders
+    GROUP BY 
+        CASE
+            WHEN total_price BETWEEN 0 AND 100000 THEN '0-100000'
+            WHEN total_price BETWEEN 100001 AND 200000 THEN '100001-200000'
+            WHEN total_price BETWEEN 200001 AND 300000 THEN '200001-300000'
+            WHEN total_price BETWEEN 300001 AND 400000 THEN '300001-400000'
+            WHEN total_price BETWEEN 400001 AND 500000 THEN '400001-500000'
+            WHEN total_price BETWEEN 500001 AND 600000 THEN '500001-600000'
+            WHEN total_price BETWEEN 600001 AND 700000 THEN '600001-700000'
+            WHEN total_price BETWEEN 700001 AND 800000 THEN '700001-800000'
+            WHEN total_price BETWEEN 800001 AND 900000 THEN '800001-900000'
+            ELSE '1000000 이상'
+        END;
+	</select>
+
+<!-- 연령 별 주문 통계 -->
+	<select id="getSalesByAgeGroup" resultType="map">
+	    select
+	        case
+	            when timestampdiff(year, m.birthday, curdate()) between 10 and 19 then '10대'
+	            when timestampdiff(year, m.birthday, curdate()) between 20 and 29 then '20대'
+	            when timestampdiff(year, m.birthday, curdate()) between 30 and 39 then '30대'
+	            when timestampdiff(year, m.birthday, curdate()) between 40 and 49 then '40대'
+	            when timestampdiff(year, m.birthday, curdate()) between 50 and 59 then '50대'
+	            when timestampdiff(year, m.birthday, curdate()) between 60 and 69 then '60대'
+	            when timestampdiff(year, m.birthday, curdate()) between 70 and 79 then '70대'
+	            when timestampdiff(year, m.birthday, curdate()) between 80 and 89 then '80대'
+	            else '90대 이상'
+	        end as age_group, count(o.order_id) as order_count
+	    from orders o
+	    join members m on o.orderer_id = m.member_id
+	    group by age_group
+	</select>
+
+</mapper>

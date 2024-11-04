@@ -1,0 +1,167 @@
+package com.finalProject.persistence;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.stereotype.Repository;
+
+import com.finalProject.model.LoginDTO;
+import com.finalProject.model.MemberDTO;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Repository
+@Slf4j
+public class MemberDAOImpl implements MemberDAO {
+
+	@Inject
+	SqlSession ses;
+
+	private String ns = "com.finalProject.mappers.memberMapper.";
+
+	// 로그인
+	@Override
+	public LoginDTO login(LoginDTO loginDTO) throws Exception {
+		return ses.selectOne(ns + "login", loginDTO);
+	}
+
+	// id, email, phone_number 중복 체크
+	@Override
+	public boolean autoDuplicate(Map<String, Object> map) {
+		boolean result = false;
+		// 중복인 경우 true
+		if ((int) ses.selectOne(ns + "autoDuplicate", map) >= 1) {
+			result = true;
+			System.out.println("중복");
+		}
+		return result;
+	}
+
+	// 회원가입
+	@Override
+	public int signUp(MemberDTO signUpDTO) throws Exception {
+		return ses.insert(ns + "signUpMember", signUpDTO);
+	}
+
+	// 자동 로그인 정보 저장
+	@Override
+	public void setAutoLogin(String member_id, String code, int AUTOLOGIN_DATE) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("member_id", member_id);
+		map.put("autologin_code", code); // 자동로그인 코드
+		map.put("autologin_date", AUTOLOGIN_DATE); // 자동로그인 유효기간
+		ses.update(ns + "updateAutoLoginData", map);
+	}
+
+	// 자동 로그인 정보 조회
+	@Override
+	public LoginDTO getAutoLogin(String autologin_code) throws Exception {
+		return ses.selectOne(ns + "selectAutoLoginData", autologin_code);
+	}
+
+	// 마이 페이지 비밀번호 인증
+	@Override
+	public boolean auth(String member_id, String member_pwd) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		LoginDTO loginDTO = ses.selectOne(ns+"login", map);
+		if(loginDTO != null) {
+			result = true;
+		}
+		
+		return result;
+	}
+
+	// 마이 페이지 회원 정보 조회
+	@Override
+	public MemberDTO getMember(String member_id) throws Exception {
+		return ses.selectOne(ns+"selectMemberById", member_id);
+	}
+
+	// 마이 페이지 회원 정보수정
+	@Override
+	public boolean updateMember(MemberDTO memberDTO) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateMember", memberDTO)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 마이 페이지 비밀번호 변경
+	@Override
+	public boolean updateMemberPwd(Map<String, String> map) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateMemberPwd", map)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 마이 페이지 회원탈퇴
+	@Override
+	public boolean withDrawMember(String member_id) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"withDrawMember", member_id)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 아이디 찾기
+	@Override
+	public LoginDTO findIdbyEmail(String email) throws Exception {
+		LoginDTO member_id = null;
+		if(ses.selectOne(ns+"selectIdByEmail", email)!=null) {
+			member_id = ses.selectOne(ns+"selectIdByEmail", email);
+		}
+		return member_id;
+	}
+
+	// 비밀번호 찾기
+	@Override
+	public boolean findPwd(String email, String member_id) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("email", email);
+		map.put("member_id", member_id);
+		if(ses.selectOne(ns+"selectPwd", map)!=null) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 비밀번호 찾기 (랜덤비밀번호 지정)
+	@Override
+	public boolean updateRandomPwd(String member_pwd, String member_id) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		if(ses.update(ns+"updateRandomPwd", map)==1) {
+			result = true;
+		}
+		
+		return result;
+	}
+
+	// 회원의 찜목록 조회
+	@Override
+	public int[] getWishList(String member_id) throws Exception {
+		List<Integer> list = ses.selectList(ns+"selectWishListByMemberId", member_id);
+		
+		int[] result = new int[list.size()]; // 배열 크기를 select문으로 찾은 찜의 갯수크기로 설정
+	    for (int i = 0; i < list.size(); i++) { // 찜 목록크기만큼 반복
+	    	result[i] = list.get(i); // int 배열에 list저장하기
+	    }
+		
+		return result;
+	}
+
+}

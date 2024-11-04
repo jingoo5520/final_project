@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.adminMemberMapper">
+
+	<!-- 총 회원 수 가져오기 -->
+	<select id="selectMemberCnt" resultType="int">
+		select count(*)
+		from
+		members
+	</select>
+
+	<!-- 필터링 된 회원 수 -->
+	<select id="selectFilteredMemberCnt" resultType="int">
+		select count(*)
+		from members
+		where 1=1
+		<if test="genders != null and genders.length > 0">
+			and (
+			<foreach item="gender" collection="genders" separator=" OR ">
+				gender
+				= #{gender}
+			</foreach>
+			)
+		</if>
+		
+		<if test="levels != null and levels.length > 0">
+			and (
+			<foreach item="level" collection="levels" separator=" OR ">
+				member_level = #{level}
+			</foreach>
+			)
+		</if>
+
+		<if test="member_id != null and member_id != ''">
+			AND member_id LIKE CONCAT('%', #{member_id}, '%')
+		</if>
+
+		<if test="member_name != null and member_name != ''">
+			AND member_name LIKE CONCAT('%', #{member_name}, '%')
+		</if>
+		
+		<![CDATA[
+		and birthday >= #{birthday_start}
+		and birthday <= #{birthday_end}
+		]]>
+
+	</select>
+
+
+	<!-- 전체 회원 조회 -->
+	<select id="selectAllMembers" resultType="MemberManageDTO">
+		select member_id,
+		member_name, phone_number, birthday, gender, member_level, reg_date
+		from members
+		order by reg_date desc
+		limit #{startRowIndex},
+		#{viewDataCntPerPage}
+	</select>
+
+	<!-- 필터링된 회원 조회 -->
+	<select id="selectFilteredMembers" resultType="MemberManageDTO">
+
+		select member_id, member_name, phone_number, birthday, gender,
+		member_level, reg_date
+		from members
+		where 1=1
+		<if
+			test="memberSearchFilterDTO.genders != null and memberSearchFilterDTO.genders.length > 0">
+			and (
+			<foreach item="gender"
+				collection="memberSearchFilterDTO.genders" separator=" OR ">
+				gender =
+				#{gender}
+			</foreach>
+			)
+		</if>
+
+		<if
+			test="memberSearchFilterDTO.levels != null and memberSearchFilterDTO.levels.length > 0">
+			and (
+			<foreach item="level"
+				collection="memberSearchFilterDTO.levels" separator=" OR ">
+				member_level =
+				#{level}
+			</foreach>
+			)
+		</if>
+
+		<if
+			test="memberSearchFilterDTO.member_id != null and memberSearchFilterDTO.member_id != ''">
+			and member_id LIKE CONCAT('%',
+			#{memberSearchFilterDTO.member_id}, '%')
+		</if>
+		<if
+			test="memberSearchFilterDTO.member_name != null and memberSearchFilterDTO.member_name != ''">
+			and member_name LIKE CONCAT('%',
+			#{memberSearchFilterDTO.member_name}, '%')
+		</if>
+		
+		<![CDATA[
+		and birthday >= #{memberSearchFilterDTO.birthday_start} 
+		and birthday <= #{memberSearchFilterDTO.birthday_end} 
+		and reg_date >= #{memberSearchFilterDTO.reg_date_start}
+		and reg_date <= #{memberSearchFilterDTO.reg_date_end}
+		]]>
+
+		order by reg_date
+		desc
+		limit #{pi.startRowIndex},
+		#{pi.viewDataCntPerPage}
+
+	</select>
+
+</mapper>
