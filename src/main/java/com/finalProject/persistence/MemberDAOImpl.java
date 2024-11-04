@@ -10,6 +10,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.DeliveryDTO;
+import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
 
@@ -167,9 +168,9 @@ public class MemberDAOImpl implements MemberDAO {
 	
 	// 주문페이지에서 입력한 주소로 회원 주소지 변경
 	@Override
-	public boolean updateAddress(DeliveryDTO deliveryDTO) throws Exception {
+	public boolean updateAddress(DeliveryVO deliveryVO) throws Exception {
 		boolean result = false;
-		if(ses.update(ns+"updateAddress", deliveryDTO)==1) {
+		if(ses.update(ns+"updateAddress", deliveryVO)==1) {
 			result = true;
 		}
 		return result;
@@ -177,8 +178,25 @@ public class MemberDAOImpl implements MemberDAO {
 	
 	// 배송지 저장
 	@Override
-	public void insertDelivery(DeliveryDTO deliveryDTO) throws Exception {
-		ses.insert(ns+"insertDelivery", deliveryDTO);
+	public void insertDelivery(DeliveryVO deliveryVO) throws Exception {
+		ses.insert(ns+"insertDelivery", deliveryVO);
+	}
+	
+	// 기본배송지 데이터 조회
+	@Override
+	public Integer selectMainDeliveryNo(String member_id) throws Exception{
+		return ses.selectOne(ns + "selectMainDelivery", member_id);
+	}
+	
+	// 기존의 기본배송지를 일반배송지로 변경
+	@Override
+	public void updateDeliveryMainToSub(Integer delivery_no) throws Exception{
+		ses.update(ns + "updateDeliveryMainToSub", delivery_no);
 	}
 
+	@Override
+	public List<DeliveryDTO> selectDeliveryList(String memberId) throws Exception {
+		return ses.selectList(ns + "selectDeliveryList", memberId);
+	}
+	
 }

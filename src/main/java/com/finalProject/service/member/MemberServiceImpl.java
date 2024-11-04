@@ -1,5 +1,6 @@
 package com.finalProject.service.member;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.DeliveryDTO;
+import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
 import com.finalProject.persistence.MemberDAO;
@@ -106,16 +108,32 @@ public class MemberServiceImpl implements MemberService {
 	
 	// 주문페이지에서 입력한 주소로 회원 주소지 변경
 	@Override
-	public boolean updateAddress(DeliveryDTO deliveryDTO) throws Exception {
-		return memberDAO.updateAddress(deliveryDTO);
+	public boolean updateAddress(DeliveryVO deliveryVO) throws Exception {
+		return memberDAO.updateAddress(deliveryVO);
 	}
 	
 	// 주문페이지에서 입력한 주소 배송지로 저장
 	@Override
-	public void saveDelivery(DeliveryDTO deliveryDTO) throws Exception {
-		memberDAO.insertDelivery(deliveryDTO);
+	@Transactional(rollbackFor={Exception.class})
+	public void saveDelivery(DeliveryVO deliveryVO) throws Exception {
+		
+		// 기본배송지 데이터 조회
+		Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryVO.getMemberId());
+		
+		if (mainDeliveryNo != null) {
+			// 기존의 기본배송지를 일반배송지로 변경
+			memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
+		}
+		
+		// 기본배송지로 저장
+		memberDAO.insertDelivery(deliveryVO);
+
 	}
 	
-	
+	// 배송지 목록 조회
+	@Override
+	public List<DeliveryDTO> getDeliveryList(String memberId) throws Exception {
+		return memberDAO.selectDeliveryList(memberId);
+	}
 
 }

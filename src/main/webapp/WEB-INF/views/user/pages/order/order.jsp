@@ -202,6 +202,11 @@
 			document.getElementById('getMemeberAddress').checked = false;
 		    document.getElementById('saveDeliveryCheck').checked = false;
 		    document.getElementById('saveAddressCheck').checked = false;
+		    $('.deliveryNameForm').hide();
+		    $("#saveDeliveryType").val("none");
+		    $("#postcodeNew").val("");
+		    $("#addressNew").val("");
+		    $("#detailAddressNew").val("");
 		}
 		
 		function pointUse() {
@@ -302,6 +307,58 @@
 			}).open();
 		}
 		
+		function showDeliveryList(memberId) {
+			console.log(memberId);
+			$.ajax({
+				async: false,
+				url: '/showDeliveryList',
+				type: 'POST',
+				dataType: "json",
+				data: { memberId: memberId },
+				success: function(data) {
+					console.log(data);
+					makeDeliveryListWithData(data);
+					$('#myModal').modal('show');
+				},
+				error: function(data) {
+					console.log(data);
+				}
+			});
+		
+		}
+		
+		function makeDeliveryListWithData(json) {
+			console.log(json);
+			console.log(json.deliveryList);
+			let mainDelivery = "";
+			let output = "";
+			$.each(json.deliveryList, function (index, item) {
+				console.log(item);
+				if (item.is_main == "M") {
+					mainDelivery = `<div class="card" id="${item.delivery_no}">
+										<div class="card-header">기본배송지</div>
+										<div class="card-body">
+											<h3>${item.delivery_name}</h3>
+											<div>${item.delivery_address}</div>
+										</div>
+										<div class="card-footer">Footer</div>
+									</div>`;
+				} else {
+					output += `<div class="card" id="${item.delivery_no}">
+									<div class="card-header">배송지</div>
+									<div class="card-body">
+										<h3>${item.delivery_name}</h3>
+										<div>${item.delivery_address}</div>
+									</div>
+									<div class="card-footer">Footer</div>
+								</div>`;
+				}
+			});
+			
+			output = mainDelivery + output;
+			$(".modal-body").html(output);
+		}
+		
 		function getMemberAddress() {
 		    // orderMember 객체를 정의합니다. 실제 사용 환경에서는 서버에서 값을 받아오거나 변수로 설정합니다.
 		    const orderMember = {
@@ -332,6 +389,11 @@
 		        detailAddress.value = "";
 		        document.getElementById('deliveryAddressHidden').value = "";
 		    }
+		}
+		
+		function useCouponCode() {
+			
+			console.log($("#useCoupon").val());
 		}
 	</script>
 	
@@ -712,7 +774,8 @@
 						<!--====== 배송지 정보 (회원) ======-->
 							<li>
 								<h5 class="title collapsed" data-bs-toggle="collapse" data-bs-target="#collapsefive" aria-expanded="false" aria-controls="collapsefive">배송지 정보</h5>
-								
+						<c:choose>
+							<c:when test="${not empty orderMember.delivery_address and not empty orderMember.delivery_name }">
 								<section class="checkout-steps-form-content collapse" id="collapsefive" aria-labelledby="headingfive">
 								<!--====== 배송지 정보 헤더 (회원) ======-->
 									<nav>
@@ -726,12 +789,14 @@
 									<div class="col-md-6">
 									
 										<div class="tab-content" id="nav-tabContent">
+									
+											
 										    <!--====== 배송지 목록 (회원) ======-->
 										    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
 										        <div class="single-form form-default">
 										        	<div class="button deliveryListTap mb-30 row align-items-center">
 										                <div class="btn col-lg-6 col-md-6 col-12" id="mainDelivery">기본배송지</div>
-										                <div class="btn col-lg-6 col-md-6 col-12" id="deliveryList">배송지 목록</div>
+										                <div class="btn col-lg-6 col-md-6 col-12" id="deliveryList" onclick="showDeliveryList('${orderMember.member_id}')">배송지 목록</div>
 								            		</div>
 										            <div class="form-input form addressForm">
 										                <h5 class="ordererHeader">주소</h5>
@@ -789,6 +854,7 @@
 										        </div>
 										    </div>
 										    <!--====== 배송지 신규입력 끝 (회원) ======-->
+									    
 											<input type="hidden" name="saveDeliveryType" id="saveDeliveryType" value="none">
 										    <input type="hidden" name="delivery_address" id="deliveryAddressHidden" value="${orderMember.address }">
 										</div>
@@ -814,6 +880,85 @@
 								<!--====== 배송지 정보 끝 (회원) ======-->
 									
 								</section>
+							</c:when>
+							<c:otherwise>
+								<section class="checkout-steps-form-content collapse show" id="collapsefive" aria-labelledby="headingfive">
+								<!--====== 배송지 정보 헤더 (비회원) ======-->
+									<nav>
+										<div class="nav nav-tabs" id="nav-tab" role="tablist">
+											<button class="nav-link active" id="nav-addressInput-tab" data-bs-toggle="tab" data-bs-target="#nav-addressInput" type="button" role="tab" aria-controls="nav-addressInput" aria-selected="false" disabled>신규입력</button>
+										</div>
+									</nav>
+								<!--====== 배송지 정보 헤더 끝 (비회원) ======-->
+								
+								<!--====== 배송지 정보 (비회원) ======-->
+									<div class="col-md-6">
+									<!--====== 배송지 주소 입력 (비회원) ======-->
+										<div class="tab-content" id="nav-tabContent">
+											<div class="tab-pane fade show active" id="nav-addressInput" role="tabpanel" aria-labelledby="nav-addressInput-tab" tabindex="0">
+												<div class="single-form form-default">
+									        		<div class="form-check">
+										                <div id="getMemeberAddressDiv">
+										                    <input type="checkbox" class="form-check-input" id="getMemeberAddress" onclick="getMemberAddress();">
+										                    <label for="getMemeberAddress">주문자 정보와 동일</label>
+										                </div>
+								            		</div>
+										            <div class="form-input form addressForm">
+										                <h5 class="ordererHeader">주소</h5>
+										                <div class="addressSearchArea">
+										                    <input class="postNumber" type="text" id="postcodeNew" placeholder="우편번호">
+										                    <input class="searchPost" type="button" onclick="sample6_execDaumPostcode('New')" value="검색"><br>
+										                </div>
+										                <input type="text" id="addressNew" placeholder="주소"><br>
+										                <input type="text" id="detailAddressNew" placeholder="상세주소">
+										            </div>
+										            <div class="form-check">
+										                <div id="saveDeliveryDiv">
+										                    <input type="checkbox" class="form-check-input" id="saveDeliveryCheck">
+										                    <label for="saveDeliveryCheck">기본배송지로 저장</label>
+										                </div>
+										                <div id="saveAddressDiv">
+										                    <input type="checkbox" class="form-check-input" id="saveAddressCheck">
+										                    <label for="saveAddressCheck">회원정보 주소로 저장</label>
+										                </div>
+										            </div>
+										        </div>
+										        <div class="single-form form-default deliveryNameForm" style="display: none;">
+										            <div class="form-input form">
+										                <h5 class="ordererHeader">배송지명</h5>
+										                <input type="text" id="deliveryName" value="${orderMember.member_name }님 배송지">
+										            </div>
+										        </div>
+											</div>
+										</div>
+									<!--====== 배송지 주소 입력 끝 (비회원) ======-->
+									
+									<!--====== 배송요청사항 입력 (비회원) ======-->
+										<div class="single-form form-default">
+											<div class="form-input form">
+												<label>배송 요청사항</label>
+												<select class="form-select deliveryOption" onchange="handleDeliveryOptionChange()">
+													<option value="default" selected>선택해주세요</option>
+													<option value="dr1">출발전에 전화 부탁드립니다.</option>
+													<option value="dr2">부재시 경비실에 맡겨주세요.</option>
+													<option value="dr3">부재시 문앞에 놓아주세요.</option>
+													<option value="dr4">부재시 휴대폰으로 연락주세요.</option>
+													<option value="dr5">부재시 문앞에 놓아주세요.</option>
+													<option value="userInput">직접입력</option>
+												</select>
+												<input class="deliveryRequest" type="text" name="deliveryRequest" style="display: none;">
+											</div>
+										</div>
+									<!--====== 배송요청사항 입력 끝(비회원) ======-->
+									<input type="hidden" id="deliveryName" value="none">
+									<input type="hidden" name="saveDeliveryType" id="saveDeliveryType" value="none">
+									<input type="hidden" name="delivery_address" id="deliveryAddressHidden">
+									</div>
+								<!--====== 배송지 정보 끝(비회원) ======-->
+									
+								</section>
+							</c:otherwise>
+					    </c:choose>
 							</li>
 							
 						<!--====== 포인트 정보 (회원) ======-->
@@ -831,7 +976,7 @@
 													<input type="text" placeholder="point" name="point" value="0">
 												</div>
 												<div class="button col-lg-4 col-md-4 col-12">
-														<button class="btn" onclick="pointUse();">사용</button>
+													<div class="btn" onclick="useCoupon()">사용</div>
 												</div>
 											</div>
 										</div>
@@ -1112,7 +1257,7 @@
 									<input type="text" placeholder="쿠폰 번호를 입력하세요" name="couponUse" id="couponUse">
 								</div>
 								<div class="button">
-									<button class="btn">쿠폰 적용</button>
+									<button class="btn" onclick="useCouponCode()">쿠폰 적용</button>
 								</div>
 							</div>
 						</div>
@@ -1159,9 +1304,11 @@
         <div id="overlay"></div>
     </section>
     <!--====== Checkout Form Steps Part Ends ======-->
-
+	
+	<jsp:include page="deliveryModal.jsp"></jsp:include>
+	
     <jsp:include page="../footer.jsp"></jsp:include>
-
+    
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">
         <i class="lni lni-chevron-up"></i>

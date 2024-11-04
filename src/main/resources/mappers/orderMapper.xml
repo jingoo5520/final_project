@@ -9,7 +9,7 @@
 	        select p.*, i.image_main_url, #{item.quantity} AS quantity
 	        from products p inner join product_images i 
 	        on p.product_no = i.product_no 
-	        where p.product_no = #{item.productNo} and i.image_sub_url = "M"
+	        where p.product_no = #{item.productNo} and i.image_sub_url = 'M'
 	    </foreach>
 	</select>
 
@@ -19,9 +19,8 @@
 			   l.level_name, l.level_dc, l.level_point 
 			   from members m 
 			   inner join levels l on l.level_no = m.member_level 
-			   inner join delivery_addrs d on d.member_id = m.member_id 
-			   where m.member_id = #{memberId} 
-			   and d.is_main = "M"
+			   left join delivery_addrs d on d.member_id = m.member_id and d.is_main = 'M'
+			   where m.member_id = #{memberId}
 	</select>
 	
 	<delete id="deleteUncompletedOrder">
