@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
@@ -10,22 +9,18 @@
 <title>Header</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
 
 <!-- ========================= CSS here ========================= -->
-<link rel="stylesheet"
-	href="/resources/assets/user/css/bootstrap.min.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/LineIcons.3.0.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/glightbox.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 <style type="text/css">
-.user-login li a:hover {
-	color: red;
+.user-login a:hover {
+	color: #fff !important;
 }
 </style>
 </head>
@@ -50,28 +45,19 @@
 									<i class="lni lni-user"></i> 로그인하세요.
 								</div>
 								<ul class="user-login">
-									<li><a
-										href="${pageContext.request.contextPath}/member/viewLogin">로그인</a>
-									</li>
-									<li><a
-										href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a>
-									</li>
+									<li><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
 									<li><a href="/serviceCenter/inquiries">고객센터</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->
 							<c:if test="${not empty sessionScope.loginMember }">
 								<div class="user">
-									<i class="lni lni-user"></i>
-									${sessionScope.loginMember.member_name } 님
+									<i class="lni lni-user"></i> ${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">
-									<li><a
-										href="${pageContext.request.contextPath}/member/myPage/modiInfo">내
-											정보</a></li>
-									<li><a
-										href="${pageContext.request.contextPath}/member/logout">로그아웃</a>
-									</li>
+									<li><a href="${pageContext.request.contextPath}/member/myPage/modiInfo">내 정보</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
 									<li><a href="/serviceCenter/inquiries">고객센터</a></li>
 								</ul>
 							</c:if>
@@ -87,8 +73,7 @@
 				<div class="row align-items-center">
 					<div class="col-lg-3 col-md-3 col-7">
 						<!-- Start Header Logo -->
-						<a class="navbar-brand" href="${pageContext.request.contextPath}/">
-							<img src="/resources/assets/user/images/logo/logo.svg" alt="Logo" />
+						<a class="navbar-brand" href="${pageContext.request.contextPath}/"> <img src="/resources/assets/user/images/logo/logo.svg" alt="Logo" />
 						</a>
 						<!-- End Header Logo -->
 					</div>
@@ -124,16 +109,14 @@
 					</div>
 					<div class="col-lg-4 col-md-2 col-5">
 						<div class="middle-right-area" style="flex-direction: row; justify-content: flex-end;">
-						
+
 							<div class="navbar-cart">
 								<div class="wishlist">
-									<a href="javascript:void(0)"> <i class="lni lni-heart"></i>
-										<span class="total-items">0</span>
+									<a href="javascript:void(0)"> <i class="lni lni-heart"></i> <span class="total-items">0</span>
 									</a>
 								</div>
 								<div class="cart-items">
-									<a href="/cart" class="main-btn"> <i
-										class="lni lni-cart"></i> <span class="total-items">${cartItemCount }</span>
+									<a href="/cart" class="main-btn"> <i class="lni lni-cart"></i> <span class="total-items">${cartItemCount }</span>
 									</a>
 								</div>
 							</div>
@@ -154,44 +137,22 @@
 						<!-- End Mega Category Menu -->
 						<!-- Start Navbar -->
 						<nav class="navbar navbar-expand-lg">
-							<button class="navbar-toggler mobile-menu-btn" type="button"
-								data-bs-toggle="collapse"
-								data-bs-target="#navbarSupportedContent"
-								aria-controls="navbarSupportedContent" aria-expanded="false"
-								aria-label="Toggle navigation">
-								<span class="toggler-icon"></span> <span class="toggler-icon"></span>
+							<button class="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+								<span class="toggler-icon"></span>
+								<span class="toggler-icon"></span>
 								<span class="toggler-icon"></span>
 							</button>
-							<div class="collapse navbar-collapse sub-menu-bar"
-								id="navbarSupportedContent">
+							<div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
 								<ul id="nav" class="navbar-nav ms-auto">
-									<li class="nav-item"><a href="/product/jewelry?category=195" class="active"
-										aria-label="Toggle navigation">earring</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=196" class=""
-										aria-label="Toggle navigation">nacklace</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=197" class=""
-										aria-label="Toggle navigation">bangle</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=198" class=""
-										aria-label="Toggle navigation">ring</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=200" class=""
-										aria-label="Toggle navigation">coupling</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=201"
-										aria-label="Toggle navigation">anklet</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=202"
-										aria-label="Toggle navigation">pendant</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=203"
-										aria-label="Toggle navigation">piercing</a>
-									</li>
-									<li class="nav-item"><a href="/product/jewelry?category=204"
-										aria-label="Toggle navigation">etc</a>
-									</li>
+									<li class="nav-item"><a href="/product/jewelry?category=195" class="active" aria-label="Toggle navigation">earring</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=196" class="" aria-label="Toggle navigation">nacklace</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=197" class="" aria-label="Toggle navigation">bangle</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=198" class="" aria-label="Toggle navigation">ring</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=200" class="" aria-label="Toggle navigation">coupling</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=201" aria-label="Toggle navigation">anklet</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=202" aria-label="Toggle navigation">pendant</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=203" aria-label="Toggle navigation">piercing</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=204" aria-label="Toggle navigation">etc</a></li>
 								</ul>
 							</div>
 							<!-- navbar collapse -->
@@ -200,14 +161,9 @@
 					</div>
 				</div>
 				<div class="col-lg-2 col-md-6 col-6" style="margin-block-end: 0em">
-					<ul id="nav" class="navbar-nav ms-auto"
-						style="flex-direction: row; justify-content: flex-end">
-						<li class="nav-item"><a href="contact.html"
-							aria-label="Toggle navigation" style="color: #b4b5b4">이벤트</a>
-						</li>
-						<li class="nav-item"><a href="contact.html"
-							aria-label="Toggle navigation" style="color: #b4b5b4">공지사항</a>
-						</li>
+					<ul id="nav" class="navbar-nav ms-auto" style="flex-direction: row; justify-content: flex-end">
+						<li class="nav-item"><a href="contact.html" aria-label="Toggle navigation" style="color: #b4b5b4">이벤트</a></li>
+						<li class="nav-item"><a href="contact.html" aria-label="Toggle navigation" style="color: #b4b5b4">공지사항</a></li>
 					</ul>
 				</div>
 			</div>

@@ -163,24 +163,15 @@
 	<section class="product-grids section">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-3 col-12">
-					<!-- Start Product Sidebar -->
-					<div class="product-sidebar">
-						<!-- Start Single Widget -->
-						<div class="single-widget">
-							<h3>고객센터</h3>
-							<ul class="list">
-								<li><a href="product-grids.html">공지사항 </a></li>
-								<li><a href="product-grids.html">이벤트 </a></li>
-								<li><a href="product-grids.html">문의</a></li>
-								<li><a href="product-grids.html">멤버십 혜택</a></li>
-							</ul>
-						</div>
-						<!-- End Single Widget -->
+				<!-- sideBar -->
+				<jsp:include page="/WEB-INF/views/user/pages/serviceCenterSideBar.jsp">
 
-					</div>
-					<!-- End Product Sidebar -->
-				</div>
+					<jsp:param name="pageName" value="inquiries" />
+
+				</jsp:include>
+				<!-- / sideBar -->
+
+
 				<div class="col-lg-9 col-12">
 					<!-- Shopping Cart -->
 					<div class="cart-list-head" style="border: none">
@@ -215,7 +206,7 @@
 										<div class="col-lg-2 col-md-2 col-12">
 											<fmt:formatDate value="${inquiry.inquiry_reg_date}" pattern="yyyy-MM-dd" />
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">${inquiry.inquiry_status == "W" ? "답변 대기" : "답변 완료"} </div>
+										<div class="col-lg-2 col-md-2 col-12">${inquiry.inquiry_status == "W" ? "답변 대기" : "답변 완료"}</div>
 									</div>
 								</div>
 							</c:forEach>

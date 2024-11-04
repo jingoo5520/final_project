@@ -28,13 +28,32 @@
 	line-clamp: 2 !important;
 	-webkit-box-orient: vertical !important;
 }
+
+.buttonArea {
+	display: flex;
+	flex-direction: row;
+	position: inherit;
+	width: 50% !important;
+	justify-content: space-between;
+}
+
+.buttonArea .btn {
+	display: flex !important;
+	flex-direction: row !important;
+	justify-content: center !important;
+}
+
+.btn i {
+	margin: 0 !important;
+}
 </style>
 <body>
 	<!-- Preloader -->
 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
-				<span></span> <span></span>
+				<span></span>
+				<span></span>
 			</div>
 		</div>
 	</div>
@@ -135,8 +154,9 @@
 						<div class="single-product">
 							<div class="product-image" style="height: 300px;">
 								<img src="${product.image_main_url }" style="height: 100%; object-fit: cover;" />
-								<div class="button">
-									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
+								<div class="button buttonArea">
+									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a> 
+									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a>
 								</div>
 							</div>
 							<div class="product-info">
@@ -146,7 +166,10 @@
 								</h4>
 
 								<div class="price">
-									<span><fmt:formatNumber value="${product.product_price}" pattern="#,###" />원</span>
+									<span>
+										<fmt:formatNumber value="${product.product_price}" pattern="#,###" />
+										원
+									</span>
 								</div>
 							</div>
 						</div>

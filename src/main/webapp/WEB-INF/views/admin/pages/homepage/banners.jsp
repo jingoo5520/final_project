@@ -47,7 +47,7 @@
 </head>
 
 <style>
-#createCouponBtnSapce {
+#addBannerBtnArea {
 	display: flex;
 	flex-direction: row;
 	justify-content: right;
@@ -90,7 +90,7 @@
 
 
 						<div class="card">
-							<h5 class="card-header">배너 목록</h5>
+							<h5 class="card-header">메인 배너 목록</h5>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
 									<thead class="table-light">
@@ -113,7 +113,7 @@
 						</div>
 						
 						<div class="card mt-4">
-							<h5 class="card-header">배너 목록</h5>
+							<h5 class="card-header">서브 배너 목록</h5>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
 									<thead class="table-light">
@@ -133,6 +133,11 @@
 									</tbody>
 								</table>
 							</div>
+						</div>
+						
+						<!-- 배너 추가 버튼 -->
+						<div id="addBannerBtnArea">
+							<button id="addBannerBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="">배너 추가</button>
 						</div>
 					</div>
 				</div>

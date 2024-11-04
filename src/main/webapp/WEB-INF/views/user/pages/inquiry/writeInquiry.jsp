@@ -254,24 +254,15 @@ let fileList = [];
 	<section class="product-grids section">
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-3 col-12">
-					<!-- Start Product Sidebar -->
-					<div class="product-sidebar">
-						<!-- Start Single Widget -->
-						<div class="single-widget">
-							<h3>고객센터</h3>
-							<ul class="list">
-								<li><a href="product-grids.html">공지사항 </a></li>
-								<li><a href="product-grids.html">이벤트 </a></li>
-								<li><a href="product-grids.html">문의</a></li>
-								<li><a href="product-grids.html">멤버십 혜택</a></li>
-							</ul>
-						</div>
-						<!-- End Single Widget -->
 
-					</div>
-					<!-- End Product Sidebar -->
-				</div>
+				<!-- sideBar -->
+				<jsp:include page="/WEB-INF/views/user/pages/serviceCenterSideBar.jsp">
+
+					<jsp:param name="pageName" value="inquiries" />
+
+				</jsp:include>
+				<!-- / sideBar -->
+				
 				<div class="col-lg-9 col-12">
 					<!-- Shopping Cart -->
 					<div class="checkout-steps-form-style-1">

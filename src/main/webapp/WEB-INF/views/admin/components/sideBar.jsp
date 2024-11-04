@@ -5,7 +5,11 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-
+<style>
+	h3 {
+		font-size: 18px !important;
+	}
+</style>
 
 <body>
 	<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
@@ -117,26 +121,30 @@
 					</a></li>
 				</ul></li>
 
-			<li class="menu-item <%= "notice".equals(request.getParameter("pageName")) || "event".equals(request.getParameter("pageName")) ? "active open" : "" %>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%="notice".equals(request.getParameter("pageName")) || "event".equals(request.getParameter("pageName"))
+		? "active open"
+		: ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Admin Notices">공지사항 관리</div>
 			</a>
 				<ul class="menu-sub">
-					<li class="menu-item <%= "notice".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/notices/notice" class="menu-link">
+					<li class="menu-item <%="notice".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/notices/notice" class="menu-link">
 							<div data-i18n="notices">공지</div>
 					</a></li>
-					<li class="menu-item <%= "event".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/notices/event" class="menu-link">
+					<li class="menu-item <%="event".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/notices/event" class="menu-link">
 							<div data-i18n="events">이벤트</div>
 					</a></li>
 				</ul></li>
 
-			<li class="menu-item <%= "adminInquiries".equals(request.getParameter("pageName")) || "reports".equals(request.getParameter("pageName")) ? "active open" : "" %>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%="adminInquiries".equals(request.getParameter("pageName")) || "reports".equals(request.getParameter("pageName"))
+				? "active open"
+				: ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Admin Inquiries, Reports">문의, 신고</div>
 			</a>
 				<ul class="menu-sub">
-					<li class="menu-item <%= "adminInquiries".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/inquiry/adminInquiries" class="menu-link">
+					<li class="menu-item <%="adminInquiries".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/inquiry/adminInquiries" class="menu-link">
 							<div data-i18n="inquiries">문의</div>
 					</a></li>
-					<li class="menu-item <%= "reports".equals(request.getParameter("pageName")) ? "active" : "" %>"><a href="/admin/report/reports" class="menu-link">
+					<li class="menu-item <%="reports".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/report/reports" class="menu-link">
 							<div data-i18n="reports">신고</div>
 					</a></li>
 				</ul></li>
