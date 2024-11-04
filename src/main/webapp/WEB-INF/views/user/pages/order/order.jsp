@@ -328,35 +328,53 @@
 		}
 		
 		function makeDeliveryListWithData(json) {
-			console.log(json);
-			console.log(json.deliveryList);
 			let mainDelivery = "";
 			let output = "";
 			$.each(json.deliveryList, function (index, item) {
-				console.log(item);
+				let postcode = item.delivery_address.split("/")[0];
+				let address = item.delivery_address.split("/")[1];
+				let detailAddress = item.delivery_address.split("/")[2];
+				
+				
 				if (item.is_main == "M") {
-					mainDelivery = `<div class="card" id="${item.delivery_no}">
-										<div class="card-header">기본배송지</div>
-										<div class="card-body">
-											<h3>${item.delivery_name}</h3>
-											<div>${item.delivery_address}</div>
-										</div>
-										<div class="card-footer">Footer</div>
-									</div>`;
+					mainDelivery = "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "'>";
+					mainDelivery += "<div class='card-header'>기본배송지</div><div class='card-body'>";
+					mainDelivery += "<h3>" + item.delivery_name + "</h3>";
+					mainDelivery += "<div>" + item.delivery_address + "</div></div><div class='card-footer'>";
+					mainDelivery += "<div class='button'>";
+					mainDelivery += `<div class='btn' onclick="applyAddress('` + item.delivery_address + `', '` + item.delivery_name + `');">등록</div></div></div></div>`;
 				} else {
-					output += `<div class="card" id="${item.delivery_no}">
-									<div class="card-header">배송지</div>
-									<div class="card-body">
-										<h3>${item.delivery_name}</h3>
-										<div>${item.delivery_address}</div>
-									</div>
-									<div class="card-footer">Footer</div>
-								</div>`;
+					output += "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "'>";
+					output += "<div class='card-header'>배송지</div><div class='card-body'>";
+					output += "<h3>" + item.delivery_name + "</h3>";
+					output += "<div>" + item.delivery_address + "</div></div><div class='card-footer'>";
+					output += "<div class='button'>";
+					output += `<div class='btn' onclick="applyAddress('` + item.delivery_address + `', '` + item.delivery_name + `');">등록</div></div></div></div>`;
 				}
+				
+				
 			});
-			
+			console.log(output);
 			output = mainDelivery + output;
+			
 			$(".modal-body").html(output);
+		}
+		
+		function applyAddress(deliveryAddress, deliveryName) {
+			console.log(deliveryAddress);
+			let postcode = deliveryAddress.split("/")[0];
+			let address = deliveryAddress.split("/")[1];
+			let detailAddress = deliveryAddress.split("/")[2];
+		    
+		    $("#postcodeList").val(postcode);
+		    $("#addressList").val(address);
+		    $("#detailAddressList").val(detailAddress);
+		    $("#savedDeliveryName").val(deliveryName);
+		    $("#deliveryAddressHidden").val(deliveryAddress);
+		    $("#deliveryName").val(deliveryName);
+		    
+		    $("#myModal").modal('hide');
+		    $(".modal-body").html("");
 		}
 		
 		function getMemberAddress() {
@@ -556,6 +574,11 @@
 		    justify-content: space-between;
 		    align-items: center;
 		    width: 100%;
+		}
+		
+		.modal-body {
+		    max-height: 490px; /* 원하는 높이로 설정 */
+		    overflow-y: auto; /* 세로 스크롤바 추가 */
 		}
 		
     </style>

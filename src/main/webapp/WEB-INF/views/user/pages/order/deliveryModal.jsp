@@ -7,11 +7,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="EUC-KR">
 <title>배송지 목록 모달창</title>
+<style type="text/css">
+
+</style>
+
 </head>
 <body>
 <!-- The Modal -->
-<div class="modal fade" id="myModal">
-  <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
     <div class="modal-content">
 
       <!-- Modal Header -->
