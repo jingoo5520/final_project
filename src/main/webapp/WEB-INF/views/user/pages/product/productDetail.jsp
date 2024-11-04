@@ -246,12 +246,12 @@ function addCart(productNo) {
 									    </c:if>
 									
 									    <!-- 할인율 및 할인 적용된 가격 표시 -->
-									    <div style="display: flex; align-items: baseline; gap: 10px;">
-									        <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
-									            <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-									                ${products[0].dc_rate}%
-									            </span>
-									        </c:if>
+<div style="display: flex; align-items: baseline; gap: 10px;">
+    <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
+        <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+            <fmt:formatNumber value="${products[0].dc_rate * 100}" type="number" maxFractionDigits="0"/>%
+        </span>
+    </c:if>
 									
 									        <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;">
 									            <fmt:formatNumber value="${products[0].calculatedPrice}" type="number" pattern="#,###"/>원

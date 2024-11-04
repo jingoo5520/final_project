@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.reviewMapper">
+   <!-- 쿼리문 -->
+    <select id="selectCountWritableReviews" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM order_products op
+		JOIN orders o ON o.order_id = op.order_id
+		WHERE o.orderer_id = #{orderer_id}
+		AND o.order_status = '6'  
+		AND NOT EXISTS (
+		    SELECT 1
+		    FROM reviews r
+		    WHERE r.product_no = op.product_no AND r.member_id = #{member_id}
+		);
+    </select>
+    
+<select id="selectWritableReviews" parameterType="map" resultType="ReviewDTO">
+SELECT 
+    op.*, 
+    p.product_name, 
+    pi.image_main_url, 
+    r.review_score, 
+    o.order_date AS delivery_date
+FROM 
+    order_products op
+JOIN 
+    orders o ON o.order_id = op.order_id
+JOIN 
+    products p ON op.product_no = p.product_no
+LEFT JOIN 
+    product_images pi ON p.product_no = pi.product_no AND pi.image_sub_url = 'M'
+LEFT JOIN 
+    reviews r ON r.product_no = op.product_no AND r.member_id = #{memberId}
+WHERE 
+    o.orderer_id = #{memberId}
+    AND o.order_status = '6'
+LIMIT 
+    #{pagingInfo.startRowIndex}, #{pagingInfo.pageSize};
+</select>
+
+</mapper>
