@@ -3,19 +3,22 @@ package com.finalProject.util;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.PasswordAuthentication;
 import java.util.Properties;
 
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.stereotype.Component;
 
-@Component // Spring 而⑦뀒�씠�꼫媛� �빐�떦 �겢�옒�뒪瑜� 鍮덉쑝濡� �벑濡�
+@Component // Spring 컨테이너가 해당 클래스를 빈으로 등록
 public class SendMailUtil {
 
 	private String host;
@@ -23,41 +26,41 @@ public class SendMailUtil {
 	private String password;
 
 	public void sendMail(String to, String subject, String content) throws IOException, MessagingException {
-		// Properties �꽕�젙
+		// Properties 설정
 		Properties props = new Properties();
 		readProperties();
 
 		props.put("mail.smtp.host", host);
-		props.put("mail.smtp.port", "587"); // TLS �룷�듃
+		props.put("mail.smtp.port", "587"); // TLS 포트
 		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true"); // TLS �궗�슜
+		props.put("mail.smtp.starttls.enable", "true"); // TLS 사용
 
-		// �꽭�뀡 �깮�꽦
+		// 세션 생성
 		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(user, password);
 			}
 		});
 
-		// 硫붿떆吏� �옉�꽦
+		// 메시지 작성
 		MimeMessage message = new MimeMessage(session);
-		message.setFrom(new InternetAddress(user)); // 蹂대궡�뒗 �궗�엺
-		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to)); // 諛쏅뒗 �궗�엺
-		message.setSubject(subject); // �씠硫붿씪 �젣紐�
-		message.setText(content); // �씠硫붿씪 蹂몃Ц
+		message.setFrom(new InternetAddress(user)); // 보내는 사람
+		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to)); // 받는 사람
+		message.setSubject(subject); // 이메일 제목
+		message.setText(content); // 이메일 본문
 
-		// �씠硫붿씪 �쟾�넚
+		// 이메일 전송
 		Transport.send(message);
-		System.out.println("�씠硫붿씪�씠 �꽦怨듭쟻�쑝濡� 諛쒖넚�릺�뿀�뒿�땲�떎: " + to);
+		System.out.println("이메일이 성공적으로 발송되었습니다: " + to);
 	}
 
 	private void readProperties() throws FileNotFoundException, IOException {
 		Properties prop = new Properties();
 
-		// �빐�떦 寃쎈줈�쓽 properties瑜� 諛쏆쓬.
+		// 해당 경로의 properties를 받음.
 		prop.load(new FileReader("D:\\my\\coding\\Flnal_2team\\final_project\\src\\main\\resources\\gmail.properties"));
 		;
-		// �븘�슂�븳 媛� ���옣
+		// 필요한 값 저장
 		this.host = prop.get("host") + "";
 		this.user = prop.get("user") + "";
 		this.password = prop.get("password") + "";

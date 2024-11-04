@@ -37,6 +37,18 @@ function countDown(productNo) {
     }
 }
 
+function orderProduct(productNo) {
+	let productsInfo = [];
+
+	let quantity = parseInt($("#" + productNo + "_quantity").text());
+	
+	productsInfo.push({ productNo: parseInt(productNo), quantity: quantity });
+    
+    $('.productInfos').val(JSON.stringify(productsInfo));
+
+    $('.orderForm').submit();
+}
+
 function addCart(productNo) {
 	let quantity = parseInt($("#" + productNo + "_quantity").text());
 	
@@ -279,9 +291,12 @@ function addCart(productNo) {
 									    <div class="row align-items-center mt-3">
 									        <!-- 결제 버튼을 전체 너비로 배치 -->
 									        <div class="col-lg-12 col-md-12 col-12">
-									            <div class="wish-button">
-									                <button class="btn" style="width: 100%;"><i class="lni lni-credit-cards"></i> 결제</button>
-									            </div>
+									            <form action="/order" method="post" class="orderForm">
+										            <div class="wish-button">
+														<input type="hidden" class="productInfos" name="productInfos">
+										                <button class="btn" style="width: 100%;" onclick="orderProduct(${products[0].product_no});"><i class="lni lni-credit-cards"></i> 결제</button>
+										            </div>
+												</form>
 									        </div>
 									    </div>
 									</div>
@@ -338,6 +353,7 @@ function addCart(productNo) {
             </div>
     </section>
     <!-- End Item Details -->
+    
 
 <jsp:include page="../cart/cartModal.jsp"></jsp:include>
 

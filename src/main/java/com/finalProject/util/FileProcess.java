@@ -10,10 +10,10 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-//import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
-@Component // �뒪�봽留� 而⑦뀒�씠�꼫�뿉寃� 媛앹껜瑜� 留뚮뱾�뼱 愿�由ы븯�룄濡�
+@Component // 스프링 컨테이너에게 객체를 만들어 관리하도록
 public class FileProcess {
 
 	public String makePath(String realPath) throws IOException {
@@ -23,7 +23,7 @@ public class FileProcess {
 		String saveFilePath = realPath + ymd[ymd.length - 1];
 		
 		return saveFilePath;
-		// �뙆�씪�씠 �떎�젣 ���옣�릺�뒗 寃쎈줈: realPath + "�뀈/�썡/�씪"
+		// 파일이 실제 저장되는 경로: realPath + "년/월/일"
 
 		/*
 		 * String[] ymd = makeCalentdarPath(realPath); String newFileName = ""; //
@@ -34,12 +34,12 @@ public class FileProcess {
 		 * String saveFilePath = realPath + ymd[ymd.length - 1];
 		 * 
 		 * File fileToSave = new File(saveFilePath + File.separator + newFileName); //
-		 * �떎�젣 ���옣 FileUtils.writeByteArrayToFile(fileToSave, upfile);
+		 * 실제 저장 FileUtils.writeByteArrayToFile(fileToSave, upfile);
 		 * 
-		 * // �씠誘몄� �뙆�씪 -> �뜽�꽕�씪 String ext =
+		 * // 이미지 파일 -> 썸네일 String ext =
 		 * originalFileName.substring(originalFileName.lastIndexOf(".") + 1); if
 		 * (ImageMimeType.isImage(ext)) { //
-		 * System.out.println("�씠誘몄��엯�땲�떎... �뜽�꽕�씪�쓣 留뚮뱾寃좎뒿�땲�떎."); String thumbImgName =
+		 * System.out.println("이미지입니다... 썸네일을 만들겠습니다."); String thumbImgName =
 		 * makeThumbNailImage(saveFilePath, newFileName);
 		 * 
 		 * System.out.println("thumbImgName: " + thumbImgName);
@@ -56,7 +56,7 @@ public class FileProcess {
 		 * 
 		 * System.out.println("result: " + result);
 		 * 
-		 * } else { // �씠誘몄�媛� �븘�땶 寃쎌슦 result =
+		 * } else { // 이미지가 아닌 경우 result =
 		 * BoardUpFilesVODTO.builder().ext(ext).newFileName(ymd[2] + File.separator +
 		 * newFileName) .originFileName(originalFileName).size(fileSize).build(); }
 		 * 
@@ -83,7 +83,7 @@ public class FileProcess {
 	}
 
 	private void makeDirectory(String realPath, String[] ymd) {
-		// �떎�젣 directory �깮�꽦
+		// 실제 directory 생성
 		System.out.println(new File(realPath + ymd[ymd.length - 1]).exists());
 
 		if (!new File(realPath + ymd[ymd.length - 1]).exists()) {

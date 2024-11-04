@@ -145,7 +145,6 @@
                         <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요" required></div>
                       </div>
                       <input type="hidden" name="noticeContent" id="noticeContentInput" required/>
-
 				<!-- 공지 등록 버튼 -->
 		      	<div class="text-end mt-3">
 					<button type="submit" class="btn rounded-pill btn-outline-primary">공지 등록</button>

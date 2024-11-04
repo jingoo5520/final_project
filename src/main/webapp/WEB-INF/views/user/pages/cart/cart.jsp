@@ -296,12 +296,6 @@ function removeCheckedItem() {
     }
 }
 
-function checkedOrder() {
-	console.log("체크한 상품들 주문페이지로 이동");
-	
-	
-}
-
 function logWindowSize() {
    let width = $(window).width();
     
@@ -335,6 +329,34 @@ $(window).scroll(function() {
 	    }
 	
 });
+
+
+function checkedOrder() {
+	let productsInfo = [];
+	let productNo = 0;
+	let quantity = 0;
+	
+	let checkboxes = $('input[type="checkbox"].checkProduct');
+    
+    for (let i = 0; i < checkboxes.length; i++) {
+        let checkbox = checkboxes[i];
+        if (checkbox.checked) {
+            productNo = parseInt(checkbox.id);
+            quantity = parseInt($("#"+productNo + "_quantity").text());
+            
+            productsInfo.push({ productNo: parseInt(productNo), quantity: quantity });
+        }
+    }
+
+	console.log(productsInfo);
+	
+	// 숨겨진 필드에 JSON 형식으로 저장
+    $('.productInfos').val(JSON.stringify(productsInfo));
+
+    // 폼 제출
+    $('.orderForm').submit();
+	
+}
 
 </script>
 
@@ -697,9 +719,11 @@ input[type="checkbox"]:hover {
 								<li>총 적립예정포인트<span class="totalPoint">0</span></li>
 							</ul>
 							<div class="button">
-								<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />
-								결제하기</a>
-								<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
+								<form action="/order" method="post" class="orderForm">
+									<input type="hidden" class="productInfos" name="productInfos">
+									<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />결제하기</a>
+									<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
+								</form>
 						 	</div>
 						 </div>
 					 </div>
@@ -723,9 +747,11 @@ input[type="checkbox"]:hover {
 						<li>총 적립예정포인트<span class="totalPoint">0</span></li>
 					</ul>
 					<div class="button">
-						<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />
-								결제하기</a>
-						<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
+						<form action="/order" method="post" class="orderForm">
+							<input type="hidden" class="productInfos" name="productInfos">
+							<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />결제하기</a>
+							<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
+						</form>
 				 	</div>
 				 </div>
 			 </div>
