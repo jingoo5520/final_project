@@ -47,6 +47,7 @@ public class PagingInfoNew {
 		this.startRowIndex = (this.pageNo - 1) * this.viewDataCntPerPage; 
 	}
 	
+	
 	public void setPageBlockNoCurPage() {
 		// (현재 페이지번호) / (1개 페이징 블럭에서 보여줄 페이지 수)
 		// 나머지가 있다면 몫 + 1

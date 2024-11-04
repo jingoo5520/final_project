@@ -3,7 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
-
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
@@ -20,15 +19,41 @@
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 </head>
+<style>
+.title a {
+	display: -webkit-box !important;
+	overflow: hidden !important;
+	-webkit-line-clamp: 2 !important;
+	line-clamp: 2 !important;
+	-webkit-box-orient: vertical !important;
+}
 
+.buttonArea {
+	display: flex;
+	flex-direction: row;
+	position: inherit;
+	width: 50% !important;
+	justify-content: space-between;
+}
+
+.buttonArea .btn {
+	display: flex !important;
+	flex-direction: row !important;
+	justify-content: center !important;
+}
+
+.btn i {
+	margin: 0 !important;
+}
+</style>
 <body>
 	<!-- Preloader -->
 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
-				<span></span> <span></span>
+				<span></span>
+				<span></span>
 			</div>
 		</div>
 	</div>
@@ -43,35 +68,27 @@
 				<div class="col-12 custom-padding-right">
 					<div class="slider-head">
 						<!-- Start Hero Slider -->
-						<div class="hero-slider" >
-					    <!-- Start Single Slider -->
-						<c:if test="${not empty event}">
-                            <c:forEach var="e" items="${event}">
-                                <div class="single-slider">
-                                        <c:choose>
-                                            <c:when test="${not empty e.banner_image}">
-                                            <a href="userViewEventDetail/${e.notice_no}">
-							                  <img src="${pageContext.request.contextPath}${e.banner_image}" alt="${e.notice_title} 이미지" style="max-width: 100%; height: 500px;" />
-							                </a>
-                                            </c:when>
-                                            <c:otherwise>
-                                            <a href="userViewEventDetail/${e.notice_no}">
-                                                <img src="${pageContext.request.contextPath}/no_image.jpg" 
-                                                     alt="기본 이미지" style="width: ; height: auto;">
-                                            </a>
-                                            </c:otherwise>
-                                        </c:choose>
-                                </div>
-                            </c:forEach>
-                        </c:if>
-					    <!-- End Single Slider -->
-					
-					</div>
+						<div class="hero-slider">
+							<!-- Start Single Slider -->
+							<div class="single-slider" style="border: 3px solid #000">
+								<div class="content">
+									<h2>1번 메인 배너</h2>
+								</div>
+							</div>
+							<!-- End Single Slider -->
+							<!-- Start Single Slider -->
+							<div class="single-slider" style="border: 3px solid #000">
+								<div class="content">
+									<h2>2번 메인 배너</h2>
+								</div>
+							</div>
+							<!-- End Single Slider -->
 						</div>
 						<!-- End Hero Slider -->
 					</div>
 				</div>
 			</div>
+		</div>
 	</section>
 	<!-- End Hero Area -->
 
@@ -91,7 +108,6 @@
 					<!-- Start Single Category -->
 					<div class="single-category">
 						<h3 class="heading">1번 서브배너</h3>
-						
 					</div>
 					<!-- End Single Category -->
 				</div>
@@ -99,7 +115,6 @@
 					<!-- Start Single Category -->
 					<div class="single-category">
 						<h3 class="heading">2번 서브배너</h3>
-						
 					</div>
 					<!-- End Single Category -->
 				</div>
@@ -107,7 +122,6 @@
 					<!-- Start Single Category -->
 					<div class="single-category">
 						<h3 class="heading">3번 서브배너</h3>
-						
 					</div>
 					<!-- End Single Category -->
 				</div>
@@ -115,7 +129,6 @@
 					<!-- Start Single Category -->
 					<div class="single-category">
 						<h3 class="heading">4번 서브배너</h3>
-						
 					</div>
 					<!-- End Single Category -->
 				</div>
@@ -131,243 +144,39 @@
 				<div class="col-12">
 					<div class="section-title">
 						<h2>추천 아이템(신상품)</h2>
-						<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.</p>
 					</div>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#">
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
+				<c:forEach var="product" items="${newProducts}">
+					<div class="col-lg-3 col-md-6 col-12">
+						<!-- Start Single Product -->
+						<div class="single-product">
+							<div class="product-image" style="height: 300px;">
+								<img src="${product.image_main_url }" style="height: 100%; object-fit: cover;" />
+								<div class="button buttonArea">
+									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a> 
+									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a>
+								</div>
+							</div>
+							<div class="product-info">
+								<span class="category">${product.category_name }</span>
+								<h4 class="title">
+									<a href="product-grids.html">${product.product_name }</a>
+								</h4>
+
+								<div class="price">
+									<span>
+										<fmt:formatNumber value="${product.product_price}" pattern="#,###" />
+										원
+									</span>
+								</div>
 							</div>
 						</div>
-						<div class="product-info">
-							<span class="category">Watches</span>
-							<h4 class="title">
-								<a href="product-grids.html">아이템1</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star"></i></li>
-								<li><span>4.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$199.00</span>
-							</div>
-						</div>
+						<!-- End Single Product -->
 					</div>
-					<!-- End Single Product -->
-				</div>
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#"> <span class="sale-tag">-25%</span>
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
-							</div>
-						</div>
-						<div class="product-info">
-							<span class="category">Speaker</span>
-							<h4 class="title">
-								<a href="product-grids.html">아이템 2</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><span>5.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$275.00</span> <span class="discount-price">$300.00</span>
-							</div>
-						</div>
-					</div>
-					<!-- End Single Product -->
-				</div>
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#">
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
-							</div>
-						</div>
-						<div class="product-info">
-							<span class="category">Camera</span>
-							<h4 class="title">
-								<a href="product-grids.html">아이템 3</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><span>5.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$399.00</span>
-							</div>
-						</div>
-					</div>
-					<!-- End Single Product -->
-				</div>
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#"> <span class="new-tag">New</span>
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
-							</div>
-						</div>
-						<div class="product-info">
-							<span class="category">Phones</span>
-							<h4 class="title">
-								<a href="product-grids.html">iphone 6x plus</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><span>5.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$400.00</span>
-							</div>
-						</div>
-					</div>
-					<!-- End Single Product -->
-				</div>
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#">
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
-							</div>
-						</div>
-						<div class="product-info">
-							<span class="category">Headphones</span>
-							<h4 class="title">
-								<a href="product-grids.html">Wireless Headphones</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><span>5.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$350.00</span>
-							</div>
-						</div>
-					</div>
-					<!-- End Single Product -->
-				</div>
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#">
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
-							</div>
-						</div>
-						<div class="product-info">
-							<span class="category">Speaker</span>
-							<h4 class="title">
-								<a href="product-grids.html">Mini Bluetooth Speaker</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star"></i></li>
-								<li><span>4.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$70.00</span>
-							</div>
-						</div>
-					</div>
-					<!-- End Single Product -->
-				</div>
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#"> <span class="sale-tag">-50%</span>
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
-							</div>
-						</div>
-						<div class="product-info">
-							<span class="category">Headphones</span>
-							<h4 class="title">
-								<a href="product-grids.html">PX7 Wireless Headphones</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star"></i></li>
-								<li><span>4.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$100.00</span> <span class="discount-price">$200.00</span>
-							</div>
-						</div>
-					</div>
-					<!-- End Single Product -->
-				</div>
-				<div class="col-lg-3 col-md-6 col-12">
-					<!-- Start Single Product -->
-					<div class="single-product">
-						<div class="product-image">
-							<img src="/335x335" alt="#">
-							<div class="button">
-								<a href="product-details.html" class="btn"><i class="lni lni-cart"></i> Add to Cart</a>
-							</div>
-						</div>
-						<div class="product-info">
-							<span class="category">Laptop</span>
-							<h4 class="title">
-								<a href="product-grids.html">Apple MacBook Air</a>
-							</h4>
-							<ul class="review">
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><i class="lni lni-star-filled"></i></li>
-								<li><span>5.0 Review(s)</span></li>
-							</ul>
-							<div class="price">
-								<span>$899.00</span>
-							</div>
-						</div>
-					</div>
-					<!-- End Single Product -->
-				</div>
+				</c:forEach>
+				<!-- End Single Product -->
 			</div>
 		</div>
 	</section>
@@ -434,81 +243,79 @@
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
 	<script type="text/javascript">
-        //========= Hero Slider 
-        tns({
-            container: '.hero-slider',
-            slideBy: 'page',
-            autoplay: true,
-            autoplayButtonOutput: false,
-            mouseDrag: true,
-            gutter: 0,
-            items: 1,
-            nav: false,
-            controls: true,
-            controlsText: ['<i class="lni lni-chevron-left"></i>', '<i class="lni lni-chevron-right"></i>'],
-        });
+            //========= Hero Slider
+            tns({
+                container: ".hero-slider",
+                slideBy: "page",
+                autoplay: true,
+                autoplayButtonOutput: false,
+                mouseDrag: true,
+                gutter: 0,
+                items: 1,
+                nav: false,
+                controls: true,
+                controlsText: ['<i class="lni lni-chevron-left"></i>', '<i class="lni lni-chevron-right"></i>'],
+            });
 
-        //======== Brand Slider
-        tns({
-            container: '.brands-logo-carousel',
-            autoplay: true,
-            autoplayButtonOutput: false,
-            mouseDrag: true,
-            gutter: 15,
-            nav: false,
-            controls: false,
-            responsive: {
-                0: {
-                    items: 1,
+            //======== Brand Slider
+            tns({
+                container: ".brands-logo-carousel",
+                autoplay: true,
+                autoplayButtonOutput: false,
+                mouseDrag: true,
+                gutter: 15,
+                nav: false,
+                controls: false,
+                responsive: {
+                    0: {
+                        items: 1,
+                    },
+                    540: {
+                        items: 3,
+                    },
+                    768: {
+                        items: 5,
+                    },
+                    992: {
+                        items: 6,
+                    },
                 },
-                540: {
-                    items: 3,
-                },
-                768: {
-                    items: 5,
-                },
-                992: {
-                    items: 6,
-                }
-            }
-        });
-
-    </script>
+            });
+        </script>
 	<script>
-        const finaleDate = new Date("February 15, 2023 00:00:00").getTime();
+            const finaleDate = new Date("February 15, 2023 00:00:00").getTime();
 
-        const timer = () => {
-            const now = new Date().getTime();
-            let diff = finaleDate - now;
-            if (diff < 0) {
-                document.querySelector('.alert').style.display = 'block';
-               // index에서 topbar가 display none되지 않도록 처리
-               // document.querySelector('.container').style.display = 'none';
-            }
+            const timer = () => {
+                const now = new Date().getTime();
+                let diff = finaleDate - now;
+                if (diff < 0) {
+                    document.querySelector(".alert").style.display = "block";
+                    // index에서 topbar가 display none되지 않도록 처리
+                    // document.querySelector('.container').style.display = 'none';
+                }
 
-            let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            let hours = Math.floor(diff % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
-            let minutes = Math.floor(diff % (1000 * 60 * 60) / (1000 * 60));
-            let seconds = Math.floor(diff % (1000 * 60) / 1000);
+                let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            days <= 99 ? days = `0${days}` : days;
-            days <= 9 ? days = `00${days}` : days;
-            hours <= 9 ? hours = `0${hours}` : hours;
-            minutes <= 9 ? minutes = `0${minutes}` : minutes;
-            seconds <= 9 ? seconds = `0${seconds}` : seconds;
+                days <= 99 ? (days = `0${days}`) : days;
+                days <= 9 ? (days = `00${days}`) : days;
+                hours <= 9 ? (hours = `0${hours}`) : hours;
+                minutes <= 9 ? (minutes = `0${minutes}`) : minutes;
+                seconds <= 9 ? (seconds = `0${seconds}`) : seconds;
 
-            document.querySelector('#days').textContent = days;
-            document.querySelector('#hours').textContent = hours;
-            document.querySelector('#minutes').textContent = minutes;
-            document.querySelector('#seconds').textContent = seconds;
+                document.querySelector("#days").textContent = days;
+                document.querySelector("#hours").textContent = hours;
+                document.querySelector("#minutes").textContent = minutes;
+                document.querySelector("#seconds").textContent = seconds;
+            };
+            timer();
+            setInterval(timer, 1000);
 
-        }
-        timer();
-        setInterval(timer, 1000);
-        
-        // index에서 topbar가 display none되지 않도록 처리
-        $("#test").css("display", "block");
-    </script>
+            // index에서 topbar가 display none되지 않도록 처리
+            $("#test").css("display", "block");
+        </script>
 </body>
-
 </html>
+
