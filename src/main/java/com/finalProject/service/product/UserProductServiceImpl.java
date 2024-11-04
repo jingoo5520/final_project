@@ -60,7 +60,7 @@ public class UserProductServiceImpl implements UserProductService {
 		
 		return pDao.getProductDetailById(productId);
 	}
-
+	
 	@Override
 	public List<ProductDTO> searchProducts(String search, Integer category, PagingInfo pagingInfo, String sortOrder) throws Exception {
 		return pDao.searchProducts(search, category, pagingInfo.getStartRowIndex(), pagingInfo.getPageSize(), sortOrder);
@@ -70,7 +70,5 @@ public class UserProductServiceImpl implements UserProductService {
 	public int countSearchResults(String search, Integer category) throws Exception {
 		return pDao.countSearchResult(search, category);
 	}
-
-
 
 }

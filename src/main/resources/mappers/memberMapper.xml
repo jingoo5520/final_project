@@ -113,5 +113,30 @@
 		select product_no from wishes where member_id = #{member_id}
 	</select>
 	
+	<!-- 주문페이지에서 입력한 주소로 회원 주소지 변경 -->
+	<update id="updateAddress">
+		update members 
+		set address = #{deliveryAddress} 
+		where member_id = #{memberId}
+	</update>
+	
+	<!-- 배송지 저장 -->
+	<insert id="insertDelivery">
+		insert into delivery_addrs (delivery_name, delivery_address, is_main, member_id) values (#{deliveryName}, #{deliveryAddress}, #{isMain}, #{memberId})
+	</insert>
+	
+	<!-- 기본배송지 데이터 조회 -->
+	<select id="selectMainDelivery" resultType="Integer">
+		select delivery_no from delivery_addrs where member_id = #{member_id}
+	</select>
+
+	<!-- 기존의 기본배송지를 일반배송지로 변경 -->
+	<update id="updateDeliveryMainToSub">
+		update delivery_addrs set is_main = 'S' where delivery_no = #{delivery_no}
+	</update>
+	
+	<select id="selectDeliveryList" resultType="com.finalProject.model.DeliveryDTO">
+		select * from delivery_addrs where member_id = #{memberId}
+	</select>
 
 </mapper>

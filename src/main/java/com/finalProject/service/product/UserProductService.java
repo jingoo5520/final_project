@@ -24,5 +24,9 @@ public interface UserProductService {
 
 	// content 가져오는 메소드
 	ProductDTO getProductDetailById(int productId)throws Exception;
+
+	int countSearchResults(String search, Integer category)throws Exception;
+
+	List<ProductDTO> searchProducts(String search, Integer category, PagingInfo pagingInfo, String sortOrder)throws Exception;
 	
 }
