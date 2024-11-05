@@ -45,36 +45,117 @@
 <html>
 <head>
 <script>
-	function PageNation(data) {
-		if (data.CancelList && data.CancelList.length != 0) {
-			let paginationOutput = "";
-			if (data.PagingInfo.pageNo == 1) {
-				paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
-			} else {
-				paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);"onclick="showCancelList(\${data.PagingInfo.pageNo - 1})"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
-			}
-
-			for (let i = data.PagingInfo.startPageNoCurBlock; i <= data.PagingInfo.endPageNoCurBlock; i++) {
-				console.log(i);
-				if (i == data.PagingInfo.pageNo) {
-					paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showCancelList(\${i})">\${i}</a></li>`;
-				} else {
-					paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showCancelList(\${i})">\${i}</a></li>`;
-				}
-			}
-
-			if (data.PagingInfo.pageNo == data.PagingInfo.totalPageCnt) {
-				paginationOutput += `<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-			} else {
-				paginationOutput += `<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showCancelList(\${data.PagingInfo.pageNo + 1})"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-			}
-
-			$('.pagination').html(paginationOutput);
+	let data;
+	
+	function showCancelList(pageNo) {
+		console.log(pageNo);
+		let pagingSize =10;
+		let cancel_type = $('input[name="cancel_type"]:checked').map(function () {
+			return $(this).val();
+		}).get();
+		let cancel_status = $('input[name="cancel_status"]:checked').map(function () {
+			return $(this).val();
+		}).get();
+		let cancel_apply_date_start = $('input[name="cancel_apply_date_start"]').val();
+		let cancel_apply_date_end = $('input[name="cancel_apply_date_end"]').val();
+		if(data == null) {
+		Pagingdata = {
+		        pageNo: pageNo,
+		        pagingSize: pagingSize,
+		        cancel_type: cancel_type,
+		        cancel_status: cancel_status,
+		        cancel_apply_date_start: cancel_apply_date_start,
+		        cancel_apply_date_end: cancel_apply_date_end
+		    };
+		} else {
+			Pagingdata = {
+			        pageNo: pageNo,
+			        pagingSize: pagingSize,
+			        cancel_type: data.cancel_type,
+			        cancel_status: data.cancel_status,
+			        cancel_apply_date_start: data.cancel_apply_date_start,
+			        cancel_apply_date_end: data.cancel_apply_date_end
+			    };
 		}
+		$.ajax({
+			 url: '/admin/order/searchFilter',
+		        type: 'POST',
+		        contentType: 'application/json' ,
+		        data: JSON.stringify(Pagingdata),
+		    	success: function(data) {
+		    	let output = "";
+			    
+
+		        $.each(data.CancelList, function(index, cancel) {
+		        	 let checkBoxHtml = '';
+		          /*       if (member.member_status != 'black') {
+		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" \${checkedMemberIdList.includes(member.member_id) ? "checked" : ""}/>`;
+		                } else {
+		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" disabled/>`; // 블랙 멤버는 체크박스를 비활성화
+		                }
+*/
+					
+		            const formattedDate = new Date(cancel.cancel_apply_date).toISOString().slice(0, 10);
+		            /* <input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="'+member.member_id+'"' + 
+	                    (checkedMemberIdList.includes(member.member_id) ? "checked" : "") + '/> */
+		            output += '<tr>' +
+		                '<td>'+checkBoxHtml+ '</td>' +
+		                '<td>' + cancel.cancel_no + '</td>' +
+		                '<td>' + cancel.orderproduct_no + '</td>' +
+		                '<td>' + formattedDate + '</td>' +
+		                '<td>' + cancel.cancel_complete_date + '</td>' +
+		                '<td>' + cancel.cancel_retract_date + '</td>' +
+		                '<td>' + cancel.cancel_type + '</td>' +
+		                '<td>' + cancel.cancel_status + '</td>' +			          
+		                '</tr>';
+		        });
+
+		        $("#memberTableBody").html(output);
+
+		        PageNation(data)
+		    },
+		    error: function(error) {
+		        console.error(error); // 에러가 발생한 경우 콘솔에 에러 출력
+		    }
+		});
+	  
+	    
+	 }
+	function PageNation(data) {
+	    if (data.CancelList && data.CancelList.length !== 0) {
+	        let paginationOutput = "";
+	        
+	        if (data.PagingInfo.pageNo == 1) {
+	            paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
+	        } else {
+	            paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showCancelList(\${data.PagingInfo.pageNo - 1})"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
+	        }
+
+	        for (let i = data.PagingInfo.startPageNoCurBlock; i <= data.PagingInfo.endPageNoCurBlock; i++) {
+	            console.log(i);
+	            if (i == data.PagingInfo.pageNo) {
+	                paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showCancelList(\${i})">\${i}</a></li>`;
+	            } else {
+	                paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showCancelList(\${i})">\${i}</a></li>`;
+	            }
+	        }
+
+	        if (data.PagingInfo.pageNo == data.PagingInfo.totalPageCnt) {
+	            paginationOutput += `<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+	        } else {
+	            paginationOutput += `<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showCancelList(\${data.PagingInfo.pageNo + 1})"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+	        }
+
+	        $('.pagination').html(paginationOutput);
+	    } else {
+	    	$('.pagination').html("");
+	    }
 	}
+
 	
 	
 	$(function() {
+
 		
 		  $("#confirmDeleteBtn").on('click', function() {
 		        let cancelNo = $("#modalCancelNo").text().replace("취소번호 : ", "").replace("번을 ", ""); // 취소번호 추출
@@ -88,7 +169,7 @@
 		        $.ajax({
 		            url: '/admin/order/changeStatus', // 서버 URL
 		            type: 'POST',
-		            dataType: 'json',
+		            contentType: 'application/json' ,
 		            data: {
 		                cancel_no: cancelNo , // 취소번호 전송
 		                orderproduct_no : orderNo ,  // 주문번호 정송
@@ -128,21 +209,20 @@
 			}).get();
 			let cancel_apply_date_start = $('input[name="cancel_apply_date_start"]').val();
 			let cancel_apply_date_end = $('input[name="cancel_apply_date_end"]').val();
-			
-			$.ajax({
-			    url: '/admin/order/searchFilter',
-			    type: 'POST',
-			    dataType: 'json',
-			    contentType: 'application/json', // JSON 형식으로 데이터 전송 설정
-			    data: JSON.stringify({
-			    	pageNo : pageNo ,
-			    	pagingSize : pagingSize ,
+			data = {
+			        pageNo: pageNo,
+			        pagingSize: pagingSize,
 			        cancel_type: cancel_type,
 			        cancel_status: cancel_status,
 			        cancel_apply_date_start: cancel_apply_date_start,
 			        cancel_apply_date_end: cancel_apply_date_end
-			    }),
-			    success: function(data) {
+			    };
+			$.ajax({
+				 url: '/admin/order/searchFilter',
+			        type: 'POST',
+			        contentType: 'application/json' ,
+			        data: JSON.stringify(data),
+			    	success: function(data) {
 			    	let output = "";
 				    
 
@@ -218,7 +298,7 @@
 
 						<!-- Basic Layout -->
 						<div class="row">
-							<h5 class="fw-bold py-3 mb-4">신규 주문 내역</h5>
+							<h5 class="fw-bold py-3 mb-4">신규 주문 취소 내역</h5>
 							<div class="row">
 
 								<c:forEach var="top" items="${TopCancleList}" varStatus="status">
@@ -272,7 +352,7 @@
 									</c:if>
 								</c:forEach>
 							</div>
-							<h3>리스트 형식의 주문 취소 내역 조회 여기서도 취소처리를 할 수 있다</h3>
+
 							<div class="card mb-4">
 								<div class="container-xxl flex-grow-1 container-p-y mb-3">
 									<div class="card accordion-item active mb-3">
@@ -301,13 +381,13 @@
 												<div class="row mb-3">
 													<label class="col-sm-2 col-form-label" for="basic-default-name">취소 상태</label>
 													<div class="col-sm-10 d-flex align-items-center">
-														<div class="form-check-inline" id=>
-															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소가능" id="cancel_status_ok" checked="checked" /> <label class="form-check-label" for="product_m"> 가능 </label>
+													
+														<div class="form-check-inline">
+															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소대기" id="cancel_status_wait" checked="checked" /> <label class="form-check-label" for="product_p"> 대기 </label>
 														</div>
 														<div class="form-check-inline">
-															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소완료" id="cancel_status_no" checked="checked" /> <label class="form-check-label" for="product_p"> 완료 </label>
+															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소완료" id="cancel_status_comple" checked="checked" /> <label class="form-check-label" for="product_c"> 완료 </label>
 														</div>
-
 													</div>
 												</div>
 
@@ -372,7 +452,7 @@
 									</div>
 									<div class="mt-4">
 										<nav aria-label="Page navigation">
-											<ul class="pagination justify-content-center">
+											<ul class="pagination justify-content-center" id="paging">
 												<c:choose>
 													<c:when test="${PagingInfo.pageNo == 1}">
 														<li class="page-item prev disabled">
@@ -416,7 +496,7 @@
 													</c:when>
 													<c:otherwise>
 														<li class="page-item next">
-															<a class="page-link" href="javascript:void(0);">
+															<a class="page-link" href="javascript:void(0);" onclick="showCancelList(${i+1})">
 																<i class="tf-icon bx bx-chevrons-right"></i>
 															</a>
 														</li>

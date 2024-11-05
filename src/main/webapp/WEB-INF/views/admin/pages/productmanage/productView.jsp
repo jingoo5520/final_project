@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
 
@@ -217,7 +218,7 @@ let selectedValues = [];
 		        formData.append('product_price', productPrice);
 		        formData.append('product_content', productContent);
 		        formData.append('product_dc_type', discountType);
-		        formData.append('product_dc_amount', discountAmount);
+		        formData.append('dc_rate', discountAmount);
 				formData.append('product_sell_count' , productSellCount);
 				formData.append('product_main_image' , deleteMainImage);
 		        // 메인 이미지
@@ -495,18 +496,26 @@ let selectedValues = [];
 												<td>${product.product_price}</td>
 												<td>${product.product_content}</td>
 												<td>${product.product_dc_type}</td>
-												<td>${product.product_dc_amount}</td>
+												<td>${product.dc_rate}</td>
 												<td>${product.product_sell_count}</td>
 												<td><c:forEach var="img" items="${product.list}">
-														<c:if test="${img.image_type == 'M'}">
+														<c:if test="${img.image_type == 'M' && !fn:contains(img.image_url, 'Main')}">
+															<img src=' ${img.image_url}' alt="Main Image" width="50" height="50">
+															<!-- 메인 이미지 URL 출력 -->
+														</c:if>
+														<c:if test = "${img.image_type == 'M' && fn:contains(img.image_url, 'Main')}">
 															<img src='/resources/product${img.image_url}' alt="Main Image" width="50" height="50">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
 												<td><c:forEach var="img" items="${product.list}">
-														<c:if test="${img.image_type == 'S'}">
-															<img src='/resources/product${img.image_url}' alt="Sub Image" width="50" height="50">
+														<c:if test="${img.image_type == 'S' && !fn:contains(img.image_url, 'Sub')}">
+															<img src='${img.image_url}' alt="Sub Image" width="50" height="50">
 															<!-- 서브 이미지 URL 출력 -->
+														</c:if>
+														<c:if test = "${img.image_type == 'M' && fn:contains(img.image_url, 'Sub')}">
+															<img src='/resources/product${img.image_url}' alt="Main Image" width="50" height="50">
+															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
 												<td><div class="mt-3">
@@ -534,7 +543,7 @@ let selectedValues = [];
 											</c:when>
 											<c:otherwise>
 												<li class="page-item prev">
-													<a class="page-link" href="javascript:void(0);">
+													<a class="page-link" href="javascript:void(0);" onclick="showProductList(${pi.pageNo-1} , ${pi.viewPostCntPerPage})">
 														<i class="tf-icon bx bx-chevrons-left"></i>
 													</a>
 												</li>
@@ -567,7 +576,7 @@ let selectedValues = [];
 											</c:when>
 											<c:otherwise>
 												<li class="page-item next">
-													<a class="page-link" href="javascript:void(0);">
+													<a class="page-link" href="javascript:void(0);" onclick="showProductList(${pi.pageNo+1} , ${pi.viewPostCntPerPage})">
 														<i class="tf-icon bx bx-chevrons-right"></i>
 													</a>
 												</li>

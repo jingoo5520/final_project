@@ -191,25 +191,25 @@
 	<insert id="saveProduct"
 		parameterType="com.finalProject.model.admin.product.ProductDTO"
 		useGeneratedKeys="true" keyProperty="product_no">
-		INSERT INTO Product (product_name,
+		INSERT INTO products (product_name,
 		product_price,
-		product_content, product_dc_type, product_dc_amount,
+		product_content, product_dc_type, dc_rate,
 		product_sell_count)
 		VALUES (#{product_name}, #{product_price},
 		#{product_content},
-		#{product_dc_type}, #{product_dc_amount},
+		#{product_dc_type}, #{dc_rate},
 		#{product_sell_count});
 	</insert>
 
 	<insert id="saveMainImage" parameterType="map">
-		INSERT INTO Image
+		INSERT INTO product_Images
 		(product_no, image_url,image_type)
 		VALUES (#{product_no},
 		#{mainImage},'M')
 	</insert>
 
 	<insert id="saveSubImage" parameterType="map">
-		INSERT INTO Image (product_no, image_url, image_type)
+		INSERT INTO product_Images (product_no, image_url, image_type)
 		VALUES
 		<foreach collection="subImage" item="sub_Image" separator=",">
 			(#{product_no}, #{sub_Image},'S')
@@ -227,7 +227,7 @@
 			javaType="String" />
 		<result column="product_dc_type" property="product_dc_type"
 			javaType="String" />
-		<result column="product_dc_amount" property="product_dc_amount"
+		<result column="dc_rate" property="dc_rate"
 			javaType="int" />
 		<result column="product_sell_count"
 			property="product_sell_count" javaType="int" />
@@ -240,32 +240,32 @@
 	<select id="getAllBoard" resultMap="productResultMap">
 		SELECT product_no,
 		product_name, product_price, product_content, product_dc_type,
-		product_dc_amount,
+		dc_rate,
 		product_sell_count
-		FROM product
+		FROM products
 		limit #{startRowIndex}
 		,#{viewPostCntPerPage}
 	</select>
 
 	<select id="getAllImg"
 		resultType="com.finalProject.model.admin.product.ProductImg">
-		SELECT image_url, image_type FROM image WHERE product_no =
+		SELECT image_url, image_type FROM product_images WHERE product_no =
 		#{product_no}
 	</select>
 
 	<update id="updateProduct">
-		update product set product_name = #{product_name} ,
+		update products set product_name = #{product_name} ,
 		product_price = #{product_price},
 		product_content = #{product_content}
-		, product_dc_type = #{product_dc_type}, product_dc_amount =
-		#{product_dc_amount}, product_sell_count = #{product_sell_count} where
+		, product_dc_type = #{product_dc_type}, dc_rate =
+		#{dc_rate}, product_sell_count = #{product_sell_count} where
 		product_no =#{product_no};
 	</update>
 
 	<select id="getSearchProduct" resultMap="productSearchResultMap">
 		SELECT product_no, product_name, product_price, product_content,
-		product_dc_type, product_dc_amount, product_sell_count
-		FROM product
+		product_dc_type, dc_rate, product_sell_count
+		FROM products
 		WHERE 1=1
 		<if test="product_name != null and product_name != ''">
 			AND product_name LIKE #{product_name}
@@ -291,10 +291,10 @@
 				order by product_price
 			</when>
 			<when test="searchType == 'sortAmountLow'">
-				order by product_dc_amount
+				order by dc_rate
 			</when>
 			<when test="searchType == 'sortAmountHigh'">
-				order by product_dc_amount desc
+				order by dc_rate desc
 			</when>
 		</choose>
 		limit #{startRowIndex} ,#{viewPostCntPerPage}
@@ -311,8 +311,8 @@
 			javaType="String" />
 		<result column="product_dc_type" property="product_dc_type"
 			javaType="String" />
-		<result column="product_dc_amount" property="product_dc_amount"
-			javaType="int" />
+		<result column="dc_rate" property="dc_rate"
+			javaType="float" />
 		<result column="product_sell_count"
 			property="product_sell_count" javaType="int" />
 
@@ -323,11 +323,11 @@
 
 	<select id="getCountAllProduct" resultType="int">
 		select count(*) from
-		product
+		products
 	</select>
 
 	<select id="getSearchAllProduct" resultType="int">
-		select count(*) from product
+		select count(*) from products
 		where 1=1
 		<if test="product_name != null and product_name != ''">
 			AND product_name LIKE #{product_name}
@@ -353,16 +353,16 @@
 				order by product_price
 			</when>
 			<when test="searchType == 'sortAmountLow'">
-				order by product_dc_amount
+				order by dc_rate
 			</when>
 			<when test="searchType == 'sortAmountHigh'">
-				order by product_dc_amount desc
+				order by dc_rate desc
 			</when>
 		</choose>
 	</select>
 
 	<delete id="deleteProductImg">
-		delete from image where product_no = #{product_no}
+		delete from product_images where product_no = #{product_no}
 		<if test="product_main_image !=null and product_main_image != ''">
 			and image_url = #{product_main_image}
 		</if>
@@ -375,6 +375,6 @@
 	</delete>
 	
 	<delete id="deleteProduct">
-		delete from product where product_no = #{productId}
+		delete from products where product_no = #{productId}
 	</delete>
 </mapper>

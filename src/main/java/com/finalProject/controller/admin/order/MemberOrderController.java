@@ -61,7 +61,7 @@ public class MemberOrderController {
 		return "admin/pages/total/test";
 	}
 
-	@RequestMapping("/changeStatus")
+	@RequestMapping("changeStatus")
 	@ResponseBody
 	public void ChangeStatus(@RequestParam("cancel_no") String cancel_no,
 			@RequestParam("orderproduct_no") String orderproduct_no) {
@@ -70,7 +70,7 @@ public class MemberOrderController {
 		System.out.println("!%!@%!%!" + orderproduct_no);
 	}
 
-	@RequestMapping("/searchFilter")
+	@RequestMapping("searchFilter")
 	@ResponseBody
 	public ResponseEntity<Object> SearchFilter(@RequestBody CancelSearchDTO search) {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
@@ -82,6 +82,7 @@ public class MemberOrderController {
 			return ResponseEntity.ok(returnMap); // 성공적으로 데이터를 반환
 		} catch (Exception e) {
 			returnMap.put("fail", "fail");
+			System.err.println("Error occurred: " + e.getMessage());
 			// 로깅 처리
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnMap); // 에러 발생 시 500 상태 코드 반환
 		}

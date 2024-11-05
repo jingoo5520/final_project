@@ -9,10 +9,12 @@ public interface OrdersDAO {
 
 	List<AdminCancleVO> getAllCancle(Map<String, Integer> pageMap);
 
-	int getTotalPostCnt();
+	int getSearchTotalPostCnt(Map<String, Object> map);
 
 	List<AdminCancleVO> getTopCancle();
 
 	List<AdminCancleVO> getSearchFilter(Map<String, Object> resultMap);
+
+	int getTotalPostCnt();
 
 }

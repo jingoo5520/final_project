@@ -40,4 +40,10 @@ public class OrdersDAOImpl implements OrdersDAO {
 		return ses.selectList(ns + "searchCancel", resultMap);
 	}
 
+	@Override
+	public int getSearchTotalPostCnt(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getCountSearchCancle", map);
+	}
+
 }

@@ -8,10 +8,32 @@
 		select * from cancels limit #{startRowIndex} ,
 		#{viewPostCntPerPage}
 	</select>
-
 	<select id="getCountAllCancle" resultType="int">
 		select count(*) from
-		cancels;
+		cancels
+	</select>
+	<select id="getCountSearchCancle" resultType="int">
+		select count(*) from cancels where 1=1
+		<if test="cancel_type != null and cancel_type.size() > 0">
+			and cancel_type in
+			<foreach item="type" collection="cancel_type" open="("
+				separator="," close=")">
+				#{type}
+			</foreach>
+		</if>
+		<if test="cancel_status != null and cancel_status.size() > 0">
+			and cancel_status in
+			<foreach item="status" collection="cancel_status" open="("
+				separator="," close=")">
+				#{status}
+			</foreach>
+		</if>
+		<if test="cancel_apply_date_start != null and cancel_apply_date_start != ''">
+			AND cancel_apply_date &gt;= #{cancel_apply_date_start}
+		</if>
+		<if test="cancel_apply_date_end != null and cancel_apply_date_end != ''">
+			AND cancel_apply_date &lt;= #{cancel_apply_date_end}
+		</if>
 	</select>
 
 	<select id="getTopCancle"
@@ -23,27 +45,30 @@
 	<select id="searchCancel"
 		resultType="com.finalProject.model.admin.order.AdminCancleVO">
 		select * from cancels where 1=1
-		<if test="cancel_type != null or cancel_type.size() > 0">
+		<if test="cancel_type != null and cancel_type.size() > 0">
 			and cancel_type in
 			<foreach item="type" collection="cancel_type" open="("
 				separator="," close=")">
 				#{type}
 			</foreach>
 		</if>
-		<if test="cancel_status != null or cancel_status.size() > 0">
+		<if test="cancel_status != null and cancel_status.size() > 0">
 			and cancel_status in
 			<foreach item="status" collection="cancel_status" open="("
 				separator="," close=")">
 				#{status}
 			</foreach>
 		</if>
-		<!-- <if test="cancel_apply_date_start != null or cancel_apply_date_start != ''">
-			and cancel_apply_date &gt;= #{cancel_apply_date_start}
+		<if
+			test="cancel_apply_date_start != null and cancel_apply_date_start != ''">
+			AND cancel_apply_date &gt;= #{cancel_apply_date_start}
 		</if>
-		<if test="cancel_apply_date_end != null or cancel_apply_date_end != ''">
-			and cancel_apply_date &lt;= #{cancel_apply_date_end}
-		</if> -->
+		<if
+			test="cancel_apply_date_end != null and cancel_apply_date_end != ''">
+			AND cancel_apply_date &lt;= #{cancel_apply_date_end}
+		</if>
 		order by cancel_apply_date desc
-		limit #{startRowIndex} , #{viewPostCntPerPage}
+		limit #{startRowIndex} ,
+		#{viewPostCntPerPage}
 	</select>
 </mapper>

@@ -26,7 +26,7 @@ public class ProductDAOImpl implements ProductDAO {
 		params.put("product_price", productDTO.getProduct_price());
 		params.put("product_content", productDTO.getProduct_content());
 		params.put("product_dc_type", productDTO.getProduct_dc_type());
-		params.put("product_dc_amount", productDTO.getProduct_dc_amount());
+		params.put("dc_rate", productDTO.getDc_rate());
 		params.put("product_sell_count", productDTO.getProduct_sell_count());
 
 		ses.insert(ns + "saveProduct", productDTO);
@@ -66,7 +66,7 @@ public class ProductDAOImpl implements ProductDAO {
 		prams.put("product_price", updateProduct.getProduct_price());
 		prams.put("product_content", updateProduct.getProduct_content());
 		prams.put("product_dc_type", updateProduct.getProduct_dc_type());
-		prams.put("product_dc_amount", updateProduct.getProduct_dc_amount());
+		prams.put("dc_rate", updateProduct.getDc_rate());
 		prams.put("product_sell_count", updateProduct.getProduct_sell_count());
 		prams.put("product_no", updateProduct.getProduct_no());
 		return ses.update(ns + "updateProduct", prams);

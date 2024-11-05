@@ -65,9 +65,24 @@ public class OrdersServiceImpl implements OrdersService {
 		return pi;
 	}
 
+	private PagingInfo makePagingInfo(adminPagingInfoDTO dto, Map<String, Object> map) throws Exception {
+		PagingInfo pi = new PagingInfo(dto);
+		pi.setTotalPostCnt(oDAO.getSearchTotalPostCnt(map));
+
+		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
+		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBlock();
+		pi.setEndPageNoCurBlock();
+
+		return pi;
+	}
+
 	@Override
 	public Map<String, Object> getSearchFilter(CancelSearchDTO search, adminPagingInfoDTO dto) throws Exception {
-		PagingInfo pagingInfo = makePagingInfo(dto);
+
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		List<AdminCancleVO> li = new ArrayList<AdminCancleVO>();
@@ -75,10 +90,13 @@ public class OrdersServiceImpl implements OrdersService {
 		resultMap.put("cancel_status", search.getCancel_status());
 		resultMap.put("cancel_apply_date_start", search.getCancel_apply_date_start());
 		resultMap.put("cancel_apply_date_end", search.getCancel_apply_date_end());
+		PagingInfo pagingInfo = makePagingInfo(dto, resultMap);
+		System.out.println(pagingInfo.getStartRowIndex());
+		System.out.println(pagingInfo.getViewPostCntPerPage());
 		resultMap.put("startRowIndex", pagingInfo.getStartRowIndex());
 		resultMap.put("viewPostCntPerPage", pagingInfo.getViewPostCntPerPage());
 		li = oDAO.getSearchFilter(resultMap);
-		System.out.println(li);
+		System.out.println(li.toString());
 		returnMap.put("CancelList", li);
 		returnMap.put("PagingInfo", pagingInfo);
 
