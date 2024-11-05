@@ -7,6 +7,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.UseCouponDTO;
 
 public interface MemberService {
 
@@ -57,5 +58,8 @@ public interface MemberService {
 	
 	// 배송지 목록 조회
 	List<DeliveryDTO> getDeliveryList(String memberId) throws Exception;
+	
+	// 쿠폰 목록 조회
+	List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception;
 	
 }

@@ -2,6 +2,8 @@ package com.finalProject.controller.order;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
+import com.finalProject.model.UseCouponDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
@@ -107,37 +110,34 @@ public class OrderController {
 	
 	// 사용자가 설정한 데이터를 가지고 주문 테이블 튜플 생성
 	@PostMapping("/orderProducts")
-    public ResponseEntity<Map<String, String>> processPayment(
-    		@RequestBody PaymentRequestDTO paymentRequest,
-    		HttpSession session
-    		) {
-		
+	public ResponseEntity<Map<String, String>> processPayment(@RequestBody PaymentRequestDTO paymentRequest, HttpSession session) {
+	
 		if (!paymentRequest.getSaveDeliveryType().equals("none")) {
-			
+		
 			DeliveryVO deliveryVO = DeliveryVO.builder()
-					.deliveryAddress(paymentRequest.getDeliveryAddress())
-					.deliveryName(paymentRequest.getDeliveryName())
-					.memberId(paymentRequest.getOrdererId())
-					.isMain("M")
-					.build();
-			
+											  .deliveryAddress(paymentRequest.getDeliveryAddress())
+											  .deliveryName(paymentRequest.getDeliveryName())
+											  .memberId(paymentRequest.getOrdererId())
+											  .isMain("M")
+											  .build();
+		
 			if (paymentRequest.getSaveDeliveryType().contains("saveDelivery")) {
 				// 배송지 저장
 				System.out.println("배송지 저장 탭임");
 				System.out.println(deliveryVO.toString());
-				
+		
 				try {
 					memberService.saveDelivery(deliveryVO);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			
+		
 			if (paymentRequest.getSaveDeliveryType().contains("saveAddress")) {
 				// 회원 정보 주소 수정
 				System.out.println("회원 주소 정보 수정 탭임");
 				System.out.println(deliveryVO.toString());
-				
+		
 				try {
 					if (memberService.updateAddress(deliveryVO)) {
 						System.out.println("회원 정보 수정 완료");
@@ -148,47 +148,68 @@ public class OrderController {
 					e.printStackTrace();
 				}
 			}
-		
+	
 		} else {
 			System.out.println("동작하면 안돼.");
 		}
-		
-        // paymentRequest 객체를 사용하여 결제 처리 로직을 구현
-        System.out.println("payment request : " + paymentRequest);
-        Map<String, String> resultMap = new HashMap<>();
-        try {
-			session.setAttribute("orderId", orderService.makeOrder(paymentRequest));
-			System.out.println("세션에 저장된 orderId : " + session.getAttribute("orderId"));
-			resultMap.put("result", "success");
-			resultMap.put("message", "Payment processed successfully");
-			resultMap.put("orderId", (String) session.getAttribute("orderId"));
-			return ResponseEntity.ok(resultMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultMap.put("result", "fail");
-			resultMap.put("message", "주문 생성 실패");
-			return ResponseEntity.badRequest().body(resultMap);
-		}        
-    }
 	
-	@PostMapping("/showDeliveryList")
+		// paymentRequest 객체를 사용하여 결제 처리 로직을 구현
+		System.out.println("payment request : " + paymentRequest);
+		Map<String, String> resultMap = new HashMap<>();
+			try {
+				session.setAttribute("orderId", orderService.makeOrder(paymentRequest));
+				System.out.println("세션에 저장된 orderId : " + session.getAttribute("orderId"));
+				resultMap.put("result", "success");
+				resultMap.put("message", "Payment processed successfully");
+				resultMap.put("orderId", (String) session.getAttribute("orderId"));
+				return ResponseEntity.ok(resultMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+				resultMap.put("result", "fail");
+				resultMap.put("message", "주문 생성 실패");
+				return ResponseEntity.badRequest().body(resultMap);
+		}        
+	}
+	
+	@PostMapping("/getDeliveryList")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> showDeliveryList(@RequestParam("memberId") String memberId) {
-		System.out.println("memberId: " + memberId);
+	public ResponseEntity<Map<String, Object>> getDeliveryList(@RequestParam("memberId") String memberId) {
 		List<DeliveryDTO> deliveryList = null;
-
+	
 		try {
 			deliveryList = memberService.getDeliveryList(memberId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		Map<String, Object> response = new HashMap<>();
 		response.put("status", "success");
-		response.put("memberId", memberId);
 		response.put("deliveryList", deliveryList);
-
-	    return ResponseEntity.ok(response);
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	
+	@PostMapping("getCouponList")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getCouponList(@RequestParam("memberId") String memberId) {
+		List<UseCouponDTO> couponList = null;
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String currentTime = now.format(formatter);
+		
+		try {
+			couponList = memberService.getCouponList(memberId, currentTime);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("status", "success");
+		response.put("couponList", couponList);
+		
+		return ResponseEntity.ok(response);
 	}
 
 	// 테스트용, 배포 환경에서는 사용되면 안됨
