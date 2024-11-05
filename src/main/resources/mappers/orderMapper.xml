@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.orderMapper">
+
+	<select id="selectProductInfo" parameterType="list" resultType="com.finalProject.model.order.OrderProductDTO">
+	    <foreach item="item" index="index" collection="list" separator="UNION ALL">
+	        select p.*, i.image_main_url, #{item.quantity} AS quantity
+	        from products p inner join product_images i 
+	        on p.product_no = i.product_no 
+	        where p.product_no = #{item.productNo} and i.image_sub_url = 'M'
+	    </foreach>
+	</select>
+
+	<select id="selectMemberInfo" resultType="com.finalProject.model.order.OrderMemberDTO">
+		select m.member_id, m.member_name, m.phone_number, m.email, m.address, m.member_point,
+			   d.delivery_address, d.delivery_name, 
+			   l.level_name, l.level_dc, l.level_point 
+			   from members m 
+			   inner join levels l on l.level_no = m.member_level 
+			   left join delivery_addrs d on d.member_id = m.member_id and d.is_main = 'M'
+			   where m.member_id = #{memberId}
+	</select>
+	
+	<delete id="deleteUncompletedOrder">
+		delete from orders 
+		where orderer_Id = #{ordererId} and ( 
+				payment_module_key is null or
+				not exists (select 1 from payments p where orders.order_id = p.order_id) 
+			)
+	</delete>
+	
+	<!-- 회원용 주문 테이블 만들기 -->
+	<!-- TODO : 쿠폰을 사용하지 않았다고 가정, 수정 필요함, level_dc_amount도 계산 안함, 철회 가능도 그냥 "Y"로 함. -->
+	<insert id="makeOrderByMember">
+		insert into orders (
+			order_id, orderer_id, coupon_no,
+		    level_dc_rate, level_dc_amount, use_point, 
+		    withdraw_possible, order_delivery, deliver_cost, 
+		    order_status, order_request, total_price_expected
+		) select #{uuidv4}, #{request.ordererId}, null,
+			l.level_dc, 0, #{request.pointDC},
+			"Y", #{request.deliveryAddress}, #{request.deliveryCost},
+			1, #{request.deliveryRequest}, #{request.totalPrice} 
+			from members m
+			left join levels l on m.member_level = l.level_no <!-- members에 데이터가 있으면  -->
+			where m.member_id = #{request.ordererId}
+<!-- //		public class PaymentRequestDTO {
+//			private List<OrderRequestDTO> productsInfo; // 상품번호 + 수량 정보 리스트
+//			private int totalPrice; // 총 예상 결제 금액
+//		    private String paymentType; // 결제 방법
+//		    private String saveDeliveryType; // 배송지 저장 구분
+//		    private String deliveryName; // 배송지 이름
+//		    private String deliveryAddress; // 배송지 주소
+//		    private String deliveryRequest; // 배송 요청사항
+			private int deliveryCost;
+//		    private String ordererId; // 주문자 ID
+//		    private String ordererName; // 주문자 이름
+//		    private String phoneNumber; // 주문자 전화번호
+//		    private String email; // 주문자 이메일
+//		    private int pointDC; // 사용 포인트
+//		    private String couponUse; // 사용 쿠폰코드
+//		} -->
+	</insert>
+	
+	<!-- 비회원용 주문 테이블 만들기 -->
+	<insert id="makeOrderByNonMember">
+		insert into orders (
+			order_id, orderer_id,
+		    withdraw_possible, order_delivery, deliver_cost, 
+		    order_status, order_request, total_price_expected
+		) values (
+			#{uuidv4}, #{request.ordererId},
+			"Y", #{request.deliveryAddress}, #{request.deliveryCost},
+			1, #{request.deliveryRequest}, #{request.totalPrice}
+		)
+	</insert>
+
+	<!-- 멤버 아이디로 오더 아이디 얻어오기 -->
+	<select id="selectUncopletedOrderId" resultType="String">
+		select order_id from orders where orderer_id = #{memberId} and payment_module_key is null
+	</select>
+	
+	<!-- 오더 아이디로 예상 결제금액 얻어오기 -->
+	<select id="selectExpectedTotalPrice" resultType="int">
+		select total_price_expected from orders where order_id = #{orderId}
+	</select>
+	
+	<!-- 예상 결제금액 저장하기 -->
+	<update id="updateExpectedTotalPrice">
+		update orders set total_price_expected = #{amount} where order_id = #{orderId}
+	</update>
+	
+	<!-- 결제모듈 키 저장하기(결제취소 등에 쓰임) -->
+	<update id="updatePaymentModuleKey">
+		update orders set payment_module_key = #{key} where order_id = #{orderId}
+	</update>
+	
+	<select id="selectPaymentModuleKey" resultType="String">
+		select payment_module_key from orders where order_id = #{orderId}
+	</select>
+	
+	<select id="selectCouponNoOfOrder" resultType="int">
+		select coupon_no from orders where order_id = #{orderId}
+	</select>
+	
+	<insert id="insertToCouponUsed">
+		insert into coupon_used (member_id, coupon_code) values(
+			(select orderer_id from orders where order_id = #{orderId}),
+			(select coupon_code from coupon_paid where coupon_no = #{couponNo})
+		)
+	</insert>
+	
+	<insert id="insertToPointUsed">
+		insert into point_used (member_id, use_point) values(
+			(select orderer_id from orders where order_id = #{orderId}),
+			(select use_point from orders where order_id = #{orderId})
+		)
+	</insert>
+	
+	<update id="subtractUserPoint">
+		update members
+		set member_point = member_point - (select use_point from orders where order_id = #{orderId})  
+		where member_id = (select orderer_id from orders where order_id = #{orderId})
+	</update>
+	
+	<!-- 결제에 의한 포인트 적립 -->
+	<update id="addUserPoint">
+		update members m
+		set m.member_point = 
+			m.member_point + 
+			(
+				(select total_price_expected from orders where order_id = #{orderId})
+				* (select level_point from levels where level_no = m.member_level)
+			)
+		where m.member_id = (select orderer_id from orders where order_id = #{orderId})
+	</update>
+	
+	<!-- 회원등급 업데이트 -->
+ 	<update id="updateUserLevel">
+ 		<![CDATA[
+ 		update members m
+		set m.member_level = 
+			(
+				select l.level_no
+				from levels l
+				where m.member_price >= l.level_min and m.member_price < l.level_max	
+			)
+		where m.member_id = (select orderer_id from orders where order_id = #{orderId})
+		]]>
+	</update>
+	
+	<!-- 결제정보 저장 -->
+	<insert id="insertPaymentInfo">
+		insert into payments (order_id, payment_status, payment_method, total_price, deposit_name, deposit_bank, deposit_account) 
+		values (#{orderId}, #{status}, #{moduleName}, #{amount}, #{depositName}, #{depositBank}, #{depositAccount});
+	</insert>
+</mapper>

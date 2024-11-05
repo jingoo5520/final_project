@@ -34,9 +34,9 @@ public class ProductServiceImpl implements ProductService {
 		System.out.println(productId);
 		for (String imageUrl : list) {
 			if (imageUrl.contains("Main_")) {
-				mainImage = imageUrl; // "main"이 포함된 이미지는 메인 이미지로 처리
+				mainImage = imageUrl; // "main"?�� ?��?��?�� ?��미�??�� 메인 ?��미�?�? 처리
 			} else if (imageUrl.contains("Sub_")) {
-				subImages.add(imageUrl); // "sub"이 포함된 이미지는 서브 이미지로 처리
+				subImages.add(imageUrl); // "sub"?�� ?��?��?�� ?��미�??�� ?���? ?��미�?�? 처리
 			}
 		}
 		if (mainImage != null) {
@@ -103,10 +103,10 @@ public class ProductServiceImpl implements ProductService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalSearchCnt(map));
 
-		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
-		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+		pi.setTotalPageCnt(); // ?���? ?��?���? ?�� ?��?��
+		pi.setStartRowIndex(); // ?��?�� ?��?���??��?�� 보여주기 ?��?��?�� �??�� index번호
 
-		// 페이징 블럭
+		// ?��?���? 블럭
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
@@ -126,10 +126,10 @@ public class ProductServiceImpl implements ProductService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(pDAO.getTotalPostCnt());
 
-		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
-		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+		pi.setTotalPageCnt(); // ?���? ?��?���? ?�� ?��?��
+		pi.setStartRowIndex(); // ?��?�� ?��?���??��?�� 보여주기 ?��?��?�� �??�� index번호
 
-		// 페이징 블럭
+		// ?��?���? 블럭
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();

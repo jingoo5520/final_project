@@ -1,6 +1,7 @@
 package com.finalProject.persistence;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -8,8 +9,10 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.finalProject.model.DeliveryDTO;
+import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.SignUpDTO;
+import com.finalProject.model.MemberDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +45,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 	// 회원가입
 	@Override
-	public int signUp(SignUpDTO signUpDTO) throws Exception {
+	public int signUp(MemberDTO signUpDTO) throws Exception {
 		return ses.insert(ns + "signUpMember", signUpDTO);
 	}
 
@@ -62,4 +65,138 @@ public class MemberDAOImpl implements MemberDAO {
 		return ses.selectOne(ns + "selectAutoLoginData", autologin_code);
 	}
 
+	// 마이 페이지 비밀번호 인증
+	@Override
+	public boolean auth(String member_id, String member_pwd) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		LoginDTO loginDTO = ses.selectOne(ns+"login", map);
+		if(loginDTO != null) {
+			result = true;
+		}
+		
+		return result;
+	}
+
+	// 마이 페이지 회원 정보 조회
+	@Override
+	public MemberDTO getMember(String member_id) throws Exception {
+		return ses.selectOne(ns+"selectMemberById", member_id);
+	}
+
+	// 마이 페이지 회원 정보수정
+	@Override
+	public boolean updateMember(MemberDTO memberDTO) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateMember", memberDTO)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 마이 페이지 비밀번호 변경
+	@Override
+	public boolean updateMemberPwd(Map<String, String> map) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateMemberPwd", map)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 마이 페이지 회원탈퇴
+	@Override
+	public boolean withDrawMember(String member_id) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"withDrawMember", member_id)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 아이디 찾기
+	@Override
+	public LoginDTO findIdbyEmail(String email) throws Exception {
+		LoginDTO member_id = null;
+		if(ses.selectOne(ns+"selectIdByEmail", email)!=null) {
+			member_id = ses.selectOne(ns+"selectIdByEmail", email);
+		}
+		return member_id;
+	}
+
+	// 비밀번호 찾기
+	@Override
+	public boolean findPwd(String email, String member_id) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("email", email);
+		map.put("member_id", member_id);
+		if(ses.selectOne(ns+"selectPwd", map)!=null) {
+			result = true;
+		}
+		return result;
+	}
+
+	// 비밀번호 찾기 (랜덤비밀번호 지정)
+	@Override
+	public boolean updateRandomPwd(String member_pwd, String member_id) throws Exception {
+		boolean result = false;
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("member_id", member_id);
+		map.put("member_pwd", member_pwd);
+		if(ses.update(ns+"updateRandomPwd", map)==1) {
+			result = true;
+		}
+		
+		return result;
+	}
+
+	// 회원의 찜목록 조회
+	@Override
+	public int[] getWishList(String member_id) throws Exception {
+		List<Integer> list = ses.selectList(ns+"selectWishListByMemberId", member_id);
+		
+		int[] result = new int[list.size()]; // 배열 크기를 select문으로 찾은 찜의 갯수크기로 설정
+	    for (int i = 0; i < list.size(); i++) { // 찜 목록크기만큼 반복
+	    	result[i] = list.get(i); // int 배열에 list저장하기
+	    }
+		
+		return result;
+	}
+	
+	// 주문페이지에서 입력한 주소로 회원 주소지 변경
+	@Override
+	public boolean updateAddress(DeliveryVO deliveryVO) throws Exception {
+		boolean result = false;
+		if(ses.update(ns+"updateAddress", deliveryVO)==1) {
+			result = true;
+		}
+		return result;
+	}
+	
+	// 배송지 저장
+	@Override
+	public void insertDelivery(DeliveryVO deliveryVO) throws Exception {
+		ses.insert(ns+"insertDelivery", deliveryVO);
+	}
+	
+	// 기본배송지 데이터 조회
+	@Override
+	public Integer selectMainDeliveryNo(String member_id) throws Exception{
+		return ses.selectOne(ns + "selectMainDelivery", member_id);
+	}
+	
+	// 기존의 기본배송지를 일반배송지로 변경
+	@Override
+	public void updateDeliveryMainToSub(Integer delivery_no) throws Exception{
+		ses.update(ns + "updateDeliveryMainToSub", delivery_no);
+	}
+
+	@Override
+	public List<DeliveryDTO> selectDeliveryList(String memberId) throws Exception {
+		return ses.selectList(ns + "selectDeliveryList", memberId);
+	}
+	
 }

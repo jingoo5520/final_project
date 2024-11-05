@@ -8,7 +8,8 @@
 	<!-- 로그인 -->
 	<select id="login" resultType="LoginDTO">
 		select * from members where
-		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256)
+		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256) and
+		member_status = 'active'
 	</select>
 
 	<!-- id, email, phone_number 중복 체크 -->
@@ -53,5 +54,89 @@
 		now()
 	</select>
 
+	<!-- 마이 페이지 회원 정보 조회 -->
+	<select id="selectMemberById" resultType="MemberDTO">
+		select * from members
+		where member_id = #{member_id}
+	</select>
+
+	<!-- 마이 페이지 회원 정보 수정 -->
+	<update id="updateMember">
+		update members
+		set nickname = #{nickname}, gender =
+		#{gender}, phone_number = #{phone_number}
+		, address = #{address}, email
+		= #{email}
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 마이 페이지 비밀번호 변경 -->
+	<update id="updateMemberPwd">
+		update members
+		set member_pwd = sha2(#{member_pwd},
+		256)
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 마이 페이지 회원탈퇴 -->
+	<update id="withDrawMember">
+		update members
+		set member_status = 'withdrawn'
+		where
+		member_id = #{member_id}
+	</update>
+
+	<!-- 아이디 찾기 -->
+	<select id="selectIdByEmail" resultType="LoginDTO">
+		select member_id from
+		members where email = #{email} and member_status = 'active'
+	</select>
+
+	<!-- 비밀번호 찾기 -->
+	<select id="selectPwd" resultType="LoginDTO">
+		select member_pwd from members
+		where member_id = #{member_id} and email = #{email} and
+		member_status =
+		'active'
+	</select>
+
+	<!-- 비밀번호 찾기(랜덤비밀번호 지정) -->
+	<update id="updateRandomPwd">
+		update members
+		set member_pwd = sha2(#{member_pwd}, 256)
+		where member_id = #{member_id} and
+		member_status = 'active'
+	</update>
+	
+	<!-- 찜 목록 조회 -->
+	<select id="selectWishListByMemberId" resultType="int">
+		select product_no from wishes where member_id = #{member_id}
+	</select>
+	
+	<!-- 주문페이지에서 입력한 주소로 회원 주소지 변경 -->
+	<update id="updateAddress">
+		update members 
+		set address = #{deliveryAddress} 
+		where member_id = #{memberId}
+	</update>
+	
+	<!-- 배송지 저장 -->
+	<insert id="insertDelivery">
+		insert into delivery_addrs (delivery_name, delivery_address, is_main, member_id) values (#{deliveryName}, #{deliveryAddress}, #{isMain}, #{memberId})
+	</insert>
+	
+	<!-- 기본배송지 데이터 조회 -->
+	<select id="selectMainDelivery" resultType="Integer">
+		select delivery_no from delivery_addrs where member_id = #{member_id}
+	</select>
+
+	<!-- 기존의 기본배송지를 일반배송지로 변경 -->
+	<update id="updateDeliveryMainToSub">
+		update delivery_addrs set is_main = 'S' where delivery_no = #{delivery_no}
+	</update>
+	
+	<select id="selectDeliveryList" resultType="com.finalProject.model.DeliveryDTO">
+		select * from delivery_addrs where member_id = #{memberId}
+	</select>
 
 </mapper>
