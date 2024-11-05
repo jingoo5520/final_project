@@ -134,7 +134,7 @@ public class CartController {
 									.product_no(cookieCartDTO.getProduct_no())
 									.product_name(cookieCartDTO.getProduct_name())
 									.product_price(cookieCartDTO.getProduct_price())
-									.image_main_url(cookieCartDTO.getImage_main_url())
+									.image_url(cookieCartDTO.getImage_url())
 									.product_count(quantityOfCookie)
 									.product_dc_type(cookieCartDTO.getProduct_dc_type())
 									.dc_rate(cookieCartDTO.getDc_rate())

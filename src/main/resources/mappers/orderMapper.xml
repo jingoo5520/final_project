@@ -6,10 +6,10 @@
 
 	<select id="selectProductInfo" parameterType="list" resultType="com.finalProject.model.order.OrderProductDTO">
 	    <foreach item="item" index="index" collection="list" separator="UNION ALL">
-	        select p.*, i.image_main_url, #{item.quantity} AS quantity
+	        select p.*, i.image_url, #{item.quantity} AS quantity
 	        from products p inner join product_images i 
 	        on p.product_no = i.product_no 
-	        where p.product_no = #{item.productNo} and i.image_sub_url = 'M'
+	        where p.product_no = #{item.productNo} and i.image_type = 'M'
 	    </foreach>
 	</select>
 
@@ -228,10 +228,10 @@
 	</select>
 	
 	<select id="selectProductList" resultType="com.finalProject.model.order.OrderProductDTO">
-		select p.product_no, p.product_name, pi.image_main_url 
+		select o.order_count as quantity, p.product_dc_type, p.dc_rate, p.product_price, p.product_no, p.product_name, pi.image_url
 		from order_products o
 		join products p on p.product_no = o.product_no
-		join product_images pi on (pi.product_no = p.product_no and pi.image_sub_url = 'M')
+		join product_images pi on (pi.product_no = p.product_no and pi.image_type = 'M')
 		where o.order_id = #{orderId}
 	</select>
 	

@@ -101,6 +101,102 @@
 	}
 
 </script>
+
+<script>
+	$(document).ready(function() {
+		let orderInfo = loadOrderInfo()
+		insertUIToPage(orderInfo)
+	})
+
+	function insertUIToPage(orderInfo) {
+		let tags = ''
+		tags += '<div class="cart-list-head">'
+		tags += `
+			<div class="cart-list-title">
+				<div class="row align-items-center">
+					<div class="col-lg-1 col-md-1 col-12"></div>
+					<div class="col-lg-4 col-md-4 col-12"><p>상품정보</p></div>
+					<div class="col-lg-2 col-md-2 col-12"><p>주문일자/주문번호</p></div>
+					<div class="col-lg-2 col-md-2 col-12"><p>처리상태</p></div>
+					<div class="col-lg-3 col-md-3 col-12"><p>변경/처리</p></div>
+				</div>
+			</div>`
+		
+		for (orderJson of orderInfo) {
+			let orderDate = orderJson.orderDate
+			let orderId = orderJson.orderId
+			let orderStatus = orderJson.orderStatus
+
+			for (product of orderJson.products) {
+				tags += `<div class="cart-single-list grid-container">`
+				tags += `<div class="row align-items-center">`
+				tags += `<div class="col-lg-1 col-md-1 col-12">`
+				tags += `<a href="">` // TODO : 상품 상세페이지 이동
+				tags += `<img src=\${product.image_url} alt="#">` // TODO : alt image 삽입
+				tags += `</a>`
+				tags += `</div>`
+				tags += `<div class="col-lg-4 col-md-4 col-12">`
+				tags += `<p>\${product.product_name}</p>`
+				tags += `</div>`
+				tags += `<div class="col-lg-2 col-md-2 col-12">`
+				tags += `<p>\${orderDate}</p>`
+				tags += `<p>\${orderId}</p>`
+				tags += `</div>`
+
+				tags += `<div class="col-lg-2 col-md-2 col-12">`
+				tags += `<p>\${orderStatus}</p>`
+				tags += `</div>`
+
+				tags += `<div class="col-lg-2 col-md-2 col-12">`
+				tags += `<p>아직 안함</p>` // TODO 버튼 추가
+				tags += `</div>`
+
+				tags += `</div>` // class="row align-items-center" end
+				tags += `</div>` // class="cart-single-list grid-container" end
+			}
+		}
+		tags += '</div>' // class="cart-list-head" end
+		$("#productsView").append(tags)
+	}
+	
+	function loadOrderInfo() {
+		let memberId = null
+		let orderInfo = null
+		// 로그인한 id 얻어오기
+        $.ajax({
+            async: false,
+            type : 'GET',
+            url : "/getLoginedId",
+            dataType : "text",
+            success : function(response) {
+                memberId = response
+            },
+            error : function(request, status, error) {
+                console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+            }
+        })
+        
+        
+        $.ajax({
+			async: false,
+			type: 'GET',
+			url: '/orderProducts?memberId=' + memberId,
+			dataType: 'json',
+            success : function(response) {
+                orderInfo = response
+            },
+            error : function(request, status, error) {
+                console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+            }
+		})
+		
+		console.log("orderInfo : ")
+		console.log(orderInfo)
+		console.log(JSON.stringify(orderInfo))
+		return orderInfo
+	}
+</script>
+
 </head>
 
 <style>
@@ -172,103 +268,18 @@
 				<!-- / sideBar -->
 
 
-				<div class="col-lg-9 col-12">
-
-					
-					<div class="cart-list-head">
-						<div class="cart-list-title">
-							<div class="row align-items-center">
-								<div class="col-lg-1 col-md-1 col-12"></div>
-								<div class="col-lg-4 col-md-4 col-12"><p>상품정보</p></div>
-								<div class="col-lg-2 col-md-2 col-12"><p>주문일자/주문번호</p></div>
-								<div class="col-lg-2 col-md-2 col-12"><p>처리상태</p></div>
-								<div class="col-lg-3 col-md-3 col-12"><p>변경/처리</p></div>
-							</div>
-						</div>
-						<span id="product-insert"></span>
-						<div class="cart-single-list grid-container">
-							<div class="row align-items-center">
-								<div class="col-lg-1 col-md-1 col-12">
-									<a href=""></a> <!-- 상품 상세페이지 이동 -->
-										<img src="https://webimg.jestina.co.kr/UpData2/item/G2000027380/20240903180236ZM.png" alt="#">
-									</a>
-								</div>
-								<div class="col-lg-4 col-md-4 col-12">
-									<p>[아이유 PICK] J.Livera 14K 체인 목걸이 (JJJTN04BF010R4420)'</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>2024.10.28</p>
-									<p>239194</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>결제완료</p>
-								</div>
-								<div class="col-lg-3 col-md-3 col-12 action-column">
-									<p>주문취소</p>
-								</div>
-							</div>
-						</div>               
-						<div class="cart-single-list">
-							<div class="row align-items-center">
-								<div class="col-lg-1 col-md-1 col-12">
-									<a href=""></a> <!-- 상품 상세페이지 이동 -->
-										<img src="https://webimg.jestina.co.kr/UpData2/item/G2000027377/20240903175828ZM.png" alt="#">
-									</a>
-								</div>
-								<div class="col-lg-4 col-md-4 col-12">
-									<p>J.Fenella 14K 목걸이 (JJJTNQ4BF008R4420)</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>2024.10.30</p>
-									<p>212144</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>배송완료</p>
-								</div>
-								<div class="col-lg-3 col-md-3 col-12">
-									<form action="/cancelOrder" method="POST">
-										<input type="text" name="orderNo" value="425346" style="display:none">
-										<input type="submit" value="반품/환불">
-									</form>
-								</div>
-							</div>
-						</div>
-
-						<div class="cart-single-list">
-							<div class="row align-items-center">
-								<div class="col-lg-1 col-md-1 col-12">
-									<a href=""></a> <!-- 상품 상세페이지 이동 -->
-										<img src="https://webimg.jestina.co.kr/UpData2/item/G2000027377/20240903175828ZM.png" alt="#">
-									</a>
-								</div>
-								<div class="col-lg-4 col-md-4 col-12">
-									<p>J.Fenella 14K 목걸이 (JJJTNQ4BF008R4420)</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>2024.10.30</p>
-									<p>212144</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>배송완료</p>
-								</div>
-								<div class="col-lg-3 col-md-3 col-12">
-									<form action="/cancelOrder" method="POST">
-										<input type="text" name="orderNo" value="425346" style="display:none">
-										<input type="submit" value="반품/환불">
-									</form>
-								</div>
-							</div>
-						</div>
-					</div> 
+				<div class="col-lg-9 col-12" id="productsView">
 
 
-					<div id="writeInquiryBtnArea" class="button mt-2">
+
+					<!-- <div id="writeInquiryBtnArea" class="button mt-2">
 						<button class="btn" onclick="location.href = '/serviceCenter/writeInquiry'">
 							문의 작성
 							<span class="dir-part"></span>
 						</button>
-					</div>
+					</div> -->
 				</div>
+				
 				<!--/ End Shopping Cart -->
 			</div>
 		</div>
@@ -288,7 +299,7 @@
 	<script src="/resources/assets/user/js/tiny-slider.js"></script>
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
-	<script type="text/javascript">
+<!-- 	<script type="text/javascript">
         //========= Hero Slider 
         tns({
             container: '.hero-slider',
@@ -328,8 +339,8 @@
             }
         });
 
-    </script>
-	<script>
+    </script> -->
+<!-- 	<script>
         const finaleDate = new Date("February 15, 2023 00:00:00").getTime();
 
         const timer = () => {
@@ -363,7 +374,7 @@
         
         // index에서 topbar가 display none되지 않도록 처리
         $("#test").css("display", "block");
-    </script>
+    </script> -->
 </body>
 
 </html>

@@ -159,11 +159,17 @@ public class OrderController {
 		System.out.println("payment request : " + paymentRequest);
 		Map<String, String> resultMap = new HashMap<>();
 			try {
-				session.setAttribute("orderId", orderService.makeOrder(paymentRequest));
-				System.out.println("세션에 저장된 orderId : " + session.getAttribute("orderId"));
+	        	boolean isMember = session.getAttribute("loginMember") == null ? false : true; // 로그인 여부로 회원, 비회원 여부 알아내기
+				session.setAttribute("orderId", orderService.makeOrder(paymentRequest, isMember)); // 비회원은 orderId가 "non_member"이다.
+				String orderId = (String) session.getAttribute("orderId");
+				System.out.println("세션에 저장된 orderId : " + orderId);
+				if (isMember == false) {
+					orderService.makeGuest(paymentRequest, orderId);
+				}
 				resultMap.put("result", "success");
 				resultMap.put("message", "Payment processed successfully");
-				resultMap.put("orderId", (String) session.getAttribute("orderId"));
+				resultMap.put("orderId", orderId);
+				resultMap.put("totalPrice", String.valueOf(orderService.getExpectedTotalPrice(orderId)));
 				return ResponseEntity.ok(resultMap);
 			} catch (Exception e) {
 				e.printStackTrace();
