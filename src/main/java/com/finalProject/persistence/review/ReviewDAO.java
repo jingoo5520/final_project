@@ -13,4 +13,10 @@ public interface ReviewDAO {
 	// 작성 가능 리뷰 조회
 	List<ReviewDTO> selectWritableReviews(String member_id, ReviewPagingInfo pagingInfo) throws Exception;
 
+	// 작성 한 리뷰 개수
+	int selectCountWrittenReviews(String member_id) throws Exception;
+
+	// 작성 한 리뷰 조회
+	List<ReviewDTO> selectWrittenReviews(String member_id, ReviewPagingInfo pagingInfo) throws Exception;
+
 }

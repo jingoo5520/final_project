@@ -32,5 +32,17 @@ public class ReviewServiceImpl implements ReviewService {
 		
 		return result;
 	}
+
+	// 작성한 리뷰 개수
+	@Override
+	public int countWrittenReviews(String member_id) throws Exception {
+		return RDao.selectCountWrittenReviews(member_id);
+	}
+
+	// 작성 한 리뷰 조회
+	@Override
+	public List<ReviewDTO> getWrittenReviews(String member_id, ReviewPagingInfo pagingInfo) throws Exception {
+		return RDao.selectWrittenReviews(member_id, pagingInfo);
+	}
 	
 }

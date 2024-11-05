@@ -29,9 +29,11 @@ public class ReviewDTO {
 	private int review_ref;
 	private String review_show;
 	private int review_score;
+	private Timestamp delivered_date;
 	
 	private String product_name;
 	private String image_main_url;
+//	private 
 	
 	
 }

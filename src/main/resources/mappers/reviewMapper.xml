@@ -21,9 +21,8 @@
 SELECT 
     op.*, 
     p.product_name, 
-    pi.image_main_url, 
-    r.review_score, 
-    o.order_date AS delivery_date
+    pi.image_main_url,
+    o.delivered_date
 FROM 
     order_products op
 JOIN 
@@ -33,12 +32,44 @@ JOIN
 LEFT JOIN 
     product_images pi ON p.product_no = pi.product_no AND pi.image_sub_url = 'M'
 LEFT JOIN 
-    reviews r ON r.product_no = op.product_no AND r.member_id = #{memberId}
+    reviews r ON r.product_no = op.product_no AND r.member_id = #{member_id}
 WHERE 
-    o.orderer_id = #{memberId}
+    o.orderer_id = #{member_id}
     AND o.order_status = '6'
+    AND NOT EXISTS (
+        SELECT 1 
+        FROM reviews r
+        WHERE r.product_no = op.product_no AND r.member_id = #{member_id}
+    )
 LIMIT 
-    #{pagingInfo.startRowIndex}, #{pagingInfo.pageSize};
+    #{pagingInfo.startRowIndex}, #{pagingInfo.pageSize}
+</select>
+
+<select id="selectCountWrittenReviews" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+    FROM reviews
+    WHERE member_id = #{member_id}
+</select>
+
+<select id="selectWrittenReviews" parameterType="map" resultType="ReviewDTO">
+SELECT 
+    r.*, 
+    p.product_name, 
+    pi.image_main_url, 
+    r.review_score, 
+    r.register_date
+FROM 
+    reviews r
+JOIN 
+    products p ON r.product_no = p.product_no
+LEFT JOIN 
+    product_images pi ON p.product_no = pi.product_no AND pi.image_sub_url = 'M'
+WHERE 
+    r.member_id = #{member_id}
+ORDER BY 
+    r.register_date DESC
+LIMIT 
+    #{pagingInfo.startRowIndex}, #{pagingInfo.pageSize}
 </select>
 
 </mapper>

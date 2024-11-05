@@ -195,7 +195,7 @@
                                                 <div class="product-image" style="height:300px;">
                                                 
                                                     <a href="/product/jewelry/detail?productNo=${product.product_no}" >
-                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
+                                                        <img src="${product.image_main_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 100%; object-fit: cover;" />
                                                     </a>
 
                                                     <div class="button" style="position: absolute; bottom: 10px; left: 90px;">

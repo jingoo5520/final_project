@@ -35,4 +35,19 @@ public class ReviewDAOImpl implements ReviewDAO {
 		return ses.selectList(ns + "selectWritableReviews", param);
 	}
 
+	@Override
+	public int selectCountWrittenReviews(String member_id) throws Exception {
+		return ses.selectOne(ns + "selectCountWrittenReviews", member_id);
+	}
+
+	@Override
+	public List<ReviewDTO> selectWrittenReviews(String member_id, ReviewPagingInfo pagingInfo) throws Exception {
+        Map<String, Object> param = new HashMap<>();
+        param.put("member_id", member_id);
+        param.put("pagingInfo", pagingInfo);
+        
+        System.out.println("가능충 : " + param);
+        return ses.selectList(ns + "selectWrittenReviews", param);
+	}
+
 }

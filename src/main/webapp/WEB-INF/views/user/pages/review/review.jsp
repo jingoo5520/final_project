@@ -22,135 +22,215 @@
 </head>
 
 <body>
-
-	<!-- Preloader -->
-	<div class="preloader">
-		<div class="preloader-inner">
-			<div class="preloader-icon">
-				<span></span>
-				<span></span>
-			</div>
-		</div>
-	</div>
-	<!-- /End Preloader -->
-	
-    <jsp:include page="../header.jsp"></jsp:include>
-<div>${reviews }</div>
-
-	<!-- Start Breadcrumbs -->
-	<div class="breadcrumbs">
-		<div class="container">
-			<div class="row align-items-center">
-				<div class="col-lg-6 col-md-6 col-12">
-					<div class="breadcrumbs-content">
-						<h1 class="page-title">Shop Grid</h1>
-					</div>
-				</div>
-				<div class="col-lg-6 col-md-6 col-12">
-					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="javascript:void(0)">Shop</a></li>
-						<li>Shop Grid</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- End Breadcrumbs -->
-
-	<section class="product-grids section">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-3 col-12">
-					<!-- Start Product Sidebar -->
-					<div class="product-sidebar">
-						<!-- Start Single Widget -->
-						<div class="single-widget">
-							<h3>고객센터</h3>
-							<ul class="list">
-
-
-
-								<li><a href="product-grids.html">공지사항 </a></li>
-								<li><a href="product-grids.html">이벤트 </a></li>
-								<li><a href="product-grids.html">문의</a></li>
-								<li><a href="product-grids.html">멤버십 혜택</a></li>
-							</ul>
-						</div>
-						<!-- End Single Widget -->
-
-					</div>
-					<!-- End Product Sidebar -->
-				</div>
-				<div class="col-lg-9 col-12">
-					<!-- Shopping Cart -->
-					<div class="cart-list-head" style="border: none">
-						<div class="cart-list-title">
-							<h5 style = "text-align : center;"> <a href = "/review/writableReview">작성 가능 리뷰</a>  / <a href = "/review/writtenByReview">작성 한 리뷰</a></h5>
-						</div>
-						<!-- Cart List Title -->
-						<div class="cart-list-title">
-							<div class="row">
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>상품 사진</p>
-								</div>
-								<div class="col-lg-6 col-md-6 col-12">
-									<p>상품 이름</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>배송 완료일</p>
-								</div>
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>작업</p>
-								</div>
-							</div>
-						</div>
-						<!-- End Cart List Title -->
-
-<c:forEach var="review" items="${reviews}">
-    <div class="cart-single-list">
-        <div class="row align-items-center">
-            <div class="col-lg-2 col-md-2 col-12">
-                <c:choose>
-                    <c:when test="${not empty review.image_main_url}">
-                        <img src="${review.image_main_url}" alt="Product Image" class="img-fluid">
-                    </c:when>
-                    <c:otherwise>
-                        <img src="/images/noP_image.png" alt="Default Image" class="img-fluid">
-                    </c:otherwise>
-                </c:choose>
-            </div>
-            <div class="col-lg-6 col-md-6 col-12">${review.product_name}</div>
-            <div class="col-lg-2 col-md-2 col-12">
-                <fmt:formatDate value="${review.product_reg_date}" pattern="yyyy-MM-dd" />
-            </div>
-            <div class="col-lg-2 col-md-2 col-12">
-                <a href="/review/writeReview?product_no=${review.product_no}">리뷰작성</a>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-icon">
+                <span></span>
+                <span></span>
             </div>
         </div>
     </div>
-</c:forEach>
+    <!-- /End Preloader -->
+
+    <jsp:include page="../header.jsp"></jsp:include>
+<div>
+${writableReviews }
+</div>
+    <!-- Start Breadcrumbs -->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">나의 리뷰</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-nav">
+                        <li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
+                        <li><a href="javascript:void(0)">Shop</a></li>
+                        <li>나의 리뷰</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Breadcrumbs -->
+
+    <section class="product-grids section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12">
+                    <!-- Start Product Sidebar -->
+                    <div class="product-sidebar">
+                        <!-- Start Single Widget -->
+                        <div class="single-widget">
+                            <h3>고객센터</h3>
+                            <ul class="list">
 
 
-						<div class="pagination center">
-							<ul class="pagination-list">
-								<li><a href="javascript:void(0)">1</a></li>
-								<li class="active"><a href="javascript:void(0)">2</a></li>
-								<li><a href="javascript:void(0)">3</a></li>
-								<li><a href="javascript:void(0)">4</a></li>
-								<li><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
-							</ul>
-						</div>
+
+                                <li><a href="product-grids.html">공지사항 </a></li>
+                                <li><a href="product-grids.html">이벤트 </a></li>
+                                <li><a href="product-grids.html">문의</a></li>
+                                <li><a href="product-grids.html">멤버십 혜택</a></li>
+                            </ul>
+                        </div>
+                        <!-- End Single Widget -->
+
+                    </div>
+                    <!-- End Product Sidebar -->
+                </div>
+                <div class="col-lg-9 col-12">
+                    <!-- Shopping Cart -->
+                    <div class="cart-list-head" style="border: none">
+
+<div class="cart-list-title">
+    <h5 style="text-align: center;">
+        <a href="/review/writableReview" style="${currentPath == '/review/writableReview' ? 'color: gray;' : ''}">
+            작성 가능 리뷰
+        </a>
+        /
+        <a href="/review/writtenByReview" style="${currentPath == '/review/writtenByReview' ? 'color: gray;' : ''}">
+            작성 한 리뷰
+        </a>
+    </h5>
+</div>
+                        <!-- Cart List Title -->
+                        <c:if test="${currentPath  == '/review/writableReview'}">
+                            <div class="cart-list-title">
+                                <div class="row">
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <p>상품 사진</p>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-12">
+                                        <p>상품 이름</p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <p>배송 완료일</p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <p>작업</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+
+                        <c:if test="${currentPath  == '/review/writtenByReview'}">
+                            <div class="cart-list-title">
+                                <div class="row">
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <p>상품 사진</p>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-12">
+                                        <p>상품 이름</p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <p>별점</p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <p>리뷰 작성일</p>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <p>작업</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+                        <!-- End Cart List Title -->
+
+						<c:if test="${currentPath  == '/review/writableReview'}">
+                        <c:forEach var="review" items="${writtenReviews}">
+                            <div class="cart-single-list">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <a href="#" style="text-decoration: none; color: inherit;">
+                                            <img src="${review.image_main_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 90px; width:90px; object-fit: cover;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-12">
+                                        <a href="#" style="text-decoration: none; color: inherit;">${review.product_name}</a>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <fmt:formatDate value="${review.delivered_date}" pattern="yyyy-MM-dd (EEE)" />
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <a href="/review/writeReview?product_no=${review.product_no}">리뷰작성</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                        </c:if>
+                        
+                        <c:if test="${currentPath  == '/review/writtenByReview'}">
+                        <c:forEach var="review" items="${writableReviews}">
+                            <div class="cart-single-list">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <a href="#" style="text-decoration: none; color: inherit;">
+                                            <img src="${review.image_main_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 90px; width:90px; object-fit: cover;" />
+                                        </a>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-12">
+                                        <a href="#" style="text-decoration: none; color: inherit;">${review.product_name}</a>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <span>${review.review_score}</span> 
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <fmt:formatDate value="${review.register_date}" pattern="yyyy-MM-dd (EEE)" />
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12">
+                                        <a href="/review/writeReview?product_no=${review.product_no}">수정</a>
+                                        <button class = button>삭제</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                        </c:if>
 
 
-					</div>
 
-				</div>
-				<!--/ End Shopping Cart -->
-			</div>
-		</div>
-	</section>
-	<!-- End Product Grids -->
+
+
+                        <div class="pagination center">
+                            <ul class="pagination-list">
+                                <c:choose>
+                                    <c:when test="${pagingInfo.currentPage > pagingInfo.pageBlockSize}">
+                                        <!-- 이전 페이지 블록 버튼 -->
+                                        <li><a href="?page=${pagingInfo.startPage - pagingInfo.pageBlockSize}"><i class="lni lni-chevron-left"></i></a></li>
+                                    </c:when>
+                                </c:choose>
+
+                                <c:forEach var="i" begin="${pagingInfo.startPage}" end="${pagingInfo.endPage}">
+                                    <li class="${i == pagingInfo.currentPage ? 'active' : ''}">
+                                        <a href="?page=${i}">${i}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <c:choose>
+                                    <c:when test="${pagingInfo.endPage < pagingInfo.totalPages}">
+                                        <!-- 다음 페이지 블록 버튼 -->
+                                        <li><a href="?page=${pagingInfo.startPage + pagingInfo.pageBlockSize}"><i class="lni lni-chevron-right"></i></a></li>
+                                    </c:when>
+                                </c:choose>
+                            </ul>
+                        </div>
+
+
+
+
+
+
+                    </div>
+
+                </div>
+                <!--/ End Shopping Cart -->
+            </div>
+        </div>
+    </section>
+    <!-- End Product Grids -->
 
 
     <jsp:include page="../footer.jsp"></jsp:include>
