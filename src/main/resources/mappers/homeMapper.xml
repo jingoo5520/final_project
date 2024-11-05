@@ -7,7 +7,7 @@
 	<!-- 신상품 가져오기 -->
 	<select id="selectNewProducts" resultType="HomeProductDTO">
 		select
-		p.product_name, p.product_price, c.category_name, i.image_main_url,
+		p.product_no, p.product_name, p.product_price, c.category_name, i.image_main_url,
 		p.product_reg_date
 		from products p
 		join categories c on p.product_category = c.category_no

@@ -42,7 +42,157 @@
 <script src="/resources/assets/admin/js/config.js"></script>
 
 <script>
+	let selectedEventNo;
+
+	$(function() {
+
+		// 모달이 닫힐 때 이벤트를 처리
+		$('#addBannerModal').on('hidden.bs.modal', function() {
+			resetAddBannerModal();
+			console.log("모달 닫힘");
+		});
+
+		getBannerList();
+		getEventList();
+	});
+
+	// 배너 목록 가져오기
+	function getBannerList() {
+		$.ajax({
+			url : '/admin/homepage/getBannerList',
+			type : 'GET',
+			dataType : 'json',
+			success : function(data) {
+				console.log(data);
+
+				let mainBannerOutput = '';
+				let subBannerOutput = '';
+				
+				data.forEach(function(banner) {
+					
+					if(banner.banner_type == 'M'){
+						mainBannerOutput += `<tr>`;
+						mainBannerOutput += `<td>\${banner.banner_no}</td>`;
+						mainBannerOutput += `<td>\${banner.notice_title}</td>`;
+						mainBannerOutput += `<td>\${banner.banner_image}</td>`;
+						mainBannerOutput += `<td>\${banner.url}</td>`;
+						mainBannerOutput += `</tr>`;	
+					} else {
+						subBannerOutput += `<tr>`;
+						subBannerOutput += `<td>\${banner.banner_no}</td>`;
+						subBannerOutput += `<td>\${banner.notice_title}</td>`;
+						subBannerOutput += `<td>\${banner.thumbnail_image}</td>`;
+						subBannerOutput += `<td>\${banner.url}</td>`;
+						subBannerOutput += `</tr>`;	
+					}
+				});
+				
+				
+				console.log(mainBannerOutput);
+				$("#mainBannerListTableBody").html(mainBannerOutput);
+				$("#subBannerListTableBody").html(subBannerOutput);
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+
+	// 이벤트 리스트 가져오기
+	function getEventList() {
+		$.ajax({
+			url : '/admin/homepage/getEventList',
+			type : 'GET',
+			dataType : 'json',
+			success : function(data) {
+				console.log(data);
 	
+				let output = '';
+				
+				data.forEach(function(event) {
+					let json = JSON.stringify(event);
+					output += `<li><a class="dropdown-item" href="javascript:void(0);" onclick='setEvent(\${json})'>\${event.notice_title}</a></li>`
+				});
+				$("#eventList").html(output);
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+
+	//배너 타입 설정
+	function setBannerType(type) {
+		document.getElementById('bannerTypeBtn').textContent = type.textContent;
+		checkFormCompletion();
+	}
+
+	// 이벤트 선택 
+	function setEvent(event) {
+		document.getElementById('selectEventBtn').textContent = event.notice_title;
+		selectedEventNo = event.notice_no;
+		checkFormCompletion();
+	}
+
+	// 모든 폼에 입력값이 있는지 체크
+	function checkFormCompletion() {
+		let bannerTypeCheck = bannerTypeVaild();
+		let eventCheck = eventVaild();
+
+		if (bannerTypeCheck && eventCheck) {
+			$("#bannerAddBtn").prop('disabled', false);
+		} else {
+			$("#bannerAddBtn").prop('disabled', true);
+		}
+	}
+
+	function bannerTypeVaild() {
+		let valid = false;
+
+		if ($('#bannerTypeBtn').text() != "배너 타입") {
+			valid = true;
+		}
+		return valid;
+	}
+
+	function eventVaild() {
+		let valid = false;
+
+		if ($('#selectEventBtn').text() != "이벤트 선택") {
+			valid = true;
+		}
+		return valid;
+	}
+
+	// 모달 초기화
+	function resetAddBannerModal() {
+		$('#bannerTypeBtn').text('배너 타입');
+		$('#selectEventBtn').text('이벤트 선택');
+		$("#bannerAddBtn").prop('disabled', true);
+	}
+
+	// 배너 추가(Add 버튼 클릭)
+	function addBanner() {
+		let bannerType = $('#bannerTypeBtn').text() == "메인 배너" ? 'M' : 'S';
+
+		$.ajax({
+			url : '/admin/homepage/addBanner',
+			type : 'GET',
+			data : {
+				"eventNo" : selectedEventNo,
+				"bannerType" : bannerType
+			},
+			dataType : 'text',
+			success : function(data) {
+				console.log(data);
+				$('#addBannerModal').modal('hide');
+				getBannerList();
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
 </script>
 </head>
 
@@ -87,23 +237,26 @@
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
 
-
-
 						<div class="card">
 							<h5 class="card-header">메인 배너 목록</h5>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
 									<thead class="table-light">
 										<tr>
-
+											<th class="col-2">배너 번호</th>
+											<th class="col-2">이벤트</th>
+											<th class="col-5">이미지 경로</th>
+											<th class="col-3">이동 경로</th>
 										</tr>
 									</thead>
-									<tbody id="couponTableBody" class="table-border-bottom-0">
+									<tbody id="mainBannerListTableBody" class="table-border-bottom-0">
 
-										<c:forEach var="coupon" items="${couponData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
+										<c:forEach var="banner" items="${mainBannerList}">
 											<tr>
-
+												<td>${banner.banner_no}</td>
+												<td>${banner.notice_title}</td>
+												<td>${banner.banner_image}</td>
+												<td>${banner.url}</td>
 											</tr>
 										</c:forEach>
 
@@ -111,22 +264,26 @@
 								</table>
 							</div>
 						</div>
-						
+
 						<div class="card mt-4">
 							<h5 class="card-header">서브 배너 목록</h5>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
 									<thead class="table-light">
 										<tr>
-
+											<th class="col-2">배너 번호</th>
+											<th class="col-2">이벤트</th>
+											<th class="col-5">이미지 경로</th>
+											<th class="col-3">이동 경로</th>
 										</tr>
 									</thead>
-									<tbody id="couponTableBody" class="table-border-bottom-0">
-
-										<c:forEach var="coupon" items="${couponData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
+									<tbody id="subBannerListTableBody" class="table-border-bottom-0">
+										<c:forEach var="banner" items="${subBannerList}">
 											<tr>
-
+												<td>${banner.banner_no}</td>
+												<td>${banner.notice_title}</td>
+												<td>${banner.thumbnail_image}</td>
+												<td>${banner.url}</td>
 											</tr>
 										</c:forEach>
 
@@ -134,11 +291,53 @@
 								</table>
 							</div>
 						</div>
-						
+
 						<!-- 배너 추가 버튼 -->
 						<div id="addBannerBtnArea">
-							<button id="addBannerBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#editCouponModal" onclick="">배너 추가</button>
+							<button id="addBannerBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#addBannerModal" onclick="">배너 추가</button>
 						</div>
+
+						<!-- 배너 추가 모달 -->
+						<div id="addBannerModal" class="modal fade" tabindex="-1" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="editModalTitle">배너 추가</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<div class="row mb-3">
+											<label id="couponNameLabel" class="col-sm-3 col-form-label" for="">배너 타입</label>
+											<div class="col-sm-9">
+												<button id="bannerTypeBtn" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">배너 타입</button>
+												<ul class="dropdown-menu">
+													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setBannerType(this)">메인 배너</a></li>
+													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setBannerType(this)">서브 배너</a></li>
+												</ul>
+											</div>
+										</div>
+
+										<div class="row mb-3">
+											<label id="" class="col-sm-3 col-form-label" for="">이벤트</label>
+											<div class="col-sm-9">
+												<button id="selectEventBtn" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">이벤트 선택</button>
+												<ul id="eventList" class="dropdown-menu">
+													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setEvent(this)">1번 이벤트</a></li>
+													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setEvent(this)">2번 이벤트</a></li>
+												</ul>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="modal-footer">
+										<button id="bannerAddModalCloseBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Close</button>
+										<button id="bannerAddBtn" type="button" class="btn btn-primary" onclick="addBanner()" disabled>Add</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- / 쿠폰 생성 모달 -->
 					</div>
 				</div>
 				<!-- / Content -->

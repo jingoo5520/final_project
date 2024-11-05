@@ -118,11 +118,6 @@ public class CouponController {
 	public ResponseEntity<String> createCoupon(@RequestBody CouponDTO couponDTO) {
 		String result = "";
 
-		System.out.println(couponDTO);
-
-		System.out.println("/createCoupon");
-
-
 		try {
 			cService.createCoupon(couponDTO);
 			result = "success";

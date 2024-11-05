@@ -23,5 +23,10 @@
 		
 		<typeAlias type="com.finalProject.model.home.HomeProductDTO" alias="HomeProductDTO" />
 		
+		<typeAlias type="com.finalProject.model.admin.homepage.EventDTO" alias="EventDTO" />
+		
+		<typeAlias type="com.finalProject.model.admin.homepage.BannerDTO" alias="BannerDTO" />
+		
+		
 	</typeAliases>
 </configuration>

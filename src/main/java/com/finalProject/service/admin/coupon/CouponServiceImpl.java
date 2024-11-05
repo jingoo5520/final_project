@@ -95,7 +95,7 @@ public class CouponServiceImpl implements CouponService {
 			System.out.println(coupon.getCoupon_use_days());
 			
 			LocalDateTime dateTime = time.toLocalDateTime();
-			LocalDateTime newDateTime = dateTime.plus(25, ChronoUnit.DAYS);
+			LocalDateTime newDateTime = dateTime.plus(coupon.getCoupon_use_days(), ChronoUnit.DAYS);
 			Timestamp newTimestamp = Timestamp.valueOf(newDateTime);
 			
 			list.add(new CouponPayDTO(couponNo, couponCode, "All", newTimestamp));
@@ -113,7 +113,7 @@ public class CouponServiceImpl implements CouponService {
 				System.out.println(coupon.getCoupon_use_days());
 				
 				LocalDateTime dateTime = time.toLocalDateTime();
-				LocalDateTime newDateTime = dateTime.plus(25, ChronoUnit.DAYS);
+				LocalDateTime newDateTime = dateTime.plus(coupon.getCoupon_use_days(), ChronoUnit.DAYS);
 				Timestamp newTimestamp = Timestamp.valueOf(newDateTime);
 				
 				list.add(new CouponPayDTO(couponNo, couponCode, memberId, newTimestamp));
