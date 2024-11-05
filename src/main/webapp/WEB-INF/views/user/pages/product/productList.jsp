@@ -42,10 +42,26 @@
         // 폼 제출
         form.submit();
     }
-</script>
 
+    function toggleHeart(element) {
+        const icon = element.querySelector('i');
+        icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
+    }
+</script>
+<style>
+.product-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 최대 줄 수를 2로 설정 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 글자가 넘치는 경우 ... 표시 */
+    white-space: normal;
+
+}
+</style>
 <body>
     <jsp:include page="../header.jsp"></jsp:include>
+
 
     <!-- Preloader -->
     <div class="preloader">
@@ -176,18 +192,23 @@
                                             <!-- Start Single Product -->
                                             <!--                                         개수 -->
                                             <div class="single-product">
-                                                <div class="product-image" >
-                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}">
-                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" height= "300px">
+                                                <div class="product-image" style="height:300px;">
+                                                
+                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}" >
+                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
                                                     </a>
-                                                    <div class="button">
-                                                        <a onclick="addCart(${product.product_no})" class="btn"><i class="lni lni-cart"></i></a>
+
+                                                    <div class="button" style="position: absolute; bottom: 10px; left: 90px;">
+                                                        <a onclick="toggleHeart(this)" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
+                                                            <i class="lni lni-heart"></i>
+                                                        </a>
                                                     </div>
 
-                                                    <div class="button">
-                                                        <a href="#" class="btn"><i class="lni lni-cart"></i></a>
+                                                    <div class="button" style="position: absolute; bottom: 10px; right: 140px;">
+                                                        <a onclick="addCart(${product.product_no})" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
+                                                            <i class="lni lni-cart"></i>
+                                                        </a>
                                                     </div>
-
                                                 </div>
 
                                                 <div class="product-info">
@@ -198,7 +219,7 @@
                                                     </span>
 
                                                     <h4 class="title">
-                                                        <a href="/product/jewelry/detail?productNo=${product.product_no}">${product.product_name }</a>
+                                                        <a href="/product/jewelry/detail?productNo=${product.product_no}" class="product-name">${product.product_name }</a>
                                                     </h4>
                                                     <div class="price">
                                                         <!--     dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
@@ -208,12 +229,14 @@
                                                             </span>
                                                         </c:if>
 
-                                                        <!--     할인율 (dc 타입이 P일 때만 표시) -->
+                                                        <!-- 할인율 (dc 타입이 P일 때만 표시) -->
                                                         <c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
                                                             <span class="sale-tag" style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-                                                                -${product.dc_rate}%
+                                                                -
+                                                                <fmt:formatNumber value="${product.dc_rate * 100}" type="number" maxFractionDigits="0" />%
                                                             </span>
                                                         </c:if>
+
 
                                                         <!--     최종 계산된 가격 표시 -->
                                                         <span>
@@ -237,15 +260,15 @@
                                                 <c:if test="${hasPrevBlock}">
                                                     <li>
                                                         <a href="<c:choose>
-                                    <c:when test='${not empty search}'>
-                                        /product/jewelry/result?search=${search}&page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:when>
-                                    <c:otherwise>
-                                        /product/jewelry?page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:otherwise>
-                                </c:choose>">
+						                                    <c:when test='${not empty search}'>
+						                                        /product/jewelry/result?search=${search}&page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:when>
+						                                    <c:otherwise>
+						                                        /product/jewelry?page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:otherwise>
+						                                </c:choose>">
                                                             <i class="lni lni-chevron-left"></i> 이전
                                                         </a>
                                                     </li>
@@ -276,15 +299,15 @@
                                                 <c:if test="${hasNextBlock}">
                                                     <li>
                                                         <a href="<c:choose>
-                                    <c:when test='${not empty search}'>
-                                        /product/jewelry/result?search=${search}&page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:when>
-                                    <c:otherwise>
-                                        /product/jewelry?page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
-                                        <c:if test='${category != null}'> &category=${category}</c:if>
-                                    </c:otherwise>
-                                 </c:choose>">
+						                                    <c:when test='${not empty search}'>
+						                                        /product/jewelry/result?search=${search}&page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:when>
+						                                    <c:otherwise>
+						                                        /product/jewelry?page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
+						                                        <c:if test='${category != null}'> &category=${category}</c:if>
+						                                    </c:otherwise>
+						                                 </c:choose>">
                                                             다음 <i class="lni lni-chevron-right"></i>
                                                         </a>
                                                     </li>

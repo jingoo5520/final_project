@@ -9,6 +9,7 @@
 		
 		<typeAlias type="com.finalProject.model.MemberDTO" alias="MemberDTO" />
 		<typeAlias type="com.finalProject.model.product.ProductDTO" alias="ProductDTO" />
+		<typeAlias type="com.finalProject.model.review.ReviewDTO" alias="ReviewDTO" />
 
 		
 		

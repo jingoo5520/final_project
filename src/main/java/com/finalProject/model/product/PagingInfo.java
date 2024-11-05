@@ -58,4 +58,14 @@ public class PagingInfo {
     private void setEndPage() {
         this.endPage = Math.min(this.startPage + this.pageBlockSize - 1, this.totalPages);
     }
+    
+    // 현재 블록의 이전 블록이 있는지 여부 반환
+    public boolean hasPrevBlock() {
+        return this.currentBlock > 1;
+    }
+
+    // 현재 블록의 다음 블록이 있는지 여부 반환
+    public boolean hasNextBlock() {
+        return this.endPage < this.totalPages;
+    }
 }
