@@ -7,6 +7,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.UseCouponDTO;
 
 public interface MemberDAO {
 
@@ -66,5 +67,8 @@ public interface MemberDAO {
 	
 	// 배송지 목록 조회
 	List<DeliveryDTO> selectDeliveryList(String memberId)throws Exception;
+	
+	// 쿠폰 목록 조회
+	List<UseCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
 
 }
