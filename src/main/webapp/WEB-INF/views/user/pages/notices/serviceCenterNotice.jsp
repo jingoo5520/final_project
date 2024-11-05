@@ -167,34 +167,8 @@
     </ul>
 </div>
 
-            <!-- / Content -->
-<!--     <h2>공지사항</h2> -->
-<!--     <form action="/notice" method="get"> -->
-<!--         <table border="1"> -->
-<!--             <thead> -->
-<!--                 <tr> -->
-<!--                     <th>번호</th> -->
-<!--                     <th>제목</th> -->
-<!--                     <th>작성일</th> -->
-<!--                     <th>상세보기</th> -->
-<!--                 </tr> -->
-<!--             </thead> -->
-<!--             <tbody> -->
-<%-- 				<c:forEach var="notice" items="${noticeList}"> --%>
-<!-- 				    <div> -->
-<%-- 				        <h3>${notice.notice_title}</h3> --%>
-<%-- 				        <div>${notice.notice_content}</div> --%>
-<%-- 				        <p>등록일: ${notice.reg_date}</p> --%>
-<%-- 				        <p>관리자: ${notice.admin_id}</p> --%>
-<!-- 				    </div> -->
-<%-- 				</c:forEach> --%>
-<!--             </tbody> -->
-<!--         </table> -->
-<!--     </form> -->
 
-	<!-- Start Breadcrumbs -->
-
-	<jsp:include page="../footer.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>

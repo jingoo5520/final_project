@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfo;

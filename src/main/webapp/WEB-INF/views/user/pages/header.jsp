@@ -162,8 +162,8 @@
 				</div>
 				<div class="col-lg-2 col-md-6 col-6" style="margin-block-end: 0em">
 					<ul id="nav" class="navbar-nav ms-auto" style="flex-direction: row; justify-content: flex-end">
-						<li class="nav-item"><a href="contact.html" aria-label="Toggle navigation" style="color: #b4b5b4">이벤트</a></li>
-						<li class="nav-item"><a href="contact.html" aria-label="Toggle navigation" style="color: #b4b5b4">공지사항</a></li>
+						<li class="nav-item"><a href="/notices/event" aria-label="Toggle navigation" style="color: #b4b5b4">이벤트</a></li>
+						<li class="nav-item"><a href="/notices/notice" aria-label="Toggle navigation" style="color: #b4b5b4">공지사항</a></li>
 					</ul>
 				</div>
 			</div>

@@ -26,7 +26,7 @@ public class UserNoticeController {
     private UserNoticeService userNoticeService;
 
     // 공지사항 목록 조회
-    @GetMapping("/notice")
+    @GetMapping("/notices/notice")
     public String showUserNoticePage(@RequestParam(defaultValue = "1") int page,Model model) {
         log.info("공지사항 목록 요청을 처리합니다."); // 요청 로그 추가
         int pagingSize = 10; // 한 페이지에 보여줄 게시글 수
@@ -66,7 +66,7 @@ public class UserNoticeController {
     }
 
     // 공지사항 상세 조회
-    @GetMapping("/userViewNoticeDetail/{noticeNo}")
+    @GetMapping("/notices/userViewNoticeDetail/{noticeNo}")
     public String getNoticeDetail(@PathVariable("noticeNo") int noticeNo, Model model) {
         NoticeDTO notices;
 		try {
@@ -81,7 +81,7 @@ public class UserNoticeController {
     }
 
     // 이벤트 목록 조회
-    @GetMapping("/event")
+    @GetMapping("/notices/event")
     public String showUserEventPage(@RequestParam(defaultValue = "1") int page,Model model) {
     	int pagingSize = 10; // 한 페이지에 보여줄 게시글 수
         int startRowIndex = (page - 1) * pagingSize; // 시작 인덱스
@@ -120,7 +120,7 @@ public class UserNoticeController {
     }
 
     // 이벤트 상세 조회
-    @GetMapping("/userViewEventDetail/{noticeNo}")
+    @GetMapping("/notices/userViewEventDetail/{noticeNo}")
     public String getEventDetail(@PathVariable("noticeNo") int noticeNo, Model model) {
         if (noticeNo <= 0) {
             model.addAttribute("error", "유효하지 않은 요청입니다.");

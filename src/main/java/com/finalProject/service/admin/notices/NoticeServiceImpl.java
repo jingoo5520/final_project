@@ -1,11 +1,15 @@
 package com.finalProject.service.admin.notices;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfoDTO;

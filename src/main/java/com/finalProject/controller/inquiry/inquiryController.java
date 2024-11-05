@@ -1,5 +1,7 @@
 package com.finalProject.controller.inquiry;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,17 +25,25 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
+import com.finalProject.service.admin.notices.UserNoticeService;
 import com.finalProject.service.inquiry.InquiryService;
 import com.finalProject.util.FileProcess;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequestMapping("/serviceCenter")
 public class inquiryController {
 
 	@Inject
 	InquiryService iService;
+	
+	@Inject
+	UserNoticeService nService;
 
 	@Inject
 	FileProcess fp;
@@ -210,5 +221,60 @@ public class inquiryController {
 		}
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
+	
+    // 공지사항 목록 조회
+    @GetMapping("/notices")
+    public String showUserNoticePage(@RequestParam(defaultValue = "1") int page,Model model) {
+        log.info("공지사항 목록 요청을 처리합니다."); // 요청 로그 추가
+        int pagingSize = 10; // 한 페이지에 보여줄 게시글 수
+        int startRowIndex = (page - 1) * pagingSize; // 시작 인덱스
+        
+        // 총 게시글 수 가져오기
+        int totalPostCount = 0;
+        try {
+            totalPostCount = nService.getTotalPostCnt(); // 총 게시글 수 조회
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "총 게시글 리스팅 실패");
+        }
+        
+        int totalPages = (int) Math.ceil((double) totalPostCount / pagingSize); // 총 페이지 수 계산
 
+        // 페이지 유효성 체크
+        if (page > totalPages && totalPages > 0) {
+            page = totalPages; // 요청한 페이지가 총 페이지 수보다 크면 마지막 페이지로 설정
+        }
+
+        List<NoticeDTO> notices = null;
+        try {
+            notices = nService.getAllNotices(pagingSize, startRowIndex); // 공지사항 조회
+            model.addAttribute("notices", notices);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "공지 목록 리스팅 실패");
+        }
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages); // 총 페이지 수 추가
+        model.addAttribute("pagingSize", pagingSize);
+        model.addAttribute("totalPostCount", totalPostCount); // 총 게시글 수 추가
+
+        return "/user/pages/notices/serviceCenterNotice"; // JSP 파일 경로
+    }
+
+    // 공지사항 상세 조회
+    @GetMapping("/userViewNoticeDetail/{noticeNo}")
+    public String getNoticeDetail(@PathVariable("noticeNo") int noticeNo, Model model) {
+        NoticeDTO notices;
+		try {
+			notices = nService.getNoticeDetail(noticeNo);
+			model.addAttribute("notices", notices);
+			return "user/pages/notices/serviceCenterNoticeDetail";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("error", "상세 조회 실패");
+			return "errorPage";
+		}
+    }
+   
 }

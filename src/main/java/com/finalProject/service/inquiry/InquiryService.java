@@ -25,5 +25,6 @@ public interface InquiryService {
 
 	// 문의 수정
 	int modifyInquiry(InquiryDetailDTO inquiryDetailDTO, MultipartFile[] files, String[] existFiles, HttpServletRequest request) throws Exception;
+
 	
 }

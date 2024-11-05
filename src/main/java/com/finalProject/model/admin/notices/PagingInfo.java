@@ -28,12 +28,12 @@ public class PagingInfo {
    public PagingInfo(PagingInfoDTO dto) {
       this.pageNo = dto.getPageNo();
       this.viewPostCntPerPage = dto.getPagingSize();
+      this.pageCntPerBlock = dto.getPageCntPerBlock();
    }
    
    public void setTotalPostCnt(int totalPostCnt2, SearchCriteriaDTO criteria) {
 	    this.totalPostCnt = totalPostCnt2;
-	    // 검색어와 검색 조건에 따라 총 게시물 수를 조정할 수 있습니다.
-	    // (검색 로직은 나중에 서비스 계층에서 처리됩니다)
+	    // (검색 로직은 나중에 서비스 계층에서 처리)
 	    if (this.totalPostCnt > 0 && this.viewPostCntPerPage > 0) {
 	        this.totalPageCnt = (int) Math.ceil((double) this.totalPostCnt / this.viewPostCntPerPage);
 	    } else {
@@ -63,12 +63,11 @@ public class PagingInfo {
       // => (현재 페이지 번호) / (1개 페이징 블럭에서 보여줄 페이지 수)
       //                 -> 나누어 떨어지면 몫이 페이지 수가 됨
       //                 -> 나누어 떨어지지 않으면 몫 + 1이 페이지 수가 됨
-      this.pageBlockNoCurPage = (this.pageNo - 1) / this.pageCntPerBlock + 1;
-//      if (this.pageNo % this.pageCntPerBlock == 0) {
-//         this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock;
-//      } else {
-//         this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock + 1;
-//      }
+		if(this.pageNo % this.pageCntPerBlock == 0) {
+			this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock;
+		} else {
+			this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock + 1; 
+		}
    }
    
    public void setStartPageNoCurBlock() {

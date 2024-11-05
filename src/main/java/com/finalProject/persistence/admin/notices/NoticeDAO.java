@@ -2,6 +2,7 @@ package com.finalProject.persistence.admin.notices;
 
 import java.util.List;
 
+import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfo;

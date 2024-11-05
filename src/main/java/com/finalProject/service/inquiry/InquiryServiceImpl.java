@@ -15,9 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
+import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
+import com.finalProject.persistence.admin.notices.NoticeDAO;
 import com.finalProject.persistence.inquiry.InquiryDAO;
 import com.finalProject.util.FileProcess;
 
@@ -26,7 +28,7 @@ public class InquiryServiceImpl implements InquiryService {
 
 	@Inject
 	InquiryDAO iDao;
-
+	
 	@Inject
 	FileProcess fp;
 
@@ -190,5 +192,6 @@ public class InquiryServiceImpl implements InquiryService {
 
 		return result;
 	}
+
 
 }
