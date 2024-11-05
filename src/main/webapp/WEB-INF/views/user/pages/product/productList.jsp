@@ -47,6 +47,43 @@
         const icon = element.querySelector('i');
         icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
     }
+    
+	function addCart(productNo) {
+		
+		console.log(productNo);
+		
+		$.ajax({
+		    url: '/addCartItem',
+		    type: 'POST',
+		    data: {
+		    	productNo : productNo
+		    	},
+		    dataType: 'json',
+		    success: function(data) {
+		        console.log(data);
+		    },
+		    error: function() {
+		    },
+		    complete: function(data) {
+		    	if (data.status == 200) {
+		            // 모달을 보여주기
+		            $('#myModal').modal('show');
+	
+		            // 확인 버튼 클릭 시 장바구니 페이지로 이동
+		            $('#goCart').off('click').on('click', function() {
+		                location.href = "/cart";
+		            });
+		            
+		            $('#keepProduct').off('click').on('click', function() {
+		                location.reload();
+		            });
+		        } else if (data.responseText == 401) {
+		            alert("잘못된 접근입니다.");
+		        }
+		    }
+		});
+	}
+	
 </script>
 <style>
 .product-name {

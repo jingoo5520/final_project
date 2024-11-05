@@ -13,6 +13,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.UseCouponDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -193,10 +194,17 @@ public class MemberDAOImpl implements MemberDAO {
 	public void updateDeliveryMainToSub(Integer delivery_no) throws Exception{
 		ses.update(ns + "updateDeliveryMainToSub", delivery_no);
 	}
-
+	
+	// 배송지 목록 조회
 	@Override
 	public List<DeliveryDTO> selectDeliveryList(String memberId) throws Exception {
 		return ses.selectList(ns + "selectDeliveryList", memberId);
+	}
+	
+	// 쿠폰 목록 조회
+	@Override
+	public List<UseCouponDTO> selectCouponList(Map<String, String> param) throws Exception {
+		return ses.selectList(ns + "selectCouponList", param);
 	}
 	
 }

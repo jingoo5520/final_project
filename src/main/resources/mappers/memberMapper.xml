@@ -138,5 +138,18 @@
 	<select id="selectDeliveryList" resultType="com.finalProject.model.DeliveryDTO">
 		select * from delivery_addrs where member_id = #{memberId}
 	</select>
+	
+	<select id="selectCouponList" resultType="com.finalProject.model.UseCouponDTO">
+		select p.coupon_no, p.coupon_code, p.pay_date, p.expire_date, p.member, 
+			   DATEDIFF(p.expire_date, #{currentTime}) as remaining_days, 
+			   c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount, c.coupon_dc_rate 
+			   from coupon_paid p 
+			   join coupons c 
+			   on p.coupon_no = c.coupon_no 
+			   left join coupon_used u 
+			   on u.coupon_code = p.coupon_code and u.member_id = #{memberId} 
+			   where (p.member = #{memberId} or p.member = 'all') 
+			   and #{currentTime} &gt;= p.pay_date and #{currentTime} &lt; p.expire_date and u.coupon_code is null
+	</select>
 
 </mapper>

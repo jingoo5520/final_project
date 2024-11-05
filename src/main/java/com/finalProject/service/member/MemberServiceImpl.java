@@ -1,5 +1,6 @@
 package com.finalProject.service.member;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.UseCouponDTO;
 import com.finalProject.persistence.MemberDAO;
 
 @Service
@@ -134,6 +136,29 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public List<DeliveryDTO> getDeliveryList(String memberId) throws Exception {
 		return memberDAO.selectDeliveryList(memberId);
+	}
+	
+	// 쿠폰 목록 조회
+	@Override
+	public List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("memberId", memberId);
+		param.put("currentTime", currentTime);
+		
+		List<UseCouponDTO> couponList = memberDAO.selectCouponList(param);
+		
+		
+		for (UseCouponDTO coupon : couponList) {
+			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
+			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
+			
+			if (coupon.getMember().equals("All")) {
+				coupon.setCoupon_name("[회원 전체 지급]" + coupon.getCoupon_name());
+			} else {
+				coupon.setCoupon_name("[특별 회원 지급]" + coupon.getCoupon_name());
+			}
+		}
+		return couponList;
 	}
 
 }
