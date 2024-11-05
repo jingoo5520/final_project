@@ -385,9 +385,13 @@ public class OrderServiceImpl implements OrderService {
 		System.out.println(memberId + "의 order id 리스트 : " + orders);
 		for (String orderId : orders) {
 			OrderProductsDTO order = new OrderProductsDTO();
+			order.setOrderId(orderId);
 			Map<String, Object> orderInfo = orderDAO.getOrderInfo(orderId);
+			System.out.println("orderInfo.order_id : " + (String) orderInfo.get("order_id"));
+			System.out.println("orderInfo : " + orderInfo);
+			System.out.println("orderInfo.order_status : " + (String) orderInfo.get("order_status"));
 			Timestamp time = (Timestamp) orderInfo.get("order_date");
-			order.setOrderDate(time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")));
+			order.setOrderDate( time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) );
 			Map<String, String> dict = new HashMap<>();
 			dict.put("1", "결제대기");
 			dict.put("2", "결제완료");
@@ -397,6 +401,7 @@ public class OrderServiceImpl implements OrderService {
 			dict.put("6", "배송완료");
 			order.setOrderStatus(dict.get((String) orderInfo.get("order_status")));
 			List<OrderProductDTO> products = orderDAO.getProductList(orderId);
+			System.out.println("products : " + products);
 			order.setProducts(products);
 			System.out.println("order : " + order);
 			result.add(order);

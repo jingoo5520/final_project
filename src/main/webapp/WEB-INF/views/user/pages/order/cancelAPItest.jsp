@@ -9,6 +9,15 @@
 <script>
 	window.onload = function() {
 		loadInfo()
+		$('#orderIdList').on('change', function() {
+			 $("#orderStatus").text(order.orderStatus)
+			 
+	 		if ($("#orderStatus").text() == "결제완료") {
+				$("#canCancel").text("예")
+			} else {
+				$("#canCancel").text("아니오")
+			}
+		});
 	}
 	
 	function loadInfo() {
@@ -44,14 +53,28 @@
 		
 		console.log("orderInfo : ")
 		console.log(orderInfo)
+		console.log(JSON.stringify(orderInfo))
+		
+		makeUI(orderInfo)
 	}
+	
+	function makeUI(orderInfo) {
+		for (order of orderInfo) {
+			$("#orderIdList").append(`<option value="\${order.orderId}">\${order.orderId}</option>`)
+		}
+		
+
+	}
+	
+
+	
 </script>
 </head>
 <body>
 <p>지금 로그인한 회원 아이디 : <span id="memberId"></span></p>
-<p>이 회원의 주문번호 : <select id="orderIdList"></select></p>
-
-
+<p>이 회원의 주문번호 : <select id="orderIdList"><option>--선택하기--</option></select></p>
+<p>주문 상태 : <span id="orderStatus"></span></p>
+<p>취소 가능 : <span id="canCancel"></span></p>
 
 </body>
 </html>

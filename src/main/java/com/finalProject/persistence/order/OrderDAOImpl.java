@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
@@ -72,7 +73,8 @@ public class OrderDAOImpl implements OrderDAO {
 		// TODO : 그런데 이 메소드를 쓰더라도 비회원 주문은 아이디가 항상 새롭게 생성되기 때문에 안지워질 수 있음 
 		// 예를 들어 비회원 상태로 주문 결제하기 버튼을 반복해서 누르고 창을 닫는다면 orders 테이블에 행이 쌓이는 걸 못 막음
 		if (isMember == true) {
-			ses.delete(ns + "deleteUncompletedOrder", request.getOrdererId());
+			// 트랜잭션 처리
+			this.deleteUncompletedOrder(request.getOrdererId());
 		}
 		if (isMember == false) {
 			// 기본값으로 "non_member"가 지정되어 있는데 이걸 UUID로 바꿔준다.
@@ -110,6 +112,12 @@ public class OrderDAOImpl implements OrderDAO {
 			// return null;
 		}
 		return ses.selectOne(ns + "selectUncompletedOrderId", request.getOrdererId());
+	}
+	
+	@Transactional(rollbackFor={Exception.class})
+	private void deleteUncompletedOrder(String ordererId) {
+		ses.delete(ns + "deleteProductsOfUncompletedOrder", ordererId);
+		ses.delete(ns + "deleteUncompletedOrder", ordererId);
 	}
 	
 	@Override

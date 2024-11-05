@@ -28,6 +28,17 @@
 		where order_id = #{order_id}
 	</delete>
 	
+	<delete id="deleteProductsOfUncompletedOrder">
+		delete from order_products
+		where order_id in (
+			select order_id from orders o
+			where o.orderer_id = #{ordererId} and (
+				o.payment_module_key is null or
+				not exists (select 1 from payments p where o.order_id = p.order_id)
+			)
+		)
+	</delete>
+	
 	<delete id="deleteUncompletedOrder">
 		delete from orders 
 		where orderer_Id = #{ordererId} and ( 
@@ -120,10 +131,10 @@
 				when product_dc_type = 'N' or product_dc_type is null
 				then 0
 			end,
-			#{orderCount}, 
-			#{product_price}
+			#{product.order_count}, 
+			product_price
 		from products
-		where product_no = #{productNo}
+		where product_no = #{product.product_no}
 		</foreach>
 	</insert>
 	
@@ -217,14 +228,20 @@
 	</select>
 	
 	<select id="selectProductList" resultType="com.finalProject.model.order.OrderProductDTO">
-		select p.product_name, pi.image_main_url 
+		select p.product_no, p.product_name, pi.image_main_url 
 		from order_products o
 		join products p on p.product_no = o.product_no
 		join product_images pi on (pi.product_no = p.product_no and pi.image_sub_url = 'M')
 		where o.order_id = #{orderId}
 	</select>
 	
-	<select id="selectOrderInfo" resultType="java.util.Map">
+	<resultMap id="OrderInfoMap" type="java.util.Map">
+	    <result property="order_id" column="order_id" javaType="java.lang.String"/>
+	    <result property="order_date" column="order_date" javaType="java.sql.Timestamp"/>
+	    <result property="order_status" column="order_status" javaType="java.lang.String" />
+	</resultMap>
+	
+	<select id="selectOrderInfo" resultMap="OrderInfoMap">
 		select order_id, order_date, order_status from orders where order_id = #{orderId}
 	</select>
 </mapper>
