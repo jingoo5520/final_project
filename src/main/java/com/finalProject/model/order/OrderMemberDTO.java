@@ -24,4 +24,6 @@ public class OrderMemberDTO {
 	private String level_name;
 	private float level_dc;
 	private float level_point;
+	private String delivery_address;
+	private String delivery_name;
 }
