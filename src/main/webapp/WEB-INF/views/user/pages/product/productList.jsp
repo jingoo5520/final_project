@@ -11,7 +11,8 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
-
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
@@ -232,7 +233,7 @@
                                                 <div class="product-image" style="height:300px;">
                                                 
                                                     <a href="/product/jewelry/detail?productNo=${product.product_no}" >
-                                                        <img src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
+                                                        <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
                                                     </a>
 
                                                     <div class="button" style="position: absolute; bottom: 10px; left: 90px;">
@@ -368,6 +369,8 @@
     <!-- End Product Grids -->
 
     <jsp:include page="../footer.jsp"></jsp:include>
+    
+    <jsp:include page="../cart/cartModal.jsp"></jsp:include>
 
     <!-- ========================= scroll-top ========================= -->
     <a href="#" class="scroll-top">

@@ -482,6 +482,56 @@ input[type="checkbox"]:hover {
 	margin-bottom: 5px;
 }
 
+.hero-area {
+	margin: 40px 0 40px 0 !important;
+	display: flex;
+   	flex-direction: column;
+   	align-items: center;
+	
+}
+
+.warning {
+	height: 100px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.goList {
+	width: 223px;
+	height: 60px;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 60px;
+	padding: 20px 30px 0 30px !important;
+}
+
+.repositBtn {
+	height: 150px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.warningImg {
+   	margin-bottom: 20px;
+   	text-align: center;
+}
+
+.warningInfoHead {
+	font-size: 16px !important;
+	font-weight: bold !important;
+	color: black !important;
+	margin-bottom: 10px;
+	text-align: center !important;
+}
+
+.warningInfoHead span {
+    display: block; 
+}
+
 </style>
 
 <body>
@@ -578,7 +628,7 @@ input[type="checkbox"]:hover {
 										<div class="col-lg-1 col-md-1 col-12">
 											<a
 												href="/product/productDetail?productNo=${item.product_no }"><img
-												src="${item.image_main_url }" alt="#"></a>
+												src="${item.image_url }" alt="#"></a>
 										</div>
 										<div class="col-lg-3 col-md-3 col-12">
 											<h5 class="product-name">
@@ -654,7 +704,7 @@ input[type="checkbox"]:hover {
 										<div class="col-lg-1 col-md-1 col-12">
 											<a
 												href="/product/productDetail?productNo=${item.product_no }"><img
-												src="${item.image_main_url }" alt="#"></a>
+												src="${item.image_url }" alt="#"></a>
 										</div>
 										<div class="col-lg-3 col-md-2 col-12">
 											<h5 class="product-name">
@@ -730,10 +780,23 @@ input[type="checkbox"]:hover {
 					 <!--/ End Total Amount -->
 				</c:when>
 				<c:otherwise>
-					<h1>장바구니에 상품이 없습니다.</h1>
-					<div class="button">
-						<a href="/product/jewelry/all" class="btn btn">상품 보러 가기</a>
-					</div>
+					<section class="hero-area">
+						<div class="warning">
+							<div class="warningImg">
+								<img alt="경고" src="/resources/assets/user/images/error/warning.png">
+							</div>
+							<div class="warningInfo">
+								<p class="warningInfoHead">
+									<span> 장바구니에 담긴 상품이 없습니다. </span>
+								</p>
+							</div>
+						</div>
+						<div class="repositBtn">
+							<div class="button">
+								<a href="/product/jewelry/all" class="btn btn goList">상품 보러 가기</a>
+							</div>
+						</div>
+					</section>
 				</c:otherwise>
 			</c:choose>
 			<!-- Total Amount -->

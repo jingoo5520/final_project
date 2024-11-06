@@ -930,7 +930,7 @@
 									<div class="row align-items-center product-list">
 										<div class="col-lg-1 col-md-1 col-12">
 											<a href="/product/productDetail?productNo=${orderProduct.product_no }">
-												<img class="productImage" src="${orderProduct.image_main_url }" alt="productImage">
+												<img class="productImage" src="${orderProduct.image_url }" alt="productImage">
 											</a>
 										</div>
 										<div class="col-lg-5 col-md-5 col-12">

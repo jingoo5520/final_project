@@ -13,7 +13,7 @@
            p.dc_rate, 
            p.product_dc_type, 
            p.product_sell_count,
-           max(pi.image_main_url) as image_main_url, 
+           max(pi.image_url) as image_url, 
            c.category_name
     from products p
     left join product_images pi on p.product_no = pi.product_no
@@ -41,7 +41,7 @@
 <!-- 카테고리별 상품 조회 쿼리문: 정렬 기준 추가 -->
 <select id="selectProductsByCategoryAndPage" parameterType="map" resultType="ProductDTO">
     select p.product_no, p.product_name, p.product_price, p.product_category, p.dc_rate, p.product_dc_type, p.product_sell_count,
-	           max(pi.image_main_url) as image_main_url, c.category_name
+	           max(pi.image_url) as image_url, c.category_name
     from products p
     left join product_images pi on p.product_no = pi.product_no
     join categories c on p.product_category = c.category_no
@@ -126,7 +126,7 @@
         p.dc_rate, 
         p.product_dc_type, 
         p.product_sell_count,
-        COALESCE(MAX(pi.image_main_url), '/resources/images/noP_image.png') AS image_main_url, 
+        COALESCE(MAX(pi.image_url), '/resources/images/noP_image.png') AS image_url, 
         c.category_name
     FROM 
         products p
