@@ -46,4 +46,6 @@ public interface OrderDAO {
 
 	Map<String, Object> getOrderInfo(String orderId);
 
+	void updateOrderStatus(String payMethod, String orderId) throws Exception;
+
 }

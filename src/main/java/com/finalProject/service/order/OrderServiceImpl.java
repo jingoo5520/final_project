@@ -78,30 +78,29 @@ public class OrderServiceImpl implements OrderService {
 		
 		boolean isMember = session.getAttribute("loginMember") == null ? false : true;
 		
-		// 비회원일 때
-		if (isMember == false) {
-			if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
-				throw new DataAccessException("결제 정보 생성 실패") {}; 
-			}
-			return;
+		if (isMember == true) {
+			// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
+			// 쿠폰 사용
+			if (orderDAO.useCoupon(orderId) != 1) {
+				throw new DataAccessException("쿠폰 사용 실패") {};
+			};
+			// 포인트 적립
+			if (orderDAO.updatePoint(orderId) != true) {
+				throw new DataAccessException("포인트 적립 실패") {}; 
+			};
+			// 회원등급 수정
+			if (orderDAO.updateUserLevel(orderId) != true) {
+				throw new DataAccessException("회원등급 수정 실패") {}; 
+			};
 		}
-		
-		// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
-		// 쿠폰 사용
-		if (orderDAO.useCoupon(orderId) != 1) {
-			throw new DataAccessException("쿠폰 사용 실패") {};
-		};
-		// 포인트 적립
-		if (orderDAO.updatePoint(orderId) != true) {
-			throw new DataAccessException("포인트 적립 실패") {}; 
-		};
-		// 회원등급 수정
-		if (orderDAO.updateUserLevel(orderId) != true) {
-			throw new DataAccessException("회원등급 수정 실패") {}; 
-		};
 		
 		if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
 			throw new DataAccessException("결제 정보 생성 실패") {}; 
+		}
+		try {
+			orderDAO.updateOrderStatus(method, orderId);
+		} catch (Exception e) {
+			
 		}
 		// TODO : 장바구니에서 결제한 물품 삭제
 	}

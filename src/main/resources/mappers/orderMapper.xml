@@ -223,6 +223,12 @@
 		values (#{orderId}, #{status}, #{moduleName}, #{amount}, #{depositName}, #{depositBank}, #{depositAccount});
 	</insert>
 	
+	<update id="updateOrderStatus">
+		update orders
+		set order_status = #{status}
+		where order_id = "34eb2a20-585e-4cdb-91f4-d4dbbc9b47ff";
+	</update>
+	
 	<select id="selectOrderId" resultType="String">
 		select order_id from orders where orderer_id = #{memberId}
 	</select>

@@ -146,17 +146,29 @@
 				tags += `<div class="col-lg-2 col-md-2 col-12">`
 				tags += `<p>\${orderStatus}</p>`
 				tags += `</div>`
-
 				tags += `<div class="col-lg-2 col-md-2 col-12">`
-				tags += `<p>아직 안함</p>` // TODO 버튼 추가
-				tags += `</div>`
+				
+				// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
+				if (orderStatus == "결제완료" || orderStatus == "배송완료") {
+					tags += makeButtonTag(orderStatus, "") // TODO : 함수 호출
+				} else {
+					tags += "<p></p>" // 아무것도 표시하지 않음
+				}
 
+				tags += `</div>`
 				tags += `</div>` // class="row align-items-center" end
 				tags += `</div>` // class="cart-single-list grid-container" end
 			}
 		}
 		tags += '</div>' // class="cart-list-head" end
 		$("#productsView").append(tags)
+	}
+
+	function makeButtonTag(name, functionName) {
+		tag = `<div class="button">
+					<button class="btn" onclick="\${functionName}">주문 취소</button>
+				</div>`
+		return tag
 	}
 	
 	function loadOrderInfo() {

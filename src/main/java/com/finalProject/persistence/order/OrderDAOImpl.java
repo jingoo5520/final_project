@@ -223,6 +223,18 @@ public class OrderDAOImpl implements OrderDAO {
 		}
 		return true;
 	}
+	
+	@Override
+	public void updateOrderStatus(String payMethod, String orderId) throws Exception {
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		if (payMethod != null && payMethod.equals("가상계좌")) {
+			params.put("status", 1); // 결제대기
+		} else {
+			params.put("status", 2); // 결제완료
+		}
+		ses.update(ns + "updateOrderStatus", params);
+	}
 
 	@Override
 	public List<String> getOrderIdList(String memberId) {

@@ -1436,7 +1436,7 @@
 												<h6 class="heading-6 font-weight-400 payment-title">결제 수단을 선택해주세요.</h6>
 												<div class="payment-option-wrapper">
 													<div class="single-payment-option">
-														<input type="radio" name="paymentMethod" id="paymentMethod-1" onclick="selectPaymentMethod('CARD')" checked>
+														<input type="radio" name="paymentMethod" id="paymentMethod-1" onclick="selectPaymentMethod('CARD')">
 														<label for="paymentMethod-1">
 															<p>카드 결제</p>
 														</label>
