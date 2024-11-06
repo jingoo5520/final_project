@@ -23,10 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finalProject.model.admin.product.ProductDTO;
-import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.model.admin.product.ProductSearchDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
 import com.finalProject.model.admin.product.ProductVO;
+import com.finalProject.model.admin.product.adminCategories;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.service.admin.product.ProductService;
 import com.finalProject.util.ProductUtil;
 
@@ -48,23 +49,43 @@ public class ProductController {
 //	}
 
 	@RequestMapping(value = "/productSave")
-	public String productSave(HttpServletRequest request) {
+	public String productSave(HttpServletRequest request, Model model) {
 		System.out.println(request.getSession().getServletContext().getRealPath("product"));
+		List<adminCategories> list = new ArrayList<adminCategories>();
+		list = ps.getCategories();
+		model.addAttribute("categories", list);
 		return "admin/pages/productmanage/productSave";
 	}
 
 	@RequestMapping(value = "/productUpdate", method = RequestMethod.POST)
 	public ResponseEntity<String> productUpdate(ProductUpdateDTO updateProduct, HttpServletRequest request) {
 		System.out.println(updateProduct.toString());
+		System.out.println(updateProduct.getProduct_main_image().trim());
+		System.out.println(updateProduct.getContent_image().getOriginalFilename());
+		System.out.println(updateProduct.getProduct_content());
 		List<String> subArr = new ArrayList<String>();
 		List<String> list = new ArrayList<>();
 
 		ServletContext sc = request.getSession().getServletContext();
 		String path = sc.getRealPath("/resources/product");
+		if (null != updateProduct.getContent_image()) {
+			String fileName = "Content_" + UUID.randomUUID() + updateProduct.getContent_image().getOriginalFilename();
+
+			File Directory = new File(path + File.separator + fileName);
+			list.add(fileName);
+			try {
+				updateProduct.getContent_image().transferTo(Directory);
+			} catch (IllegalStateException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
+			}
+		}
 		if (null != updateProduct.getImage_main_url()) {
 			String fileName = "Main_" + UUID.randomUUID() + updateProduct.getImage_main_url().getOriginalFilename();
+
 			File Directory = new File(path + File.separator + fileName);
-			list.add(File.separator + fileName);
+			list.add(fileName);
 			try {
 				updateProduct.getImage_main_url().transferTo(Directory);
 			} catch (IllegalStateException | IOException e) {
@@ -79,7 +100,7 @@ public class ProductController {
 					String fileName = "Sub_" + UUID.randomUUID() + file.getOriginalFilename();
 
 					File Directory = new File(path + File.separator + fileName);
-					list.add(File.separator + fileName);
+					list.add(fileName);
 					try {
 						file.transferTo(Directory);
 					} catch (IllegalStateException | IOException e) {
@@ -141,6 +162,7 @@ public class ProductController {
 	public void UploadProduct(ProductDTO productDTO, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println(productDTO.toString());
 		System.out.println(productDTO.getImage_main_url().getOriginalFilename());
+
 		String url = "/resources/product";
 		ServletContext sc = request.getSession().getServletContext();
 
@@ -158,7 +180,7 @@ public class ProductController {
 				route = realPath + File.separator + fileName;
 				File Directory = new File(realPath + File.separator + fileName);
 
-				list.add(File.separator + fileName);
+				list.add(fileName);
 				try {
 					productDTO.getImage_main_url().transferTo(Directory);
 				} catch (IllegalStateException | IOException e) {
@@ -173,7 +195,7 @@ public class ProductController {
 					route = realPath + File.separator + fileName;
 
 					File Directory = new File(realPath + File.separator + fileName);
-					list.add(File.separator + fileName);
+					list.add(fileName);
 					try {
 						file.transferTo(Directory);
 					} catch (IllegalStateException | IOException e) {
@@ -203,10 +225,13 @@ public class ProductController {
 			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
 		adminPagingInfoDTO dto = adminPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
 		Map<String, Object> maps = new HashMap<String, Object>();
+
 		try {
+
 			maps = ps.getAllProducts(dto);
 			model.addAttribute("productList", maps.get("list"));
 			model.addAttribute("pi", maps.get("pi"));
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -45,6 +45,15 @@
 let selectedValues = [];
 	$(function() {
 
+		  $('.previewImg').on('click', function() {
+		        // 클릭된 이미지의 src 가져오기
+		        var imageSrc = $(this).attr('src');
+		        console.log(imageSrc);
+		        // 모달에 이미지 src 설정
+		        $('#bigImage').attr('src', imageSrc);
+		        
+		    });
+		
 		$('#modalToggle').on('show.bs.modal', function(event) {
 			var button = $(event.relatedTarget); // 클릭한 버튼
 			var row = button.closest('tr'); // 버튼이 있는 행을 찾음
@@ -53,12 +62,13 @@ let selectedValues = [];
 			var productId = button.val(); // 제품 ID
 			var productName = row.find('td:eq(2)').text(); // 제품 이름 (3번째 열)
 			var productPrice = row.find('td:eq(3)').text(); // 제품 가격 (4번째 열)
-			var productContent = row.find('td:eq(4)').text(); // 제품 설명 (5번째 열)
+			var productContent = row.find('td:eq(4)').find('img').attr('src'); // 제품 설명 (5번째 열) 
 			var productDcType = row.find('td:eq(5)').text();
 			var productDcAmount = row.find('td:eq(6)').text();
 			var productSellCount = row.find('td:eq(7)').text();
 			var mainImageUrl =row.find('td:eq(8)').find('img').attr('src');
 			console.log(mainImageUrl);
+			console.log(productContent);
 			var subImageUrl =  [];
 			  row.find('td:eq(9)').find('img').each(function() {
 		            subImageUrl.push($(this).attr('src'));
@@ -67,7 +77,7 @@ let selectedValues = [];
 			modal.find('#productNo').val(productId); // 제품 ID 입력란
 			modal.find('#productName').val(productName); // 제품 이름 입력란
 			modal.find('#productPrice').val(productPrice); // 제품 가격 입력란
-			modal.find('#productContent').val(productContent); // 제품 설명 입력란
+			/* modal.find('#productContent').val(productContent); // 제품 설명 입력란 */
 			modal.find('#productSellCount').val(productSellCount);
 			// 할인 타입 라디오 버튼 설정
 			if (productDcType === "고정할인") {
@@ -81,8 +91,10 @@ let selectedValues = [];
 			modal.find('#productDcAmount').val(productDcAmount); // 할인 금액 입력란
 			
 			 updateDiscountAmountInput();
-			
-			  if (mainImageUrl) {
+			if(typeof productContent != 'undefined'){
+				$('#contentImgPreview').attr('src',productContent).show();
+			}
+			  if (typeof mainImageUrl != 'undefined') {
 			        $('#mainImagePreview').attr('src',mainImageUrl).show();
 			        $('#deleteImage').show();
 			    } else {
@@ -93,7 +105,7 @@ let selectedValues = [];
 			    if (subImageUrl.length > 0) {
 			        subImageUrl.forEach(function(url, index) {
 			            $('#subImagePreview').append( '<div style="position: relative; display: inline-block;">' +
-			                    '<img src="' + url + '" alt="Sub Image" width="50" height="50">' +
+			                    '<img src="' + url + '" alt="Sub Image" width="100px" height="100px">' +
 			                    '<button type="button" class="deleteSubImage btn btn-danger btn-sm " style="position: absolute; top: 0; right: 0;" data-index="' + index + '">X</button>' +
 			                    '</div>');
 			        });
@@ -198,16 +210,17 @@ let selectedValues = [];
 		        var productId = $('#productNo').val();
 		        var productName = $('#productName').val();
 		        var productPrice = $('#productPrice').val();
-		        var productContent = $('#productContent').val();
+		        var productContent = $('#contentImgPreview').attr('src');
+		        var deleteContentImg = $('#deletecontentImage').is(':visible') ? 'true' : productContent;
 		        var productSellCount = $("#productSellCount").val();
 		        // 할인 타입 설정
 		        var discountType = $("input[name='discountType']:checked").val();
 		        var existingMainImageUrl = $('#mainImagePreview').attr('src');
 		        var deleteMainImage = $('#deleteImage').is(':visible') ? 'true' : existingMainImageUrl; // 삭제 버튼이 보이면 이미지가 삭제되지 않음
 
-		        if (discountType === "percent") {
+		        if (discountType == "percent") {
 		        	discountType = "P"; // 퍼센트할인
-		        } else if ( discountType = "none") {
+		        } else if ( discountType == "none") {
 		        	 discountType = "N"
 		        }
 
@@ -216,11 +229,12 @@ let selectedValues = [];
 		        formData.append('product_no', productId);
 		        formData.append('product_name', productName);
 		        formData.append('product_price', productPrice);
-		        formData.append('product_content', productContent);
+		        formData.append('product_content', deleteContentImg);
 		        formData.append('product_dc_type', discountType);
 		        formData.append('dc_rate', discountAmount);
 				formData.append('product_sell_count' , productSellCount);
 				formData.append('product_main_image' , deleteMainImage);
+				
 		        // 메인 이미지
 		        var mainImage = $('#image_main_url')[0].files[0];
 		        if (mainImage) {
@@ -240,6 +254,10 @@ let selectedValues = [];
 		        var subImages = $('#image_sub_url')[0].files;
 		        for (var i = 0; i < subImages.length; i++) {
 		            formData.append('image_sub_url', subImages[i]);
+		        }
+		        var contentImage = $('#product_content_img')[0].files[0];
+		        if (contentImage) {
+		            formData.append('content_image', contentImage);
 		        }
 		        $.ajax({
 		            url: '/admin/productmanage/productUpdate', // 수정 요청을 보낼 URL
@@ -494,27 +512,33 @@ let selectedValues = [];
 												<td>${product.product_no}</td>
 												<td>${product.product_name}</td>
 												<td>${product.product_price}</td>
-												<td>${product.product_content}</td>
+												<td><c:if test="${!fn:contains(product.product_content , 'Content')}">
+														<img src="${product.product_content}" width="40px" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
+													</c:if>
+														<c:if test="${fn:contains(product.product_content , 'Content')}">
+														<img src="/resources/product/${product.product_content}" width="40px" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
+														</c:if>
+													</td>
 												<td>${product.product_dc_type}</td>
 												<td>${product.dc_rate}</td>
 												<td>${product.product_sell_count}</td>
 												<td><c:forEach var="img" items="${product.list}">
 														<c:if test="${img.image_type == 'M' && !fn:contains(img.image_url, 'Main')}">
-															<img src=' ${img.image_url}' alt="Main Image" width="50" height="50">
+															<img src='${img.image_url} ' alt="Main Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
-														<c:if test = "${img.image_type == 'M' && fn:contains(img.image_url, 'Main')}">
-															<img src='/resources/product${img.image_url}' alt="Main Image" width="50" height="50">
+														<c:if test="${img.image_type == 'M' && fn:contains(img.image_url, 'Main')}">
+															<img src='/resources/product/${img.image_url}' alt="Main Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
 												<td><c:forEach var="img" items="${product.list}">
 														<c:if test="${img.image_type == 'S' && !fn:contains(img.image_url, 'Sub')}">
-															<img src='${img.image_url}' alt="Sub Image" width="50" height="50">
+															<img src='${img.image_url}' alt="Sub Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 서브 이미지 URL 출력 -->
 														</c:if>
-														<c:if test = "${img.image_type == 'M' && fn:contains(img.image_url, 'Sub')}">
-															<img src='/resources/product${img.image_url}' alt="Main Image" width="50" height="50">
+														<c:if test="${img.image_type == 'S' && fn:contains(img.image_url, 'Sub')}">
+															<img src='/resources/product/${img.image_url}' alt="Sub Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
@@ -686,8 +710,16 @@ let selectedValues = [];
 						<label for="productPrice" class="form-label">상품 가격</label> <input type="text" class="form-control" id="productPrice">
 					</div>
 					<div class="mb-3">
-						<label for="productContent" class="form-label">상품 설명</label>
-						<textarea class="form-control" id="productContent"></textarea>
+						<label for="image_main_url" class="form-label">상품 설명 이미지</label>
+						<div id="contentImg">
+
+							<div style="position: relative; display: inline-block;">
+								<img id="contentImgPreview" src="" alt="contentImage" width="100" height="100">
+								<button id="deletecontentImage" type="button" class="btn btn-danger btn-sm" style="position: absolute; top: 0; right: 0;">X</button>
+							</div>
+
+						</div>
+						<input type="file" class="form-control" id="product_content_img" accept="image/*">
 					</div>
 					<div class="mb-3">
 						<label class="form-label">상품 할인 타입</label><br> <input type="radio" id="percentDiscount" name="discountType" value="percent"> 퍼센트할인 <input type="radio" id="noDiscount" name="discountType" value="none" checked> 없음
@@ -742,6 +774,21 @@ let selectedValues = [];
 					<button class="btn btn-primary" id="confirmDeleteBtn">확인</button>
 					<button class="btn btn-danger" data-bs-dismiss="modal">취소</button>
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalToggle3" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none;" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalToggleLabel"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<img src="" id="bigImage" class="img-fluid">
+				</div>
+				<div class="modal-footer"></div>
 			</div>
 		</div>
 	</div>

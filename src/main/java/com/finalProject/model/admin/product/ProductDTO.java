@@ -20,7 +20,7 @@ public class ProductDTO {
 	private String product_name;
 	private int product_price;
 	private String product_content;
-
+	private int category_no;
 	private String product_dc_type;
 	private float dc_rate;
 	private int product_sell_count;

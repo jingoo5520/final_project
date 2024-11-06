@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
 
@@ -40,7 +42,13 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
-	
+	function selectCategory(name, no) {
+		document.getElementById('selectCategory').value = no;
+
+		// 버튼의 텍스트를 선택된 카테고리 이름으로 설정
+		document.querySelector('.btn-group > button').innerText = name;
+
+	}
 </script>
 </head>
 
@@ -133,6 +141,23 @@
 													</tr>
 												</tbody>
 											</table>
+											<div class="row mb-3">
+												<label class="col-sm-2 col-form-label" for="basic-default-company"> 카테고리</label>
+												<div class="col-sm-10">
+													<div class="btn-group">
+														<button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">카테고리 번호</button>
+														<input type="number" class="form-control" id="selectCategory" placeholder="카테고리" name="category_no" readonly="readonly" value="">
+														<ul class="dropdown-menu" style="">
+															<c:forEach var="category" items="${categories}">
+																<li>
+																	<label>${category.category_no }</label>
+																	<a href="javascript:void(0);" class="list-group-item list-group-item-action" onclick="selectCategory('${category.category_name}', '${category.category_no}')"> ${category.category_name} </a>
+																</li>
+															</c:forEach>
+														</ul>
+													</div>
+												</div>
+											</div>
 										</div>
 										<div class="row mb-3">
 											<label class="col-sm-2 col-form-label" for="basic-default-email">할인타입이 선택된 값에 따라 보여지는html이 다르게 동적으로 설정</label>

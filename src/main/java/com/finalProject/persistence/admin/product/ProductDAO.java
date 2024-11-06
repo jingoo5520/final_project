@@ -6,6 +6,7 @@ import java.util.Map;
 import com.finalProject.model.admin.product.ProductDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
 import com.finalProject.model.admin.product.ProductVO;
+import com.finalProject.model.admin.product.adminCategories;
 
 public interface ProductDAO {
 
@@ -30,5 +31,7 @@ public interface ProductDAO {
 	int updateProductImg(ProductUpdateDTO updateProduct);
 
 	int deleteProduct(int productId);
+
+	List<adminCategories> getCategories();
 
 }

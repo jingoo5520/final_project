@@ -29,7 +29,7 @@ public class ProductUpdateDTO {
 
 	private String product_main_image;
 	private List<String> product_sub_image;
-
+	private MultipartFile content_image;
 	private MultipartFile image_main_url;
 	private MultipartFile[] image_sub_url;
 }

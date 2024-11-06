@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.finalProject.model.admin.product.ProductDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
 import com.finalProject.model.admin.product.ProductVO;
+import com.finalProject.model.admin.product.adminCategories;
 
 @Repository
 public class ProductDAOImpl implements ProductDAO {
@@ -109,5 +110,11 @@ public class ProductDAOImpl implements ProductDAO {
 	public int deleteProduct(int productId) {
 		// TODO Auto-generated method stub
 		return ses.delete(ns + "deleteProduct", productId);
+	}
+
+	@Override
+	public List<adminCategories> getCategories() {
+
+		return ses.selectList(ns + "getCategories");
 	}
 }

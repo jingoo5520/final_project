@@ -23,7 +23,7 @@ public class ProductUtil {
 		// TODO Auto-generated method stub
 		boolean result = false;
 		for (String filePath : list) {
-			File file = new File(filePath);
+			File file = new File(File.separator + filePath);
 			if (file.exists()) {
 				result = file.delete();
 			}
@@ -34,7 +34,7 @@ public class ProductUtil {
 	public boolean removeFile(String path) {
 		// TODO Auto-generated method stub
 
-		File file = new File(path);
+		File file = new File(File.separator + path);
 		if (file.exists()) {
 			return file.delete();
 		}

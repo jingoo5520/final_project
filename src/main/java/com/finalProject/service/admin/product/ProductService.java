@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.finalProject.model.admin.product.ProductDTO;
-import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
+import com.finalProject.model.admin.product.adminCategories;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 
 public interface ProductService {
 
@@ -22,5 +23,7 @@ public interface ProductService {
 	int deleteProduct(int productId);
 
 	void updateProductImg(int product_no, List<String> list);
+
+	List<adminCategories> getCategories();
 
 }

@@ -13,9 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.product.PagingInfo;
 import com.finalProject.model.admin.product.ProductDTO;
-import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
 import com.finalProject.model.admin.product.ProductVO;
+import com.finalProject.model.admin.product.adminCategories;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.persistence.admin.product.ProductDAO;
 
 @Service
@@ -68,11 +69,11 @@ public class ProductServiceImpl implements ProductService {
 	public boolean updateProduct(ProductUpdateDTO updateProduct) {
 		if (pDAO.updateProduct(updateProduct) == 1) {
 
-			updateProduct
-					.setProduct_main_image(updateProduct.getProduct_main_image().replace("/resources/product", ""));
+			updateProduct.setProduct_main_image(
+					updateProduct.getProduct_main_image().trim().replace("/resources/product/", ""));
 			for (int i = 0; i < updateProduct.getProduct_sub_image().size(); i++) {
 
-				String updatedImage = updateProduct.getProduct_sub_image().get(i).replace("/resources/product", "");
+				String updatedImage = updateProduct.getProduct_sub_image().get(i).replace("/resources/product/", "");
 				updateProduct.getProduct_sub_image().set(i, updatedImage);
 			}
 			if (pDAO.updateProductImg(updateProduct) == 1) {
@@ -165,5 +166,11 @@ public class ProductServiceImpl implements ProductService {
 			System.out.println(subImages.toArray().toString());
 		}
 
+	}
+
+	@Override
+	public List<adminCategories> getCategories() {
+
+		return pDAO.getCategories();
 	}
 }
