@@ -1700,7 +1700,7 @@
 		    }
 
             const paymentType = document.querySelector("#payment_type").value;
-            const totalPrice = parseInt(document.querySelector(".totalPrice").textContent.replace(/\D/g, "")) // 예) "453,000원" -> 453000
+            // const totalPrice = parseInt(document.querySelector(".totalPrice").textContent.replace(/\D/g, "")) // 예) "453,000원" -> 453000
             const saveDeliveryType = document.querySelector("#saveDeliveryType").value;
             const deliveryName = document.querySelector("#deliveryName").value;
             const pointDCText = document.querySelector("#pointDC").textContent;
@@ -1708,7 +1708,7 @@
             const couponUse = document.querySelector("#couponUse").value;
             const deliveryAddress = document.querySelector("#deliveryAddressHidden").value + document.querySelector("#detailAddressNew").value;
             const deliveryRequest = document.querySelector("input[name='deliveryRequest']").value;
-            const deliveryCost = parseInt(document.querySelector("#deliveryCost").textContent.replace(/\D/g, "")) // 예) "2500 원" -> 2500
+            // const deliveryCost = parseInt(document.querySelector("#deliveryCost").textContent.replace(/\D/g, "")) // 예) "2500 원" -> 2500
             const ordererId = document.querySelector("input[name='ordererId']").value;
             const ordererName = document.querySelector("input[name='ordererName']").value;
             const phoneNumber = document.querySelector("input[name='phoneNumber']").value;
@@ -1716,13 +1716,13 @@
 
             const paymentData = {
                 productsInfo,
-                totalPrice,
+                // totalPrice,
                 paymentType,
                 saveDeliveryType,
                 deliveryName,
                 deliveryAddress,
                 deliveryRequest,
-                deliveryCost,
+                // deliveryCost,
                 ordererId,
                 ordererName,
                 phoneNumber,
@@ -1736,6 +1736,7 @@
 			// 주문 테이블 생성
 			let isOrderMade = false
 			let orderId = null
+			let totalPrice = null
             $.ajax({
             	async: false,
                 url: '/orderProducts',
@@ -1746,6 +1747,7 @@
                 success: function(response) {
                     console.log('Success:', response);
                     orderId = response.orderId
+                    totalPrice = parseInt(response.totalPrice)
 					isOrderMade = true
                 },
                 error: function(xhr, status, error) {
@@ -1755,13 +1757,14 @@
             });
             if (isOrderMade == false) {return} // 주문 테이블 생성이 제대로 안되었을 때 함수 종료
             
-            console.log("now here")
 			// @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
 			let amount = {
 				currency: "KRW",
 				value: totalPrice,
 			}
+            console.log("amount : " + JSON.stringify(amount))
 			let orderName =  $(".product-name").find("a").text()
+			orderName = orderName.substring(0, 20)
 			if ($(".product-name").length > 1) {
 				orderName += ("외 " + ($(".product-name").length - 1) + "건")
 			}

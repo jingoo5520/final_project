@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.UseCouponDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
+import com.finalProject.model.order.OrderProductsDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
 import com.finalProject.service.member.MemberService;
@@ -157,11 +159,17 @@ public class OrderController {
 		System.out.println("payment request : " + paymentRequest);
 		Map<String, String> resultMap = new HashMap<>();
 			try {
-				session.setAttribute("orderId", orderService.makeOrder(paymentRequest));
-				System.out.println("세션에 저장된 orderId : " + session.getAttribute("orderId"));
+	        	boolean isMember = session.getAttribute("loginMember") == null ? false : true; // 로그인 여부로 회원, 비회원 여부 알아내기
+				session.setAttribute("orderId", orderService.makeOrder(paymentRequest, isMember)); // 비회원은 orderId가 "non_member"이다.
+				String orderId = (String) session.getAttribute("orderId");
+				System.out.println("세션에 저장된 orderId : " + orderId);
+				if (isMember == false) {
+					orderService.makeGuest(paymentRequest, orderId);
+				}
 				resultMap.put("result", "success");
 				resultMap.put("message", "Payment processed successfully");
-				resultMap.put("orderId", (String) session.getAttribute("orderId"));
+				resultMap.put("orderId", orderId);
+				resultMap.put("totalPrice", String.valueOf(orderService.getExpectedTotalPrice(orderId)));
 				return ResponseEntity.ok(resultMap);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -219,6 +227,7 @@ public class OrderController {
 		session.setAttribute("orderId", orderId);
 	}
 	
+	// deprecated : /orderProducts에서 예상금액 칼럼을 채워넣음
 	@PostMapping("/payment/saveExpectedTotalPrice")
 	public ResponseEntity<Map<String, String>> saveAmount(
 			@RequestParam("value") int amount,
@@ -234,6 +243,7 @@ public class OrderController {
 			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			resultMap.put("result", "fail");
 			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.BAD_REQUEST);
 		}
@@ -246,7 +256,8 @@ public class OrderController {
 			@RequestParam("orderId") String orderId,
 			@RequestParam("paymentKey") String paymentKey,
 			@RequestParam("amount") int amount,
-			Model model
+			Model model,
+			HttpSession session
 			) {
 		// 예시 : http://localhost:8080/user/payment/success.html?orderId=MC4wODExNjkzNzY1NTg1&paymentKey=tviva20241016183611gDY62&amount=10
 		System.out.println("결제 인증 성공");
@@ -254,8 +265,11 @@ public class OrderController {
 		// NOTE : DB 조작이 일어나지만 select문이므로 트랜잭션 처리하지 않았음. 예외 발생 시 함수가 중지됨.
 		int savedPrice = orderService.getExpectedTotalPrice(orderId);
 		int queryPrice = amount;
+		System.out.println("savedPrice : " + savedPrice);
+		System.out.println("queryPrice : " + amount);
 		if (savedPrice != amount) {
 			model.addAttribute("message", "결제 금액 조작의 위험이 발견되었습니다. 다시 한번 결제를 시도해주세요.");
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			// TODO : 지금 로그인한 유저의 orderId로 orders 테이블 삭제하기, orderProducts의 테이블의 행들도 삭제하기
 			// (입력단에서 다시 테이블 삽입시켜야 함.)
 			// (입력단에서 테이블 삽입할 때 기존 아이디로 orders 테이블에 뭔가 있다면 삭제하고 다시 넣는 처리가 필요할 듯)
@@ -275,6 +289,7 @@ public class OrderController {
 			orderService.setPaymentModuleKey(orderId, paymentKey);
 		} catch (Exception e) {
 			model.addAttribute("message", "잘못된 요청입니다. 다시 한번 시도해주세요.");
+			orderService.deleteOrder(orderId);
 			// TODO : 실패 페이지 깔끔하게 다시 만들어야 함
 			return "/user/pages/order/temp_02";
 		}
@@ -304,14 +319,14 @@ public class OrderController {
 						orderId,
 						(int) Float.parseFloat(responseMap.get("totalAmount").toString()),
 						"T",
-						responseMap.get("method").toString()
+						responseMap.get("method").toString(),
+						session
 					);
 				return "/user/pages/order/temp_01"; // 결제 성공
 			}
 		} catch (Exception e) {
-			// TODO : 현재 로그인된 id로 orders 테이블 delete 처리
-			// 실패해도 예외처리 할 필요는 없음. 만약에 미리 지워져있다면 지우는 데 실패할 수도 있으니까...
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			return "/user/pages/order/temp_02"; // 결제 실패
 		}
 		return "/user/pages/order/temp_02"; // 결제 실패
@@ -337,11 +352,13 @@ public class OrderController {
 					orderId,
 					orderService.getExpectedTotalPrice(orderId),
 					"N", // 네이버페이
-					null
+					null, 
+					session
 				);
 			return "/user/pages/order/temp_01"; // 결제 성공
 		} catch (Exception e) {
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			return "/user/pages/order/temp_02"; // 결제 실패
 		}
 	}
@@ -375,6 +392,7 @@ public class OrderController {
 			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			Map<String, String> outputResponseMap = new HashMap<>();
 			outputResponseMap.put("result", "fail");
 			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.BAD_REQUEST);
@@ -413,7 +431,6 @@ public class OrderController {
 				(String) requestData.get("tid"), 
 				(String) requestData.get("pg_token")
 			);
-		// working...
 		Map<String, String> outputResponseMap = new HashMap<>();
 		String orderId = (String) session.getAttribute("orderId");
 
@@ -423,17 +440,20 @@ public class OrderController {
 						orderId,
 						orderService.getExpectedTotalPrice(orderId),
 						"K", // 카카오페이
-						null
+						null, 
+						session
 					);
 				outputResponseMap.put("result", "success");
 				return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.OK);
 			} catch (Exception e) {
 				e.printStackTrace();
 				outputResponseMap.put("result", "fail");
+				orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 				return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			outputResponseMap.put("result", "fail");
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -468,4 +488,31 @@ public class OrderController {
 		model.addAttribute("orderNo", orderNo);
 		return "/user/pages/order/cancelOrder";
 	}
+	
+	// 회원의 모든 주문과 주문마다의 상품을 반환
+	@GetMapping("/orderProducts")
+	@ResponseBody
+	public List<OrderProductsDTO> getOrderProducts(
+			@RequestParam("memberId") String memberId) {
+		return orderService.getOrderListOfMember(memberId);
+	}
+	
+	
+	@GetMapping("/cancelAPItest")
+	public String cancelAPItest() {
+		return "/user/pages/order/cancelAPItest";
+	}
+	
+	@GetMapping("/getLoginedId")
+	@ResponseBody
+	public String getLoginedId(HttpSession session) {
+		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
+		return loginDTO.getMember_id();
+	}
+	
+//	@GetMapping("/cancelAPItest/")
+//	public String cancelAPItest() {
+//		return "/user/pages/order/cancelAPItest";
+//	}
+	
 }
