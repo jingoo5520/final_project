@@ -54,5 +54,10 @@ public class AdminInquiryDAOImpl implements AdminInquiryDAO {
 	public int updateInquiryReply(InquiryReplyDTO dto) throws Exception {
 		return ses.insert(ns + "updateInquiryReply", dto);
 	}
+
+	@Override
+	public int updateInquiryStatus(int inquiryNo) throws Exception {
+		return ses.update(ns + "updateInquiryStatus", inquiryNo);
+	}
 } 
 

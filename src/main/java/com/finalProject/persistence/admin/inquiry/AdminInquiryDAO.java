@@ -28,4 +28,7 @@ public interface AdminInquiryDAO {
 
 	// 문의 답글 수정
 	int updateInquiryReply(InquiryReplyDTO dto) throws Exception;
+
+	// 문의 답글 작성 후 문의 상태 변경
+	int updateInquiryStatus(int inquiryNo) throws Exception;
 }

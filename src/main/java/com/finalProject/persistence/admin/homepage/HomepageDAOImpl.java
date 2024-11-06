@@ -41,8 +41,13 @@ public class HomepageDAOImpl implements HomepageDAO {
 
 	@Override
 	public List<BannerDTO> selectBannerList() throws Exception {
-		
 		return ses.selectList(ns + "selectBannerList");
+	}
+
+	@Override
+	public int deleteBanner(int bannerNo) throws Exception {
+		
+		return ses.delete(ns + "deleteBanner", bannerNo);
 	}
 
 }

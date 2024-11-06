@@ -26,6 +26,9 @@ let fileList = [];
 
 	$(function(){
 		
+		getOrderedProducts();
+		
+		
 		$('#inquiryTitle').on('input', function() {
 			checkFormCompletion();
 		});
@@ -68,25 +71,48 @@ let fileList = [];
 		})
 		
 		// 문의 타입이 상품인 경우 주문 상품 리스트 가져와야함
-		$(".select-items select").on("change", function(){
+		$("#selectInquiryType select").on("change", function(){
 			if($(this).val() == "상품"){
-				let output = `<label>주문 상품(type = "상품")</label>
-					<div class="select-items">
-					<select class="form-control">
-						<option value="0">1</option>
-						<option value="0">2</option>
-						<option value="0">3</option>
-						<option value="0">4</option>
-					</select>
-				</div>`
-				
-				$(".orderList").html(output);
+				$("#orderList").show();
 			} else {
-				$(".orderList").html("");
+				$("#selectInquiryProduct select").val("");
+				$("#orderList").hide();
 			}
+			
+			checkFormCompletion();
+		});
+		
+		$("#selectInquiryProduct select").on("change", function(){
+			checkFormCompletion();
+			console.log($(this).val());
 		});
 	});
 
+	// 주문 상품 리스트 가져오기
+	function getOrderedProducts(){
+		$.ajax({
+			url : '/serviceCenter/getOrderedProducts',
+			type : 'GET',
+			dataType: 'json',
+			success : function(data) {
+				console.log(data);
+				
+				let output = '';
+				output += `<option value="" disabled selected>상품선택</option>`;
+				
+				data.forEach(function(orderProduct){
+					output += `<option value="\${orderProduct.product_no}">\${orderProduct.product_name}</option>`
+				})
+				
+				$("#orderListSelect").html(output);
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		
+		});
+	}
+	
 	// 첨부파일 리스트 보여주기
 	function showFiles(){
 		let listOutput = '';
@@ -102,10 +128,14 @@ let fileList = [];
 	function writeInquiry(){
 		let inquiryTitle = $("#inquiryTitle").val();
 		let inquiryContent = $("#inquiryContent").val();
-		let inquiryType = $(".select-items select").val();
+		let inquiryType = $("#selectInquiryType select").val();
 		let productNo = null;
 		
 		let formData = new FormData();
+		
+		if($("#selectInquiryType select").val() == "상품"){
+			productNo = $("#selectInquiryProduct select").val();
+		}
 		
 		
 		formData.append('inquiryTitle', inquiryTitle);
@@ -139,8 +169,9 @@ let fileList = [];
 	function checkFormCompletion() {
 		let inquiryTitleCheck = inquiryTitleValid();
 		let inquiryContentCheck = inquiryContentValid();
+		let inquiryProductCheck = inquiryProductValid();
 
-		if (inquiryTitleCheck && inquiryContentCheck) {
+		if (inquiryTitleCheck && inquiryContentCheck && inquiryProductCheck) {
 			$("#writeInquiryBtn").prop('disabled', false);
 		} else {
 			$("#writeInquiryBtn").prop('disabled', true);
@@ -164,6 +195,17 @@ let fileList = [];
 		if ($('#inquiryContent').val().length > 0) {
 			valid = true;
 		}
+		return valid;
+	}
+	
+	// 상품 선택 검사
+	function inquiryProductValid(){
+		let valid = false;
+
+		if ($('#selectInquiryType select').val() != "상품" || $('#selectInquiryProduct select').val() != null) {
+			valid = true;
+		}
+		
 		return valid;
 	}
 	
@@ -284,7 +326,7 @@ let fileList = [];
 									<div class="col-md-12">
 										<div class="single-form form-default">
 											<label>문의 타입</label>
-											<div class="select-items">
+											<div id="selectInquiryType" class="select-items">
 												<select class="form-control">
 													<option value="상품">상품</option>
 													<option value="주문">주문</option>
@@ -297,14 +339,10 @@ let fileList = [];
 
 									<!-- 주문 상품 -->
 									<div class="col-md-12">
-										<div class="single-form form-default orderList">
-											<label>주문 상품(type = "상품")</label>
-											<div class="select-items">
-												<select class="form-control">
-													<option value="0">1</option>
-													<option value="0">2</option>
-													<option value="0">3</option>
-													<option value="0">4</option>
+										<div id="orderList" class="single-form form-default">
+											<label>주문 상품</label>
+											<div id="selectInquiryProduct" class="select-items">
+												<select id="orderListSelect" class="form-control">
 												</select>
 											</div>
 										</div>

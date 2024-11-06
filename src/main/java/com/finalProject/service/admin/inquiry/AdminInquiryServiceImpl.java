@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
@@ -68,12 +69,15 @@ public class AdminInquiryServiceImpl implements AdminInquiryService {
 	}
 
 	@Override
+	@Transactional
 	public int writeInquiryReply(InquiryReplyDTO dto) throws Exception {
 		int result = 0;
 		
 		// 신규 작성
 		if(dto.getInquiry_reply_no() == 0) {
+			
 			result = aiDao.insertInquiryReply(dto);
+			aiDao.updateInquiryStatus(dto.getInquiry_no());
 		} else {
 			result = aiDao.updateInquiryReply(dto);
 		}

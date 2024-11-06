@@ -36,5 +36,13 @@
 		from banners b join notices n on b.notice_no = n.notice_no
 		where n.notice_type = 'E'
 	</select>
+	
+	<!-- 배너 삭제 -->
+	<delete id="deleteBanner">
+		delete from banners
+		where banner_no = #{bannerNo}
+	</delete>
+	
+	
 
 </mapper>

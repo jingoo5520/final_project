@@ -19,4 +19,7 @@ public interface HomepageDAO {
 	// 배너 리스트 가져오기
 	List<BannerDTO> selectBannerList() throws Exception;
 
+	// 배너 삭제
+	int deleteBanner(int bannerNo) throws Exception;
+
 }

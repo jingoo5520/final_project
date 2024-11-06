@@ -42,4 +42,10 @@ public class HomepageServiceImpl implements HomepageService{
 		return hDao.selectBannerList();
 	}
 
+
+	@Override
+	public int deleteBanner(int bannerNo) throws Exception {
+		return hDao.deleteBanner(bannerNo);
+	}
+
 }

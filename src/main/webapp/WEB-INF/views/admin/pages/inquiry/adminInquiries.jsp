@@ -74,7 +74,7 @@
 
 				    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
 					
-					listOutput += '<tr>' 
+					listOutput += `<tr onclick="location.href='/admin/inquiry/adminInquiryDetail?inquiryNo=\${inquiry.inquiry_no}'">` 
 						+ `<td>\${inquiry.inquiry_no}</td>`
 						+ `<td>\${inquiry.inquiry_title}</td>`
 						+ `<td>\${inquiry.member_id}</td>`
@@ -172,7 +172,6 @@ table tr:hover {
 									<tbody id="inquiryTableBody" class="table-border-bottom-0">
 
 										<c:forEach var="inquiry" items="${inquiryData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
 											<tr onclick="location.href='/admin/inquiry/adminInquiryDetail?inquiryNo=${inquiry.inquiry_no}'">
 												<td class="">${inquiry.inquiry_no}</td>
 												<td class="">${inquiry.inquiry_title}</td>

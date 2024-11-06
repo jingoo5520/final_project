@@ -79,5 +79,17 @@
 		#{reply_content}
 		where inquiry_reply_no = #{inquiry_reply_no}
 	</update>
+	
+	<!-- 문의 답글 작성 후 문의 상태 변경 -->
+	
+	<update id="updateInquiryStatus">
+		update inquiries
+		set
+		inquiry_status = 'C'
+		where inquiry_no = #{inquiryNo}
+	</update>
+	
+	
+	
 
 </mapper>

@@ -43,7 +43,8 @@
 
 <script>
 	let selectedEventNo;
-
+	let selectedBannerNo;
+	
 	$(function() {
 
 		// 모달이 닫힐 때 이벤트를 처리
@@ -52,7 +53,6 @@
 			console.log("모달 닫힘");
 		});
 
-		getBannerList();
 		getEventList();
 	});
 
@@ -76,19 +76,20 @@
 						mainBannerOutput += `<td>\${banner.notice_title}</td>`;
 						mainBannerOutput += `<td>\${banner.banner_image}</td>`;
 						mainBannerOutput += `<td>\${banner.url}</td>`;
-						mainBannerOutput += `</tr>`;	
+						mainBannerOutput += `<td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBannerModal" onclick="openDeleteBannerModal(\${banner.banner_no})">삭제</button></td>`;
+						mainBannerOutput += `</tr>`;
 					} else {
 						subBannerOutput += `<tr>`;
 						subBannerOutput += `<td>\${banner.banner_no}</td>`;
 						subBannerOutput += `<td>\${banner.notice_title}</td>`;
 						subBannerOutput += `<td>\${banner.thumbnail_image}</td>`;
 						subBannerOutput += `<td>\${banner.url}</td>`;
-						subBannerOutput += `</tr>`;	
+						subBannerOutput += `<td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBannerModal" onclick="openDeleteBannerModal(\${banner.banner_no})">삭제</button></td>`;
+						subBannerOutput += `</tr>`;
 					}
 				});
 				
 				
-				console.log(mainBannerOutput);
 				$("#mainBannerListTableBody").html(mainBannerOutput);
 				$("#subBannerListTableBody").html(subBannerOutput);
 			},
@@ -177,7 +178,7 @@
 
 		$.ajax({
 			url : '/admin/homepage/addBanner',
-			type : 'GET',
+			type : 'POST',
 			data : {
 				"eventNo" : selectedEventNo,
 				"bannerType" : bannerType
@@ -186,6 +187,31 @@
 			success : function(data) {
 				console.log(data);
 				$('#addBannerModal').modal('hide');
+				getBannerList();
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+	
+	// 배너 삭제 모달 열기(삭제 버튼 클릭)
+	function openDeleteBannerModal(bannerNo){
+		selectedBannerNo = bannerNo;
+	}
+	
+	// 배너 삭제
+	function deleteBanner(){
+		$.ajax({
+			url : '/admin/homepage/deleteBanner',
+			type : 'POST',
+			data : {
+				"bannerNo" : selectedBannerNo
+			},
+			dataType : 'text',
+			success : function(data) {
+				console.log(data);
+				$('#deleteBannerModal').modal('hide');
 				getBannerList();
 			},
 			error : function(error) {
@@ -246,7 +272,8 @@
 											<th class="col-2">배너 번호</th>
 											<th class="col-2">이벤트</th>
 											<th class="col-5">이미지 경로</th>
-											<th class="col-3">이동 경로</th>
+											<th class="col-2">이동 경로</th>
+											<th class="col-1">삭제</th>
 										</tr>
 									</thead>
 									<tbody id="mainBannerListTableBody" class="table-border-bottom-0">
@@ -257,6 +284,7 @@
 												<td>${banner.notice_title}</td>
 												<td>${banner.banner_image}</td>
 												<td>${banner.url}</td>
+												<td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBannerModal" onclick="openDeleteBannerModal(${banner.banner_no})">삭제</button></td>
 											</tr>
 										</c:forEach>
 
@@ -274,7 +302,8 @@
 											<th class="col-2">배너 번호</th>
 											<th class="col-2">이벤트</th>
 											<th class="col-5">이미지 경로</th>
-											<th class="col-3">이동 경로</th>
+											<th class="col-2">이동 경로</th>
+											<th class="col-1">삭제</th>
 										</tr>
 									</thead>
 									<tbody id="subBannerListTableBody" class="table-border-bottom-0">
@@ -284,6 +313,7 @@
 												<td>${banner.notice_title}</td>
 												<td>${banner.thumbnail_image}</td>
 												<td>${banner.url}</td>
+												<td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBannerModal" onclick="openDeleteBannerModal(${banner.banner_no})">삭제</button></td>
 											</tr>
 										</c:forEach>
 
@@ -337,7 +367,27 @@
 								</div>
 							</div>
 						</div>
-						<!-- / 쿠폰 생성 모달 -->
+						<!-- / 배너 생성 모달 -->
+						
+						<!-- 배너 삭제 모달 -->
+						<div id="deleteBannerModal" class="modal fade" tabindex="-1" aria-hidden="true">
+							<div class="modal-dialog modal-sm" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="editModalTitle">배너 삭제</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">배너를 삭제하시겠습니까?</div>
+
+
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Close</button>
+										<button type="button" class="btn btn-danger" onclick="deleteBanner()">Delete</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- / 배너 삭제 모달 -->
 					</div>
 				</div>
 				<!-- / Content -->

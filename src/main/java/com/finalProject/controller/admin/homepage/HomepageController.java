@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -83,8 +84,7 @@ public class HomepageController {
 		return list;
 	}
 	
-	
-	@GetMapping("/addBanner")
+	@PostMapping("/addBanner")
 	public ResponseEntity<String> addBanner(@RequestParam int eventNo, @RequestParam String bannerType) {
 		String result = "";
 		
@@ -93,6 +93,21 @@ public class HomepageController {
 		
 		try {
 			hService.addBanner(eventNo, bannerType);
+			result = "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return new ResponseEntity<String>(result, HttpStatus.OK);
+	}
+	
+	@PostMapping("/deleteBanner")
+	public ResponseEntity<String> deleteBanner(@RequestParam int bannerNo) {
+		String result = "";
+		
+		try {
+			hService.deleteBanner(bannerNo);
 			result = "success";
 		} catch (Exception e) {
 			e.printStackTrace();

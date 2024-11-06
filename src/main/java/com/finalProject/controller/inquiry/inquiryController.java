@@ -24,6 +24,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
+import com.finalProject.model.inquiry.InquiryProductDTO;
 import com.finalProject.service.inquiry.InquiryService;
 import com.finalProject.util.FileProcess;
 
@@ -126,6 +127,24 @@ public class inquiryController {
 		}
 
 		return data;
+	}
+
+	// 주문 상품 리스트 가져오기
+	@GetMapping("/getOrderedProducts")
+	@ResponseBody
+	public List<InquiryProductDTO> getOrderedProducts(HttpServletRequest request) {
+		List<InquiryProductDTO> list = null;
+
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
+		String memberId = loginDTO.getMember_id();
+
+		try {
+			list = iService.getOrderdProducts(memberId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	// 문의 작성
