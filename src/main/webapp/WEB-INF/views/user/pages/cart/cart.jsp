@@ -31,14 +31,6 @@
 
 $(document).ready(function() {
 	
-	logWindowSize();
-	
-    // 창 크기가 변경될 때마다 크기를 찍기
-    $(window).resize(function() {
-        logWindowSize();
-    });
-	
-	
 	let productCount = $("div.cart-single-list").length;
 	let totalPrices = 0;
 	let totalPoints = 0;
@@ -296,41 +288,6 @@ function removeCheckedItem() {
     }
 }
 
-function logWindowSize() {
-   let width = $(window).width();
-    
-    if (width >= 1837) {
-        $('.hide-total').hide();
-        $('.total-amount.fixed-total').show();
-    } else {
-        $('.hide-total').show();
-        $('.total-amount.fixed-total').hide();
-    }
-}
-
-$(window).scroll(function() {
-	let width = $(window).width(); // 현재 문서의 너비
-	var scrollTop = $(window).scrollTop();
-	var documentHeight = $(document).height();
-	var windowHeight = $(window).height();
-	var remainingScroll = documentHeight - (scrollTop + windowHeight);
-	
-	 if (width >= 1837) {
-	        $('.hide-total').hide();
-	        
-	        if (remainingScroll <= 552) {
-	            $('.total-amount.fixed-total').hide();
-	        } else {
-	            $('.total-amount.fixed-total').show();
-	        }
-	    } else {
-	        $('.hide-total').show();
-	        $('.total-amount.fixed-total').hide();
-	    }
-	
-});
-
-
 function checkedOrder() {
 	let productsInfo = [];
 	let productNo = 0;
@@ -443,29 +400,10 @@ input[type="checkbox"]:hover {
 	color: #807e6f;
 }
 
-.fixed-total {
-    position: fixed;
-    top: 442px;
-    right: 60px;
-    width: 300px;
-    height: 404px;
-    background-color: #a8a691;
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3), 0 10px 15px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-    z-index: 1000;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 0;
-    padding: 0; /* 상단 패딩 제거 */
-}
-
-.fixed-right {
-    padding: 0;
-    margin: 10px !important;/* 상단 마진을 음수로 설정하여 빈 공간 줄이기 */
-}
-
-.bingonggans {
+.cartInfo {
 	height: 180px;
 	margin-bottom: 100px;
+	margin-top: 80px;
 }
 
 #instruction {
@@ -530,6 +468,19 @@ input[type="checkbox"]:hover {
 
 .warningInfoHead span {
     display: block; 
+}
+
+.cart-total {
+	display: flex;
+	justify-content: right;
+}
+
+.cart-total .cartInfo{
+	max-width: 846px;
+}
+
+.cart-total .right {
+	width: 450px;
 }
 
 </style>
@@ -758,26 +709,6 @@ input[type="checkbox"]:hover {
 							</c:forEach>
 						</c:if>
 					</div>
-					<!-- Total Amount -->
-					<div class="total-amount fixed-total ">
-						<div class="right fixed-right">
-							<ul>
-								<li>총 상품금액<span class="totalPrice">0</span></li>
-								<li>상품 할인금액<span class="dcProduct">0</span></li>
-								<li>등급 할인금액<span class="dcLevel"></span></li>
-								<li class="last">총 결제금액<span class="totalPay">0</span></li>
-								<li>총 적립예정포인트<span class="totalPoint">0</span></li>
-							</ul>
-							<div class="button">
-								<form action="/order" method="post" class="orderForm">
-									<input type="hidden" class="productInfos" name="productInfos">
-									<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />결제하기</a>
-									<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
-								</form>
-						 	</div>
-						 </div>
-					 </div>
-					 <!--/ End Total Amount -->
 				</c:when>
 				<c:otherwise>
 					<section class="hero-area">
@@ -800,14 +731,22 @@ input[type="checkbox"]:hover {
 				</c:otherwise>
 			</c:choose>
 			<!-- Total Amount -->
-			<div class="total-amount hide-total">
+			<div class="total-amount cart-total">
+				<div class="cartInfo container">
+					<span id="instruction">장바구니 이용안내</span>
+					<ul id="instructionList">
+						<li>상품 옵션에 따라 결제 금액이 변경 될 수 있습니다.</li>
+						<li>쇼핑백 보관 기간 중 상품 가격이나 혜택이 변동 될수 있습니다.</li>
+						<li>쇼핑백의 상품을 찜 하시면 지속적으로 보실 수 있습니다.</li>
+					</ul>
+				</div>
 				<div class="right">
 					<ul>
-						<li>총 상품금액<span class="totalPrice">0</span></li>
-						<li>상품 할인금액<span class="dcProduct">0</span></li>
-						<li>등급 할인금액<span class="dcLevel"></span></li>
-						<li class="last">총 결제금액<span class="totalPay">0</span></li>
-						<li>총 적립예정포인트<span class="totalPoint">0</span></li>
+						<li><b>총 상품금액</b><span class="totalPrice">0</span></li>
+						<li><b>상품 할인금액</b><span class="dcProduct">0</span></li>
+						<li><b>등급 할인금액</b><span class="dcLevel"></span></li>
+						<li class="last"><b>총 결제금액</b><span class="totalPay">0</span></li>
+						<li><b>총 적립예정포인트</b><span class="totalPoint">0</span></li>
 					</ul>
 					<div class="button">
 						<form action="/order" method="post" class="orderForm">
@@ -822,14 +761,7 @@ input[type="checkbox"]:hover {
 		</div>
 	</div>
 	<!--/ End Shopping Cart -->
-	<div class="bingonggans container">
-		<span id="instruction">장바구니 이용안내</span>
-		<ul id="instructionList">
-			<li>상품 옵션에 따라 결제 금액이 변경 될 수 있습니다.</li>
-			<li>쇼핑백 보관 기간 중 상품 가격이나 혜택이 변동 될수 있습니다.</li>
-			<li>쇼핑백의 상품을 찜 하시면 지속적으로 보실 수 있습니다.</li>
-		</ul>
-	</div>
+	
 
 	<jsp:include page="../footer.jsp"></jsp:include>
 
