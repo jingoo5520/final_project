@@ -19,6 +19,46 @@
 <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
+<!-- 커스텀 스타일 -->
+<style>
+	.btn {
+		width: 100%;
+	}
+
+	.form-group input.text-input:focus {
+		border-color: #A8A691;
+	}
+
+	.form-group input.text-input {
+		width: 100%;
+		padding: 15px 20px;
+		border-radius: 4px;
+		border: 1px solid #e6e2f5;
+		transition: all 0.4s ease;
+		margin-bottom: 1rem;
+	}
+
+	.form-group textarea:focus {
+  		border-color: #A8A691;
+		resize: none;
+	}
+	
+	.form-group textarea {
+		height: 180px;
+		width: 100%;
+		border: 1px solid #e6e2f5;
+		padding: 15px 20px;
+		color: #333;
+		resize: none;
+		font-weight: 400;
+		resize: vertical;
+		border-radius: 4px;
+		background-color: #fff;
+		-webkit-transition: all 0.4s ease;
+		transition: all 0.4s ease;
+	}
+</style>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
 	let pageNo = 1;
@@ -94,7 +134,6 @@
 			}
 		});
 	}
-	
 	// 디테일 페이지 이동
 	function goInquiryDetailPage(inquiryNo) {
 		
@@ -106,6 +145,7 @@
 	$(document).ready(function() {
 		let orderInfo = loadOrderInfo()
 		insertUIToPage(orderInfo)
+
 	})
 
 	function insertUIToPage(orderInfo) {
@@ -142,7 +182,6 @@
 				tags += `<p>\${orderDate}</p>`
 				tags += `<p>\${orderId}</p>`
 				tags += `</div>`
-
 				tags += `<div class="col-lg-2 col-md-2 col-12">`
 				tags += `<p>\${orderStatus}</p>`
 				tags += `</div>`
@@ -150,7 +189,7 @@
 				
 				// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
 				if (orderStatus == "결제완료" || orderStatus == "배송완료") {
-					tags += makeButtonTag(orderStatus, "") // TODO : 함수 호출
+					tags += makeButtonTag(orderStatus, `onOrderCancelBtnClicked(\'\${orderId}\')`) // TODO : 함수 호출
 				} else {
 					tags += "<p></p>" // 아무것도 표시하지 않음
 				}
@@ -164,9 +203,9 @@
 		$("#productsView").append(tags)
 	}
 
-	function makeButtonTag(name, functionName) {
+	function makeButtonTag(name, func) {
 		tag = `<div class="button">
-					<button class="btn" onclick="\${functionName}">주문 취소</button>
+					<button class="btn" onclick="\${func}">주문 취소</button>
 				</div>`
 		return tag
 	}
@@ -188,7 +227,6 @@
             }
         })
         
-        
         $.ajax({
 			async: false,
 			type: 'GET',
@@ -207,7 +245,87 @@
 		console.log(JSON.stringify(orderInfo))
 		return orderInfo
 	}
+
+	function onOrderCancelBtnClicked(orderId) {
+		$("#productsView").html("")
+		tags = ""
+		tags += `<form class="card" method="post">`
+		tags += `<div class="card-body row">`
+		tags += `<div class="title col-12">`
+		tags += `<h3>주문 취소 신청</h3>`
+		tags += `</div>` // class="title col-12" end
+		tags += `<p>주문번호 : \${orderId}</p>`
+
+
+		tags += `
+		<div class="cart-list-title col-12">
+			<div class="row align-items-center">
+				<div class="col-lg-1 col-md-1 col-12"></div>
+				<div class="col-lg-4 col-md-4 col-12"><p>상품정보</p></div>
+				<div class="col-lg-4 col-md-4 col-12"><p>처리상태</p></div>
+				<div class="col-lg-3 col-md-3 col-12"><p>변경/처리</p></div>
+			</div>
+		</div>
+		`
+
+		tags += `<div class="cart-single-list col-12">`
+		tags += `
+		<div class="row align-items-center">
+			<div class="col-lg-1 col-md-1 col-12"><a href="">
+				<img src="https://webimg.jestina.co.kr/UpData2/item/G2000026727/20231116090734ZM.jpg" alt="#"></a>
+			</div>
+			<div class="col-lg-4 col-md-4 col-12">
+				<p>[강진구 PICK] ETER HEART 귀걸이 (JJEREQ3BF693SR000)</p>
+			</div>
+			<div class="col-lg-4 col-md-4 col-12">
+				<p>결제완료</p>
+			</div>
+			<div class="col-lg-3 col-md-3 col-12">
+				<input class="form-check-input" type="checkbox"></input>
+			</div>
+		</div>
+		`
+		tags += `</div>`
+
+
+		tags += `<p>신청사유</p>`
+
+		tags += `<div class="form-group col-12">`
+		tags += `<textarea name=""></textarea>`
+		tags += `</div>` // textarea end
+
+		tags += `<p>계좌 정보</p>`
+		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
+		tags += `<input class="text-input" type="text" placeholder="예금주"></input>`
+		tags += `</div>`
+		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
+		tags += `<input class="text-input" type="text" placeholder="은행"></input>`
+		tags += `</div>`
+		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
+		tags += `<input class="text-input" type="text" placeholder="계좌번호"></input>`
+		tags += `</div>`
+		tags += "<p></p>"
+
+		tags += `<div class="col-lg-6 col-md-6 col-12 button">`
+		tags += `<button class="btn">확인</button>`
+		tags += `</div>`
+		tags += `<div class="col-lg-6 col-md-6 col-12 button">`
+		tags += `<button class="btn">취소</button>`
+		tags += `</div>`
+
+		tags += `</div>` // class="card-body row" end
+		tags += `</form>`
+		$("#productsView").html(tags)
+	}
 </script>
+
+
+<!-- <div class="col-12">
+	<div class="form-group message">
+		<textarea name="message" placeholder="Your Message"></textarea>
+	</div>
+</div> -->
+
 
 </head>
 
@@ -232,6 +350,53 @@
 	transition: background-color 0.3s ease;
 }
 </style>
+
+<!--TODO : 디자인 단순 참고용, 끝나고 삭제하기-->
+<!-- <form class="card login-form" method="post">
+	<div class="card-body">
+		<div class="title">
+			<h3>Login Now</h3>
+			<p>You can login using your social media account or email address.</p>
+		</div>
+		<div class="social-login">
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-12"><a class="btn facebook-btn" href="javascript:void(0)"><i class="lni lni-facebook-filled"></i> Facebook
+						login</a></div>
+				<div class="col-lg-4 col-md-4 col-12"><a class="btn twitter-btn" href="javascript:void(0)"><i class="lni lni-twitter-original"></i> Twitter
+						login</a></div>
+				<div class="col-lg-4 col-md-4 col-12"><a class="btn google-btn" href="javascript:void(0)"><i class="lni lni-google"></i> Google login</a>
+				</div>
+			</div>
+		</div>
+		<div class="alt-option">
+			<span>Or</span>
+		</div>
+		<div class="form-group input-group">
+			<label for="reg-fn">Email</label>
+			<input class="form-control" type="email" id="reg-email" required="">
+		</div>
+		<div class="form-group input-group">
+			<label for="reg-fn">Password</label>
+			<input class="form-control" type="password" id="reg-pass" required="">
+		</div>
+		<div class="d-flex flex-wrap justify-content-between bottom-content">
+			<div class="form-check">
+				<input type="checkbox" class="form-check-input width-auto" id="exampleCheck1">
+				<label class="form-check-label">Remember me</label>
+			</div>
+			<a class="lost-pass" href="account-password-recovery.html">Forgot password?</a>
+		</div>
+		<div class="button">
+			<button class="btn" type="submit">Login</button>
+		</div>
+		<p class="outer-link">Don't have an account? <a href="register.html">Register here </a>
+		</p>
+	</div>
+</form> -->
+
+
+
+
 
 <body>
 	<!-- Preloader -->

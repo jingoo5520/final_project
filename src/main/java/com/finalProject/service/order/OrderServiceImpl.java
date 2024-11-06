@@ -75,6 +75,7 @@ public class OrderServiceImpl implements OrderService {
 	public void makePayment(String orderId, Integer amount, String payModule, String method, HttpSession session) throws Exception {
 		// NOTE : 이 트랜잭션에서 예외가 발생해도 이미 생성된 orders의 테이블의 행은 삭제되지 않음
 		// 그러므로 컨트롤러의 catch 블록에서 orders 테이블의 행을 삭제함
+		System.out.println("makePayment 함수 실행, method 매개변수 : " + method);
 		
 		boolean isMember = session.getAttribute("loginMember") == null ? false : true;
 		
@@ -97,11 +98,8 @@ public class OrderServiceImpl implements OrderService {
 		if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
 			throw new DataAccessException("결제 정보 생성 실패") {}; 
 		}
-		try {
-			orderDAO.updateOrderStatus(method, orderId);
-		} catch (Exception e) {
-			
-		}
+		orderDAO.updateOrderStatus(method, orderId);
+		
 		// TODO : 장바구니에서 결제한 물품 삭제
 	}
 	

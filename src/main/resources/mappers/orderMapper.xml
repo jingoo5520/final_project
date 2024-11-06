@@ -226,7 +226,7 @@
 	<update id="updateOrderStatus">
 		update orders
 		set order_status = #{status}
-		where order_id = "34eb2a20-585e-4cdb-91f4-d4dbbc9b47ff";
+		where order_id = #{orderId};
 	</update>
 	
 	<select id="selectOrderId" resultType="String">

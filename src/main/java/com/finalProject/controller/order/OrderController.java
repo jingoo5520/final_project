@@ -481,7 +481,7 @@ public class OrderController {
 		return "/user/pages/order/orderList";
 	}
 	
-	@PostMapping("/cancelOrder")
+	@GetMapping("/cancelOrder")
 	public String cancelOrder(@RequestParam int orderNo, Model model) {
 		System.out.println("주문취소(or 반품/환불) 페이지 접속");
 		System.out.println("주문번호는 " + orderNo);

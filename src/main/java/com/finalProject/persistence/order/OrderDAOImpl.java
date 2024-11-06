@@ -207,7 +207,7 @@ public class OrderDAOImpl implements OrderDAO {
 		params.put("orderId", orderId);
 		params.put("amount", amount);
 		params.put("moduleName", payModule);
-		if (method != null && method.equals("가상계좌")) {
+		if (method.equals("가상계좌")) {
 			params.put("status", "A");
 		} else { // 카카오페이, 네이버페이 포함
 			params.put("status", "S");
@@ -228,7 +228,7 @@ public class OrderDAOImpl implements OrderDAO {
 	public void updateOrderStatus(String payMethod, String orderId) throws Exception {
 		Map<String, Object> params = new HashMap<>();
 		params.put("orderId", orderId);
-		if (payMethod != null && payMethod.equals("가상계좌")) {
+		if (payMethod.equals("가상계좌")) {
 			params.put("status", 1); // 결제대기
 		} else {
 			params.put("status", 2); // 결제완료
@@ -240,7 +240,6 @@ public class OrderDAOImpl implements OrderDAO {
 	public List<String> getOrderIdList(String memberId) {
 		return ses.selectList(ns + "selectOrderId", memberId);
 	}
-
 
 	@Override
 	public Map<String, Object> getOrderInfo(String orderId) {
