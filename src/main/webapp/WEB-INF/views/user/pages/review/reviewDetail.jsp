@@ -90,12 +90,12 @@
             formData.append('review_title', reviewTitle);
             formData.append('review_content', reviewContent);
             formData.append('review_score', reviewScore);
-			formData.append('product_no', product_no);
-            
+            formData.append('product_no', product_no);
+
             for (let i = 0; i < fileList.length; i++) {
                 formData.append('files', fileList[i]);
             }
-            
+
             // 별점 선택 여부 확인
             if (reviewScore == 0) {
                 const proceed = confirm("별점 선택을 안 하셨습니다. 작성 완료 하시겠습니까?");
@@ -117,7 +117,7 @@
                     location.href = "/review/writtenByReview";
                 },
                 error: function(error) {
-                	console.log("다메다메");
+                    console.log("다메다메");
                     console.log(error);
                 }
             });
@@ -136,37 +136,37 @@
             }
         }
 
-    	// 리뷰 제목 검사
-    	function reviewTitleValid() {
-    		let valid = false;
+        // 리뷰 제목 검사
+        function reviewTitleValid() {
+            let valid = false;
 
-    		if ($('#reviewTitle').val().length > 0) {
-    			valid = true;
-    		}
-    		return valid;
-    	}
-    	
-    	// 리뷰 내용 검사
-    	function reviewContentValid() {
-    		let valid = false;
+            if ($('#reviewTitle').val().length > 0) {
+                valid = true;
+            }
+            return valid;
+        }
 
-    		if ($('#reviewContent').val().length > 0) {
-    			valid = true;
-    		}
-    		return valid;
-    	}
+        // 리뷰 내용 검사
+        function reviewContentValid() {
+            let valid = false;
+
+            if ($('#reviewContent').val().length > 0) {
+                valid = true;
+            }
+            return valid;
+        }
 
         // 리뷰 점수 유효성 검사
-    	function reviewScoreValid() {
-    		let valid = false;
+        function reviewScoreValid() {
+            let valid = false;
 
-    		if ($('#reviewScore').val().length > 0) {
-    			valid = true;
-    		}
-    		return valid;
-    	}
-        
-        
+            if ($('#reviewScore').val().length > 0) {
+                valid = true;
+            }
+            return valid;
+        }
+
+
         $(document).ready(function() {
             // 별 클릭 시 별점 값 설정 및 스타일 변경
             $(".star").on("click", function() {
@@ -235,16 +235,18 @@
         flex-direction: row;
         align-items: center;
     }
-    .star-rating .star {
-    font-size: 24px;
-    color: #ddd;
-    cursor: pointer;
-    transition: color 0.2s;
-}
 
-.star-rating .star.selected {
-    color: gold; /* 선택된 별점 색상 */
-}
+    .star-rating .star {
+        font-size: 24px;
+        color: #ddd;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .star-rating .star.selected {
+        color: gold;
+        /* 선택된 별점 색상 */
+    }
 </style>
 
 <body>
@@ -299,17 +301,17 @@
                     <div class="checkout-steps-form-style-1">
                         <section class="checkout-steps-form-content collapse show" id="collapseThree" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                             <div class="cart-list-title">
-                                <h5>리뷰</h5>
+                                <h5>리뷰 상세</h5>
                             </div>
-                            
-                            
+
+
                             <div class="row">
-                                <form>
+                                <c:forEach var="review" items="${reviews}">
                                     <div class="col-12">
                                         <div class="single-form form-default">
                                             <label>상품 사진</label>
                                             <div class="form-input form">
-                                                <img src="${image_url}" alt="${param.product_name }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="width: 200px; height: 200px; object-fit: cover;">
+                                                <img src="${review.product_image_url}" alt="${review.product_name}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="width: 200px; height: 200px; object-fit: cover;">
                                             </div>
                                         </div>
                                     </div>
@@ -317,8 +319,8 @@
                                         <div class="single-form form-default">
                                             <label>상품 이름</label>
                                             <div class="form-input form">
-                                                <input type="text" name = "product_name" value="${param.product_name}" readonly>
-                                                <input type="hidden" id="product_no" name="product_no" value="${param.product_no}">
+                                                <input type="text" name="product_name" value="${review.product_name}" readonly>
+                                                <input type="hidden" id="product_no" name="product_no" value="${review.product_no}">
                                             </div>
                                         </div>
                                     </div>
@@ -327,7 +329,7 @@
                                         <div class="single-form form-default">
                                             <label>리뷰 제목</label>
                                             <div class="form-input form">
-                                                <input id="reviewTitle" name="review_title" type="text" placeholder="리뷰 제목을 입력하세요.">
+                                                <input id="reviewTitle" name="review_title" type="text" placeholder="리뷰 제목을 입력하세요." value="${review.review_title}" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -335,15 +337,21 @@
                                     <div class="col-md-12">
                                         <div class="single-form form-default">
                                             <label>별점</label>
-							    <div id="starRating" class="star-rating">
-							        <i class="star" data-value="1">&#9733;</i>
-							        <i class="star" data-value="2">&#9733;</i>
-							        <i class="star" data-value="3">&#9733;</i>
-							        <i class="star" data-value="4">&#9733;</i>
-							        <i class="star" data-value="5">&#9733;</i>
-							    </div>
-							    <input type="hidden" id="reviewScore" name="reviewScore" value="0">
+                                            <div id="starRating" class="star-rating">
+                                                <c:forEach begin="1" end="5" var="star">
+                                                    <i class="star ${star <= review.review_score ? 'selected' : ''}" data-value="${star}" style="pointer-events: none;">&#9733;</i>
+                                                </c:forEach>
+                                            </div>
+                                            <input type="hidden" id="reviewScore" name="reviewScore" value="${review.review_score}">
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-12">
+                                        <div class="single-form form-default">
+                                            <label>리뷰 작성일</label>
+                                            <div>
+                                                <fmt:formatDate value="${review.register_date}" pattern="yyyy-MM-dd  HH:mm:ss (EEE)" />
+                                            </div>
                                         </div>
                                     </div>
 
@@ -351,31 +359,22 @@
                                         <div class="single-form form-default">
                                             <label>리뷰 내용</label>
                                             <div class="form-input form">
-                                                <textarea id="reviewContent" rows="15"  style="resize: none; padding: 10px 20px; height: 100%;"></textarea>
+                                                <textarea id="reviewContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readonly>${review.review_content}${reviews }</textarea>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-6">
-                                        <div class="single-form form-default">
-                                            <label>이미지 첨부</label>
-                                            <div class="single-form form-default button" style="margin-top: 0px">
-                                                <input type="file" id="fileInput" name="files" multiple style="display: none;" />
-                                                <button class="btn" onclick="document.getElementById('fileInput').click(); return false;">이미지 첨부하기</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    
                                     <div class="col-md-12">
                                         <div class="single-form form-default">
-                                            <label>첨부된 이미지</label>
-                                            <ul class="fileList list mt-1">
-
-                                            </ul>
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-sm-12" style="padding: 5px;">
+                                                    <img src="${review.review_image_url }" class="img-fluid" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" >
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                </form>
+                                    
+                                </c:forEach>
                             </div>
 
                         </section>
@@ -387,10 +386,10 @@
                         <button class="btn" onclick="location.href='/review/writableReview'">
                             목록으로 돌아가기
                         </button>
-                        
-                        <button id="saveReviewBtn" class="btn" onclick="saveReview()" disabled>
-                            리뷰 등록
+                        <button id="saveReviewBtn" class="btn" onclick="modifyReview()">
+                            수정
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -411,7 +410,7 @@
     <script src="/resources/assets/user/js/tiny-slider.js"></script>
     <script src="/resources/assets/user/js/glightbox.min.js"></script>
     <script src="/resources/assets/user/js/main.js"></script>
- <script>
+    <script>
         // index에서 topbar가 display none되지 않도록 처리
         $("#test").css("display", "block");
     </script>

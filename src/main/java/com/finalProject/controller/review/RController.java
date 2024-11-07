@@ -6,17 +6,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.review.ReviewDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.model.review.ReviewPagingInfo;
 import com.finalProject.model.review.ReviewPagingInfoDTO;
-import com.finalProject.service.member.MemberService;
 import com.finalProject.service.review.ReviewService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +32,6 @@ public class RController {
 	@Autowired
 	private ReviewService service;
 	
-	@Autowired
-	private MemberService MService;
-
-	
 	// 작성 가능한 리뷰
 	@GetMapping("/writableReview")
 	public String WritableReview(@RequestParam(defaultValue = "1") int page, HttpServletRequest request, ReviewPagingInfoDTO pagingInfoDTO, Model model) throws Exception {
@@ -40,8 +39,8 @@ public class RController {
 	    HttpSession session = request.getSession();
 	    LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 	    
-	    System.out.println("데이터");
-	    System.out.println(loginMember);
+//	    System.out.println("데이터");
+//	    System.out.println(loginMember);
 
 	    if (loginMember != null) {
 	    	
@@ -64,8 +63,8 @@ public class RController {
 	        // 조건부 렌더링
 	        model.addAttribute("currentPath", "/review/writableReview");
 	        
-	        System.out.println("C이거 뜨면 로그인 된거임");
-	        System.out.println(writableReviews);
+//	        System.out.println("C이거 뜨면 로그인 된거임");
+//	        System.out.println(writableReviews);
 	        System.out.println("C로그인된 회원 ID: " + loginMember.getMember_id());
 	        System.out.println("C총 작성 가능한 리뷰 개수: " + totalWritableReviews);
 
@@ -85,7 +84,7 @@ public class RController {
 		
 	    HttpSession session = request.getSession();
 	    LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
-		
+//		System.out.println(loginMember);
 	    if (loginMember != null) {
 	    	
 	        // 1. 총 작성한 리뷰 개수를 가져옴
@@ -108,8 +107,8 @@ public class RController {
 	        // 조건부 렌더링
 	        model.addAttribute("currentPath", "/review/writtenByReview");
 	        
-	        System.out.println("가능 충 데이터 : " + writtenReviews);
-	        System.out.println("C로그인된 회원 ID: " + loginMember.getMember_id());
+//	        System.out.println("가능 충 데이터 : " + writtenReviews);
+//	        System.out.println("C로그인된 회원 ID: " + loginMember.getMember_id());
 	        System.out.println("C총 작성한 리뷰 개수: " + totalWrittenReviews);
 	    } else {
 	        System.out.println("로그인 정보 없음");
@@ -119,13 +118,88 @@ public class RController {
 	    return "/user/pages/review/review"; // 작성한 리뷰 페이지로 이동
 	}
 	
-	// 리뷰 작성 페이지
-	@RequestMapping ("/writeReview")
-	public String WriteReview () {
-		
-		return "/user/pages/review/writeReview"; 
-	}
-	
+//     리뷰 작성 페이지 표시 (GET 요청)
+    @GetMapping("/writeReview")
+    public String showWriteReviewPage(HttpServletRequest request, Model model, @RequestParam int product_no, @RequestParam String product_name) {
+    	
+        HttpSession session = request.getSession();
+        LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+
+        if (loginMember != null) {
+
+        	String image_url = service.getImageUrl(product_no);
+        	
+            model.addAttribute("product_no", product_no);
+            model.addAttribute("product_name", product_name);
+            model.addAttribute("image_url", image_url);
+            model.addAttribute("member_id", loginMember.getMember_id());
+            
+            return "/user/pages/review/writeReview"; // 리뷰 작성 페이지 반환
+        } else {
+        	
+            return "redirect:/member/viewLogin"; // 로그인 정보가 없을 경우 로그인 페이지로 리다이렉트
+        }
+    }
+    
+    // 리뷰 저장
+    @PostMapping("/writeReview")
+    public ResponseEntity<String> submitReview(HttpServletRequest request, ReviewDTO reviewDTO) {
+        HttpSession session = request.getSession();
+        LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+
+        // 로그인 되어있지 않을 때
+        if (loginMember == null) {
+        	return new ResponseEntity<> ("로그인 되지 않았습니다.", HttpStatus.UNAUTHORIZED);
+        }
+        
+        reviewDTO.setMember_id(loginMember.getMember_id()); // 로그인한 사용자 ID 설정	
+        
+			try {
+				
+				service.saveReview(reviewDTO, request);
+				return new ResponseEntity<>("리뷰 저장 완료", HttpStatus.OK);
+				
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+				return new ResponseEntity<>("리뷰 저장 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+    }
+    
+    
+    // 리뷰 상세 조회
+    @GetMapping("/reviewDetail") 
+    	public String reviewDetail (HttpServletRequest request, Model model, @RequestParam int reviewNo ) throws Exception {
+        HttpSession session = request.getSession();
+        LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+    	
+        List<ReviewDetailDTO> reviewDetail = service.getReviewDetail(reviewNo);
+        System.out.println(reviewDetail);
+        
+        if (loginMember == null) {
+        	return "redirect:/member/viewLogin"; // 로그인 정보가 없을 경우 로그인 페이지로 리다이렉트
+        }
+    	if (loginMember != null) {
+    		
+    		model.addAttribute("reviews", reviewDetail);
+    	}
+    	return "/user/pages/review/reviewDetail";
+    }
+    
+    @PostMapping("/modifyReview")
+    public ResponseEntity<String> modifyReview(HttpServletRequest request, ReviewDTO reviewDTO) {
+    	
+        HttpSession session = request.getSession();
+        LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+        
+        // 로그인 정보 확인
+        if (loginMember != null) {
+        	
+        }
+        
+//        return "/user/pages/review/reviewDetail";
+        return null;
+    }
 	
 	
 }

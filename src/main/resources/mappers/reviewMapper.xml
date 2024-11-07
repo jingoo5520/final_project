@@ -21,7 +21,7 @@
 SELECT 
     op.*, 
     p.product_name, 
-    pi.image_main_url,
+    pi.image_url,
     o.delivered_date
 FROM 
     order_products op
@@ -30,7 +30,7 @@ JOIN
 JOIN 
     products p ON op.product_no = p.product_no
 LEFT JOIN 
-    product_images pi ON p.product_no = pi.product_no AND pi.image_sub_url = 'M'
+    product_images pi ON p.product_no = pi.product_no AND pi.image_type = 'M'
 LEFT JOIN 
     reviews r ON r.product_no = op.product_no AND r.member_id = #{member_id}
 WHERE 
@@ -55,7 +55,7 @@ LIMIT
 SELECT 
     r.*, 
     p.product_name, 
-    pi.image_main_url, 
+    pi.image_url, 
     r.review_score, 
     r.register_date
 FROM 
@@ -63,13 +63,45 @@ FROM
 JOIN 
     products p ON r.product_no = p.product_no
 LEFT JOIN 
-    product_images pi ON p.product_no = pi.product_no AND pi.image_sub_url = 'M'
+    product_images pi ON p.product_no = pi.product_no AND pi.image_type = 'M'
 WHERE 
     r.member_id = #{member_id}
 ORDER BY 
     r.register_date DESC
 LIMIT 
     #{pagingInfo.startRowIndex}, #{pagingInfo.pageSize}
+</select>
+
+<!-- 리뷰테이블 삽입 -->
+<insert id="insertReview" parameterType="ReviewDTO" useGeneratedKeys="true" keyProperty="review_no">
+    INSERT INTO reviews (product_no, member_id, review_title, review_content, review_score, register_date)
+    VALUES (#{product_no}, #{member_id}, #{review_title}, #{review_content}, #{review_score}, NOW())
+</insert>
+
+<!-- 리뷰테이블 이미지 삽입 -->
+<insert id="insertReviewImages" parameterType="list">
+    INSERT INTO review_images (review_no, image_url)
+    VALUES
+    <foreach collection="list" item="image" separator=",">
+        (#{image.review_no}, #{image.image_url})
+    </foreach>
+</insert>
+
+
+
+<!-- 이미지 가져오는 쿼리 -->
+<select id="findImageUrlByProductNo" parameterType="int" resultType="String">
+    SELECT image_url FROM product_images WHERE product_no = #{product_no} AND image_type = 'M'
+</select>
+
+<select id="selectReviewDetail" parameterType="int" resultType="ReviewDetailDTO">
+select r.review_no, r.member_id, r.review_title, r.register_date, r.review_score, r.review_content, p.product_name, pi.image_url as product_image_url, ri.image_url as review_image_url
+from reviews r
+join products p on r.product_no = p.product_no
+left join product_images pi on r.product_no = pi.product_no and pi.image_type = 'M'
+left join review_images ri on r.review_no = ri.review_no
+where r.review_no = #{review_no}
+
 </select>
 
 </mapper>

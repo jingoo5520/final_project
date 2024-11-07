@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
 @ToString
-public class ReviewDTO {
+public class ReviewDetailDTO {
 
 	private int review_no;
 	private int product_no;
@@ -26,13 +26,11 @@ public class ReviewDTO {
 	private String review_title;
 	private String review_content;
 	private Timestamp register_date;
-	private String review_show;
-	private String review_type;
 	private int review_score;
-	private Timestamp delivered_date;
-	private MultipartFile[] files;
+	
 	private String product_name;
-	private String image_url;
+	private String product_image_url;
+	private String review_image_url;
 
 	
 	

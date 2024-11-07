@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.finalProject.model.review.ReviewPagingInfo;
 import com.finalProject.model.review.ReviewDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
+import com.finalProject.model.review.ReviewPagingInfo;
 
 @Repository
 public class ReviewDAOImpl implements ReviewDAO {
@@ -30,7 +32,7 @@ public class ReviewDAOImpl implements ReviewDAO {
 	    param.put("member_id", member_id);
 	    param.put("pagingInfo", pagingInfo);
 	    
-	    System.out.println("DAO에 전달된 파라미터: " + param);
+//	    System.out.println("DAO에 전달된 파라미터: " + param);
 		
 		return ses.selectList(ns + "selectWritableReviews", param);
 	}
@@ -46,8 +48,36 @@ public class ReviewDAOImpl implements ReviewDAO {
         param.put("member_id", member_id);
         param.put("pagingInfo", pagingInfo);
         
-        System.out.println("가능충 : " + param);
         return ses.selectList(ns + "selectWrittenReviews", param);
+	}
+
+    @Override
+    public void insertReview(ReviewDTO reviewDTO) throws Exception {
+        ses.insert(ns + "insertReview", reviewDTO);
+    }
+
+    @Override
+    public void insertReviewImages(List<ReviewDTO> imageList) throws Exception {
+        ses.insert(ns + "insertReviewImages", imageList);
+    }
+
+	// 이미지 가져오기
+	@Override
+	public String getImage(int product_no) {
+		return ses.selectOne(ns + "findImageUrlByProductNo" , product_no);
+	}
+
+	// 리뷰 상세 정ㅈ보
+	@Override
+	public List<ReviewDetailDTO> selectReviewDetail(int review_no) throws Exception {
+		
+		return ses.selectList(ns + "selectReviewDetail" , review_no);
+	}
+
+	@Override
+	public int saveReview(ReviewDTO reviewDTO) {
+		
+		return 0;
 	}
 
 }
