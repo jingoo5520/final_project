@@ -138,7 +138,14 @@
 	<insert id="saveAddressBySignUp">
 		insert into delivery_addrs (delivery_name,
 		delivery_address, is_main, member_id)
-		values (#{addressName}, #{address}, 'M', #{member_id})
+		values (#{addressName},
+		#{address}, 'M', #{member_id})
 	</insert>
+
+	<!-- 기본주소로 저장(회원가입) -->
+	<select id="selectMemberByEmail" resultType="LoginDTO">
+		select * from
+		members where email = #{email}
+	</select>
 
 </mapper>

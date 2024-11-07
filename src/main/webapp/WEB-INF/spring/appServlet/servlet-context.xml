@@ -46,6 +46,7 @@
 		<interceptor>
 			<mapping path="/member/viewLogin" />
 			<mapping path="/member/login" />
+			<mapping path="/member/kakao/signUp" /> <!-- 카카오 간편가입후 바로 로그인 -->
 			<beans:ref bean="loginInterceptor" />
 		</interceptor>
 	</interceptors>

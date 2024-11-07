@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -158,7 +159,6 @@ public class MemberController {
 			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
-		// 입력받은 주소+상세주소
 		// 우편번호/주소/상세주소
 		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
 
@@ -216,6 +216,7 @@ public class MemberController {
 	@RequestMapping(value = "/logout")
 	public String logout(HttpServletRequest request) {
 		HttpSession ses = request.getSession();
+		kakao.kakaoLogout((String)ses.getAttribute("accessToken"));
 		ses.removeAttribute("loginMember");
 		ses.removeAttribute("rememberPath");
 		ses.removeAttribute("auth");
@@ -391,6 +392,7 @@ public class MemberController {
 				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)
 				cookie.setPath("/"); // 모든 경로에서 사용 가능
 				response.addCookie(cookie); // 쿠키 저장(삭제)
+				kakao.kakaoLogout((String)ses.getAttribute("accessToken"));
 			} else {
 				json = new ResponseData("fail", "탈퇴 실패");
 			}
@@ -606,16 +608,52 @@ public class MemberController {
 
 	// 카카오 로그인(토큰 api)
 	@RequestMapping(value = "/kakao")
-	public String kakaoLogin(HttpServletResponse response, Model model,
+	public String kakaoLogin(HttpServletResponse response, Model model, HttpServletRequest request,
 			@RequestParam(value = "code", defaultValue = "false") String code,
 			@RequestParam(value = "state", defaultValue = "false") String state,
-			@RequestParam(value = "client_secret", defaultValue = "false") String client_secret) {
+			@RequestParam(value = "client_secret", defaultValue = "false") String client_secret) throws Exception {
+		String result = "/user/index";
+		HttpSession ses = request.getSession();
 		String accessToken = kakao.getAccessToken(code); // 인가코드로 토큰을 받아오기
-		Map<String, Object> userInfo = kakao.getUserInfo(accessToken); // 토큰으로 유저정보 받아오기
-		String email = (String)userInfo.get("email"); // 받아온 유저정보에서 email저장
-        String nickname = (String)userInfo.get("nickname"); // 받아온 유저정보에서 별명 저장
-		
+		MemberDTO userInfo = kakao.getUserInfo(accessToken); // 토큰으로 유저정보 받아오기
+		ses.setAttribute("accessToken", accessToken); // 세션에 토큰 저장
+		System.out.println(userInfo);
+		// 받아온 이메일로 members 테이블 조회
+		LoginDTO loginMember = memberService.selectMemberByEmail(userInfo);
+		// 카카오 로그인 이메일과 동일한 이메일을 찾았다면 해당 데이터로 로그인
+		if (loginMember != null) {
+			ses.setAttribute("loginMember", loginMember);
+		} else {
+			model.addAttribute("userInfo", userInfo);
+			result = "/user/pages/member/signUpKakao";
+		}
+
+		return result;
+	}
+
+	// 카카오 회원가입(간편가입)
+	@PostMapping(value = "/kakao/signUp")
+	public String kakaoSignUp(MemberDTO memberDTO, Model model) {
+		System.out.println(memberDTO);
+		// 우편번호/주소/상세주소
+		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
+		try {
+			if (memberService.signUp(memberDTO) == 1) {
+				System.out.println("카카오 간편가입 완료");
+				LoginDTO loginDTO = new LoginDTO();
+				loginDTO.setMember_id(memberDTO.getMember_id());
+				loginDTO.setMember_pwd(memberDTO.getMember_pwd());
+				LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에 조회한다.
+				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장
+			} else {
+				System.out.println("잘못된 접근(가입에 필요한 데이터 부족");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return "/user/index";
 	}
+	
 
 }

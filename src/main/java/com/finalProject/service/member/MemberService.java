@@ -51,6 +51,9 @@ public interface MemberService {
 
 	// 기본주소로 저장(회원가입)
 	void saveAdddress(MemberDTO memberDTO, String addressName)throws Exception;
+
+	// 이메일로 회원 조회(카카오 로그인)
+	LoginDTO selectMemberByEmail(MemberDTO userInfo)throws Exception;
 	
 	
 	

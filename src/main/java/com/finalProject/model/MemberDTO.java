@@ -20,9 +20,9 @@ public class MemberDTO {
 	private String nickname;
 	private String birthday;
 	private String gender;
-	private String address;
-	private String zipCode;
-	private String address2;
+	private String address; // 기본주소
+	private String zipCode; // 우편번호
+	private String address2; //상세주소
 	private String email;
 	private String phone_number;
 }

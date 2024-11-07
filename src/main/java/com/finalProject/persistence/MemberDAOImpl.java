@@ -182,6 +182,7 @@ public class MemberDAOImpl implements MemberDAO {
 		ses.delete(ns+"deleteWish", map);
 	}
 
+	// 기본주소로 저장(회원가입)
 	@Override
 	public void saveAddress(MemberDTO memberDTO, String addressName) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -189,6 +190,12 @@ public class MemberDAOImpl implements MemberDAO {
 		map.put("member_id", memberDTO.getMember_id());
 		map.put("address", memberDTO.getAddress());
 		ses.insert(ns+"saveAddressBySignUp", map);
+	}
+
+	// 이메일로 회원 조회(카카오 로그인)
+	@Override
+	public LoginDTO selectMemberByEmail(MemberDTO userInfo) throws Exception {
+		return ses.selectOne(ns+"selectMemberByEmail", userInfo);
 	}
 
 }

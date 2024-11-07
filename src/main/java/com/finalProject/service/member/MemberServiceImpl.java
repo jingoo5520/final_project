@@ -127,6 +127,12 @@ public class MemberServiceImpl implements MemberService {
 	public void saveAdddress(MemberDTO memberDTO, String addressName) throws Exception {
 		memberDAO.saveAddress(memberDTO, addressName);
 	}
+
+	// 이메일로 회원 조회(카카오 로그인)
+	@Override
+	public LoginDTO selectMemberByEmail(MemberDTO userInfo) throws Exception {
+		return memberDAO.selectMemberByEmail(userInfo);
+	}
 	
 	
 
