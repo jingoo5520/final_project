@@ -31,6 +31,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.order.CancelOrderRequestDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderProductsDTO;
@@ -482,7 +483,7 @@ public class OrderController {
 	}
 	
 	@GetMapping("/cancelOrder")
-	public String cancelOrder(@RequestParam int orderNo, Model model) {
+	public String showCancelOrderPage(@RequestParam int orderNo, Model model) {
 		System.out.println("주문취소(or 반품/환불) 페이지 접속");
 		System.out.println("주문번호는 " + orderNo);
 		model.addAttribute("orderNo", orderNo);
@@ -508,6 +509,24 @@ public class OrderController {
 	public String getLoginedId(HttpSession session) {
 		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
 		return loginDTO.getMember_id();
+	}
+	
+	@PostMapping("/cancelOrder")
+	public ResponseEntity<Map<String, String>> cancelOrder(
+			@RequestBody CancelOrderRequestDTO requestDTO
+			) {
+		System.out.println("CancelOrderRequestDTO : " + requestDTO);
+		Map<String, String> resultMap = new HashMap<>();
+		try {
+			orderService.cancelOrder(requestDTO);
+			resultMap.put("result", "success");
+			return ResponseEntity.ok(resultMap);
+		} catch (Exception e) {
+			resultMap.put("result", "fail");
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(resultMap);
+		}
+		
 	}
 	
 //	@GetMapping("/cancelAPItest/")

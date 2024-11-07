@@ -142,13 +142,13 @@
 </script>
 
 <script>
+	let orderInfo = null
 	$(document).ready(function() {
-		let orderInfo = loadOrderInfo()
-		insertUIToPage(orderInfo)
-
+		orderInfo = loadOrderInfo()
+		showViewOrderPage(orderInfo)
 	})
 
-	function insertUIToPage(orderInfo) {
+	function showViewOrderPage(orderInfo) {
 		let tags = ''
 		tags += '<div class="cart-list-head">'
 		tags += `
@@ -188,8 +188,10 @@
 				tags += `<div class="col-lg-2 col-md-2 col-12">`
 				
 				// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
-				if (orderStatus == "결제완료" || orderStatus == "배송완료") {
-					tags += makeButtonTag(orderStatus, `onOrderCancelBtnClicked(\'\${orderId}\')`) // TODO : 함수 호출
+				if (orderStatus == "결제완료") {
+					tags += makeButtonTag("cancel", orderId)
+				} else if (orderStatus == "배송완료") {
+					tags += makeButtonTag("return", orderId)
 				} else {
 					tags += "<p></p>" // 아무것도 표시하지 않음
 				}
@@ -200,12 +202,28 @@
 			}
 		}
 		tags += '</div>' // class="cart-list-head" end
-		$("#productsView").append(tags)
+		$("#productsView").html(tags)
+		// 버튼에 이벤트 핸들러 부착
+		$(".button .btn").each(function() {
+			$(this).click(function() {
+				let orderId = $(this).attr("attr-order-id")
+				let aOrder = orderInfo.find((o) => o.orderId = orderId)
+				let cancelType = $(this).attr("attr-cancel-type")
+				onOrderCancelBtnClicked(aOrder, cancelType)
+			})
+		})
+		
 	}
 
-	function makeButtonTag(name, func) {
+	function makeButtonTag(cancelType, orderId) { // TODO : orderStatus에 따라 버튼의 이름 다르게 만들기
+		let buttonValue = null
+		if (cancelType == "cancel") {
+			buttonValue = "주문 취소"
+		} else if (cancelType == "return") {
+			buttonValue = "반품/환불"
+		}
 		tag = `<div class="button">
-					<button class="btn" onclick="\${func}">주문 취소</button>
+					<button class="btn" attr-order-id=\${orderId} attr-cancel-type=\${cancelType}>\${buttonValue}</button>
 				</div>`
 		return tag
 	}
@@ -246,16 +264,16 @@
 		return orderInfo
 	}
 
-	function onOrderCancelBtnClicked(orderId) {
+	function onOrderCancelBtnClicked(orderJson, cancelType) {
+		let orderId = orderJson.orderId
 		$("#productsView").html("")
 		tags = ""
-		tags += `<form class="card" method="post">`
+		tags += `<div class="card">`
 		tags += `<div class="card-body row">`
 		tags += `<div class="title col-12">`
-		tags += `<h3>주문 취소 신청</h3>`
+		tags += (cancelType == "cancel" ? `<h3>주문 취소 신청</h3>` :  `<h3>반품/환불 신청</h3>`)
 		tags += `</div>` // class="title col-12" end
 		tags += `<p>주문번호 : \${orderId}</p>`
-
 
 		tags += `
 		<div class="cart-list-title col-12">
@@ -263,59 +281,138 @@
 				<div class="col-lg-1 col-md-1 col-12"></div>
 				<div class="col-lg-4 col-md-4 col-12"><p>상품정보</p></div>
 				<div class="col-lg-4 col-md-4 col-12"><p>처리상태</p></div>
-				<div class="col-lg-3 col-md-3 col-12"><p>변경/처리</p></div>
+				<div class="col-lg-3 col-md-3 col-12"><p>취소/환불</p></div>
 			</div>
-		</div>
-		`
+		</div>`
+		
+		for (product of orderJson.products) {
+			tags += `<div class="cart-single-list col-12">`
+			tags += `
+				<div class="row align-items-center">
+					<div class="col-lg-1 col-md-1 col-12"><a href="">
+						<img src=\${product.image_url} alt="#"></a>
+					</div>
+					<div class="col-lg-4 col-md-4 col-12">
+						<p>\${product.product_name}</p>
+					</div>
+					<div class="col-lg-4 col-md-4 col-12">
+						<p>\${orderJson.orderStatus}</p>
+					</div>
+					<div class="col-lg-3 col-md-3 col-12">
+						<input class="form-check-input" type="checkbox" attr-orderproduct-no=\${product.orderproduct_no}></input>
+					</div>
+				</div>`
+			tags += `</div>`
+		} // for_end
 
-		tags += `<div class="cart-single-list col-12">`
-		tags += `
-		<div class="row align-items-center">
-			<div class="col-lg-1 col-md-1 col-12"><a href="">
-				<img src="https://webimg.jestina.co.kr/UpData2/item/G2000026727/20231116090734ZM.jpg" alt="#"></a>
-			</div>
-			<div class="col-lg-4 col-md-4 col-12">
-				<p>[강진구 PICK] ETER HEART 귀걸이 (JJEREQ3BF693SR000)</p>
-			</div>
-			<div class="col-lg-4 col-md-4 col-12">
-				<p>결제완료</p>
-			</div>
-			<div class="col-lg-3 col-md-3 col-12">
-				<input class="form-check-input" type="checkbox"></input>
-			</div>
-		</div>
-		`
-		tags += `</div>`
-
-
+		// 단순 참고용, 삭제해도 좋음
+/* 		{
+		    "orderDate": "2024.11.06",
+		    "orderId": "6f143a86-eeee-4a0c-917b-13b41034dce7",
+		    "orderStatus": "결제완료",
+		    "products": [
+		      {
+		        "product_no": 324,
+		        "product_name": "[강진구 PICK] ETER HEART 귀걸이 (JJEREQ3BF693SR000)",
+		        "quantity": 2,
+		        "product_price": 125800,
+		        "product_dc_type": null,
+		        "dc_rate": 0,
+		        "image_url": "https://webimg.jestina.co.kr/UpData2/item/G2000026727/20231116090734ZM.jpg"
+		      },
+		      {
+		        "product_no": 413,
+		        "product_name": "[강진구 PICK] J.Fenella 14K 발찌 (JJJTAQ1BS058R4230)",
+		        "quantity": 1,
+		        "product_price": 321300,
+		        "product_dc_type": "P",
+		        "dc_rate": 0.15,
+		        "image_url": "https://webimg.jestina.co.kr/UpData2/item/G2024347/20220620094812ZM.jpg"
+		      },
+		      {
+		        "product_no": 245,
+		        "product_name": "BASIC PERLINA 14K 바로크 담수진주 목걸이(JJP1NF4BF222R4420)",
+		        "quantity": 1,
+		        "product_price": 398000,
+		        "product_dc_type": "P",
+		        "dc_rate": 0.1,
+		        "image_url": "https://webimg.jestina.co.kr/UpData2/item/G2000027308/20240802130457ZM.png"
+		      }
+		    ]
+	  } 			*/
+		
 		tags += `<p>신청사유</p>`
 
 		tags += `<div class="form-group col-12">`
-		tags += `<textarea name=""></textarea>`
+		tags += `<textarea id="cancel-reason"></textarea>` // TODO : 255자 이상 안들어가게 막아줘야 함
 		tags += `</div>` // textarea end
 
 		tags += `<p>계좌 정보</p>`
 		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
-		tags += `<input class="text-input" type="text" placeholder="예금주"></input>`
+		tags += `<input class="text-input" type="text" placeholder="예금주" id="account-owner"></input>`
 		tags += `</div>`
 		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
-		tags += `<input class="text-input" type="text" placeholder="은행"></input>`
+		tags += `<input class="text-input" type="text" placeholder="은행" id="account-bank"></input>`
 		tags += `</div>`
 		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
-		tags += `<input class="text-input" type="text" placeholder="계좌번호"></input>`
+		tags += `<input class="text-input" type="text" placeholder="계좌번호" id="account-number"></input>`
 		tags += `</div>`
 		tags += "<p></p>"
 
 		tags += `<div class="col-lg-6 col-md-6 col-12 button">`
-		tags += `<button class="btn">확인</button>`
+		tags += `<button class="btn" onclick="submitOrderCancel(\'\${cancelType}\')">확인</button>`
 		tags += `</div>`
 		tags += `<div class="col-lg-6 col-md-6 col-12 button">`
-		tags += `<button class="btn">취소</button>`
+		tags += `<button class="btn" onclick="cancelSubmit()">취소</button>`
 		tags += `</div>`
 
 		tags += `</div>` // class="card-body row" end
-		tags += `</form>`
+		tags += `</div>` // class="card" end
+		tags += `<div style="display:none;" id="order-id">\${orderId}</div>`
 		$("#productsView").html(tags)
+	} // function end
+	
+	function submitOrderCancel(cancelType) {
+		let products = []
+		$(".form-check-input").each(function() {
+			if ($(this).is(':checked')) {
+				products.push($(this).attr("attr-orderproduct-no"))
+			}
+		})
+		let orderId = $("#order-id").text()
+		let cancelReason = $("#cancel-reason").val()
+		let accountOwner =  $("#account-owner").val()
+		let accountBank = $("#account-bank").val()
+		let accountNumber = $("#account-number").val()
+		
+		$.ajax({
+			async: false,
+			type: 'POST',
+			url: '/cancelOrder',
+			data: JSON.stringify({
+				orderId: orderId,
+				cancelType: cancelType,
+				products: products,
+				cancelReason: cancelReason,
+				accountOwner: accountOwner,
+				accountBank: accountBank,
+				accountNumber: accountNumber
+			}),
+			dataType: 'json',
+			contentType: 'application/json',
+            success : function(response) {
+                console.log("/cancelOrder 요쳥의 응답 : " + response)
+                location.href = window.location.origin + "/member/myPage/viewOrder?result=success"
+            },
+            error : function(request, status, error) {
+                console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                // TODO : 에러 페이지 보여주기
+            }
+		})
+	}
+	
+	function cancelSubmit() {
+		showViewOrderPage(orderInfo)
 	}
 </script>
 

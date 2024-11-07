@@ -22,6 +22,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.order.CancelOrderRequestDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderProductsDTO;
@@ -406,4 +407,24 @@ public class OrderServiceImpl implements OrderService {
 		return result;
 	}
 
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void cancelOrder(CancelOrderRequestDTO request) throws Exception {
+		if (orderDAO.makeCancel(
+				request.getOrderId(),
+				request.getProducts(), 
+				request.getCancelType(),
+				request.getCancelReason()) != request.getProducts().size()) {
+			throw new DataAccessException("취소 정보 삽입 실패") {};
+		}
+		orderDAO.updateAccountInfo(
+				request.getOrderId(),
+				request.getAccountOwner(),
+				request.getAccountBank(),
+				request.getAccountNumber()
+				);
+	}
+	
+	// working...
+	// public getCancelProcessStatus(String orderId, String )
 }

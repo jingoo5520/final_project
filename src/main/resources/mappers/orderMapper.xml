@@ -234,7 +234,7 @@
 	</select>
 	
 	<select id="selectProductList" resultType="com.finalProject.model.order.OrderProductDTO">
-		select o.order_count as quantity, p.product_dc_type, p.dc_rate, p.product_price, p.product_no, p.product_name, pi.image_url
+		select o.order_count as quantity, o.orderproduct_no, p.product_dc_type, p.dc_rate, p.product_price, p.product_no, p.product_name, pi.image_url
 		from order_products o
 		join products p on p.product_no = o.product_no
 		join product_images pi on (pi.product_no = p.product_no and pi.image_type = 'M')
@@ -250,4 +250,17 @@
 	<select id="selectOrderInfo" resultMap="OrderInfoMap">
 		select order_id, order_date, order_status from orders where order_id = #{orderId}
 	</select>
+	
+	<insert id="insertCancel">
+		insert into cancels (order_id, order_product_no, cancel_type, cancel_status, cancel_reason)
+		<foreach item="productNo" index="index" collection="productNoList" separator=" UNION ALL ">
+	        select #{orderId}, #{productNo}, #{cancelType}, '취소 요청', #{cancelReason}
+	    </foreach>
+	</insert>
+	
+	<update id="updateAccountInfo">
+		update payments
+		set deposit_name = #{depositName}, deposit_bank = #{depositBank}, deposit_account = #{depositAccount}
+		where order_id = #{orderId}
+	</update>
 </mapper>

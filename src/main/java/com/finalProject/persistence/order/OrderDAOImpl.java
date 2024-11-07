@@ -251,4 +251,23 @@ public class OrderDAOImpl implements OrderDAO {
 		return ses.selectList(ns + "selectProductList", orderId);
 	}
 
+	@Override
+	public int makeCancel(String orderId, List<Integer> productNoList, String cancelType, String cancelReason) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		params.put("productNoList", productNoList);
+		params.put("cancelType", cancelType);
+		params.put("cancelReason", cancelReason);
+		return ses.insert(ns + "insertCancel", params);
+	}
+	
+	@Override
+	public void updateAccountInfo(String orderId, String depositName, String depositBank, String depoistAccount) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		params.put("depositName", depositName);
+		params.put("depositBank", depositBank);
+		params.put("depoistAccount", depoistAccount);
+		ses.update(ns + "updateAccountInfo", params);
+	}
 }

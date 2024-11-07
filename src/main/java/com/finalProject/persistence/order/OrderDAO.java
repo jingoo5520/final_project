@@ -48,4 +48,10 @@ public interface OrderDAO {
 
 	void updateOrderStatus(String payMethod, String orderId) throws Exception;
 
+	int makeCancel(String orderId, List<Integer> orderproductNoList, String cancelType, String cancelReason);
+	
+	void updateAccountInfo(String orderId, String depositName, String depositBank, String depoistAccount);
+
+
+
 }
