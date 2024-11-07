@@ -119,15 +119,19 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional(rollbackFor={Exception.class})
 	public void saveDelivery(DeliveryVO deliveryVO) throws Exception {
 		
-		// 기본배송지 데이터 조회
-		Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryVO.getMemberId());
-		
-		if (mainDeliveryNo != null) {
-			// 기존의 기본배송지를 일반배송지로 변경
-			memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
+			
+		if (deliveryVO.getIsMain().equals("M")) {
+			// 기본 배송지로 저장할 때
+			// 기본배송지 데이터 조회
+			Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryVO.getMemberId());
+			
+			if (mainDeliveryNo != null) {
+				// 기존의 기본배송지를 일반배송지로 변경
+				memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
+			}
 		}
 		
-		// 기본배송지로 저장
+		// 배송지 저장
 		memberDAO.insertDelivery(deliveryVO);
 
 	}
