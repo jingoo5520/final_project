@@ -22,6 +22,9 @@
 		<typeAlias type="com.finalProject.model.admin.member.MemberManageDTO" alias="MemberManageDTO" />
 		<typeAlias type="com.finalProject.model.admin.coupon.CouponDTO" alias="CouponDTO" />
 		<typeAlias type="com.finalProject.model.admin.coupon.CouponPayDTO" alias="CouponPayDTO" />
+		<typeAlias type="com.finalProject.model.admin.coupon.CouponPayLogDTO" alias="CouponPayLogDTO" />
+		
+		<typeAlias type="com.finalProject.model.admin.review.AdminReviewDTO" alias="AdminReviewDTO" />
 		
 		<typeAlias type="com.finalProject.model.home.HomeProductDTO" alias="HomeProductDTO" />
 		

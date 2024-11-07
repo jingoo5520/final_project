@@ -53,10 +53,10 @@ public class CouponController {
 		return "/admin/pages/coupon/coupons";
 	}
 
-	// 쿠폰 관리 - 쿠폰 사용 내역 페이지 이동
-	@GetMapping("/couponUseLog")
+	// 쿠폰 관리 - 쿠폰 지급 내역 페이지 이동
+	@GetMapping("/couponPayLogs")
 	public String couponUseLogPage() {
-		return "/admin/pages/coupon/couponUseLog";
+		return "/admin/pages/coupon/couponPayLogs";
 	}
 
 	// 쿠폰 관리 - 쿠폰 지급 페이지 이동
@@ -83,7 +83,6 @@ public class CouponController {
 	@GetMapping("/getCouponList")
 	@ResponseBody
 	public List<CouponDTO> getCouponList() {
-		System.out.println("getCouponList");
 		List<CouponDTO> list = null;
 
 		try {
@@ -187,5 +186,23 @@ public class CouponController {
 		}
 
 		return new ResponseEntity<String>(result, HttpStatus.OK);
+	}
+	
+	
+	// 쿠폰 지급 로그 리스트 가져오기
+	@GetMapping("/getCouponPayLogList")
+	@ResponseBody
+	public Map<String, Object> getCouponUseLogList(@RequestParam int pageNo, @RequestParam int pagingSize,
+			@RequestParam int pageCntPerBlock) {
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		try {
+			data = cService.getCouponPayLogList(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return data;
 	}
 }

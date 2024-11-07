@@ -71,8 +71,6 @@ public class AdminInquiryController {
 		try {
 			inquiry = aiService.getInquiry(inquiryNo);
 
-			System.out.println("inquiry: " + inquiry);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -39,16 +39,36 @@ let fileList = [];
 		
 		
 		$("#fileInput").on("change", function(){
+			console.log(fileList);
 			
 			$.each(this.files, function(index, file){
-				// 중복 파일 거르기
-				if(!fileList.some(function(f){
-					return f.name === file.name
-				})) {
+				let isDuplicated = false;
+				
+				for(let i = 0; i < fileList.length; i++){
+					if(fileList[i].name == file.name){
+						isDuplicated = true;
+					}
+				}
+				
+				if(!isDuplicated){
 					fileList.push(file);
 					console.log(fileList);
 				}
-			});
+				
+			})
+			
+			
+			/* $.each(this.files, function(index, file){
+				// 중복 파일 거르기
+				if(!fileList.some(function(f){
+					console.log("중복됨");
+					return f.name === file.name
+				})) {
+					
+					fileList.push(file);
+					console.log(fileList);
+				}
+			}); */
 			
 			showFiles();
 		});
