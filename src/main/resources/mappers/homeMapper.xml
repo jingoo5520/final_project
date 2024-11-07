@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.homeMapper">
+
+	<!-- 신상품 가져오기 -->
+	<select id="selectNewProducts" resultType="HomeProductDTO">
+		select
+		p.product_name, p.product_price, c.category_name, i.image_main_url,
+		p.product_reg_date
+		from products p
+		join categories c on p.product_category = c.category_no
+		join product_images i on p.product_no = i.product_no
+		where p.product_delete = 'N'
+		and p.product_show = 'N'
+		and i.image_sub_url = 'M'
+		order by product_reg_date desc
+		limit #{count}
+	</select>
+
+</mapper>

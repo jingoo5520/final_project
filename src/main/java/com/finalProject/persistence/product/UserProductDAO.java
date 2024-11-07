@@ -2,31 +2,29 @@ package com.finalProject.persistence.product;
 
 import java.util.List;
 import java.util.Map;
-
-import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
 
 public interface UserProductDAO {
-	
-	// ìƒí’ˆ ì¶œë ¥
-	List<ProductDTO> selectProductsByPage(int offset, int pageSize) throws Exception;
+    
+    // »óÇ° Ãâ·Â
+    List<ProductDTO> selectProductsByPage(int offset, int pageSize) throws Exception;
 
-	// í˜ì´ì§€ë„¤ì´ì…˜
-	int selectProductCount() throws Exception;
+    // ÆäÀÌÁö³×ÀÌ¼Ç
+    int selectProductCount() throws Exception;
 
-	// ì¹´í…Œê³ ë¦¬ ë²ˆí˜¸ì— ë”°ë¥¸ ìƒí’ˆ ê°œìˆ˜ ì¡°íšŒ
-	int selectProductCountByCategory(Map<String, Object> params) throws Exception;
-	
-	// ì¹´í…Œê³ ë¦¬ ë²ˆí˜¸ì™€ í˜ì´ì§€ì— ë”°ë¥¸ ìƒí’ˆ ì¡°íšŒ
-	List<ProductDTO> selectProductsByCategoryAndPage(Map<String, Object> params) throws Exception;
+    // Ä«Å×°í¸® ¹øÈ£¿¡ µû¸¥ »óÇ° ¼ö Á¶È¸
+    int selectProductCountByCategory(Map<String, Object> params) throws Exception;
+    
+    // Ä«Å×°í¸® ¹øÈ£¿Í ÆäÀÌÁö¿¡ µû¸¥ »óÇ° Á¶È¸
+    List<ProductDTO> selectProductsByCategoryAndPage(Map<String, Object> params) throws Exception;
 
-	List<ProductDTO> getProductById (int productId) throws Exception;
+    List<ProductDTO> getProductById(int productId) throws Exception;
 
-	ProductDTO getProductDetailById(int productId) throws Exception;
+    ProductDTO getProductDetailById(int productId) throws Exception;
 
-	// ì´ ê²Œì‹œë¬¼ ìˆ˜ ì¡°íšŒ
-	int countSearchResult(String search, Integer category) throws Exception;
+    // ÃÑ °Ô½Ã¹° ¼ö Á¶È¸
+    int countSearchResult(String search, Integer category) throws Exception;
 
-	// ê²€ìƒ‰ëœ ìƒí’ˆ ì¡°íšŒ
-	List<ProductDTO> searchProducts(String search, Integer category, int startRowIndex, int pageSize, String sortOrder);
+    // °Ë»öµÈ »óÇ° Á¶È¸
+    List<ProductDTO> searchProducts(String search, Integer category, int startRowIndex, int pageSize, String sortOrder);
 }

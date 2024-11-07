@@ -59,6 +59,9 @@
 			<mapping path="/member/myPage/modiPwd" />
 			<mapping path="/member/myPage/withdraw" />
 			<mapping path="/member/myPage/history" />
+			
+			<mapping path="/serviceCenter/inquiries" />
+			<mapping path="/serviceCenter/writeInquiry" />
 			<beans:ref bean="authInterceptor" />
 		</interceptor>
 	</interceptors>

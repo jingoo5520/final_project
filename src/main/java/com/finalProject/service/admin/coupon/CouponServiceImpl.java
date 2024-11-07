@@ -117,13 +117,9 @@ public class CouponServiceImpl implements CouponService {
 				Timestamp newTimestamp = Timestamp.valueOf(newDateTime);
 				
 				list.add(new CouponPayDTO(couponNo, couponCode, memberId, newTimestamp));
-				
 			}
 		}
 		
 		return cDao.insertCouponPayLogs(list);
 	}
-
-	
-
 }

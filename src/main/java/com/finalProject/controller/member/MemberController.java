@@ -80,6 +80,7 @@ public class MemberController {
 			e.printStackTrace();
 
 		}
+
 		// 로그인 성공 실패에 따른 페이지 이동은 인터셉터가 처리함.
 		// 리턴 타입을 void로 login.jsp의 form태그 action에 설정된 경로의 jsp를 찾고, 해당 경로의 jsp는 없기때문에
 		// 실제하는 아무파일의 경로를 임의로 리턴해줌.

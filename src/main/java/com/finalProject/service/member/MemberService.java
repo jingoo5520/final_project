@@ -1,9 +1,13 @@
 package com.finalProject.service.member;
 
+import java.util.List;
 import java.util.Map;
 
+import com.finalProject.model.DeliveryDTO;
+import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.UseCouponDTO;
 
 public interface MemberService {
 
@@ -55,6 +59,16 @@ public interface MemberService {
 	// 이메일로 회원 조회(카카오 로그인)
 	LoginDTO selectMemberByEmail(MemberDTO userInfo)throws Exception;
 	
+	// 주문페이지에서 입력한 주소로 회원 주소지 변경
+	boolean updateAddress(DeliveryVO deliveryVO) throws Exception;
 	
+	// 주문페이지에서 입력한 주소 배송지로 저장
+	void saveDelivery(DeliveryVO deliveryVO) throws Exception;
+	
+	// 배송지 목록 조회
+	List<DeliveryDTO> getDeliveryList(String memberId) throws Exception;
+	
+	// 쿠폰 목록 조회
+	List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception;
 	
 }

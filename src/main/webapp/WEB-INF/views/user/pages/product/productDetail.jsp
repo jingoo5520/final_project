@@ -37,6 +37,18 @@ function countDown(productNo) {
     }
 }
 
+function orderProduct(productNo) {
+	let productsInfo = [];
+
+	let quantity = parseInt($("#" + productNo + "_quantity").text());
+	
+	productsInfo.push({ productNo: parseInt(productNo), quantity: quantity });
+    
+    $('.productInfos').val(JSON.stringify(productsInfo));
+
+    $('.orderForm').submit();
+}
+
 function addCart(productNo) {
 	let quantity = parseInt($("#" + productNo + "_quantity").text());
 	
@@ -234,12 +246,12 @@ function addCart(productNo) {
 									    </c:if>
 									
 									    <!-- 할인율 및 할인 적용된 가격 표시 -->
-									    <div style="display: flex; align-items: baseline; gap: 10px;">
-									        <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
-									            <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-									                ${products[0].dc_rate}%
-									            </span>
-									        </c:if>
+<div style="display: flex; align-items: baseline; gap: 10px;">
+    <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
+        <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+            <fmt:formatNumber value="${products[0].dc_rate * 100}" type="number" maxFractionDigits="0"/>%
+        </span>
+    </c:if>
 									
 									        <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;">
 									            <fmt:formatNumber value="${products[0].calculatedPrice}" type="number" pattern="#,###"/>원
@@ -279,9 +291,12 @@ function addCart(productNo) {
 									    <div class="row align-items-center mt-3">
 									        <!-- 결제 버튼을 전체 너비로 배치 -->
 									        <div class="col-lg-12 col-md-12 col-12">
-									            <div class="wish-button">
-									                <button class="btn" style="width: 100%;"><i class="lni lni-credit-cards"></i> 결제</button>
-									            </div>
+									            <form action="/order" method="post" class="orderForm">
+										            <div class="wish-button">
+														<input type="hidden" class="productInfos" name="productInfos">
+										                <button class="btn" style="width: 100%;" onclick="orderProduct(${products[0].product_no});"><i class="lni lni-credit-cards"></i> 결제</button>
+										            </div>
+												</form>
 									        </div>
 									    </div>
 									</div>
@@ -338,6 +353,7 @@ function addCart(productNo) {
             </div>
     </section>
     <!-- End Item Details -->
+    
 
 <jsp:include page="../cart/cartModal.jsp"></jsp:include>
 

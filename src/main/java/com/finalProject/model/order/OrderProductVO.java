@@ -21,6 +21,5 @@ public class OrderProductVO {
 	private int price;
 	private String dcType;
 	private float dcRate;
-	private int dcAmount;
 	private String productImg;
 }
