@@ -40,7 +40,8 @@
 	
 <!-- 이벤트 조회 -->
     <select id="selectEventById" resultType="NoticeDTO">
-		select notice_no, notice_type, notice_title, notice_content, reg_date, admin_id
+		select notice_no, notice_type, notice_title, notice_content, reg_date, admin_id,
+		thumbnail_image, event_start_date, event_end_date
 		from notices where notice_no = #{noticeNo}
 	</select>
 	

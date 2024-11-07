@@ -356,7 +356,7 @@
                 contentType: false,
                 processData: false,
                 success: function(fileName) {
-                    let imageUrl = '/post/summernoteImages/' + fileName;
+                    let imageUrl = '/resources/inquiryImages/' + fileName;
                     $('#summernote').summernote('insertImage', imageUrl);
                     console.log('업로드 성공:', fileName);
                 },

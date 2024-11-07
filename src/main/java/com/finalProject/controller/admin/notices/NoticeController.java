@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +64,7 @@ public class NoticeController {
     private List<NoticeDTO> cachedNotices;
     private List<NoticeDTO> cachedEvents;
     
-    private static final String UPLOAD_DIR = "C:/spring/temp/";
+//    private static final String UPLOAD_DIR = "C:/spring/temp/";
 
 //    @PostConstruct
 //    public void init() {
@@ -210,8 +213,10 @@ public class NoticeController {
 //		return "admin/pages/notices/event";
 //	}
 
-		private String saveFile(MultipartFile file, String prefix) throws IOException {
-		    // 파일이 비어있는 경우
+		private String saveFile(MultipartFile file, String prefix, HttpServletRequest request) throws IOException {
+			String realPath = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+			
+			// 파일이 비어있는 경우
 		    if (file.isEmpty()) {
 		        System.out.println("파일이 비어있습니다: " + file.getOriginalFilename());
 		        return null; // 또는 적절한 예외 처리
@@ -229,7 +234,7 @@ public class NoticeController {
 		    String uniqueFileName = prefix + UUID.randomUUID() + "_" + originalFileName;
 
 		    // 파일 저장 경로 지정
-		    Path path = Paths.get("C:/spring/temp/" + uniqueFileName);
+		    Path path = Paths.get(realPath + uniqueFileName);
 		    
 		    // 파일 저장
 		    try (InputStream inputStream = file.getInputStream()) {
@@ -295,7 +300,7 @@ public class NoticeController {
 	                       @RequestParam("eventStartDate") String eventStartDate,
 	                       @RequestParam("eventEndDate") String eventEndDate,
 	                       RedirectAttributes redirectAttributes, 
-	                       Model model) {
+	                       Model model, HttpServletRequest request) {
 
 	    // noticeTitle이 null인 경우 에러 처리
 	    if (noticeTitle == null || noticeTitle.isEmpty()) {
@@ -308,14 +313,14 @@ public class NoticeController {
 
 	    // 썸네일 이미지 처리
 	    if (!thumbnail.isEmpty()) {
-	        String uploadDir = "C:/spring/temp/";
+	        String uploadDir = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
 	        String originalFilename = thumbnail.getOriginalFilename();
 	        String newFilename = "event_thumbnail_" + UUID.randomUUID().toString() + "_" + originalFilename;
 
 	        try {
 	            File destinationFile = new File(uploadDir + newFilename);
 	            thumbnail.transferTo(destinationFile);
-	            thumbnailPath = "/post/summernoteImages/" + newFilename;
+	            thumbnailPath = "/resources/inquiryImages/" + newFilename;
 	            System.out.println("썸네일 저장 성공: " + thumbnailPath);
 	        } catch (IOException e) {
 	            e.printStackTrace();
@@ -326,14 +331,14 @@ public class NoticeController {
 
 	    // 배너 이미지 처리
 	    if (!bannerImage.isEmpty()) {
-	        String uploadDir = "C:/spring/temp/";
+	        String uploadDir = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
 	        String originalFilename = bannerImage.getOriginalFilename();
 	        String newFilename = "event_banner_" + UUID.randomUUID().toString() + "_" + originalFilename;
 
 	        try {
 	            File destinationFile = new File(uploadDir + newFilename);
 	            bannerImage.transferTo(destinationFile);
-	            bannerPath = "/post/summernoteImages/" + newFilename;
+	            bannerPath = newFilename;
 	            System.out.println("배너 저장 성공: " + bannerPath);
 	        } catch (IOException e) {
 	            e.printStackTrace();
@@ -350,20 +355,35 @@ public class NoticeController {
 	    event.setNotice_content(noticeContent); // noticeContent 사용
 	    event.setAdmin_id(adminId); // adminId 사용
 
-//	    // 날짜 포맷 지정
-//	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-//	    try {
-//	        LocalDate startDate = LocalDate.parse(eventStartDate, formatter);
-//	        LocalDate endDate = LocalDate.parse(eventEndDate, formatter);
-//	        LocalDateTime startDateTime = startDate.atStartOfDay();
-//	        LocalDateTime endDateTime = endDate.atStartOfDay();
-//	        event.setEvent_start_date(startDateTime); // LocalDateTime으로 설정
-//	        event.setEvent_end_date(endDateTime); // LocalDateTime으로 설정
-//	    } catch (DateTimeParseException e) {
-//	        redirectAttributes.addAttribute("error", "날짜 형식이 올바르지 않습니다.");
-//	        return "redirect:/admin/notices/createEvent";
-//	    }
+	    // 날짜 포맷 지정
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+	    try {
+	        // eventStartDate와 eventEndDate가 제대로 전달되었는지 확인
+	        LocalDateTime startDateTime = LocalDateTime.parse(eventStartDate, formatter);
+	        LocalDateTime endDateTime = LocalDateTime.parse(eventEndDate, formatter);
+
+	        event.setEvent_start_date(startDateTime); // LocalDateTime으로 설정
+	        event.setEvent_end_date(endDateTime); // LocalDateTime으로 설정
+	    } catch (DateTimeParseException e) {
+	        redirectAttributes.addAttribute("error", "날짜 형식이 올바르지 않습니다.");
+	        return "redirect:/admin/notices/createEvent";
+	    }
+	    
+	    // eventStartDate가 null인 경우 기본 날짜 설정
+	    if (event.getEvent_start_date() == null) {
+	        event.setEvent_start_date(LocalDateTime.now());  // 현재 날짜로 시작일을 설정
+	    }
+
+	    // eventEndDate가 null인 경우 종료일을 시작일 + 10로 설정
+	    if (event.getEvent_end_date() == null) {
+	        event.setEvent_end_date(LocalDateTime.now().plusDays(10));  // 종료일을 시작일 + 1로 설정
+	    }
+
+	    // 출력
+	    System.out.println("Start Date: " + event.getEvent_start_date());
+	    System.out.println("End Date: " + event.getEvent_end_date());
+	    
 	    // noticeType 설정
 	    if ("E".equals(noticeType)) {
 	        event.setNotice_type(NoticeTypeStatus.NoticeType.E);
@@ -386,6 +406,7 @@ public class NoticeController {
 	    try {
 	        noticeService.addEvent(event); // 이벤트 저장
 	        List<NoticeDTO> events = noticeService.getAllEvents(10, 1);
+	        System.out.println("-------- event --------" + event);
 	        log.info("업로드 성공:", event);
 	        redirectAttributes.addFlashAttribute("events", events);
 	        redirectAttributes.addFlashAttribute("message", "이벤트가 등록되었습니다.");
@@ -596,9 +617,10 @@ public class NoticeController {
 
  // 배너 업로드 
     @PostMapping("/event/{noticeNo}/banner")
-    public ResponseEntity<?> uploadBanner(@PathVariable("noticeNo") int noticeNo, @RequestParam("banner") MultipartFile banner) {
+    public ResponseEntity<?> uploadBanner(@PathVariable("noticeNo") int noticeNo, @RequestParam("banner") MultipartFile banner, HttpServletRequest request) {
         log.info("배너 업로드 요청: noticeNo={}, file={}", noticeNo, banner.getOriginalFilename());
-
+        String realPath = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+        
         if (banner.isEmpty()) {
             return ResponseEntity.badRequest().body("파일이 비어 있습니다.");
         }
@@ -608,7 +630,7 @@ public class NoticeController {
             String originalFileName = banner.getOriginalFilename();
             String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
             String fileName = "banner_" + UUID.randomUUID() + extension; // 확장자를 유지한 채로 파일 이름 생성
-            String filePath = "C:/spring/temp/" + fileName; // 파일을 저장할 경로 설정
+            String filePath = realPath + fileName; // 파일을 저장할 경로 설정
             File dest = new File(filePath);
             banner.transferTo(dest);
 
@@ -628,8 +650,9 @@ public class NoticeController {
 
     // 배너 삭제
     @DeleteMapping("/event/deleteBanner")
-    public ResponseEntity<Map<String, String>> deleteBanner(@RequestParam("notice_no") int noticeNo) {
-        String bannerPath = "C:/spring/temp/" + noticeNo + "_banner.jpg"; // 배너 파일 경로
+    public ResponseEntity<Map<String, String>> deleteBanner(@RequestParam("notice_no") int noticeNo, HttpServletRequest request) {
+    	String realPath = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+    	String bannerPath = realPath + noticeNo + "_banner.jpg"; // 배너 파일 경로
         File bannerFile = new File(bannerPath);
         if (bannerFile.delete()) {
             return ResponseEntity.ok(Collections.singletonMap("message", "배너가 삭제되었습니다."));
@@ -642,10 +665,10 @@ public class NoticeController {
     // 썸네일 교체
     @PostMapping("/updateThumbnail/{noticeNo}")
     @ResponseBody
-    public ResponseEntity<?> updateThumbnail(@PathVariable int noticeNo, @RequestParam("thumbnail") MultipartFile file) {
+    public ResponseEntity<?> updateThumbnail(@PathVariable int noticeNo, @RequestParam("thumbnail") MultipartFile file, HttpServletRequest request) {
         String newThumbnailPath = "";
         try {
-            String uploadDir = "C:/spring/temp/";
+            String uploadDir = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
             newThumbnailPath = uploadDir + "thumbnail_" + noticeNo + "_" + UUID.randomUUID() + "_" + file.getOriginalFilename();
             
             File destinationFile = new File(newThumbnailPath);
@@ -669,8 +692,9 @@ public class NoticeController {
 
     @PostMapping("/deleteThumbnail")
     public String deleteThumbnail(@RequestParam("noticeNo") int noticeNo,
-                                  RedirectAttributes redirectAttributes) {
+                                  RedirectAttributes redirectAttributes, HttpServletRequest request) {
         // 썸네일 삭제 로직
+    	String UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
         String thumbnailPath = UPLOAD_DIR + "notice_" + noticeNo + ".jpg"; // 파일 경로
         File file = new File(thumbnailPath);
         if (file.exists()) {
@@ -686,7 +710,8 @@ public class NoticeController {
         return "redirect:/admin/pages/notice"; // 성공 시 리다이렉션
     }
 
-    private String getThumbnailPath(int noticeNo) {
+    private String getThumbnailPath(int noticeNo, HttpServletRequest request) {
+    	String UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
         // 데이터베이스에서 썸네일 경로를 조회하는 로직
         // 예: return noticeService.getThumbnailPath(noticeNo);
         return UPLOAD_DIR + "notice_" + noticeNo + ".jpg"; // 예시 경로

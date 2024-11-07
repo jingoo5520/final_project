@@ -1,9 +1,8 @@
 package com.finalProject.model.admin.notices;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import com.finalProject.model.admin.notices.NoticeTypeStatus.NoticeType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +23,15 @@ public class NoticeDTO {
 	private String admin_id;
 	private String notice_content;
 	private NoticeTypeStatus.NoticeType notice_type;
-	private LocalDateTime reg_date;
-	private LocalDateTime event_start_date;
-	private LocalDateTime event_end_date;
+	
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime reg_date;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime event_start_date;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime event_end_date;
 	
     private String banner_image;
     private String thumbnail_image;

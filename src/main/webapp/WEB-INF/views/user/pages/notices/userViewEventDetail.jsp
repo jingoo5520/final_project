@@ -60,7 +60,7 @@
 				            <p class="card-text">${event.notice_content}</p>
 				        </div>
 				        <div style="transform: translate(15px, -10px);">
-				            <a class="btn rounded-pill btn-outline-secondary" href="/event">목록으로 돌아가기</a>
+				            <a class="btn rounded-pill btn-outline-secondary" href="/notices/event">목록으로 돌아가기</a>
 				        </div>
 				    </div>
 				</c:if>

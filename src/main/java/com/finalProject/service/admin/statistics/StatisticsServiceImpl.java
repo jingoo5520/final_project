@@ -6,8 +6,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.finalProject.model.admin.statistics.AgeGroupSalesDTO;
+import com.finalProject.model.admin.statistics.CateSalesDTO;
+import com.finalProject.model.admin.statistics.GenderSalesDTO;
+import com.finalProject.model.admin.statistics.PriceRangeDTO;
 import com.finalProject.persistence.admin.statistics.StatisticsDAO;
-import com.finalProject.service.admin.notices.NoticeServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,8 +22,33 @@ public class StatisticsServiceImpl implements StatisticsService {
 	private StatisticsDAO sDao;
 	
 	@Override
+	public int getTotalSalesThisMonth() throws Exception {
+		return sDao.getTotalSalesThisMonth();
+	}
+	
+	@Override
 	public int getTotalSalesLastMonth() throws Exception {
 		return sDao.getTotalSalesLastMonth();
+	}
+	
+	@Override
+	public int getTotalSalesLastYear() throws Exception {
+		return sDao.getTotalSalesLastYear();
+	}
+	
+	@Override
+	public int getTotalSalesFirstHalfYear() throws Exception {
+		return sDao.getTotalSalesFirstHalfYear();
+	}
+	
+	@Override
+	public int getTotalSalesSecondHalfYear() throws Exception {
+		return sDao.getTotalSalesSecondHalfYear();
+	}
+	
+	@Override
+	public int getTotalSalesThisYear() throws Exception {
+		return sDao.getTotalSalesThisYear();
 	}
 
 	@Override
@@ -44,19 +72,30 @@ public class StatisticsServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalesByCategory() throws Exception {
+	public List<CateSalesDTO> getSalesByCategory() throws Exception {
 		return sDao.getSalesByCategory();
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalesByPriceRange() throws Exception {
+	public List<PriceRangeDTO> getSalesByPriceRange() throws Exception {
 		return sDao.getSalesByPriceRange();
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalesByAgeGroup() throws Exception {
-	    return sDao.getSalesByAgeGroup(); // DAO에서 데이터 가져오기
+	public List<AgeGroupSalesDTO> getSalesByAgeGroup() throws Exception {
+	    return sDao.getSalesByAgeGroup();
 	}
+
+	@Override
+	public List<GenderSalesDTO> getSalesByGender() throws Exception {
+		return sDao.getSalesByGender();
+	}
+
+//	@Override
+//	public int getVisitorCount() throws Exception {
+//		return sDao.getVisitorCount();
+//	}
+
 
 
 }
