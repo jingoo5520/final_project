@@ -14,7 +14,8 @@
 	rel="stylesheet">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <style>
 </style>
 </head>
@@ -23,7 +24,12 @@
 	<jsp:include page="../header.jsp"></jsp:include>
 
 	<div class="contentContainer container">
-		<jsp:include page="../myPage_side.jsp"></jsp:include>
+	
+		<jsp:include page="../myPageSideBar.jsp">
+			<jsp:param name="modiInfo" value="modiInfo" />
+		</jsp:include>
+		
+		
 		<main class="right-pane">
 
 			<h1>회원 정보 수정</h1>

@@ -21,7 +21,9 @@
 	<jsp:include page="../header.jsp"></jsp:include>
 
 	<div class="contentContainer container">
-		<jsp:include page="../myPage_side.jsp"></jsp:include>
+		<jsp:include page="../myPageSideBar.jsp">
+			<jsp:param name="withdraw" value="withdraw" />
+		</jsp:include>
 		<main class="right-pane">
 
 			<h1>회원 탈퇴</h1>

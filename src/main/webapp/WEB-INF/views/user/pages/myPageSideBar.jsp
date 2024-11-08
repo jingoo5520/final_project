@@ -68,9 +68,9 @@ h5 {
 				<hr>
 				<ul class="list">
 					<li><h5>회원 정보</h5></li>
-					<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">회원 정보 수정</a></li>
-					<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">비밀 번호 변경</a></li>
-					<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">회원 탈퇴</a></li>
+					<li><a href="${pageContext.request.contextPath}/member/myPage/modiInfo" class="<%="modiInfo".equals(request.getParameter("modiInfo")) ? "active" : ""%>">회원 정보 수정</a></li>
+					<li><a href="${pageContext.request.contextPath}/member/myPage/modiPwd" class="<%="modiPwd".equals(request.getParameter("modiPwd")) ? "active" : ""%>">비밀 번호 변경</a></li>
+					<li><a href="${pageContext.request.contextPath}/member/myPage/withdraw" class="<%="withdraw".equals(request.getParameter("withdraw")) ? "active" : ""%>">회원 탈퇴</a></li>
 				</ul>
 			</div>
 			<!-- End Single Widget -->

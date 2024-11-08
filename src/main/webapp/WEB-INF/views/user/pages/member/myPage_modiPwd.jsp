@@ -21,7 +21,9 @@
 	<jsp:include page="../header.jsp"></jsp:include>
 
 	<div class="contentContainer container">
-		<jsp:include page="../myPage_side.jsp"></jsp:include>
+		<jsp:include page="../myPageSideBar.jsp">
+			<jsp:param name="modiPwd" value="modiPwd" />
+		</jsp:include>
 		<main class="right-pane">
 
 			<h1>비밀번호 변경</h1>
