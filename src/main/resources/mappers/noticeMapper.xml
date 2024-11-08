@@ -55,7 +55,9 @@
 <!-- 이벤트 수정 -->
 	<update id="updateEvent" parameterType="NoticeDTO">
 		update notices set notice_title = #{notice_title}, admin_id = #{admin_id},
-		notice_content = #{notice_content}, notice_type = #{notice_type}
+		notice_content = #{notice_content}, notice_type = #{notice_type},
+		event_start_date = #{event_start_date}, event_end_date = #{event_end_date},
+		banner_image = #{banner_image}, thumbnail_image = #{thumbnail_image}, url = #{url}
 		where notice_no = #{notice_no}
 	</update>
 	

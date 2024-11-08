@@ -144,19 +144,14 @@
             </div>
 			<div class="mb-3">
 			    <label for="eventStartDate" class="form-label">이벤트 시작 날짜</label>
-			    <!-- 날짜와 시간을 분리하여 입력 필드 구성 -->
-			    <input type="date" class="form-control" id="eventStartDate" name="eventStartDate" 
-			           value="${event.event_start_date != null ? event.event_start_date.toLocalDate() : ''}">
-			    <input type="time" class="form-control mt-2" id="eventStartTime" name="eventStartTime" 
-			           value="${event.event_start_date != null ? event.event_start_date.toLocalTime() : ''}">
+			    <input type="datetime-local" class="form-control" id="eventStartDate" name="eventStartDate"
+			           value="${event.event_start_date != null ? event.event_start_date.toLocalDateTime().format(java.time.format.DateTimeFormatter.ofPattern('yyyy-MM-dd\'T\'HH:mm')) : ''}">
 			</div>
 			
 			<div class="mb-3">
 			    <label for="eventEndDate" class="form-label">이벤트 종료 날짜</label>
-			    <input type="date" class="form-control" id="eventEndDate" name="eventEndDate" 
-			           value="${event.event_end_date != null ? event.event_end_date.toLocalDate() : ''}">
-			    <input type="time" class="form-control mt-2" id="eventEndTime" name="eventEndTime" 
-			           value="${event.event_end_date != null ? event.event_end_date.toLocalTime() : ''}">
+			    <input type="datetime-local" class="form-control" id="eventEndDate" name="eventEndDate"
+			           value="${event.event_end_date != null ? event.event_end_date.toLocalDateTime().format(java.time.format.DateTimeFormatter.ofPattern('yyyy-MM-dd\'T\'HH:mm')) : ''}">
 			</div>
 
             <div class="input-group">
@@ -449,7 +444,12 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append("thumbnail", file);
 
             // AJAX 요청
-            const noticeNo = thumbnailInput.dataset.noticeNo; // noticeNo는 thumbnailInput에서 data-attribute로 가져옴
+            if (!noticeNo) {
+                console.error("noticeNo가 설정되지 않았습니다.");
+                alert("공지 번호를 찾을 수 없습니다.");
+                return;
+            }
+
             fetch('/admin/notices/updateThumbnail/' + noticeNo, {
                 method: 'POST',
                 body: formData

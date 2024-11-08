@@ -142,11 +142,11 @@
 				      </div>
 					<div class="mb-3">
 					    <label for="eventStartDate" class="form-label">이벤트 시작 날짜</label>
-					    <input type="date" class="form-control" id="eventStartDate" name="eventStartDate">
+					    <input type="datetime-local" class="form-control" id="eventStartDate" name="eventStartDate">
 					</div>
 					<div class="mb-3">
 					    <label for="eventEndDate" class="form-label">이벤트 종료 날짜</label>
-					    <input type="date" class="form-control" id="eventEndDate" name="eventEndDate">
+					    <input type="datetime-local" class="form-control" id="eventEndDate" name="eventEndDate">
 					</div>
                       <div class="input-group" id="summerSize">
                         <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요"></div>
@@ -413,42 +413,6 @@
             };
             reader.readAsDataURL(event.target.files[0]);
         });
-     	
-//         document.getElementById('bannerImage').addEventListener('change', function (event) {
-//             const file = event.target.files[0];
-//             const reader = new FileReader();
-
-//             reader.onload = function (e) {
-//                 const bannerPreview = document.getElementById('bannerPreview');
-//                 bannerPreview.src = e.target.result;
-//                 bannerPreview.style.display = 'block'; // 미리보기 이미지 표시
-//             }
-
-//             if (file) {
-//                 reader.readAsDataURL(file); // 파일을 Data URL로 변환
-//             }
-//         });
-
-//         document.getElementById('thumbnailImage').addEventListener('change', function (event) {
-//             const file = event.target.files[0];
-//             const reader = new FileReader();
-
-//             reader.onload = function (e) {
-//                 const thumbnailPreview = document.getElementById('thumbnailPreview');
-//                 thumbnailPreview.src = e.target.result;
-//                 thumbnailPreview.style.display = 'block'; // 미리보기 이미지 표시
-//             }
-
-//             if (file) {
-//                 reader.readAsDataURL(file); // 파일을 Data URL로 변환
-//             }
-//         });
-
-//         // 버튼 클릭 시 처리 로직 추가 가능
-//         document.getElementById('uploadButton').addEventListener('click', function () {
-//             // 이미지 업로드 로직 추가
-//             alert('이미지를 저장할 수 있습니다.'); // 임시 알림
-//         });
     });
 </script>
   </body>

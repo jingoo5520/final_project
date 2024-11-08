@@ -299,7 +299,7 @@ public class NoticeController {
 	                       @RequestParam("noticeContent") String noticeContent,
 	                       @RequestParam("eventStartDate") String eventStartDate,
 	                       @RequestParam("eventEndDate") String eventEndDate,
-	                       RedirectAttributes redirectAttributes, 
+	                       RedirectAttributes redirectAttributes,
 	                       Model model, HttpServletRequest request) {
 
 	    // noticeTitle이 null인 경우 에러 처리
@@ -356,7 +356,7 @@ public class NoticeController {
 	    event.setAdmin_id(adminId); // adminId 사용
 
 	    // 날짜 포맷 지정
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
 	    try {
 	        // eventStartDate와 eventEndDate가 제대로 전달되었는지 확인
@@ -377,9 +377,9 @@ public class NoticeController {
 
 	    // eventEndDate가 null인 경우 종료일을 시작일 + 10로 설정
 	    if (event.getEvent_end_date() == null) {
-	        event.setEvent_end_date(LocalDateTime.now().plusDays(10));  // 종료일을 시작일 + 1로 설정
+	        event.setEvent_end_date(LocalDateTime.now().plusDays(10));  // 종료일을 시작일 + 10로 설정
 	    }
-
+	    
 	    // 출력
 	    System.out.println("Start Date: " + event.getEvent_start_date());
 	    System.out.println("End Date: " + event.getEvent_end_date());
@@ -512,6 +512,9 @@ public class NoticeController {
                 if (existingEvent.getBanner_image() != null && !existingEvent.getBanner_image().isEmpty()) {
                     fileService.deleteFile(existingEvent.getBanner_image());
                 }
+                // 배너 파일 경로 업데이트
+                String newBannerPath = fileService.uploadFile(noticeDTO.getBanner_image(), "banner_");
+                noticeDTO.setBanner_image(newBannerPath);
             } else {
                 // 배너가 변경되지 않은 경우 기존 배너 유지
                 noticeDTO.setBanner_image(existingEvent.getBanner_image());
