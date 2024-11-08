@@ -1,20 +1,23 @@
 package com.finalProject.controller.admin.review;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
-import com.finalProject.model.admin.review.AdminReviewDTO;
+import com.finalProject.model.admin.review.ReviewReplyDTO;
 import com.finalProject.service.admin.review.AdminReviewService;
 
 @Controller
@@ -25,7 +28,7 @@ public class adminReviewController {
 	AdminReviewService arService;
 
 	// 리뷰 페이지 이동
-	@GetMapping("/reviews")
+	@GetMapping("/adminReviews")
 	public String reviewPage() {
 		return "/admin/pages/review/adminReviews";
 	}
@@ -58,13 +61,44 @@ public class adminReviewController {
 			e.printStackTrace();
 		}
 
-//		System.out.println("inquiry.get(\"inquiryReply\"): " + inquiry.get("inquiryReply"));
-//
-//		model.addAttribute("inquiryDetail", inquiry.get("inquiryDetail"));
-//		model.addAttribute("inquiryImgList", inquiry.get("inquiryImgList"));
-//		model.addAttribute("inquiryReply", inquiry.get("inquiryReply"));
+		System.out.println(review);
+
+		model.addAttribute("reviewDetail", review.get("reviewDetail"));
+		model.addAttribute("reviewImages", review.get("reviewImages"));
+		model.addAttribute("reviewReply", review.get("reviewReply"));
 
 		return "/admin/pages/review/adminReviewDetail";
+	}
+
+	// 리뷰 답글 저장, 수정
+	@PostMapping("/saveReviewReply")
+	public ResponseEntity<String> saveReviewReply(@RequestParam("reviewNo") int reviewNo,
+			@RequestParam("replyContent") String replyContent, @RequestParam("reviewTitle") String reviewTitle,
+			@RequestParam("reviewReplyNo") int reviewReplyNo, @RequestParam("productNo") int productNo,
+			HttpServletRequest request) {
+		String result = "";
+
+//		HttpSession ses = request.getSession();
+//		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
+//		String memberId = loginDTO.getMember_id();
+
+		String replyTitle = "[Re] " + reviewTitle;
+		
+		
+		ReviewReplyDTO dto = ReviewReplyDTO.builder().
+				product_no(productNo).
+				member_id("jingoo5520").
+				review_no(reviewReplyNo).review_ref(reviewNo).review_title(replyTitle).review_content(replyContent).build();
+
+		try {
+			arService.writeReviewReply(dto);
+			result = "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = "fail";
+		}
+
+		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 
 }

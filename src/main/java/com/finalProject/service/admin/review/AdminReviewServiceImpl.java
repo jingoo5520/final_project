@@ -12,17 +12,19 @@ import com.finalProject.model.admin.coupon.CouponDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.review.AdminReviewDetailDTO;
-import com.finalProject.persistence.admin.review.AdminReviewDao;
+import com.finalProject.model.admin.review.ReviewImgDTO;
+import com.finalProject.model.admin.review.ReviewReplyDTO;
+import com.finalProject.persistence.admin.review.AdminReviewDAO;
 
 @Service
 public class AdminReviewServiceImpl implements AdminReviewService {
 
 	@Inject
-	AdminReviewDao arDao;
-	
+	AdminReviewDAO arDao;
+
 	@Override
 	public Map<String, Object> getReviewList(PagingInfoNewDTO pagingInfoDTO) throws Exception {
-		
+
 		PagingInfoNew pi = new PagingInfoNew(pagingInfoDTO);
 
 		// setter 호출
@@ -48,12 +50,29 @@ public class AdminReviewServiceImpl implements AdminReviewService {
 	@Override
 	public Map<String, Object> getReview(int reviewNo) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
-		
-		// AdminReviewDetailDTO reviewDetailDTO = arDao.selectReview(reviewNo);
-		// List<ReviewImgDTO> reviewImages = arDao.selectReviewImages(reviewNo);
-		// ReviewReplyDTO ReviewReplyDTO = arDao.selectReviewReply(reviewNo);
-		
-		return null;
+
+		AdminReviewDetailDTO reviewDetailDTO = arDao.selectReview(reviewNo);
+		List<ReviewImgDTO> reviewImages = arDao.selectReviewImages(reviewNo);
+		ReviewReplyDTO ReviewReplyDTO = arDao.selectReviewReply(reviewNo);
+
+		result.put("reviewDetail", reviewDetailDTO);
+		result.put("reviewImages", reviewImages);
+		result.put("reviewReply", ReviewReplyDTO);
+
+		return result;
+	}
+
+	@Override
+	public int writeReviewReply(ReviewReplyDTO dto) throws Exception {
+		int result = 0;
+
+		// 신규 작성
+		if (dto.getReview_no() == 0) {
+			result = arDao.insertReviewReply(dto);
+		} else {
+			result = arDao.updateReviewReply(dto);
+		}
+		return result;
 	}
 
 }

@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -40,117 +41,60 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
-
 <script>
-	let pageNo = 1;
-	let pagingSize = 10;
-	let pageCntPerBlock = 10;
-	
-	$(function(){
-		showReviewList(pageNo);
-	});
-	
-	// 리뷰 리스트 출력
-	function showReviewList(pageNo) {
+	// 리뷰 답글 저장
+	function saveReviewReply(replyNo){
+		let reviewReplyNo = 0;
+		
+		if((typeof replyNo) != 'undefined'){
+			reviewReplyNo = replyNo;
+		}
+		
 		
 		$.ajax({
-			url : '/admin/review/getReviewList',
-			type : 'GET',
-			dataType : 'json',
+			url : '/admin/review/saveReviewReply',
+			type : 'POST',
+			dataType: 'text',
 			data : {
-				"pageNo" : pageNo,
-				"pagingSize" : pagingSize,
-				"pageCntPerBlock" : pageCntPerBlock
+				"reviewNo" : ${reviewDetail.review_no},
+				"replyContent" : $("#replyContent").val(),
+				"reviewTitle" : "${reviewDetail.review_title}",
+				"reviewReplyNo" : reviewReplyNo,
+				"productNo" : ${reviewDetail.product_no}
 			},
 			success : function(data) {
 				console.log(data);
-	
-				let listOutput = '';
-				let paginationOutput = '';
-	
-				$.each(data.list, function(index, review) {
-					let regDate = dateFormat(review.register_date);
-
-					listOutput += `<tr onclick="location.href='/admin/review/adminReviewDetail?reviewNo=\${review.review_no}'">` 
-							+ '<td>' + review.review_no + '</td>'
-							+ '<td>' + review.product_no + '</td>' 
-							+ '<td>' + review.member_id + '</td>' 
-							+ '<td>' + review.review_title + '</td>'
-							+ '<td>' + regDate + '</td>'
-							+ '</tr>';
-				});
-	
-				$('#reviewTableBody').html(listOutput);
-				
-				if(data.pi.pageNo == 1){
-					paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
-				} else {
-					paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${data.pi.pageNo} - 1)"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
-				}
-				
-				
-				for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
-					if(i == data.pi.pageNo) {
-						paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${i},)">\${i}</a></li>`;
-					} else {
-						paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${i})">\${i}</a></li>`;	
-					}
-				}
-				
-				
-				if(data.pi.pageNo == data.pi.totalPageCnt){
-					paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-				} else {
-					paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${data.pi.pageNo} + 1)"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-				}
-				
-				$('.pagination').html(paginationOutput);
+				// location.href = "/admin/inquiry/adminInquiries";
 			},
 			error : function(error) {
 				console.log(error);
 			}
 		});
 	}
-	
-	// 타임스탬프 to date
-	function dateFormat(timestamp){
-		let date = new Date(timestamp);
-		
-		let year = date.getFullYear();
-		let month = String(date.getMonth() + 1).padStart(2, '0'); 
-		let day = String(date.getDate()).padStart(2, '0'); 
-
-	    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
-	    
-	    return date;
-	}
 </script>
 </head>
+
 <style>
-table tr:hover {
-	background-color: rgba(0, 123, 255, 0.1);
-	transition: background-color 0.3s ease;
-	cursor: pointer;
+#saveInquiryReplyBtnArea {
+	display: flex;
+	flex-direction: row;
+	justify-content: right;
 }
 </style>
+
 <body>
 	<!-- Layout wrapper -->
 	<div class="layout-wrapper layout-content-navbar">
 		<div class="layout-container">
 			<!-- Menu -->
-
-			<!-- Menu -->
-
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
 				<jsp:param name="pageName" value="adminReviews" />
 
 			</jsp:include>
-
 			<!-- / Menu -->
 
 			<!-- Layout container -->
-
 			<div class="layout-page">
 				<!-- Navbar -->
 				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
@@ -158,10 +102,7 @@ table tr:hover {
 						<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
-
-
 				</nav>
-
 				<!-- / Navbar -->
 
 				<!-- Content wrapper -->
@@ -170,32 +111,72 @@ table tr:hover {
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
 						<div class="card">
-							<h5 class="card-header">리뷰 목록</h5>
-							<div class="table-responsive text-nowrap">
-								<table class="table">
-									<thead class="table-light">
-										<tr>
-											<th class="col-2">리뷰 번호</th>
-											<th class="col-2">상품 번호</th>
-											<th class="col-2">회원</th>
-											<th class="col-4">리뷰 제목</th>
-											<th class="col-2">작성 날짜</th>
-										</tr>
-									</thead>
-									<tbody id="reviewTableBody" class="table-border-bottom-0">
-									</tbody>
-								</table>
+							<h5 class="card-header">리뷰</h5>
+							<div class="card-body">
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">리뷰 번호</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${reviewDetail.review_no }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">리뷰 제목</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${reviewDetail.review_title }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">리뷰 회원</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${reviewDetail.member_id }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">리뷰 상품</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="${reviewDetail.product_name }" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">작성 날짜</label>
+									<div class="col-md-10">
+										<input class="form-control" type="text" value="<fmt:formatDate value='${reviewDetail.register_date}' pattern='yyyy-MM-dd' />" id="" readonly />
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">리뷰 내용</label>
+									<div class="col-md-10">
+										<textarea rows="15" class="form-control" id="" readonly>${reviewDetail.review_content }</textarea>
+									</div>
+								</div>
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">리뷰 이미지</label>
+									<div class="col-md-10">
+										<div class="row">
+											<c:forEach var="img" items="${reviewImages}">
+												<div class="col-lg-6 col-md-6 col-sm-12 " style="padding: 5px;">
+													<img src="${img.image_url}" class="img-fluid">
+												</div>
+											</c:forEach>
+										</div>
+									</div>
+								</div>
+
+								<hr class="mt-4">
+
+								<div class="mb-3 row">
+									<label for="" class="col-md-2 col-form-label">리뷰 답글</label>
+									<div class="col-md-10">
+										<textarea id="replyContent" rows="15" class="form-control">${reviewReply.review_content }</textarea>
+									</div>
+								</div>
 							</div>
 
-							<!-- 페이지 네이션 -->
-							<div class="mt-4">
-								<nav aria-label="Page navigation">
-									<ul class="pagination justify-content-center">
-									</ul>
-								</nav>
-							</div>
-							<!-- / 페이지 네이션 -->
+						</div>
 
+						<div id="saveInquiryReplyBtnArea">
+							<button id="" type="button" class="btn btn-outline-primary mt-4 me-1" onclick="location.href='/admin/review/adminReviews'">목록으로 돌아가기</button>
+							<button id="saveInquiryReplyBtn" type="button" class="btn btn-outline-primary mt-4" onclick="saveReviewReply(${reviewReply.review_no})">답글 저장</button>
 						</div>
 
 					</div>

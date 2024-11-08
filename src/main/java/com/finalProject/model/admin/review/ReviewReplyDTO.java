@@ -1,25 +1,23 @@
 package com.finalProject.model.admin.review;
 
-import java.sql.Timestamp;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder
-public class AdminReviewDetailDTO {
+public class ReviewReplyDTO {
 	private int review_no;
-	private int product_no;
-	private String product_name;
-	private String member_id;
+	private int review_ref;
 	private String review_title;
 	private String review_content;
-	private Timestamp register_date;
+	private int product_no;
+	private String member_id;
 }

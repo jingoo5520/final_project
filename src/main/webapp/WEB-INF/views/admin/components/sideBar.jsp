@@ -149,12 +149,12 @@
 					</a></li>
 				</ul></li>
 
-			<li class="menu-item <%="reviews".equals(request.getParameter("pageName")) ? "active open" : ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
+			<li class="menu-item <%="adminReviews".equals(request.getParameter("pageName")) ? "active open" : ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
 					<div data-i18n="Admin Reviews">리뷰 관리</div>
 			</a>
 				<ul class="menu-sub">
-					<li class="menu-item <%="reviews".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/review/reviews" class="menu-link">
-							<div data-i18n="reviews">리뷰</div>
+					<li class="menu-item <%="adminReviews".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/review/adminReviews" class="menu-link">
+							<div data-i18n="adminReviews">리뷰</div>
 					</a></li>
 				</ul></li>
 

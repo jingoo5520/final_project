@@ -18,4 +18,36 @@
 		limit
 		#{startRowIndex}, #{viewDataCntPerPage}
 	</select>
+	
+	<!-- 리뷰 상세 가져오기 -->
+	<select id="selectReview" resultType="AdminReviewDetailDTO">
+		select r.review_no, r.product_no, p.product_name, r.member_id, r.review_title, r.review_content, r.register_date
+		from reviews r join products p on r.product_no = p.product_no 
+		where r.review_no = #{reviewNo} and r.review_type = 'review'
+	</select>
+	
+	<!-- 리뷰 이미지 가져오기 -->
+	<select id="selectReviewImages" resultType="ReviewImgDTO">
+		select image_no, review_no, image_url
+		from review_images
+		where review_no = #{reviewNo}
+	</select>
+	
+	<!-- 리뷰 답글 가져오기 -->
+	<select id="selectReviewReply" resultType="AdminReviewDetailDTO">
+		select review_no, review_ref, review_title, review_content
+		from reviews
+		where review_ref = #{reviewNo}
+	</select>
+	
+	<!-- 리뷰 답글 작성 -->
+	<insert id="insertReviewReply">
+		insert into reviews 
+		(product_no, member_id, review_title, review_content, review_type, review_ref)
+		values
+		(#{product_no}, #{member_id}, #{review_title}, #{review_content}, 'reply', #{review_ref}) 
+	</insert>
+	
+	<!-- 리뷰 답글 수정 -->
+	
 </mapper>

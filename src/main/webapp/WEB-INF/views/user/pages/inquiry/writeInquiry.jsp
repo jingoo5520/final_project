@@ -39,7 +39,6 @@ let fileList = [];
 		
 		
 		$("#fileInput").on("change", function(){
-			// 파일크기, 최대개수, 확장자
 			const maxSize = 10 * 1024 * 1024;
 			
 			$.each(this.files, function(index, file){

@@ -68,7 +68,6 @@
 		(inquiry_no, reply_content, admin_id)
 		values
 		(#{inquiry_no}, #{reply_content}, #{admin_id}) 
-		
 	</insert>
 
 	<!-- 문의 답글 수정하기 -->
