@@ -77,46 +77,21 @@
 							<div class="social-login">
 								<div class="row">
 									<div class="col-lg-4 col-md-4 col-12">
-										<a
-											href="${pageContext.request.contextPath}/member/kakao/login"><img
-											src="/resources/images/kakao_login_medium.png"></a>
+										<a class="btn facebook-btn" href="javascript:void(0)"><i
+											class="lni lni-facebook-filled"></i> 페이스북 로그인</a>
 									</div>
 									<div class="col-lg-4 col-md-4 col-12">
 										<a class="btn twitter-btn" href="javascript:void(0)"><i
-											class="lni lni-twitter-original"></i> 미구현</a>
+											class="lni lni-twitter-original"></i> 트위터 로그인</a>
 									</div>
 									<div class="col-lg-4 col-md-4 col-12">
 										<a class="btn google-btn" href="javascript:void(0)"><i
-											class="lni lni-google"></i> 미구현</a>
+											class="lni lni-google"></i> 구글 로그인</a>
 									</div>
 								</div>
 							</div>
 							<div class="alt-option">
 								<span>Or</span>
-							</div>
-							<div class="form-group input-group">
-								<label for="reg-fn">아이디</label> <input class="form-control"
-									type="text" name="member_id" id="member_id" required>
-							</div>
-							<div class="form-group input-group">
-								<label for="reg-fn">비밀번호</label> <input class="form-control"
-									type="password" name="member_pwd" id="member_pwd" required>
-							</div>
-							<div
-								class="d-flex flex-wrap justify-content-between bottom-content">
-								<div class="form-check">
-									<input type="checkbox" class="form-check-input width-auto"
-										name="autologin_code" id="autologin_code"> <label
-										class="form-check-label">자동 로그인</label>
-								</div>
-								<a class="lost-pass"
-									href="${pageContext.request.contextPath}/member/find_id">아이디
-									찾기</a> <a class="lost-pass"
-									href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
-									찾기</a>
-							</div>
-							<div class="button">
-								<button class="btn" type="submit">로그인</button>
 							</div>
 							<p class="outer-link">
 								아직 회원이 아니신가요? <a

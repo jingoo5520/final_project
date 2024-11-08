@@ -63,5 +63,9 @@ public class TestController {
 	public String testjsp() {
 		return "/user/pages/member/testbar";
 	}
-
+	
+	@RequestMapping(value = "/kakao")
+	public String kakao() {
+		return "/user/pages/member/kakaoLogin";
+	}
 }

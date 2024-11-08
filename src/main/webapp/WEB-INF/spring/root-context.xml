@@ -24,7 +24,7 @@
 		<property name="url" value="jdbc:mysql://localhost:3306/my?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false"> 
 		</property> <property name="username" value="root"></property> <property 
 		name="password" value="1234"></property> </bean> -->
-
+	
 	<bean id="dataSource"
       class="org.springframework.jdbc.datasource.DriverManagerDataSource">
       <property name="driverClassName"

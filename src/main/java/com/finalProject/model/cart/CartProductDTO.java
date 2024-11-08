@@ -16,5 +16,5 @@ import lombok.ToString;
 public class CartProductDTO {
 	private String product_name;
 	private int product_price;
-	private String image_main_url;
+	private String image_url;
 }

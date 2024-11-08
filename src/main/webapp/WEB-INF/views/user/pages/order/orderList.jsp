@@ -1,13 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html class="no-js" lang="zxx">
+
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>ELOLIA</title>
-<meta name="description" content="" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>ELOLIA</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -28,14 +29,14 @@
     <![endif]-->
 
     <!-- Preloader -->
-    <div class="preloader">
+    <!-- <div class="preloader">
         <div class="preloader-inner">
             <div class="preloader-icon">
                 <span></span>
                 <span></span>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- /End Preloader -->
     
     <jsp:include page="../header.jsp"></jsp:include>
@@ -80,7 +81,8 @@
                     				<div class="col-lg-3 col-md-3 col-12"><p>변경/처리</p></div>
                     			</div>
                     		</div>
-                    		<div class="cart-single-list">
+                            <span id="product-insert"></span>
+                    		<div class="cart-single-list grid-container">
                     			<div class="row align-items-center">
                     				<div class="col-lg-1 col-md-1 col-12">
                     					<a href=""></a> <!-- 상품 상세페이지 이동 -->
@@ -97,7 +99,7 @@
                     				<div class="col-lg-2 col-md-2 col-12">
                     					<p>결제완료</p>
                     				</div>
-                    				<div class="col-lg-3 col-md-3 col-12">
+                    				<div class="col-lg-3 col-md-3 col-12 action-column">
                     					<p>주문취소</p>
                     				</div>
                     			</div>
@@ -119,8 +121,34 @@
                     				<div class="col-lg-2 col-md-2 col-12">
                     					<p>배송완료</p>
                     				</div>
+                                    <div class="col-lg-3 col-md-3 col-12">
+                    					<form action="/cancelOrder" method="POST">
+                    						<input type="text" name="orderNo" value="425346" style="display:none">
+                    						<input type="submit" value="반품/환불">
+                    					</form>
+                    				</div>
+                    			</div>
+                    		</div>
+
+                            <div class="cart-single-list">
+                    			<div class="row align-items-center">
+                    				<div class="col-lg-1 col-md-1 col-12">
+                    					<a href=""></a> <!-- 상품 상세페이지 이동 -->
+                    						<img src="https://webimg.jestina.co.kr/UpData2/item/G2000027377/20240903175828ZM.png" alt="#">
+                    					</a>
+                    				</div>
+                    				<div class="col-lg-4 col-md-4 col-12">
+                    					<p>J.Fenella 14K 목걸이 (JJJTNQ4BF008R4420)</p>
+                    				</div>
+                    				<div class="col-lg-2 col-md-2 col-12">
+                    					<p>2024.10.30</p>
+                    					<p>212144</p>
+                    				</div>
+                    				<div class="col-lg-2 col-md-2 col-12">
+                    					<p>배송완료</p>
+                    				</div>
                     				<div class="col-lg-3 col-md-3 col-12">
-                    					<form action="/user/cancelOrder" method="POST">
+                    					<form action="/cancelOrder" method="POST">
                     						<input type="text" name="orderNo" value="425346" style="display:none">
                     						<input type="submit" value="반품/환불">
                     					</form>
@@ -155,7 +183,36 @@
     <script src="/resources/assets/user/js/main.js"></script>
     
     <script>
+        let items = null
+        let memberId = null
+        window.onload = function() {
+            requestProductInfo()
+        }
 
+        function requestProductInfo() {
+            $.ajax({
+                async: false,
+                type : 'GET',
+                url : "/getLoginedId",
+                dataType : "text",
+                success : function(response) {
+                    memberId = response
+                },
+                error : function(request, status, error) {
+                    console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+                }
+            })
+
+            $.ajax({
+                type : "GET",
+                url : "/orderProducts?memberId=" + memberId,
+                dataType : "json",
+                success : function(response) {
+                    console.log("페이지에 뿌릴 정보 : ")
+                    console.log(response)
+                },
+            })
+        }
     </script>
     
     

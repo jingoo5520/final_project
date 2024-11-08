@@ -1,5 +1,7 @@
 package com.finalProject.service.member;
 
+import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.UseCouponDTO;
 import com.finalProject.persistence.MemberDAO;
 
 @Service
@@ -92,8 +95,8 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public boolean findPwd(String email, String member_id, String member_pwd) throws Exception {
 		boolean result = false;
-		if(memberDAO.findPwd(email, member_id)) {
-			if(memberDAO.updateRandomPwd(member_pwd, member_id)) {
+		if (memberDAO.findPwd(email, member_id)) {
+			if (memberDAO.updateRandomPwd(member_pwd, member_id)) {
 				result = true;
 			}
 		}
@@ -105,35 +108,87 @@ public class MemberServiceImpl implements MemberService {
 	public int[] getWishList(String member_id) throws Exception {
 		return memberDAO.getWishList(member_id);
 	}
-	
+
+	// 찜 토글 동작(찜하기, 찜해제)
+	@Transactional
+	@Override
+	public int saveWish(int product_no, String member_id) throws Exception {
+		int result = -1;
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("member_id", member_id);
+		map.put("product_no", product_no);
+		if (memberDAO.checkWishStatus(map) == 0) { // 찜 상태를 확인 (0이면 insert 1이면 delete)
+			memberDAO.insertWish(map); // 찜 정보 추가
+			result = 0;
+		} else {
+			memberDAO.deleteWish(map); // 찜 정보 삭제
+			result = 1;
+		}
+		return result;
+	}
+
+	// 기본주소로 저장(회원가입)
+	@Override
+	public void saveAdddress(MemberDTO memberDTO, String addressName) throws Exception {
+		memberDAO.saveAddress(memberDTO, addressName);
+	}
+
+	// 이메일로 회원 조회(카카오 로그인)
+	@Override
+	public LoginDTO selectMemberByEmail(MemberDTO userInfo) throws Exception {
+		return memberDAO.selectMemberByEmail(userInfo);
+	}
+
 	// 주문페이지에서 입력한 주소로 회원 주소지 변경
 	@Override
 	public boolean updateAddress(DeliveryVO deliveryVO) throws Exception {
 		return memberDAO.updateAddress(deliveryVO);
 	}
-	
+
 	// 주문페이지에서 입력한 주소 배송지로 저장
 	@Override
-	@Transactional(rollbackFor={Exception.class})
+	@Transactional(rollbackFor = { Exception.class })
 	public void saveDelivery(DeliveryVO deliveryVO) throws Exception {
-		
+
 		// 기본배송지 데이터 조회
 		Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryVO.getMemberId());
-		
+
 		if (mainDeliveryNo != null) {
 			// 기존의 기본배송지를 일반배송지로 변경
 			memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
 		}
-		
+
 		// 기본배송지로 저장
 		memberDAO.insertDelivery(deliveryVO);
 
 	}
-	
+
 	// 배송지 목록 조회
 	@Override
 	public List<DeliveryDTO> getDeliveryList(String memberId) throws Exception {
 		return memberDAO.selectDeliveryList(memberId);
+	}
+
+	// 쿠폰 목록 조회
+	@Override
+	public List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("memberId", memberId);
+		param.put("currentTime", currentTime);
+
+		List<UseCouponDTO> couponList = memberDAO.selectCouponList(param);
+
+		for (UseCouponDTO coupon : couponList) {
+			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
+			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
+
+			if (coupon.getMember().equals("All")) {
+				coupon.setCoupon_name("[회원 전체 지급]" + coupon.getCoupon_name());
+			} else {
+				coupon.setCoupon_name("[특별 회원 지급]" + coupon.getCoupon_name());
+			}
+		}
+		return couponList;
 	}
 
 }

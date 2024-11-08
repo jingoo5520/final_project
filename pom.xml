@@ -46,7 +46,7 @@
 			<artifactId>jackson-core</artifactId>
 			<version>2.15.2</version>
 		</dependency>
-		
+
 		<dependency>
 	        <groupId>com.fasterxml.jackson.core</groupId>
 	        <artifactId>jackson-databind</artifactId>
@@ -155,6 +155,15 @@
 			<version>8.0.15</version>
 		</dependency>
 
+		<!-- mariaDB driver -->
+		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+		<dependency>
+		    <groupId>org.mariadb.jdbc</groupId>
+		    <artifactId>mariadb-java-client</artifactId>
+		    <version>3.5.0</version>
+		</dependency>
+
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -199,6 +208,14 @@
 			<version>1.16</version>
 		</dependency>
 
+		<!-- mariaDB -->
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>2.7.3</version>
+		</dependency>
+		
+		
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -263,12 +280,6 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.8.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-			<version>2.7.3</version>
 		</dependency>
 		
 		<dependency>

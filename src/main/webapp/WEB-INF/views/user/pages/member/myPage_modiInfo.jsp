@@ -63,8 +63,12 @@
 							id="phoneStatus"></span><input type="hidden" value="">
 					</div>
 					<div class="form-group input-group">
+						우편번호<input type="text" id="zipCode" name="zipCode" readonly
+							onclick="selectAddress();">
+					</div>
+					<div class="form-group input-group">
 						주소<input type="text" id="address" name="address" readonly
-							onclick="selectAddress(this);">
+							onclick="selectAddress();">
 					</div>
 					<div class="form-group input-group">
 						상세주소<input type="text" id="address2" name="address2">
@@ -219,6 +223,7 @@ let tmpEmail = "tmpEmail";
 		tmpEmail = data.email; // 전역변수에 저장
 		$("#nickname").val(data.nickname);
 		$("#phone_number").val(data.phone_number);
+		$("#zipCode").val(data.zipCode);
 		$("#address").val(data.address);
 		$("#address2").val(data.address2);
 		$("#email").val(data.email);
@@ -286,13 +291,14 @@ let tmpEmail = "tmpEmail";
 });
 	// daum 주소 api
 	// 주소칸에서 onclick으로 호출
-	function selectAddress(obj) {
+	function selectAddress() {
 	    new daum.Postcode({
 	        oncomplete: function(data) {
 	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
 	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
 	            console.log(data);
-	            $(obj).val(data.zonecode + "/" + data.address);
+	            $("#zipCode").val(data.zonecode);
+	            $("#address").val(data.address);
 	        }
 	    }).open();
 	}
