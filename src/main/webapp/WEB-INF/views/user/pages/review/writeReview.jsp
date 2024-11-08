@@ -304,7 +304,6 @@
                             
                             
                             <div class="row">
-                                <form>
                                     <div class="col-12">
                                         <div class="single-form form-default">
                                             <label>상품 사진</label>
@@ -375,7 +374,6 @@
                                         </div>
                                     </div>
 
-                                </form>
                             </div>
 
                         </section>

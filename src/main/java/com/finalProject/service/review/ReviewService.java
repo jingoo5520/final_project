@@ -24,10 +24,13 @@ public interface ReviewService {
 	// 리뷰 생성
 	void saveReview(ReviewDTO reviewDTO, HttpServletRequest request) throws Exception;
 
-	// 이미지 가져오기
+	// 상품 이미지 가져오기
 	String getImageUrl(int product_no);
 
 	// 리뷰 상세 조회
 	List<ReviewDetailDTO> getReviewDetail(int review_no) throws Exception;
+
+	// 리뷰이미지
+	List<String> getReviewImages(int reviewNo) throws Exception;
 
 }

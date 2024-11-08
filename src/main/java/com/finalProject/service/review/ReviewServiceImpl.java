@@ -1,7 +1,9 @@
 package com.finalProject.service.review;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,34 +62,54 @@ public class ReviewServiceImpl implements ReviewService {
 		
 	    // 리뷰 데이터 저장
 	    RDao.insertReview(reviewDTO);
+
+	    // 서버 실제 파일 저장 경로 설정
+	    String url = "/resources/reviewImg"; // 서버 경로
 	    
-	    String url = "/resources/reviewImg";
 	    String realPath = request.getSession().getServletContext().getRealPath(url);
 	    
 	    	
 	    // 생성된 리뷰 번호 가져오기 (MyBatis의 selectKey 활용 가능)
 	    int reviewNo = reviewDTO.getReview_no();
 
+	    // 파일 존재 여부
 	    if (reviewDTO.getFiles() != null && reviewDTO.getFiles().length > 0) {
-	    
 	        
 	        // 각 파일을 저장하고 review_images 테이블에 저장
 	        List<ReviewDTO> imageList = new ArrayList<>();
+	        
+	        // 파일 반복 배열 처리
 	        for (MultipartFile file : reviewDTO.getFiles()) {
+	        	
+	        	// 파일 비어있는지 확인
 	            if (!file.isEmpty()) {
-	                // 고유 파일명 생성
-	                String fileName = "Review"+UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-	                String filePath = realPath + File.separator + fileName;
+	            	
+	                try {
+						// 고유 파일명 생성
+						String fileName = "Review"+UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+						String filePath = realPath + File.separator + fileName;
 
-	                // 파일 서버에 저장
-	                File destinationFile = new File(filePath);
-	                file.transferTo(destinationFile);
+						// 파일 서버에 저장 (파일 경로 + 이름)
+						File destinationFile = new File(filePath);
+						file.transferTo(destinationFile);
 
-	                // 이미지 정보 DTO에 저장
-	                ReviewDTO reviewImageDTO = new ReviewDTO();
-	                reviewImageDTO.setReview_no(reviewNo);
-	                reviewImageDTO.setImage_url(filePath);
-	                imageList.add(reviewImageDTO);
+						
+						// 이미지 정보 DTO에 저장
+						ReviewDTO reviewImageDTO = new ReviewDTO();
+						reviewImageDTO.setReview_no(reviewNo);
+						
+	                    // 파일 경로에서 /resources/reviewImg 이후의 부분만 추출
+	                    String relativePath = filePath.split("resources")[1];
+	                    relativePath = "/resources" + relativePath.replace("\\", "/"); // 경로 수정
+
+	                    // db 상대 경로 저장
+	                    reviewImageDTO.setImage_url(relativePath); // DB에 상대 경로 저장
+	                    imageList.add(reviewImageDTO);
+						
+						
+					} catch (IOException e) {
+						throw new RuntimeException("파일 저장 중 오류 발생" , e);
+					}
 	            }
 	        }
 	        // 리뷰 이미지 정보 저장
@@ -110,6 +132,12 @@ public class ReviewServiceImpl implements ReviewService {
 		
 		return RDao.selectReviewDetail(review_no);
 		
+	}
+
+	// 리뷰 이미지 
+	@Override
+	public List<String> getReviewImages(int reviewNo) throws Exception {
+		return RDao.selectReviewImage(reviewNo);
 	}
 	
 }

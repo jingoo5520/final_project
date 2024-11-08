@@ -31,7 +31,9 @@ public interface ReviewDAO {
 	// 리뷰 상세 정보
 	List<ReviewDetailDTO> selectReviewDetail(int review_no) throws Exception;
 
-	int saveReview(ReviewDTO reviewDTO);
+	// 리뷰 이미지
+	List<String> selectReviewImage(int reviewNo) throws Exception;
+
 
 
 

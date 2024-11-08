@@ -359,7 +359,7 @@
                                         <div class="single-form form-default">
                                             <label>리뷰 내용</label>
                                             <div class="form-input form">
-                                                <textarea id="reviewContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readonly>${review.review_content}${reviews }</textarea>
+                                                <textarea id="reviewContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readonly>${review.review_content}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -368,7 +368,9 @@
                                         <div class="single-form form-default">
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12" style="padding: 5px;">
-                                                    <img src="${review.review_image_url }" class="img-fluid" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" >
+            <c:forEach var="image" items="${reviewImages}">
+                <img src="${image}" class="img-fluid" alt="Review Image" style="padding: 5px;">
+            </c:forEach>
                                                 </div>
                                             </div>
                                         </div>

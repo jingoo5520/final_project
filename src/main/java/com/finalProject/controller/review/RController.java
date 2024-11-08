@@ -173,14 +173,24 @@ public class RController {
         HttpSession session = request.getSession();
         LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
     	
+        // 리뷰 기본정보 가져오기
         List<ReviewDetailDTO> reviewDetail = service.getReviewDetail(reviewNo);
+        
+        // 리뷰 이미지 리스트 가져오기
+		List<String> reviewImages = service.getReviewImages(reviewNo);
+        
         System.out.println(reviewDetail);
         
         if (loginMember == null) {
         	return "redirect:/member/viewLogin"; // 로그인 정보가 없을 경우 로그인 페이지로 리다이렉트
         }
+        
+        
+        
     	if (loginMember != null) {
     		
+
+    		model.addAttribute("reviewImages", reviewImages); // 이미지 리스트를 JSP로 전달
     		model.addAttribute("reviews", reviewDetail);
     	}
     	return "/user/pages/review/reviewDetail";

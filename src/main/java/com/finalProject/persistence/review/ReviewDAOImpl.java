@@ -75,9 +75,9 @@ public class ReviewDAOImpl implements ReviewDAO {
 	}
 
 	@Override
-	public int saveReview(ReviewDTO reviewDTO) {
+	public List<String> selectReviewImage(int reviewNo) throws Exception {
 		
-		return 0;
+		return ses.selectList(ns + "selectReviewImages", reviewNo);
 	}
 
 }
