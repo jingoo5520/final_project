@@ -71,4 +71,21 @@ public interface MemberDAO {
 	// 쿠폰 목록 조회
 	List<UseCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
 
+	// 찜 상태 확인(찜이 되있다면 1, 아니면 0)
+	int checkWishStatus(Map<String, Object> map)throws Exception;
+
+	// 찜 정보 추가
+	void insertWish(Map<String, Object> map)throws Exception;
+
+	// 찜 정보 삭제
+	void deleteWish(Map<String, Object> map)throws Exception;
+
+	// 기본주소로 저장(회원가입)
+	void saveAddress(MemberDTO memberDTO, String addressName)throws Exception;
+
+	// 이메일로 회원 조회(카카오 로그인)
+	LoginDTO selectMemberByEmail(MemberDTO userInfo)throws Exception;
+	
+
+
 }
