@@ -65,7 +65,6 @@ public class ProductDAOImpl implements ProductDAO {
 		Map<String, Object> prams = new HashMap<>();
 		prams.put("product_name", updateProduct.getProduct_name());
 		prams.put("product_price", updateProduct.getProduct_price());
-		prams.put("product_content", updateProduct.getProduct_content());
 		prams.put("product_dc_type", updateProduct.getProduct_dc_type());
 		prams.put("dc_rate", updateProduct.getDc_rate());
 		prams.put("product_sell_count", updateProduct.getProduct_sell_count());
@@ -116,5 +115,27 @@ public class ProductDAOImpl implements ProductDAO {
 	public List<adminCategories> getCategories() {
 
 		return ses.selectList(ns + "getCategories");
+	}
+
+	@Override
+	public int updateContent(int product_no, String content) {
+		System.out.println(product_no + " , " + content);
+		Map<String, Object> prams = new HashMap<>();
+		prams.put("content", content);
+		prams.put("product_no", product_no);
+		int result = ses.update(ns + "updateContent", prams);
+
+		return result;
+
+	}
+
+	@Override
+	public void deleteContentImg(int product_no, String product_content) {
+		Map<String, Object> prams = new HashMap<>();
+		prams.put("content", product_content);
+		prams.put("product_no", product_no);
+		System.out.println(product_content + ", " + product_no);
+		ses.update(ns + "deleteContentImg", prams);
+
 	}
 }

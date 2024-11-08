@@ -40,6 +40,7 @@ public class MemberOrderController {
 			}
 
 			model.addAttribute("CancleList", map.get("CancleList"));
+			System.out.println(map.get("CancleList"));
 			model.addAttribute("PagingInfo", map.get("PagingInfo"));
 			model.addAttribute("TopCancleList", map.get("TopCancleList"));
 		} catch (Exception e) {

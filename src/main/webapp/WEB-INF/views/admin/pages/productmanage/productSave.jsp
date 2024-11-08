@@ -49,6 +49,19 @@
 		document.querySelector('.btn-group > button').innerText = name;
 
 	}
+
+	function toggleDiscountInput() {
+		let discountType = $("input[name='product_dc_type']:checked").val();
+		console.log(discountType);
+
+		if (discountType === 'P') {
+			$("#discountAmountContainer").css('display', 'block');
+			$("#discountAmountContainer").attr('readonly', false);
+		} else {
+			$("#discountAmountContainer").attr('readonly', true);
+			$("discountAmountContainer").val(0);
+		}
+	}
 </script>
 </head>
 
@@ -115,33 +128,32 @@
 										</div>
 										<div class="row mb-3">
 
-											<table class="table table-striped table-borderless border-bottom">
+											<table class="table table-striped table-borderless border-bottom mb-3">
 												<thead>
 													<tr>
 														<th class="text-nowrap">할인 종류</th>
-														<th class="text-nowrap text-center">✉️ 비율 할인</th>
+														<th class="text-nowrap text-center"><span>&#x0025;</span> 비율 할인</th>
 
-														<th class="text-nowrap text-center">👩🏻‍💻 없음</th>
+														<th class="text-nowrap text-center"><span>&#x274C;</span>없음</th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr>
-														<td class="text-nowrap">할인 타입</td>
+														<td class="text-nowrap mb-3">할인 타입</td>
 														<td>
 															<div class="form-check d-flex justify-content-center">
-																<input class="form-check-input" type="radio" id="defaultCheck1" name="product_dc_type" value="P">
+																<input class="form-check-input dc_type" type="radio" id="defaultCheck1" name="product_dc_type" value="P" onclick="toggleDiscountInput()">
 															</div>
 														</td>
-
 														<td>
 															<div class="form-check d-flex justify-content-center">
-																<input class="form-check-input" type="radio" id="defaultCheck3" checked="checked" name="product_dc_type" value="N">
+																<input class="form-check-input dc_type" type="radio" id="defaultCheck3" name="product_dc_type" value="N" onclick="toggleDiscountInput()">
 															</div>
 														</td>
 													</tr>
 												</tbody>
 											</table>
-											<div class="row mb-3">
+											<div class="row mb-3 mt-3">
 												<label class="col-sm-2 col-form-label" for="basic-default-company"> 카테고리</label>
 												<div class="col-sm-10">
 													<div class="btn-group">
@@ -160,10 +172,10 @@
 											</div>
 										</div>
 										<div class="row mb-3">
-											<label class="col-sm-2 col-form-label" for="basic-default-email">할인타입이 선택된 값에 따라 보여지는html이 다르게 동적으로 설정</label>
+											<label class="col-sm-2 col-form-label" for="basic-default-email">할인금액</label>
 											<div class="col-sm-10">
 												<div class="input-group input-group-merge">
-													<input type="number" id="basic-default-email" class="form-control" placeholder="" name="product_dc_amount">
+													<input type="number" id="discountAmountContainer" class="form-control" placeholder="" name="product_dc_amount">
 												</div>
 
 											</div>
@@ -177,7 +189,7 @@
 										<div class="row mb-3">
 											<label class="col-sm-2 col-form-label" for="basic-default-message">상품 설명</label>
 											<div class="col-sm-10">
-												<textarea id="basic-default-message" class="form-control" placeholder="상품 설명" aria-label="상품 설명을 입력하세요..." name="product_content"></textarea>
+												<input type="file" class="form-control" id="basic-default-company" placeholder="게시할 상품 설명" name="product_content_file">
 											</div>
 										</div>
 										<div class="row mb-3">
@@ -187,7 +199,7 @@
 											</div>
 										</div>
 										<div class="row mb-3">
-											<label class="col-sm-2 col-form-label" for="basic-default-message">상품 서브 이미지 + 버튼 추가 해서 더 추가 할 수 있게 처리 </label>
+											<label class="col-sm-2 col-form-label" for="basic-default-message">상품 서브 이미지 </label>
 											<div class="col-sm-10">
 
 												<input type="file" class="form-control" id="basic-default-company" placeholder="게시할 상품 서브 이미지" name="image_sub_url" multiple>
@@ -241,7 +253,15 @@
 
 	<!-- / Layout wrapper -->
 
-
+	<div class="bs-toast toast toast-placement-ex m-2 fade bg-secondary top-0 end-0 hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+		<div class="toast-header">
+			<i class="bx bx-bell me-2"></i>
+			<div class="me-auto fw-semibold">Bootstrap</div>
+			<small>11 mins ago</small>
+			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+		</div>
+		<div class="toast-body">Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.</div>
+	</div>
 
 	<!-- Core JS -->
 	<!-- build:js assets/vendor/js/core.js -->

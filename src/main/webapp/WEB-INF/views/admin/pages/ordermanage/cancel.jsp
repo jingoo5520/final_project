@@ -101,7 +101,8 @@
 		            output += '<tr>' +
 		                '<td>'+checkBoxHtml+ '</td>' +
 		                '<td>' + cancel.cancel_no + '</td>' +
-		                '<td>' + cancel.orderproduct_no + '</td>' +
+		                '<td>' + cancel.order_id + '</td>' +
+		                '<td>' + cancel.order_product_no + '</td>' +
 		                '<td>' + formattedDate + '</td>' +
 		                '<td>' + cancel.cancel_complete_date + '</td>' +
 		                '<td>' + cancel.cancel_retract_date + '</td>' +
@@ -172,7 +173,7 @@
 		            contentType: 'application/json' ,
 		            data: {
 		                cancel_no: cancelNo , // 취소번호 전송
-		                orderproduct_no : orderNo ,  // 주문번호 정송
+		                order_product_no : orderNo ,  // 주문번호 정송
 		                cancel_type : cancelType // 취소 구분 
 		            },
 		            success: function(data) {
@@ -241,7 +242,8 @@
 			            output += '<tr>' +
 			                '<td>'+checkBoxHtml+ '</td>' +
 			                '<td>' + cancel.cancel_no + '</td>' +
-			                '<td>' + cancel.orderproduct_no + '</td>' +
+			                '<td>' + cancel.oreder_id + '</td>' +
+			                '<td>' + cancel.order_product_no + '</td>' +
 			                '<td>' + formattedDate + '</td>' +
 			                '<td>' + cancel.cancel_complete_date + '</td>' +
 			                '<td>' + cancel.cancel_retract_date + '</td>' +
@@ -306,9 +308,9 @@
 										<div class="col-xl">
 											<div class="card mb-4">
 												<div class="card h-100">
-													<h5 class="card-title mt-3" align="center" id="orderNo">주문번호 : ${top.orderproduct_no}</h5>
+													<h5 class="card-title mt-3" align="center" id="orderNo">주문번호 : ${top.order_product_no}</h5>
 													<div class="card-body">
-
+														<p class="card-text">주문 아이디 : ${top.order_id}</p>
 														<p class="card-text">취소번호 : ${top.cancel_no}</p>
 														<p class="card-text">
 															신청날짜 :
@@ -333,9 +335,9 @@
 											<div class="card mb-4">
 
 												<div class="card h-100">
-													<h5 class="card-title mt-3" align="center" id="orderNo">주문번호 : ${top.orderproduct_no}</h5>
+													<h5 class="card-title mt-3" align="center" id="orderNo">주문번호 : ${top.order_product_no}</h5>
 													<div class="card-body">
-
+														<p class="card-text">주문 아이디 : ${top.order_id}</p>
 														<p class="card-text">취소번호 : ${top.cancel_no}</p>
 														<p class="card-text">
 															신청날짜 :
@@ -381,7 +383,7 @@
 												<div class="row mb-3">
 													<label class="col-sm-2 col-form-label" for="basic-default-name">취소 상태</label>
 													<div class="col-sm-10 d-flex align-items-center">
-													
+
 														<div class="form-check-inline">
 															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소대기" id="cancel_status_wait" checked="checked" /> <label class="form-check-label" for="product_p"> 대기 </label>
 														</div>
@@ -422,6 +424,7 @@
 													<th>선택</th>
 													<th>취소 번호</th>
 													<th>주문 번호</th>
+													<th>주문 아이디 번호</th>
 													<th>취소 신청 날짜</th>
 													<th>취소 완료 날짜</th>
 													<th>취소 철회 날짜</th>
@@ -436,7 +439,8 @@
 													<tr>
 														<td><input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="${member.member_id}" <c:if test="\${fn:contains(checkedMemberIdList , member.member_id)}">checked</c:if> /></td>
 														<td>${cancle.cancel_no }</td>
-														<td>${cancle.orderproduct_no}</td>
+														<td>${cancle.order_product_no}</td>
+														<td>${cancle.order_id }</td>
 														<td><fmt:formatDate value="${cancle.cancel_apply_date}" pattern="yyyy-MM-dd" /></td>
 														<td><fmt:formatDate value="${cancle.cancel_complete_date}" pattern="yyyy-MM-dd" /></td>
 														<td><fmt:formatDate value="${cancle.cancel_retract_date}" pattern="yyyy-MM-dd" /></td>

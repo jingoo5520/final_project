@@ -25,6 +25,7 @@ public class ProductDTO {
 	private float dc_rate;
 	private int product_sell_count;
 
+	private MultipartFile product_content_file;
 	private MultipartFile image_main_url;
 	private MultipartFile[] image_sub_url;
 }

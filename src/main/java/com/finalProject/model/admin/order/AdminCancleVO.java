@@ -15,7 +15,8 @@ import lombok.ToString;
 @Builder
 public class AdminCancleVO {
 	private int cancel_no;
-	private int orderproduct_no;
+	private String order_id;
+	private int order_product_no;
 	private Date cancel_apply_date;
 	private Date cancel_complete_date;
 	private Date cancel_retract_date;

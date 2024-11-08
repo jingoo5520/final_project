@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin/productmanage")
 public class ProductController {
-
 	@Autowired
 	private ProductService ps;
 	@Autowired
@@ -52,87 +52,21 @@ public class ProductController {
 	public String productSave(HttpServletRequest request, Model model) {
 		System.out.println(request.getSession().getServletContext().getRealPath("product"));
 		List<adminCategories> list = new ArrayList<adminCategories>();
+
 		list = ps.getCategories();
+
 		model.addAttribute("categories", list);
 		return "admin/pages/productmanage/productSave";
 	}
 
 	@RequestMapping(value = "/productUpdate", method = RequestMethod.POST)
-	public ResponseEntity<String> productUpdate(ProductUpdateDTO updateProduct, HttpServletRequest request) {
-		System.out.println(updateProduct.toString());
-		System.out.println(updateProduct.getProduct_main_image().trim());
-		System.out.println(updateProduct.getContent_image().getOriginalFilename());
-		System.out.println(updateProduct.getProduct_content());
-		List<String> subArr = new ArrayList<String>();
-		List<String> list = new ArrayList<>();
+	public ResponseEntity<String> productUpdate(@ModelAttribute ProductUpdateDTO updateProduct,
+			HttpServletRequest request) {
+		System.out.println("sdsdsddsds");
+		return ps.updateFile(updateProduct, request);
 
-		ServletContext sc = request.getSession().getServletContext();
-		String path = sc.getRealPath("/resources/product");
-		if (null != updateProduct.getContent_image()) {
-			String fileName = "Content_" + UUID.randomUUID() + updateProduct.getContent_image().getOriginalFilename();
-
-			File Directory = new File(path + File.separator + fileName);
-			list.add(fileName);
-			try {
-				updateProduct.getContent_image().transferTo(Directory);
-			} catch (IllegalStateException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
-			}
-		}
-		if (null != updateProduct.getImage_main_url()) {
-			String fileName = "Main_" + UUID.randomUUID() + updateProduct.getImage_main_url().getOriginalFilename();
-
-			File Directory = new File(path + File.separator + fileName);
-			list.add(fileName);
-			try {
-				updateProduct.getImage_main_url().transferTo(Directory);
-			} catch (IllegalStateException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
-			}
-		}
-		if (null != updateProduct.getImage_sub_url()) {
-			for (MultipartFile file : updateProduct.getImage_sub_url()) {
-				if (file.getOriginalFilename() != "") {
-					String fileName = "Sub_" + UUID.randomUUID() + file.getOriginalFilename();
-
-					File Directory = new File(path + File.separator + fileName);
-					list.add(fileName);
-					try {
-						file.transferTo(Directory);
-					} catch (IllegalStateException | IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
-					}
-				}
-			}
-		}
-		if (ps.updateProduct(updateProduct)) {
-
-			if (!(updateProduct.getProduct_main_image().equals("true"))) {
-
-				String realPath = sc.getRealPath(updateProduct.getProduct_main_image());
-
-				pu.removeFile(realPath);
-			}
-			if (updateProduct.getProduct_sub_image() != null) {
-				for (String a : updateProduct.getProduct_sub_image()) {
-					subArr.add(sc.getRealPath(a));
-
-				}
-				pu.removeFile(subArr);
-			}
-
-		}
-		if (list != null) {
-			ps.updateProductImg(updateProduct.getProduct_no(), list);
-		}
-		return ResponseEntity.status(HttpStatus.OK).body("success");
 	}
+
 //
 //	@RequestMapping("/test")
 //	public void home() {
@@ -152,7 +86,7 @@ public class ProductController {
 //				"attachment; filename=\"" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1") + "\"");
 //
 //		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), "MS949"))) {
-//			out.println("�긽�뭹 �씠由�,媛�寃�,�븷�씤���엯");
+
 //			out.println(productDTO.getProduct_name() + "," + productDTO.getProduct_dc_type());
 //			out.flush();
 //		}
@@ -172,7 +106,7 @@ public class ProductController {
 		String route = "";
 		System.out.println(realPath);
 		List<String> list = new ArrayList<>();
-		pu.makeDirectory(request, realPath);
+		pu.makeDirectory(realPath);
 
 		try {
 			if (productDTO.getImage_main_url().getOriginalFilename() != "") {
@@ -205,7 +139,7 @@ public class ProductController {
 				}
 			}
 
-			if (ps.saveProduct(productDTO, list) == 1) {
+			if (ps.saveProduct(productDTO, list, realPath) == 1) {
 				System.out.println("���옣 �꽦怨�");
 				response.sendRedirect("/admin/productmanage/productSave");
 			} else {

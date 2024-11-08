@@ -44,7 +44,50 @@
 <script>
 let selectedValues = [];
 	$(function() {
+	
+		  const errorMessages = {
+			        mainImage: $("<div style='color: red;'></div>").insertAfter("#image_main_url"),
+			        subImage: $("<div style='color: red;'></div>").insertAfter("#image_sub_url"),
+			        contentImage: $("<div style='color: red;'></div>").insertAfter("#product_content_img")
+			    };
 
+			    // 이미지 파일 유효성 검사 함수
+			    function validateImageInput($input, $errorMessageElement) {
+			        const files = $input[0].files;
+			        let isValid = true;
+
+			        // 파일 타입 검사
+			        $.each(files, function (index, file) {
+			            if (!file.type.startsWith("image/")) {
+			                isValid = false;
+			                return false; // 이미지 파일이 아닌 경우 루프 종료
+			            }
+			        });
+
+			        // 유효하지 않으면 경고 메시지 표시
+			        if (!isValid) {
+			            $errorMessageElement.text("이미지 파일이 아닙니다.");
+			            $input.val(""); // 파일 선택 해제
+			        } else {
+			            $errorMessageElement.text(""); // 유효한 경우 메시지 제거
+			        }
+			    }
+			let mainImageInput = $("#image_main_url");
+			let subImageInput  = $("#image_sub_url");
+			let productContentImgInput  = $("#product_content_img");
+			console.log(mainImageInput);
+			console.log(subImageInput);
+			console.log(productContentImgInput);
+		
+			mainImageInput.on('change', function() {
+				 validateImageInput($(this), errorMessages.mainImage);
+			})
+			subImageInput.on('change', function() {
+				 validateImageInput($(this), errorMessages.subImage);
+			})
+			productContentImgInput.on('change', function() {
+				 validateImageInput($(this), errorMessages.contentImage);
+			}) 
 		  $('.previewImg').on('click', function() {
 		        // 클릭된 이미지의 src 가져오기
 		        var imageSrc = $(this).attr('src');
@@ -64,7 +107,9 @@ let selectedValues = [];
 			var productPrice = row.find('td:eq(3)').text(); // 제품 가격 (4번째 열)
 			var productContent = row.find('td:eq(4)').find('img').attr('src'); // 제품 설명 (5번째 열) 
 			var productDcType = row.find('td:eq(5)').text();
-			var productDcAmount = row.find('td:eq(6)').text();
+			var productDcAmount = parseFloat(row.find('td:eq(6)').text().replace('%', '').trim());
+			console.log(productDcAmount);
+			console.log(productDcType);
 			var productSellCount = row.find('td:eq(7)').text();
 			var mainImageUrl =row.find('td:eq(8)').find('img').attr('src');
 			console.log(mainImageUrl);
@@ -77,14 +122,12 @@ let selectedValues = [];
 			modal.find('#productNo').val(productId); // 제품 ID 입력란
 			modal.find('#productName').val(productName); // 제품 이름 입력란
 			modal.find('#productPrice').val(productPrice); // 제품 가격 입력란
-			/* modal.find('#productContent').val(productContent); // 제품 설명 입력란 */
+			modal.find('#productContent').val(productContent); // 제품 설명 입력란 */
 			modal.find('#productSellCount').val(productSellCount);
 			// 할인 타입 라디오 버튼 설정
-			if (productDcType === "고정할인") {
-				modal.find('#fixedDiscount').prop('checked', true);
-			} else if (productDcType === "퍼센트할인") {
+			if (productDcType === "P") {
 				modal.find('#percentDiscount').prop('checked', true);
-			} else {
+			} else if(productDcType === "N"){
 				modal.find('#noDiscount').prop('checked', true);
 			}
 
@@ -93,6 +136,10 @@ let selectedValues = [];
 			 updateDiscountAmountInput();
 			if(typeof productContent != 'undefined'){
 				$('#contentImgPreview').attr('src',productContent).show();
+				$('#deletecontentImage').show();
+			} else {
+				$('#contentImgPreview').hide();
+				$('#deletecontentImage').hide();
 			}
 			  if (typeof mainImageUrl != 'undefined') {
 			        $('#mainImagePreview').attr('src',mainImageUrl).show();
@@ -120,16 +167,18 @@ let selectedValues = [];
 	$("#deleteImage").on('click' , function() {
 		console.log("메인이미지 삭제하기");
 		$(this).parent().hide();
-	})
+	});
 
 	$('#subImagePreview').on('click', '.deleteSubImage', function() {
         $(this).parent().hide();
         // 필요하면 서버에 이미지 삭제 요청을 할 수 있음
     });
-	
+	$('#deletecontentImage').on('click',function() {
+		$(this).parent().hide();
+	});
     function updateDiscountAmountInput() {
         var selectedType = $("input[name='discountType']:checked").val();
-
+console.log(selectedType); 
         if (selectedType === "fixed") {
             $('#productDcAmount').attr('type', 'number').attr('min', '0').removeAttr('max');
             $('#productDcAmount').removeAttr('disabled');
@@ -194,8 +243,10 @@ let selectedValues = [];
 							productId : productId
 						}, // 제품 ID 데이터 전송
 						success : function(response) {
-							alert('상품이 삭제되었습니다.');
-							window.location.reload(); // 페이지 새로고침
+							$('#toastMessage').removeClass('hide').addClass('show');
+			            	$("#toastTitle").text("상품 삭제");
+			            	$("#toastBody").text("상품 삭제가 성공했습니다");
+			            	$('#modalToggle2').modal('hide');
 						},
 						error : function(xhr, status, error) {
 							console.error('Error:', error);
@@ -217,7 +268,7 @@ let selectedValues = [];
 		        var discountType = $("input[name='discountType']:checked").val();
 		        var existingMainImageUrl = $('#mainImagePreview').attr('src');
 		        var deleteMainImage = $('#deleteImage').is(':visible') ? 'true' : existingMainImageUrl; // 삭제 버튼이 보이면 이미지가 삭제되지 않음
-
+				console.log(productContent)
 		        if (discountType == "percent") {
 		        	discountType = "P"; // 퍼센트할인
 		        } else if ( discountType == "none") {
@@ -234,7 +285,7 @@ let selectedValues = [];
 		        formData.append('dc_rate', discountAmount);
 				formData.append('product_sell_count' , productSellCount);
 				formData.append('product_main_image' , deleteMainImage);
-				
+				console.log(discountAmount);
 		        // 메인 이미지
 		        var mainImage = $('#image_main_url')[0].files[0];
 		        if (mainImage) {
@@ -266,8 +317,17 @@ let selectedValues = [];
 		            processData: false, // 자동으로 데이터 처리하지 않도록 설정
 		            contentType: false, // 컨텐츠 타입을 설정하지 않도록 설정
 		            success: function(response) {
-		                alert('상품이 수정되었습니다.');
-		                window.location.reload(); // 페이지 새로고침
+		            	 
+		            	 $('#toastTitle').text('성공!');
+		                 $('#toastBody').text('상품 수정이 성공적으로 처리되었습니다.');
+		                 
+		                 // 토스트 메시지 표시
+		                 var toastElement = $('#toastMessage');
+		                 toastElement.removeClass('hide').addClass('show');
+						$("#modalToggle").modal('hide');
+						 setTimeout(function() {
+							 toastElement.hide();
+				            }, 2000);
 		            },
 		            error: function(xhr, status, error) {
 		                console.error('Error:', error);
@@ -275,6 +335,7 @@ let selectedValues = [];
 		            }
 		        });
 		    });
+		
 		$(".dropdown-item").on('click', function () {
 			 let selectVal = $(this).parent().attr("value");
 			console.log(selectVal);
@@ -512,32 +573,30 @@ let selectedValues = [];
 												<td>${product.product_no}</td>
 												<td>${product.product_name}</td>
 												<td>${product.product_price}</td>
-												<td><c:if test="${!fn:contains(product.product_content , 'Content')}">
+												<td><c:if test="${!fn:contains(product.product_content , 'Content') && product.product_content != null && product.product_content != ''}">
 														<img src="${product.product_content}" width="40px" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
-													</c:if>
-														<c:if test="${fn:contains(product.product_content , 'Content')}">
+													</c:if> <c:if test="${fn:contains(product.product_content , 'Content') && product.product_content != null && product.product_content != ''}">
 														<img src="/resources/product/${product.product_content}" width="40px" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
-														</c:if>
-													</td>
+													</c:if></td>
 												<td>${product.product_dc_type}</td>
-												<td>${product.dc_rate}</td>
+												<td><fmt:formatNumber value="${product.dc_rate * 100}" type="number" />%</td>
 												<td>${product.product_sell_count}</td>
 												<td><c:forEach var="img" items="${product.list}">
-														<c:if test="${img.image_type == 'M' && !fn:contains(img.image_url, 'Main')}">
-															<img src='${img.image_url} ' alt="Main Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
+														<c:if test="${img.image_type == 'M' && !fn:contains(img.image_url, 'Main') && img.image_url != null && img.image_url != ''}">
+															<img src='${img.image_url}' alt="Main Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
-														<c:if test="${img.image_type == 'M' && fn:contains(img.image_url, 'Main')}">
+														<c:if test="${img.image_type == 'M' && fn:contains(img.image_url, 'Main') && img.image_url != null && img.image_url != ''}">
 															<img src='/resources/product/${img.image_url}' alt="Main Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
 													</c:forEach></td>
 												<td><c:forEach var="img" items="${product.list}">
-														<c:if test="${img.image_type == 'S' && !fn:contains(img.image_url, 'Sub')}">
+														<c:if test="${img.image_type == 'S' && !fn:contains(img.image_url, 'Sub')&& img.image_url != null && img.image_url != ''}">
 															<img src='${img.image_url}' alt="Sub Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 서브 이미지 URL 출력 -->
 														</c:if>
-														<c:if test="${img.image_type == 'S' && fn:contains(img.image_url, 'Sub')}">
+														<c:if test="${img.image_type == 'S' && fn:contains(img.image_url, 'Sub')&& img.image_url != null && img.image_url != ''}">
 															<img src='/resources/product/${img.image_url}' alt="Sub Image" width="50" height="50" class="previewImg" data-bs-toggle="modal" data-bs-target="#modalToggle3">
 															<!-- 메인 이미지 URL 출력 -->
 														</c:if>
@@ -719,7 +778,7 @@ let selectedValues = [];
 							</div>
 
 						</div>
-						<input type="file" class="form-control" id="product_content_img" accept="image/*">
+						<input type="file" class="form-control imgClass" id="product_content_img" accept="image/*">
 					</div>
 					<div class="mb-3">
 						<label class="form-label">상품 할인 타입</label><br> <input type="radio" id="percentDiscount" name="discountType" value="percent"> 퍼센트할인 <input type="radio" id="noDiscount" name="discountType" value="none" checked> 없음
@@ -743,7 +802,7 @@ let selectedValues = [];
 							</div>
 
 						</div>
-						<input type="file" class="form-control" id="image_main_url" accept="image/*">
+						<input type="file" class="form-control imgClass" id="image_main_url" accept="image/*">
 					</div>
 					<div class="mb-3">
 						<label for="image_sub_url" class="form-label">상품 서브 이미지</label>
@@ -751,7 +810,7 @@ let selectedValues = [];
 							<div id="subImagePreview"></div>
 							<!-- 서브 이미지 미리보기 영역 -->
 						</div>
-						<label for="udpate image" class="form-label">변경할 서브 이미지</label> <input type="file" class="form-control" id="image_sub_url" accept="image/*" multiple>
+						<label for="udpate image" class="form-label imgClass">변경할 서브 이미지</label> <input type="file" class="form-control" id="image_sub_url" accept="image/*" multiple>
 					</div>
 
 				</div>
@@ -791,6 +850,15 @@ let selectedValues = [];
 				<div class="modal-footer"></div>
 			</div>
 		</div>
+	</div>
+	<div class="bs-toast toast toast-placement-ex m-2 fade bg-secondary top-0 end-0 hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000" id="toastMessage">
+		<div class="toast-header">
+			<i class="bx bx-bell me-2"></i>
+			<div class="me-auto fw-semibold" id="toastTitle"></div>
+			<small></small>
+			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+		</div>
+		<div class="toast-body" id="toastBody"></div>
 	</div>
 </body>
 

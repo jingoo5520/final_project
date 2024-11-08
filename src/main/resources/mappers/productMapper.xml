@@ -16,16 +16,20 @@
 		p.product_sell_count,
 		max(pi.image_main_url) as image_main_url,
 		c.category_name
-		from products p
+		from products
+		p
 		left join product_images pi on p.product_no = pi.product_no
-		join categories c on p.product_category = c.category_no
-		where p.product_delete = 'N'
+		join
+		categories c on p.product_category = c.category_no
+		where
+		p.product_delete = 'N'
 		group by p.product_no,
 		p.product_name,
 		p.product_price,
 		p.product_category,
 		c.category_name
-		order by p.product_reg_date desc
+		order by
+		p.product_reg_date desc
 		limit #{limit} offset #{offset}
 	</select>
 
@@ -45,10 +49,13 @@
 		select p.product_no, p.product_name, p.product_price,
 		p.product_category, p.dc_rate, p.product_dc_type,
 		p.product_sell_count,
-		max(pi.image_main_url) as image_main_url, c.category_name
+		max(pi.image_main_url) as image_main_url,
+		c.category_name
 		from products p
-		left join product_images pi on p.product_no = pi.product_no
-		join categories c on p.product_category = c.category_no
+		left join product_images pi on
+		p.product_no = pi.product_no
+		join categories c on p.product_category =
+		c.category_no
 		where p.product_delete = 'N'
 		<if test="category != null">
 			and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
@@ -66,14 +73,16 @@
 			<when test="sortOrder == 'lowPrice'">
 				order by
 				CASE
-				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate ))
+				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1
+				- p.dc_rate ))
 				ELSE p.product_price
 				END asc  <!-- 낮은가격순 -->
 			</when>
 			<when test="sortOrder == 'highPrice'">
 				order by
 				CASE
-				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1
+				- p.dc_rate))
 				ELSE p.product_price
 				END desc  <!-- 높은가격순 -->
 			</when>
@@ -99,8 +108,10 @@
 	<select id="getProductById" parameterType="int"
 		resultType="ProductDTO">
 		select p.*,c.*,pi.* from products p
-		left join categories c on p.product_category = c.category_no
-		left join product_images pi on p.product_no = pi.product_no
+		left join categories c
+		on p.product_category = c.category_no
+		left join product_images pi on
+		p.product_no = pi.product_no
 		where p.product_no = #{productId}
 	</select>
 
@@ -108,8 +119,10 @@
 		resultType="ProductDTO">
 		SELECT p.*, c.category_name
 		FROM products p
-		LEFT JOIN categories c ON p.product_category = c.category_no
-		WHERE p.product_no = #{productId}
+		LEFT JOIN
+		categories c ON p.product_category = c.category_no
+		WHERE p.product_no =
+		#{productId}
 	</select>
 
 
@@ -122,7 +135,8 @@
 		products p
 		WHERE
 		p.product_delete = 'N'
-		AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search},
+		AND
+		(#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search},
 		'%'))
 		AND (#{category} IS NULL OR p.product_category = #{category})
 	</select>
@@ -137,19 +151,24 @@
 		p.dc_rate,
 		p.product_dc_type,
 		p.product_sell_count,
-		COALESCE(MAX(pi.image_main_url), '/resources/images/noP_image.png') AS image_main_url,
+		COALESCE(MAX(pi.image_main_url), '/resources/images/noP_image.png') AS
+		image_main_url,
 		c.category_name
 		FROM
 		products p
 		LEFT JOIN
-		product_images pi ON p.product_no = pi.product_no
+		product_images pi
+		ON p.product_no = pi.product_no
 		JOIN
-		categories c ON p.product_category = c.category_no
+		categories c ON p.product_category
+		= c.category_no
 		WHERE
 		p.product_delete = 'N'
-		AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search},
+		AND (#{search} IS NULL OR
+		p.product_name LIKE CONCAT('%', #{search},
 		'%'))
-		AND (#{category} IS NULL OR p.product_category = #{category})
+		AND (#{category} IS
+		NULL OR p.product_category = #{category})
 		GROUP BY
 		p.product_no,
 		p.product_name,
@@ -169,13 +188,15 @@
 			</when>
 			<when test="'lowPrice'.equals(sortOrder)">
 				CASE
-				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+				WHEN p.product_dc_type = 'P' THEN
+				(p.product_price * (1 - p.dc_rate))
 				ELSE p.product_price
 				END ASC
 			</when>
 			<when test="'highPrice'.equals(sortOrder)">
 				CASE
-				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+				WHEN p.product_dc_type = 'P' THEN
+				(p.product_price * (1 - p.dc_rate))
 				ELSE p.product_price
 				END DESC
 			</when>
@@ -272,11 +293,12 @@
 
 	<update id="updateProduct">
 		update products set product_name = #{product_name} ,
-		product_price = #{product_price},
-		product_content = #{product_content}
-		, product_dc_type = #{product_dc_type}, dc_rate =
+		product_price = #{product_price}
+		, product_dc_type =
+		#{product_dc_type}, dc_rate =
 		#{dc_rate},
-		product_sell_count = #{product_sell_count} where
+		product_sell_count =
+		#{product_sell_count} where
 		product_no
 		=#{product_no};
 	</update>
@@ -401,4 +423,13 @@
 		resultType="com.finalProject.model.admin.product.adminCategories">
 		select * from categories
 	</select>
+	<update id="updateContent">
+		update products set product_content = #{content}
+		where
+		product_no = #{product_no}
+	</update>
+
+	<update id="deleteContentImg" parameterType="int">
+        UPDATE products SET product_content = NULL WHERE product_no = #{product_no}
+    </update>
 </mapper>

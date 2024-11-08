@@ -34,4 +34,8 @@ public interface ProductDAO {
 
 	List<adminCategories> getCategories();
 
+	int updateContent(int product_no, String content);
+
+	void deleteContentImg(int i, String product_content);
+
 }
