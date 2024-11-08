@@ -91,7 +91,7 @@
 	
 	
 	<select id="getProductById" parameterType="int" resultType="ProductDTO">
-	    select p.*,c.*,pi.* from products p
+	    select p.*, c.*, pi.image_url as image_main_url, pi.image_type as image_sub_url from products p
 	    left join categories c on p.product_category = c.category_no
 	    left join product_images pi on p.product_no = pi.product_no
 	    where p.product_no = #{productId}
