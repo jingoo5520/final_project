@@ -14,11 +14,12 @@ import lombok.ToString;
 @ToString
 @Builder
 public class OrderProductDTO {
+	private int orderproduct_no;
 	private int product_no;
 	private String product_name;
 	private int quantity;
 	private int product_price;
 	private String product_dc_type;
 	private float dc_rate;
-	private String image_main_url;
+	private String image_url;
 }

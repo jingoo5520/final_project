@@ -2,6 +2,8 @@ package com.finalProject.controller.order;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +30,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
+import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.order.CancelOrderRequestDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
+import com.finalProject.model.order.OrderProductsDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
 import com.finalProject.service.member.MemberService;
@@ -107,37 +113,34 @@ public class OrderController {
 	
 	// 사용자가 설정한 데이터를 가지고 주문 테이블 튜플 생성
 	@PostMapping("/orderProducts")
-    public ResponseEntity<Map<String, String>> processPayment(
-    		@RequestBody PaymentRequestDTO paymentRequest,
-    		HttpSession session
-    		) {
-		
+	public ResponseEntity<Map<String, String>> processPayment(@RequestBody PaymentRequestDTO paymentRequest, HttpSession session) {
+	
 		if (!paymentRequest.getSaveDeliveryType().equals("none")) {
-			
+		
 			DeliveryVO deliveryVO = DeliveryVO.builder()
-					.deliveryAddress(paymentRequest.getDeliveryAddress())
-					.deliveryName(paymentRequest.getDeliveryName())
-					.memberId(paymentRequest.getOrdererId())
-					.isMain("M")
-					.build();
-			
+											  .deliveryAddress(paymentRequest.getDeliveryAddress())
+											  .deliveryName(paymentRequest.getDeliveryName())
+											  .memberId(paymentRequest.getOrdererId())
+											  .isMain("M")
+											  .build();
+		
 			if (paymentRequest.getSaveDeliveryType().contains("saveDelivery")) {
 				// 배송지 저장
 				System.out.println("배송지 저장 탭임");
 				System.out.println(deliveryVO.toString());
-				
+		
 				try {
 					memberService.saveDelivery(deliveryVO);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			
+		
 			if (paymentRequest.getSaveDeliveryType().contains("saveAddress")) {
 				// 회원 정보 주소 수정
 				System.out.println("회원 주소 정보 수정 탭임");
 				System.out.println(deliveryVO.toString());
-				
+		
 				try {
 					if (memberService.updateAddress(deliveryVO)) {
 						System.out.println("회원 정보 수정 완료");
@@ -148,47 +151,74 @@ public class OrderController {
 					e.printStackTrace();
 				}
 			}
-		
+	
 		} else {
 			System.out.println("동작하면 안돼.");
 		}
-		
-        // paymentRequest 객체를 사용하여 결제 처리 로직을 구현
-        System.out.println("payment request : " + paymentRequest);
-        Map<String, String> resultMap = new HashMap<>();
-        try {
-			session.setAttribute("orderId", orderService.makeOrder(paymentRequest));
-			System.out.println("세션에 저장된 orderId : " + session.getAttribute("orderId"));
-			resultMap.put("result", "success");
-			resultMap.put("message", "Payment processed successfully");
-			resultMap.put("orderId", (String) session.getAttribute("orderId"));
-			return ResponseEntity.ok(resultMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultMap.put("result", "fail");
-			resultMap.put("message", "주문 생성 실패");
-			return ResponseEntity.badRequest().body(resultMap);
-		}        
-    }
 	
-	@PostMapping("/showDeliveryList")
+		// paymentRequest 객체를 사용하여 결제 처리 로직을 구현
+		System.out.println("payment request : " + paymentRequest);
+		Map<String, String> resultMap = new HashMap<>();
+			try {
+	        	boolean isMember = session.getAttribute("loginMember") == null ? false : true; // 로그인 여부로 회원, 비회원 여부 알아내기
+				session.setAttribute("orderId", orderService.makeOrder(paymentRequest, isMember)); // 비회원은 orderId가 "non_member"이다.
+				String orderId = (String) session.getAttribute("orderId");
+				System.out.println("세션에 저장된 orderId : " + orderId);
+				if (isMember == false) {
+					orderService.makeGuest(paymentRequest, orderId);
+				}
+				resultMap.put("result", "success");
+				resultMap.put("message", "Payment processed successfully");
+				resultMap.put("orderId", orderId);
+				resultMap.put("totalPrice", String.valueOf(orderService.getExpectedTotalPrice(orderId)));
+				return ResponseEntity.ok(resultMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+				resultMap.put("result", "fail");
+				resultMap.put("message", "주문 생성 실패");
+				return ResponseEntity.badRequest().body(resultMap);
+		}        
+	}
+	
+	@PostMapping("/getDeliveryList")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> showDeliveryList(@RequestParam("memberId") String memberId) {
-		System.out.println("memberId: " + memberId);
+	public ResponseEntity<Map<String, Object>> getDeliveryList(@RequestParam("memberId") String memberId) {
 		List<DeliveryDTO> deliveryList = null;
-
+	
 		try {
 			deliveryList = memberService.getDeliveryList(memberId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		Map<String, Object> response = new HashMap<>();
 		response.put("status", "success");
-		response.put("memberId", memberId);
 		response.put("deliveryList", deliveryList);
-
-	    return ResponseEntity.ok(response);
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	
+	@PostMapping("getCouponList")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getCouponList(@RequestParam("memberId") String memberId) {
+		List<UseCouponDTO> couponList = null;
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String currentTime = now.format(formatter);
+		
+		try {
+			couponList = memberService.getCouponList(memberId, currentTime);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("status", "success");
+		response.put("couponList", couponList);
+		
+		return ResponseEntity.ok(response);
 	}
 
 	// 테스트용, 배포 환경에서는 사용되면 안됨
@@ -198,6 +228,7 @@ public class OrderController {
 		session.setAttribute("orderId", orderId);
 	}
 	
+	// deprecated : /orderProducts에서 예상금액 칼럼을 채워넣음
 	@PostMapping("/payment/saveExpectedTotalPrice")
 	public ResponseEntity<Map<String, String>> saveAmount(
 			@RequestParam("value") int amount,
@@ -213,6 +244,7 @@ public class OrderController {
 			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			resultMap.put("result", "fail");
 			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.BAD_REQUEST);
 		}
@@ -225,7 +257,8 @@ public class OrderController {
 			@RequestParam("orderId") String orderId,
 			@RequestParam("paymentKey") String paymentKey,
 			@RequestParam("amount") int amount,
-			Model model
+			Model model,
+			HttpSession session
 			) {
 		// 예시 : http://localhost:8080/user/payment/success.html?orderId=MC4wODExNjkzNzY1NTg1&paymentKey=tviva20241016183611gDY62&amount=10
 		System.out.println("결제 인증 성공");
@@ -233,8 +266,11 @@ public class OrderController {
 		// NOTE : DB 조작이 일어나지만 select문이므로 트랜잭션 처리하지 않았음. 예외 발생 시 함수가 중지됨.
 		int savedPrice = orderService.getExpectedTotalPrice(orderId);
 		int queryPrice = amount;
+		System.out.println("savedPrice : " + savedPrice);
+		System.out.println("queryPrice : " + amount);
 		if (savedPrice != amount) {
 			model.addAttribute("message", "결제 금액 조작의 위험이 발견되었습니다. 다시 한번 결제를 시도해주세요.");
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			// TODO : 지금 로그인한 유저의 orderId로 orders 테이블 삭제하기, orderProducts의 테이블의 행들도 삭제하기
 			// (입력단에서 다시 테이블 삽입시켜야 함.)
 			// (입력단에서 테이블 삽입할 때 기존 아이디로 orders 테이블에 뭔가 있다면 삭제하고 다시 넣는 처리가 필요할 듯)
@@ -254,6 +290,7 @@ public class OrderController {
 			orderService.setPaymentModuleKey(orderId, paymentKey);
 		} catch (Exception e) {
 			model.addAttribute("message", "잘못된 요청입니다. 다시 한번 시도해주세요.");
+			orderService.deleteOrder(orderId);
 			// TODO : 실패 페이지 깔끔하게 다시 만들어야 함
 			return "/user/pages/order/temp_02";
 		}
@@ -283,14 +320,14 @@ public class OrderController {
 						orderId,
 						(int) Float.parseFloat(responseMap.get("totalAmount").toString()),
 						"T",
-						responseMap.get("method").toString()
+						responseMap.get("method").toString(),
+						session
 					);
 				return "/user/pages/order/temp_01"; // 결제 성공
 			}
 		} catch (Exception e) {
-			// TODO : 현재 로그인된 id로 orders 테이블 delete 처리
-			// 실패해도 예외처리 할 필요는 없음. 만약에 미리 지워져있다면 지우는 데 실패할 수도 있으니까...
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			return "/user/pages/order/temp_02"; // 결제 실패
 		}
 		return "/user/pages/order/temp_02"; // 결제 실패
@@ -316,11 +353,13 @@ public class OrderController {
 					orderId,
 					orderService.getExpectedTotalPrice(orderId),
 					"N", // 네이버페이
-					null
+					null, 
+					session
 				);
 			return "/user/pages/order/temp_01"; // 결제 성공
 		} catch (Exception e) {
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			return "/user/pages/order/temp_02"; // 결제 실패
 		}
 	}
@@ -354,6 +393,7 @@ public class OrderController {
 			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			Map<String, String> outputResponseMap = new HashMap<>();
 			outputResponseMap.put("result", "fail");
 			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.BAD_REQUEST);
@@ -392,7 +432,6 @@ public class OrderController {
 				(String) requestData.get("tid"), 
 				(String) requestData.get("pg_token")
 			);
-		// working...
 		Map<String, String> outputResponseMap = new HashMap<>();
 		String orderId = (String) session.getAttribute("orderId");
 
@@ -402,17 +441,20 @@ public class OrderController {
 						orderId,
 						orderService.getExpectedTotalPrice(orderId),
 						"K", // 카카오페이
-						null
+						null, 
+						session
 					);
 				outputResponseMap.put("result", "success");
 				return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.OK);
 			} catch (Exception e) {
 				e.printStackTrace();
 				outputResponseMap.put("result", "fail");
+				orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 				return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			outputResponseMap.put("result", "fail");
+			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -440,11 +482,56 @@ public class OrderController {
 		return "/user/pages/order/orderList";
 	}
 	
-	@PostMapping("/cancelOrder")
-	public String cancelOrder(@RequestParam int orderNo, Model model) {
+	@GetMapping("/cancelOrder")
+	public String showCancelOrderPage(@RequestParam int orderNo, Model model) {
 		System.out.println("주문취소(or 반품/환불) 페이지 접속");
 		System.out.println("주문번호는 " + orderNo);
 		model.addAttribute("orderNo", orderNo);
 		return "/user/pages/order/cancelOrder";
 	}
+	
+	// 회원의 모든 주문과 주문마다의 상품을 반환
+	@GetMapping("/orderProducts")
+	@ResponseBody
+	public List<OrderProductsDTO> getOrderProducts(
+			@RequestParam("memberId") String memberId) {
+		return orderService.getOrderListOfMember(memberId);
+	}
+	
+	
+	@GetMapping("/cancelAPItest")
+	public String cancelAPItest() {
+		return "/user/pages/order/cancelAPItest";
+	}
+	
+	@GetMapping("/getLoginedId")
+	@ResponseBody
+	public String getLoginedId(HttpSession session) {
+		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
+		return loginDTO.getMember_id();
+	}
+	
+	@PostMapping("/cancelOrder")
+	public ResponseEntity<Map<String, String>> cancelOrder(
+			@RequestBody CancelOrderRequestDTO requestDTO
+			) {
+		System.out.println("CancelOrderRequestDTO : " + requestDTO);
+		Map<String, String> resultMap = new HashMap<>();
+		try {
+			orderService.cancelOrder(requestDTO);
+			resultMap.put("result", "success");
+			return ResponseEntity.ok(resultMap);
+		} catch (Exception e) {
+			resultMap.put("result", "fail");
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(resultMap);
+		}
+		
+	}
+	
+//	@GetMapping("/cancelAPItest/")
+//	public String cancelAPItest() {
+//		return "/user/pages/order/cancelAPItest";
+//	}
+	
 }

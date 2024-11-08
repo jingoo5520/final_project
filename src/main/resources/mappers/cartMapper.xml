@@ -12,12 +12,12 @@
 	</select>
 	
 	<select id="selectCartItems" resultType="com.finalProject.model.cart.CartDTO">
-		select p.product_no, p.product_name, p.product_price, p.product_dc_type, p.dc_rate, i.image_main_url, c.cart_no, c.product_count, c.cart_item_no 
+		select p.product_no, p.product_name, p.product_price, p.product_dc_type, p.dc_rate, i.image_url, c.cart_no, c.product_count, c.cart_item_no 
 		from product_images i, products p 
 		inner join cart_items c 
 		on p.product_no = c.product_no 
 		where p.product_no = i.product_no and c.cart_no = #{cartNo}
-		and i.image_sub_url = "M"
+		and i.image_type = "M"
 	</select>
 	
 	<update id="updateQuantity">
@@ -61,9 +61,9 @@
 	</select>
 	
 	<select id="selectProductInfoByCookie" resultType="com.finalProject.model.cart.CookieCartDTO">
-		select p.product_no, p.product_name, p.product_dc_type, p.dc_rate, p.product_price, i.image_main_url 
+		select p.product_no, p.product_name, p.product_dc_type, p.dc_rate, p.product_price, i.image_url 
 		from product_images i inner join products p on p.product_no = i.product_no 
-		where i.image_sub_url = "M" and p.product_no = #{productNo}
+		where i.image_type = "M" and p.product_no = #{productNo}
 	</select>
 	
 	<update id="updateQuantityWithCookieCart">

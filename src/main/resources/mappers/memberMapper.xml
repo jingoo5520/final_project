@@ -103,40 +103,96 @@
 	<!-- 비밀번호 찾기(랜덤비밀번호 지정) -->
 	<update id="updateRandomPwd">
 		update members
-		set member_pwd = sha2(#{member_pwd}, 256)
+		set member_pwd = sha2(#{member_pwd},
+		256)
 		where member_id = #{member_id} and
 		member_status = 'active'
 	</update>
-	
+
 	<!-- 찜 목록 조회 -->
 	<select id="selectWishListByMemberId" resultType="int">
-		select product_no from wishes where member_id = #{member_id}
+		select
+		product_no from wishes where member_id = #{member_id}
 	</select>
-	
+
+	<!-- 찜 상태 확인 -->
+	<select id="selectWish" resultType="int">
+		select count(*) from wishes
+		where member_id = #{member_id} and product_no = #{product_no}
+	</select>
+
+	<!-- 찜 정보 추가 -->
+	<insert id="insertWish">
+		insert into wishes (member_id, product_no)
+		values
+		(#{member_id}, #{product_no})
+	</insert>
+
+	<!-- 찜 정보 삭제 -->
+	<delete id="deleteWish">
+		delete from wishes where member_id = #{member_id} and
+		product_no = #{product_no}
+	</delete>
+
+	<!-- 기본주소로 저장(회원가입) -->
+	<insert id="saveAddressBySignUp">
+		insert into delivery_addrs (delivery_name,
+		delivery_address, is_main, member_id)
+		values (#{addressName},
+		#{address}, 'M', #{member_id})
+	</insert>
+
+	<!-- 기본주소로 저장(회원가입) -->
+	<select id="selectMemberByEmail" resultType="LoginDTO">
+		select * from
+		members where email = #{email}
+	</select>
+
 	<!-- 주문페이지에서 입력한 주소로 회원 주소지 변경 -->
 	<update id="updateAddress">
-		update members 
-		set address = #{deliveryAddress} 
+		update members
+		set address = #{deliveryAddress}
 		where member_id = #{memberId}
 	</update>
-	
+
 	<!-- 배송지 저장 -->
 	<insert id="insertDelivery">
-		insert into delivery_addrs (delivery_name, delivery_address, is_main, member_id) values (#{deliveryName}, #{deliveryAddress}, #{isMain}, #{memberId})
+		insert into delivery_addrs (delivery_name,
+		delivery_address, is_main, member_id) values (#{deliveryName},
+		#{deliveryAddress}, #{isMain}, #{memberId})
 	</insert>
-	
+
 	<!-- 기본배송지 데이터 조회 -->
 	<select id="selectMainDelivery" resultType="Integer">
-		select delivery_no from delivery_addrs where member_id = #{member_id}
+		select delivery_no
+		from delivery_addrs where member_id = #{member_id}
 	</select>
 
 	<!-- 기존의 기본배송지를 일반배송지로 변경 -->
 	<update id="updateDeliveryMainToSub">
-		update delivery_addrs set is_main = 'S' where delivery_no = #{delivery_no}
+		update delivery_addrs set is_main = 'S' where
+		delivery_no = #{delivery_no}
 	</update>
-	
-	<select id="selectDeliveryList" resultType="com.finalProject.model.DeliveryDTO">
+
+	<select id="selectDeliveryList"
+		resultType="com.finalProject.model.DeliveryDTO">
 		select * from delivery_addrs where member_id = #{memberId}
+	</select>
+
+	<select id="selectCouponList"
+		resultType="com.finalProject.model.UseCouponDTO">
+		select p.coupon_no, p.coupon_code, p.pay_date,
+		p.expire_date, p.member,
+		DATEDIFF(p.expire_date, #{currentTime}) as remaining_days,
+		c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount, c.coupon_dc_rate
+		from coupon_paid p
+		join coupons c
+		on p.coupon_no = c.coupon_no
+		left join coupon_used u
+		on u.coupon_code = p.coupon_code and u.member_id = #{memberId}
+		where (p.member = #{memberId} or p.member = 'all')
+		and #{currentTime} &gt;= p.pay_date and #{currentTime} &lt; p.expire_date
+		and u.coupon_code is null
 	</select>
 
 </mapper>

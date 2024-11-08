@@ -3,6 +3,7 @@ package com.finalProject.util;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.mail.Folder;
@@ -58,8 +59,15 @@ public class SendMailUtil {
 		Properties prop = new Properties();
 
 		// 해당 경로의 properties를 받음.
-		prop.load(new FileReader("D:\\my\\coding\\Flnal_2team\\final_project\\src\\main\\resources\\gmail.properties"));
-		;
+//		prop.load(new FileReader("D:\\my\\coding\\Flnal_2team\\final_project\\src\\main\\resources\\gmail.properties"));
+		
+		// 클래스패스에서 gmail.properties 파일을 읽음 src/main/resources
+	    InputStream input = getClass().getClassLoader().getResourceAsStream("gmail.properties");
+	    if (input == null) {
+	        System.out.println("gmail.properties를 찾을수 없습니다.");
+	    }
+	    prop.load(input);
+		
 		// 필요한 값 저장
 		this.host = prop.get("host") + "";
 		this.user = prop.get("user") + "";

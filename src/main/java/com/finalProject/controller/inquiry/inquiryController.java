@@ -30,6 +30,7 @@ import com.finalProject.util.FileProcess;
 
 @Controller
 @RequestMapping("/serviceCenter")
+
 public class inquiryController {
 
 	@Inject

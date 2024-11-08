@@ -57,6 +57,10 @@
 	font-size: 28px;
 	font-weight: bold;
 }
+
+.addressName {
+	display: none;
+}
 </style>
 
 <body>
@@ -109,7 +113,7 @@
 					<div class="register-form">
 						<div class="title">
 							<h3>ELOLIA회원가입</h3>
-							<p>쉽고 빠르게 회원가입을 할수있습니다.</p>
+							<p></p>
 						</div>
 						<form class="row" action="/member/signUp" method="post">
 							<div class="col-sm-12">
@@ -169,24 +173,52 @@
 										name="gender" value="F"> <label
 										class="form-check-label" for="F">여자</label>
 								</div>
-							</div>
-							<div class="col-sm-12">
-								<div class="form-group">
-									<label for="reg-ad">*주소</label> <input class="form-control"
-										type="text" name="address" id="address" readonly
-										onclick="selectAddress(this);"><span
-										id="addressStatus"></span> <input type="hidden" value="">
+								<div class="form-check">
+									<input type="radio" class="form-check-input" id="N"
+										name="gender" value="N"> <label
+										class="form-check-label" for="N">미선택</label>
 								</div>
 							</div>
+							<div class="form-group">
+								<span id=""></span> <input type="hidden" value="">
+							</div>
 							<div class="col-sm-12">
+								<div class="form-group" style="margin-bottom: 0px">
+									<label for="reg-ad">*주소</label> <input class="form-control"
+										type="text" name="address" id="address" readonly
+										onclick="selectAddress();"><span id="addressStatus"></span>
+									<input type="hidden" value="">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group" style="margin-bottom: 0px">
+									<label for="reg-ad">*우편번호</label> <input class="form-control"
+										type="text" name="zipCode" id="zipCode" readonly
+										onclick="selectAddress();"><span id="zipCodeStatus"></span>
+									<input type="hidden" value="">
+								</div>
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input"
+										id="basicAddress" name="basicAddress" value="기본주소"> <label
+										class="form-check-label" for="basicAddress">기본 주소로 설정</label>
+								</div>
+							</div>
+							<div class="col-sm-6">
 								<div class="form-group">
 									<label for="reg-ad2">상세 주소</label> <input class="form-control"
 										type="text" name="address2" id="address2"><span
 										id="address2Status"></span> <input type="hidden" value="">
 								</div>
 							</div>
-
-
+							<div class="col-sm-12">
+								<div class="form-group addressName">
+									<label for="reg-ad">배송지명</label> <input class="form-control"
+										type="text" name="addressName" id="addressName">
+								</div>
+							</div>
+							<div class="form-group">
+								<span id=""></span> <input type="hidden" value="">
+							</div>
 							<div class="col-sm-7">
 								<div class="form-group">
 									<label for="reg-em">*이메일</label> <input class="form-control"
@@ -234,16 +266,6 @@
 											name="option1" value="something"> <label
 											class="form-check-label" for="check1">약관 동의(필수)<span
 											id="checkboxStatus"></span><input type="hidden" value=""></label>
-									</div>
-									<div class="form-check">
-										<input type="checkbox" class="form-check-input" id="check2"
-											name="option2" value="something"> <label
-											class="form-check-label" for="check2">이메일 수신 동의(선택)</label>
-									</div>
-									<div class="form-check">
-										<input type="checkbox" class="form-check-input" id="check3"
-											name="option3" value="something"> <label
-											class="form-check-label" for="check3">문자 수신 동의(선택)</label>
 									</div>
 								</div>
 							</div>
@@ -392,6 +414,17 @@
 			} else {
 				isMsg("birthday", "값이 올바르지 않습니다.", "red", false);
 			}
+		});				
+		
+		// 기본 주소 설정 체크
+		$("#basicAddress").change(function () {
+			if($('#basicAddress').is(':checked')) {
+				$(".addressName").css("display", "block");
+				//$("#addressName").attr("type", "text");
+			} else {
+				$(".addressName").css("display", "none");
+				//$("#addressName").attr("type", "hidden");
+			}
 		});
 		
 		
@@ -399,13 +432,14 @@
 	
 	// daum 주소 api
 	// 주소칸에서 onclick으로 호출
-	function selectAddress(obj) {
+	function selectAddress() {
 	    new daum.Postcode({
 	        oncomplete: function(data) {
 	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
 	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
 	            console.log(data);
-	            $(obj).val(data.zonecode + "/" + data.address);
+	            $("#address").val(data.address);
+	            $("#zipCode").val(data.zonecode);
 	        }
 	    }).open();
 	}
@@ -629,6 +663,8 @@
 			complete: function () {},
 		});
 	}
+	
+
 	
 
 	
