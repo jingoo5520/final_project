@@ -165,4 +165,24 @@ public class MemberServiceImpl implements MemberService {
 		return couponList;
 	}
 
+	// 배송지 수정
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void modifyDelivery(DeliveryDTO deliveryDTO) throws Exception {
+		if (deliveryDTO.getIs_main().equals("M")) {
+			// 기본 배송지로 저장할 때
+			// 기본배송지 데이터 조회
+			Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryDTO.getMember_id());
+			
+			if (mainDeliveryNo != null) {
+				// 기존의 기본배송지를 일반배송지로 변경
+				memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
+			}
+		}
+		
+		// 배송지 저장
+		memberDAO.updateDelivery(deliveryDTO);
+		
+	}
+
 }

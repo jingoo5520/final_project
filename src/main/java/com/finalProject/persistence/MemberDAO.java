@@ -70,5 +70,8 @@ public interface MemberDAO {
 	
 	// 쿠폰 목록 조회
 	List<UseCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
+	
+	// 배송지 수정
+	void updateDelivery(DeliveryDTO deliveryDTO) throws Exception;
 
 }

@@ -1117,11 +1117,11 @@
 										            <div class="form-input form addressForm">
 										                <h5 class="ordererHeader">주소</h5>
 										                <div class="addressSearchArea">
-										                    <input class="postNumber" type="text" id="postcodeNew" placeholder="우편번호">
+										                    <input class="postNumber" type="text" id="postcodeNew" placeholder="우편번호" readonly>
 										                    <input class="searchPost" type="button" onclick="sample6_execDaumPostcode('New')" value="검색"><br>
 										                </div>
-										                <input type="text" id="addressNew" placeholder="주소"><br>
-										                <input type="text" id="detailAddressNew" placeholder="상세주소">
+										                <input type="text" id="addressNew" placeholder="주소" readonly><br>
+										                <input type="text" id="detailAddressNew" placeholder="상세주소" readonly>
 										            </div>
 										            <div class="form-check">
 										                <div id="saveDeliveryDiv">

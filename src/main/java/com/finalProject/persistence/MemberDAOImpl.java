@@ -207,4 +207,10 @@ public class MemberDAOImpl implements MemberDAO {
 		return ses.selectList(ns + "selectCouponList", param);
 	}
 	
+	// 배송지 수정
+	@Override
+	public void updateDelivery(DeliveryDTO deliveryDTO) throws Exception {
+		ses.update(ns + "updateDeliveryInfo", deliveryDTO);
+	}
+	
 }

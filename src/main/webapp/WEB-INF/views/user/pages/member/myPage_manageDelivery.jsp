@@ -22,10 +22,14 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
-$(document).ready(function() {
-	getDeliveryInfo();
-	
-});
+	$(document).ready(function() {
+		getDeliveryInfo();
+		const successMessage = '${successMessage}';
+		
+		if (successMessage) {
+			alert(successMessage);
+		}
+	});
 
 function getDeliveryInfo() {
 	
@@ -69,7 +73,7 @@ function makeDeliveryList(deliveryList, memberInfo) {
 									<p>[\${postcode}] \${address} \${detailAddress}</p>
 								</div>
 								<div class="col-lg-1 col-md-1 col-12 modifyDelivery">
-									<p><a onclick="modifyDelivery();">수정</a></p>
+									<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}'">수정</a></p>
 								</div>
 							</div>`;
 		} else {
@@ -82,10 +86,10 @@ function makeDeliveryList(deliveryList, memberInfo) {
 								<p>[\${postcode}] \${address} \${detailAddress}</p>
 							</div>
 							<div class="col-lg-1 col-md-1 col-12 modifyDelivery">
-								<p><a onclick="modifyDelivery();">수정</a></p>
+								<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}'">수정</a></p>
 							</div>
 							<div class="col-lg-1 col-md-1 col-12 deleteDelivery">
-								<p><a onclick="deleteDelivery();">삭제</a></p>
+								<p><a onclick="deleteDelivery(\${item.delivery_no});">삭제</a></p>
 							</div>
 						</div>`;
 		}

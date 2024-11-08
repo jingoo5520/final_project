@@ -14,7 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class DeliveryDTO {
-	private String delivery_no;
+	private int delivery_no;
 	private String delivery_name;
 	private String delivery_address;
 	private String member_id;

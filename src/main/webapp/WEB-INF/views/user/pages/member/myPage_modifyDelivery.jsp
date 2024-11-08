@@ -23,25 +23,41 @@
 
 <script>
 $(document).ready(function() {
-	/* getDeliveryInfo(); */
+	var deliveryNo = ${deliveryNo};
+	getDeliveryInfo(deliveryNo);
 	
 });
 
-function getDeliveryInfo() {
+function getDeliveryInfo(deliveryNo) {
 	
 	$.ajax({
 		async: false,
 		type: 'GET',
+		data: { deliveryNo: deliveryNo },
 		url: '/member/myPage/getDeliveryInfo',
 		dataType: 'json',
         success : function(response) {
         	console.log(response);
-        	makeDeliveryList(response.deliveryList, response.memberInfo);
+        	makeDeliveryInfo(response.deliveryInfo, response.memberInfo);
         },
         error : function(response) {
             /* console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);    */    
         }
 	})
+	
+}
+
+function makeDeliveryInfo(deliveryInfo, memberInfo) {
+	let postcode = deliveryInfo.delivery_address.split("/")[0];
+	let address = deliveryInfo.delivery_address.split("/")[1];
+	let detailAddress = deliveryInfo.delivery_address.split("/")[2];
+	
+	$('#postcodeNew').val(postcode);
+	$('#addressNew').val(address);
+	$('#detailAddressNew').val(detailAddress);
+	$('#deliveryName').val(deliveryInfo.delivery_name);
+	$('input[name="deliveryNo"]').val(deliveryInfo.delivery_no);
+	
 	
 }
 
@@ -118,9 +134,6 @@ function getDeliveryInfo() {
 </style>
 <script type="text/javascript">
 	function sendData() {
-		/* let postCode = $("#postcodeNew").val();
-		let address = $("#addressNew").val();
-		let detailAddress = $("#detailAddressNew").val(); */
 		
 		let postCode = validateInfo($("#postcodeNew").val());
 		let address = validateInfo($("#addressNew").val());
@@ -136,8 +149,6 @@ function getDeliveryInfo() {
 		
 		if ($('#saveDeliveryCheck').prop('checked')) {
 			$('input[name="isMain"]').val("M");
-		} else {
-			$('input[name="isMain"]').val("S");
 		}
 		
 		if ($('#saveAddressCheck').prop('checked')) {
@@ -283,12 +294,13 @@ function getDeliveryInfo() {
 					</div>
 					<div class="sendDeliveryInfoArea">
 						<div class="button saveDeliveryInfo">
-							<form action="/member/myPage/saveDelivery" method="post" id="sendDataForm">
+							<form action="/member/myPage/modifyDelivery" method="post" id="sendDataForm">
 								<input type="hidden" name="deliveryName">
 								<input type="hidden" name="deliveryAddress">
 								<input type="hidden" name="memberId" value="${memberInfo.member_id }">
-								<input type="hidden" name="isMain">
-								<input type="hidden" name="deliveryType" value="saveDelivery">
+								<input type="hidden" name="isMain" value="S">
+								<input type="hidden" name="deliveryNo">
+								<input type="hidden" name="deliveryType" value="modifyDelivery">
 								<div class="btn" onclick="sendData()">등록</div>
 							</form>
 						</div>
