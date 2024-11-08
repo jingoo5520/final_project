@@ -224,13 +224,22 @@ public class MemberController {
 		System.out.println("로그아웃");
 		return "redirect:/";
 	}
-
+	
 	// 마이페이지 (내정보수정 페이지)
 	@RequestMapping(value = "/myPage/modiInfo")
 	public String myPage(HttpServletRequest request) {
 		System.out.println("마이페이지로 이동");
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_modiInfo";
+	}
+	
+	
+	// 마이페이지 (주문 / 배송 조회)
+	@RequestMapping(value = "/myPage/viewOrder")
+	public String myPage_viewOrder(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_viewOrder";
 	}
 
 	// 마이페이지 (비밀번호 변경 페이지)
