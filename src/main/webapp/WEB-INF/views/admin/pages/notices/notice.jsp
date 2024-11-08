@@ -157,14 +157,14 @@
 		    </c:if>
 		</div>
 		
-		<form method="get" action="/notices">
-		    <input type="text" name="searchWord" placeholder="검색어 입력">
-		    <select name="searchType">
-		        <option value="notice_title">제목</option>
-		        <option value="admin_id">작성자</option>
-		    </select>
-		    <button type="submit">검색</button>
-		</form>
+<!-- 		<form method="get" action="/notices"> -->
+<!-- 		    <input type="text" name="searchWord" placeholder="검색어 입력"> -->
+<!-- 		    <select name="searchType"> -->
+<!-- 		        <option value="notice_title">제목</option> -->
+<!-- 		        <option value="admin_id">작성자</option> -->
+<!-- 		    </select> -->
+<!-- 		    <button type="submit">검색</button> -->
+<!-- 		</form> -->
 		
 		
                     

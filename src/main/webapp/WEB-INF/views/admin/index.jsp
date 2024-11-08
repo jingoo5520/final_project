@@ -79,161 +79,161 @@
                 <div class="col-lg-8 col-md-8 order-1">
                   <div class="row">
 
-                <div class="col-lg-6 col-md-6 col-6 mb-4">
-                      <div class="card">
-                        <div class="card-body">
-							<i class='bx bxs-wallet'> 금일 방문자수</i> 
-                          <h3 class="card-title mb-2">${visitorCount} 명</h3>
-                        </div>
-                      </div>
-                    </div>
+<!--                 <div class="col-lg-6 col-md-6 col-6 mb-4"> -->
+<!--                       <div class="card"> -->
+<!--                         <div class="card-body"> -->
+<!-- 							<i class='bx bxs-wallet'> 금일 방문자수</i>  -->
+<%--                           <h3 class="card-title mb-2">${visitorCount} 명</h3> --%>
+<!--                         </div> -->
+<!--                       </div> -->
+<!--                     </div> -->
           
-<div class="container-xxl flex-grow-1 container-p-y">
-
-  <!-- Collapse -->
-  <h5>매출 통계</h5>
-  <div class="row">
-    <div class="col-12">
-      <div class="card mb-4">
-        <h5 class="card-header">매출 통계</h5>
-        <div class="card-body">
-          <p class="card-text">원하는 기간을 선택하여 매출 통계를 확인하세요.</p>
-
-          <!-- Collapse 트리거 버튼들 -->
-          <p class="demo-inline-spacing">
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#totalSales" aria-expanded="false" aria-controls="totalSales">이번 달 매출 통계</button>
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#lastMonthSales" aria-expanded="false" aria-controls="lastMonthSales">지난 달 매출 통계</button>
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#lastYearSales" aria-expanded="false" aria-controls="lastYearSales">작년 매출 통계</button>
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#firstHalfSales" aria-expanded="false" aria-controls="firstHalfSales">상반기 매출 통계</button>
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#secondHalfSales" aria-expanded="false" aria-controls="secondHalfSales">하반기 매출 통계</button>
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#thisYearSales" aria-expanded="false" aria-controls="thisYearSales">올해 매출 통계</button>
-          </p>
-
-          <!-- Collapse 내용들 -->
-
-          <div class="collapse" id="totalSales">
-            <div class="d-grid d-sm-flex p-3 border">
-				<i class='bx bxs-wallet'> 이번 달 매출 통계 : </i>&nbsp;
-                <h3 class="card-title mb-2" >${totalSales} 원</h3>
-            </div>
-          </div>
-          
-          <div class="collapse" id="lastMonthSales">
-            <div class="d-grid d-sm-flex p-3 border">
-              <i class='bx bxs-wallet'> 지난 달 매출 통계 : </i>&nbsp;
-              <h3 class="card-title mb-2" id="lastMonthSales">${lastMonthSales} 원</h3>
-            </div>
-          </div>
-
-          <div class="collapse" id="lastYearSales">
-            <div class="d-grid d-sm-flex p-3 border">
-              <i class='bx bxs-wallet'> 작년 매출 통계 : </i>&nbsp;
-              <h3 class="card-title mb-2" id="lastYearSales">${lastYearSales} 원</h3>
-            </div>
-          </div>
-
-          <div class="collapse" id="firstHalfSales">
-            <div class="d-grid d-sm-flex p-3 border">
-              <i class='bx bxs-wallet'> 상반기 매출 통계 : </i>&nbsp;
-              <h3 class="card-title mb-2" id="firstHalfSales">${firstHalfSales} 원</h3>
-            </div>
-          </div>
-
-          <div class="collapse" id="secondHalfSales">
-            <div class="d-grid d-sm-flex p-3 border">
-              <i class='bx bxs-wallet'> 하반기 매출 통계 : </i>&nbsp;
-              <h3 class="card-title mb-2" id="secondHalfSales">${secondHalfSales} 원</h3>
-            </div>
-          </div>
-          
-          <div class="collapse" id="thisYearSales">
-            <div class="d-grid d-sm-flex p-3 border">
-              <i class='bx bxs-wallet'> 올해 매출 통계 : </i>&nbsp;
-              <h3 class="card-title mb-2" id="thisYearSales">${thisYearSales} 원</h3>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-                    
-<div class="container-xxl flex-grow-1 container-p-y">
- <!-- Collapse -->
-  <h5>주문 수</h5>
-  <div class="row">
-    <div class="col-12">
-      <div class="card mb-4">
-        <h5 class="card-header">주문 수 통계</h5>
-        <div class="card-body">
-          <p class="card-text">원하는 옵션을 선택하여 주문 수 통계를 확인하세요.</p>
-
-          <!-- Collapse 트리거 버튼들 -->
-          <p class="demo-inline-spacing">
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#todayOrderCount" aria-expanded="false" aria-controls="todayOrderCount">오늘의 주문 수</button>
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#totalOrders" aria-expanded="false" aria-controls="totalOrders">이번 달 주문 수</button>
-          </p>
-
-          <!-- Collapse 내용들 -->
-
-          <div class="collapse" id="todayOrderCount">
-            <div class="d-grid d-sm-flex p-3 border">
-				<i class='bx bxs-wallet'> 오늘의 주문 수 : </i>&nbsp;
-                <h3 class="card-title mb-2" id="todayOrderCount">${todayOrderCount} 개</h3>
-            </div>
-          </div>
-          
-          <div class="collapse" id="totalOrders">
-            <div class="d-grid d-sm-flex p-3 border">
-              <i class='bx bxs-wallet'> 이번 달 주문 수 : </i>&nbsp;
-              <h3 class="card-title mb-2" id="totalOrders">${totalOrders} 개</h3>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container-xxl flex-grow-1 container-p-y">
- <!-- Collapse -->
-  <h5>취소 및 반품</h5>
-  <div class="row">
-    <div class="col-12">
-      <div class="card mb-4">
-        <h5 class="card-header">취소 및 반품 통계</h5>
-        <div class="card-body">
-          <p class="card-text">원하는 옵션을 선택하여 취소 및 반품 통계를 확인하세요.</p>
-
-          <!-- Collapse 트리거 버튼들 -->
-          <p class="demo-inline-spacing">
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#cancelRate" aria-expanded="false" aria-controls="cancelRate">이번 달 취소율</button>
-            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#returnRate" aria-expanded="false" aria-controls="returnRate">이번 달 반품율</button>
-          </p>
-
-          <!-- Collapse 내용들 -->
-
-          <div class="collapse" id="cancelRate">
-            <div class="d-grid d-sm-flex p-3 border">
-				<i class='bx bxs-wallet'> 이번 달 취소율 : </i>&nbsp;
-                <h3 class="card-title mb-2" id="cancelRate">${cancelRate} %</h3>
-            </div>
-          </div>
-          
-          <div class="collapse" id="returnRate">
-            <div class="d-grid d-sm-flex p-3 border">
-              <i class='bx bxs-wallet'> 이번 달 반품율 : </i>&nbsp;
-              <h3 class="card-title mb-2" id="returnRate">${returnRate} %</h3>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+				<div class="container-xxl flex-grow-1 container-p-y">
+				
+				  <!-- Collapse -->
+				  <h5>매출 통계</h5>
+				  <div class="row">
+				    <div class="col-12">
+				      <div class="card mb-4">
+				        <h5 class="card-header">매출 통계</h5>
+				        <div class="card-body">
+				          <p class="card-text">원하는 기간을 선택하여 매출 통계를 확인하세요.</p>
+				
+				          <!-- Collapse 트리거 버튼들 -->
+				          <p class="demo-inline-spacing">
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#totalSales" aria-expanded="false" aria-controls="totalSales">이번 달 매출 통계</button>
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#lastMonthSales" aria-expanded="false" aria-controls="lastMonthSales">지난 달 매출 통계</button>
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#lastYearSales" aria-expanded="false" aria-controls="lastYearSales">작년 매출 통계</button>
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#firstHalfSales" aria-expanded="false" aria-controls="firstHalfSales">상반기 매출 통계</button>
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#secondHalfSales" aria-expanded="false" aria-controls="secondHalfSales">하반기 매출 통계</button>
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#thisYearSales" aria-expanded="false" aria-controls="thisYearSales">올해 매출 통계</button>
+				          </p>
+				
+				          <!-- Collapse 내용들 -->
+				
+				          <div class="collapse" id="totalSales">
+				            <div class="d-grid d-sm-flex p-3 border">
+								<i class='bx bxs-wallet'> 이번 달 매출 통계 : </i>&nbsp;
+				                <h3 class="card-title mb-2" >${totalSales} 원</h3>
+				            </div>
+				          </div>
+				          
+				          <div class="collapse" id="lastMonthSales">
+				            <div class="d-grid d-sm-flex p-3 border">
+				              <i class='bx bxs-wallet'> 지난 달 매출 통계 : </i>&nbsp;
+				              <h3 class="card-title mb-2" id="lastMonthSales">${lastMonthSales} 원</h3>
+				            </div>
+				          </div>
+				
+				          <div class="collapse" id="lastYearSales">
+				            <div class="d-grid d-sm-flex p-3 border">
+				              <i class='bx bxs-wallet'> 작년 매출 통계 : </i>&nbsp;
+				              <h3 class="card-title mb-2" id="lastYearSales">${lastYearSales} 원</h3>
+				            </div>
+				          </div>
+				
+				          <div class="collapse" id="firstHalfSales">
+				            <div class="d-grid d-sm-flex p-3 border">
+				              <i class='bx bxs-wallet'> 상반기 매출 통계 : </i>&nbsp;
+				              <h3 class="card-title mb-2" id="firstHalfSales">${firstHalfSales} 원</h3>
+				            </div>
+				          </div>
+				
+				          <div class="collapse" id="secondHalfSales">
+				            <div class="d-grid d-sm-flex p-3 border">
+				              <i class='bx bxs-wallet'> 하반기 매출 통계 : </i>&nbsp;
+				              <h3 class="card-title mb-2" id="secondHalfSales">${secondHalfSales} 원</h3>
+				            </div>
+				          </div>
+				          
+				          <div class="collapse" id="thisYearSales">
+				            <div class="d-grid d-sm-flex p-3 border">
+				              <i class='bx bxs-wallet'> 올해 매출 통계 : </i>&nbsp;
+				              <h3 class="card-title mb-2" id="thisYearSales">${thisYearSales} 원</h3>
+				            </div>
+				          </div>
+				
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				                    
+				<div class="container-xxl flex-grow-1 container-p-y">
+				 <!-- Collapse -->
+				  <h5>주문 수</h5>
+				  <div class="row">
+				    <div class="col-12">
+				      <div class="card mb-4">
+				        <h5 class="card-header">주문 수 통계</h5>
+				        <div class="card-body">
+				          <p class="card-text">원하는 옵션을 선택하여 주문 수 통계를 확인하세요.</p>
+				
+				          <!-- Collapse 트리거 버튼들 -->
+				          <p class="demo-inline-spacing">
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#todayOrderCount" aria-expanded="false" aria-controls="todayOrderCount">오늘의 주문 수</button>
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#totalOrders" aria-expanded="false" aria-controls="totalOrders">이번 달 주문 수</button>
+				          </p>
+				
+				          <!-- Collapse 내용들 -->
+				
+				          <div class="collapse" id="todayOrderCount">
+				            <div class="d-grid d-sm-flex p-3 border">
+								<i class='bx bxs-wallet'> 오늘의 주문 수 : </i>&nbsp;
+				                <h3 class="card-title mb-2" id="todayOrderCount">${todayOrderCount} 개</h3>
+				            </div>
+				          </div>
+				          
+				          <div class="collapse" id="totalOrders">
+				            <div class="d-grid d-sm-flex p-3 border">
+				              <i class='bx bxs-wallet'> 이번 달 주문 수 : </i>&nbsp;
+				              <h3 class="card-title mb-2" id="totalOrders">${totalOrders} 개</h3>
+				            </div>
+				          </div>
+				
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+				
+				<div class="container-xxl flex-grow-1 container-p-y">
+				 <!-- Collapse -->
+				  <h5>취소 및 반품</h5>
+				  <div class="row">
+				    <div class="col-12">
+				      <div class="card mb-4">
+				        <h5 class="card-header">취소 및 반품 통계</h5>
+				        <div class="card-body">
+				          <p class="card-text">원하는 옵션을 선택하여 취소 및 반품 통계를 확인하세요.</p>
+				
+				          <!-- Collapse 트리거 버튼들 -->
+				          <p class="demo-inline-spacing">
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#cancelRate" aria-expanded="false" aria-controls="cancelRate">이번 달 취소율</button>
+				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#returnRate" aria-expanded="false" aria-controls="returnRate">이번 달 반품율</button>
+				          </p>
+				
+				          <!-- Collapse 내용들 -->
+				
+				          <div class="collapse" id="cancelRate">
+				            <div class="d-grid d-sm-flex p-3 border">
+								<i class='bx bxs-wallet'> 이번 달 취소율 : </i>&nbsp;
+				                <h3 class="card-title mb-2" id="cancelRate">${cancelRate} %</h3>
+				            </div>
+				          </div>
+				          
+				          <div class="collapse" id="returnRate">
+				            <div class="d-grid d-sm-flex p-3 border">
+				              <i class='bx bxs-wallet'> 이번 달 반품율 : </i>&nbsp;
+				              <h3 class="card-title mb-2" id="returnRate">${returnRate} %</h3>
+				            </div>
+				          </div>
+				
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+				</div>
                     
                   </div>
                 </div>
