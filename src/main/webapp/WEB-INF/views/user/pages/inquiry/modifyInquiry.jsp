@@ -39,13 +39,12 @@ let fileList = [];
 		});
 		
 		$("#fileInput").on("change", function(){
-			// 이미지 파일만 업로드 가능
-			const imageTypes = ["image/jpeg", "image/png"];
+			const maxSize = 10 * 1024 * 1024;
 			
 			// 중복 이름 거르기
 			$.each(this.files, function(index, file){
-				if (!imageTypes.includes(file.type)) {
-		            console.log("이미지 파일이 아닙니다", file.name);
+				if (!file.type.startsWith("image/") || file.size > maxSize) {
+		            console.log("이미지 파일이 아니거나, 파일 용량이 10MB를 초과합니다.", file.name);
 		            console.log(file.type);
 		            return; 
 		        }
@@ -91,6 +90,7 @@ let fileList = [];
 			
 			console.log(fileList);
 			console.log(existFileList);
+			$("#fileInput").val("");
 			showFiles();
 		})
 		

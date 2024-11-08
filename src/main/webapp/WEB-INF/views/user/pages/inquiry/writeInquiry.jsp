@@ -39,36 +39,25 @@ let fileList = [];
 		
 		
 		$("#fileInput").on("change", function(){
-			console.log(fileList);
+			// 파일크기, 최대개수, 확장자
+			const maxSize = 10 * 1024 * 1024;
 			
 			$.each(this.files, function(index, file){
-				let isDuplicated = false;
-				
-				for(let i = 0; i < fileList.length; i++){
-					if(fileList[i].name == file.name){
-						isDuplicated = true;
-					}
-				}
-				
-				if(!isDuplicated){
-					fileList.push(file);
-					console.log(fileList);
-				}
-				
-			})
-			
-			
-			/* $.each(this.files, function(index, file){
-				// 중복 파일 거르기
-				if(!fileList.some(function(f){
-					console.log("중복됨");
-					return f.name === file.name
-				})) {
+				if(file.type.startsWith("image/") && file.size <= maxSize){
+					let isDuplicated = false;
 					
-					fileList.push(file);
-					console.log(fileList);
+					for(let i = 0; i < fileList.length; i++){
+						if(fileList[i].name == file.name){
+							isDuplicated = true;
+						}
+					}
+					
+					if(!isDuplicated){
+						fileList.push(file);
+						console.log(fileList);
+					}	
 				}
-			}); */
+			})
 			
 			showFiles();
 		});
@@ -87,6 +76,7 @@ let fileList = [];
 			}
 			
 			console.log(fileList);
+			$("#fileInput").val("");
 			showFiles();
 		})
 		
@@ -251,8 +241,11 @@ let fileList = [];
 	color: #fff;
 	background-color: #f44336;
 	font-size: 8px;
-	height: 18px; width : 18px; line-height : 18px; border-radius : 50%;
-	text-align : center;
+	height: 18px;
+	width: 18px;
+	line-height: 18px;
+	border-radius: 50%;
+	text-align: center;
 	margin-left: 5px;
 	font-size: 8px;
 	height: 18px;
@@ -324,7 +317,7 @@ let fileList = [];
 
 				</jsp:include>
 				<!-- / sideBar -->
-				
+
 				<div class="col-lg-9 col-12">
 					<!-- Shopping Cart -->
 					<div class="checkout-steps-form-style-1">
@@ -381,7 +374,7 @@ let fileList = [];
 										<div class="single-form form-default">
 											<label>이미지 첨부</label>
 											<div class="single-form form-default button" style="margin-top: 0px">
-												<input type="file" id="fileInput" name="files" multiple style="display: none;" />
+												<input type="file" id="fileInput" name="files" multiple style="display: none;" accept="image/" />
 												<button class="btn" onclick="document.getElementById('fileInput').click(); return false;">이미지 첨부하기</button>
 											</div>
 										</div>
@@ -405,12 +398,8 @@ let fileList = [];
 					<!--/ End Shopping Cart -->
 
 					<div id="writeInquiryBtnArea" class="button mt-2">
-						<button class="btn" onclick="location.href='/serviceCenter/inquiries'">
-							목록으로 돌아가기
-						</button>
-						<button id="writeInquiryBtn" class="btn" onclick="writeInquiry()" disabled>
-							작성 완료
-						</button>
+						<button class="btn" onclick="location.href='/serviceCenter/inquiries'">목록으로 돌아가기</button>
+						<button id="writeInquiryBtn" class="btn" onclick="writeInquiry()" disabled>작성 완료</button>
 					</div>
 				</div>
 			</div>
