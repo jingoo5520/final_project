@@ -278,6 +278,14 @@ public class NoticeController {
 		
 		try {
 			noticeService.addNotice(notice);
+			
+	        // 공지사항 번호 기반 URL 생성 및 설정
+	        if (notice.getNoticeNo() > 0) {
+	            String url = "/admin/notices/viewNotice/" + notice.getNoticeNo();
+	            notice.setUrl(url);
+	            noticeService.updateNoticeUrl(notice); // URL 업데이트
+	        }
+			
 //			model.addAttribute("notices", noticeService.getAllnotices());
 			List<NoticeDTO> notices = noticeService.getAllNotices(10, 1);
 			redirectAttributes.addFlashAttribute("notices", notices);
@@ -784,5 +792,15 @@ public class NoticeController {
 
         return "admin/pages/notices/notice"; // JSP 뷰의 경로
     }
+    
+    // db url 저장
+    public String generateNoticeUrl(@PathVariable("notice_no") int noticeNo) {
+        return "/notice/" + noticeNo;
+    }
+
+    public String generateEventUrl(@PathVariable("notice_no") int noticeNo) {
+        return "/event/" + noticeNo;
+    }
+    
 }
     

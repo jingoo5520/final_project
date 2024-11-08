@@ -221,6 +221,11 @@ public class NoticeDAOImpl implements NoticeDAO {
 		return ses.selectList(ns + "getBannersWithImages");
 	}
 
+	@Override
+	public void updateNoticeUrl(NoticeVO notice) throws Exception {
+		ses.update(ns + "updateNoticeUrl", notice);
+	}
+
 
 //	@Override
 //	public List<NoticeVO> selectAllBoard(PagingInfo pi) throws Exception {

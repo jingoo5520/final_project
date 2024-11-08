@@ -145,6 +145,11 @@ public class NoticeServiceImpl implements NoticeService {
 		return nDao.getBannersWithImages();
 	}
 
+	@Override
+	public void updateNoticeUrl(NoticeVO notice) throws Exception {
+		nDao.updateNoticeUrl(notice);
+	}
+
 
 //	@Override
 //	public int getTotalNoticeCount() throws Exception {

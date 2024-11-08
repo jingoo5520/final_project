@@ -152,5 +152,12 @@
     from notices where is_delete = 'N' and notice_type = 'E'
     order by reg_date desc limit 8
     </select>
+    
+    <update id="updateNoticeUrl">
+        update notices
+        set url = #{url}
+        where notice_no = #{noticeNo}
+    </update>
+    
 </mapper>
   
