@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +33,9 @@ import com.google.gson.JsonParser;
 @Component // Spring 컨테이너가 해당 클래스를 빈으로 등록
 public class KakaoUtil {
 
-	private String key;
-	private String redirectUri;
-	private String getCodeUrl;
+	private String key; // kakao REST API 키
+	private String redirectUri; // 코드발급 api에 쿼리파라미터로 포함될 uri
+	private String getCodeUrl; // kakao 로그인 api
 	private String response_type;
 	private String state;
 	private String getTokenUrl;
@@ -262,8 +264,9 @@ public class KakaoUtil {
 	}
 
 	// 로그아웃
-	public void kakaoLogout(String accessToken) {
+	public void kakaoLogout(String accessToken, HttpServletRequest request) {
 		// 로그아웃 API URL
+		HttpSession ses = request.getSession();
 		String url = "https://kapi.kakao.com/v1/user/logout";
 
 		// 헤더에 Authorization으로 액세스 토큰 추가
@@ -280,6 +283,7 @@ public class KakaoUtil {
 		if (response.getStatusCodeValue() == 200) {
 			// 로그아웃 성공
 			System.out.println("카카오 로그아웃 성공");
+			ses.removeAttribute("accessToken"); // 토큰 삭제
 		} else {
 			// 로그아웃 실패
 			System.out.println("카카오 로그아웃 실패");
