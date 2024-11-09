@@ -36,6 +36,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
 import com.finalProject.model.ResponseData;
 import com.finalProject.service.member.MemberService;
+import com.finalProject.util.KakaoUtil;
 import com.finalProject.util.ReceiveMailPOP3;
 import com.finalProject.util.RememberPath;
 import com.finalProject.util.SendMailUtil;
@@ -55,6 +56,9 @@ public class MemberController {
 
 	@Inject
 	private ReceiveMailPOP3 remail;
+
+	@Inject
+	private KakaoUtil kakao;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
 	public String viewLogin() {
@@ -133,43 +137,53 @@ public class MemberController {
 		return result;
 	}
 
-	@RequestMapping(value = "/signUp", method = RequestMethod.POST) // 회원가입 처리
-	public String signUp(MemberDTO signUpDTO, RedirectAttributes rttr) {
+	// 회원가입 처리
+	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
+	public String signUp(MemberDTO memberDTO, RedirectAttributes rttr,
+			@RequestParam(value = "basicAddress", required = false) String basicAddress,
+			@RequestParam(value = "addressName", required = false) String addressName) {
 		System.out.println("회원가입 요청");
-		System.out.println(signUpDTO.toString());
+		System.out.println(memberDTO.toString());
 		String result = "redirect:/viewSignUp";
 		// 입력받은 생일 형식을 DB에 저장될 형식으로 변경
-		String birtday = signUpDTO.getBirthday().replace("-", "");
-		signUpDTO.setBirthday(birtday);
+		String birtday = memberDTO.getBirthday().replace("-", "");
+		memberDTO.setBirthday(birtday);
 
 		// 입력받은 폰번호 형식을 DB에 저장될 형식으로 변경
 		// 01012345678 의 형식(-가 없는 형식이 경우)
-		if (signUpDTO.getPhone_number().length() == 11) {
-			String phone = signUpDTO.getPhone_number().substring(0, 3) + "-"
-					+ signUpDTO.getPhone_number().substring(3, 7) + "-" + signUpDTO.getPhone_number().substring(7, 11);
-			signUpDTO.setPhone_number(phone);
+		if (memberDTO.getPhone_number().length() == 11) {
+			String phone = memberDTO.getPhone_number().substring(0, 3) + "-"
+					+ memberDTO.getPhone_number().substring(3, 7) + "-" + memberDTO.getPhone_number().substring(7, 11);
+			memberDTO.setPhone_number(phone);
 		}
 
 		// 별명(nickname)을 입력하지 않았을 경우
-		if (signUpDTO.getNickname().equals("")) {
+		if (memberDTO.getNickname().equals("")) {
 			UUID randomuuid = UUID.randomUUID();
 			// member_name + 무작위 8글자로 닉네임 저장
 			// ex : 홍길동_44a9d39b
-			signUpDTO.setNickname(signUpDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
+			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
-		// 입력받은 주소+상세주소
 		// 우편번호/주소/상세주소
-		signUpDTO.setAddress(signUpDTO.getAddress() + "/" + signUpDTO.getAddress2());
+		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
 
 		// 성별 미선택시 null로 들어오는 데이터 처리
-		if (signUpDTO.getGender() == null) {
-			signUpDTO.setGender("N");
+		if (memberDTO.getGender() == null) {
+			memberDTO.setGender("N");
 		}
 
 		try {
-			if (memberService.signUp(signUpDTO) == 1) {
+			if (memberService.signUp(memberDTO) == 1) {
 				System.out.println("insert성공");
+				// 기본 주소 체크 여부 확인
+				if (basicAddress != null) {
+					try {
+						memberService.saveAdddress(memberDTO, addressName);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 				result = "redirect:/";
 			} else {
 				System.out.println("insert실패");
@@ -212,9 +226,12 @@ public class MemberController {
 		ses.removeAttribute("rememberPath");
 		ses.removeAttribute("auth");
 		System.out.println("로그아웃");
+		if (ses.getAttribute("accessToken") != null) {
+			kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
+		}
 		return "redirect:/";
 	}
-	
+
 	// 마이페이지 (내정보수정 페이지)
 	@RequestMapping(value = "/myPage/modiInfo")
 	public String myPage(HttpServletRequest request) {
@@ -222,8 +239,7 @@ public class MemberController {
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_modiInfo";
 	}
-	
-	
+
 	// 마이페이지 (주문 / 배송 조회)
 	@RequestMapping(value = "/myPage/viewOrder")
 	public String myPage_viewOrder(HttpServletRequest request) {
@@ -442,7 +458,8 @@ public class MemberController {
 			ObjectMapper objectMapper = new ObjectMapper(); // jackson 메서드
 			if (memberDTO != null) {
 				String address[] = memberDTO.getAddress().split("/");
-				memberDTO.setAddress(address[0] + "/" + address[1]);
+				memberDTO.setZipCode(address[0]);
+				memberDTO.setAddress(address[1]);
 				memberDTO.setAddress2(address[2]);
 				String result = objectMapper.writeValueAsString(memberDTO);
 				response.getWriter().write(result);
@@ -477,9 +494,9 @@ public class MemberController {
 			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
-		// 입력받은 주소+상세주소
+		// 입력받은 우편번호+주소+상세주소
 		// 우편번호/주소/상세주소
-		memberDTO.setAddress(memberDTO.getAddress() + "/" + memberDTO.getAddress2());
+		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
 		System.out.println(memberDTO.toString());
 		try {
 			// update가 정상적으로 됬다면
@@ -544,6 +561,9 @@ public class MemberController {
 				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)
 				cookie.setPath("/"); // 모든 경로에서 사용 가능
 				response.addCookie(cookie); // 쿠키 저장(삭제)
+				if (ses.getAttribute("accessToken") != null) {
+					kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
+				}
 			} else {
 				json = new ResponseData("fail", "탈퇴 실패");
 			}
@@ -691,10 +711,11 @@ public class MemberController {
 		ResponseData json = null;
 		HttpSession ses = request.getSession();
 		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인세션을 loginDTO로 받아옴
-		if(loginDTO != null) { // 로그인 상태인지 확인(세션이 있다면 로그인된 상태인 것)
+		if (loginDTO != null) { // 로그인 상태인지 확인(세션이 있다면 로그인된 상태인 것)
 			try {
 				int wishList[] = memberService.getWishList(loginDTO.getMember_id());
-				model.addAttribute("wishList", wishList); // 모델에 찜 목록 배열 저장(페이지가 열릴때 모델에 저장되는게 아니라서 해당 코드는 페이지가 열릴때 동작되도록 해야함)
+				model.addAttribute("wishList", wishList); // 모델에 찜 목록 배열 저장(페이지가 열릴때 모델에 저장되는게 아니라서 해당 코드는 페이지가 열릴때
+															// 동작되도록 해야함)
 				json = new ResponseData("success", "찜목록 받아옴", wishList);
 				result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
 			} catch (Exception e) {
@@ -705,8 +726,106 @@ public class MemberController {
 			json = new ResponseData("fail", "로그인 세션 없음");
 			result = new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-		
+
 		return result;
 	}
-	
+
+	// 찜 하기(토글 동작)
+	// ajax요청 data에 찜하려는, 해제하려는 상품의 product_no를 받을수있도록 한다는 가정하에 만듦
+	@RequestMapping(value = "/saveWish", method = RequestMethod.GET)
+	public ResponseEntity<ResponseData> saveWish(
+			@RequestParam(value = "product_no", defaultValue = "-1") int product_no, HttpServletRequest request) {
+		ResponseEntity<ResponseData> result = null;
+		ResponseData json = null;
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인세션을 loginDTO로 받아옴
+		if (loginDTO != null) { // 로그인 상태인가?
+			System.out.println("로그인 상태 확인");
+			if (product_no != -1) { // 상품번호가 유효한가?(제대로 받아왔는가?)
+				System.out.println("상품 번호 유효");
+				try {
+					int tmp = memberService.saveWish(product_no, loginDTO.getMember_id()); // -1 : 에러, 0 : 찜추가, 1 : 찜취소
+					if (tmp == 0) {
+						System.out.println("찜 추가");
+						json = new ResponseData("success", "찜");
+					} else if (tmp == 1) {
+						System.out.println("찜 삭제");
+						json = new ResponseData("success", "찜 취소");
+					} else {
+						System.out.println("실패");
+						json = new ResponseData("fail", "실패");
+					}
+					result = new ResponseEntity<ResponseData>(json, HttpStatus.OK);
+				} catch (Exception e) {
+					json = new ResponseData("error", "에러");
+					result = new ResponseEntity<>(HttpStatus.CONFLICT);
+					e.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
+
+	// 카카오 로그인(인가코드 api)
+	@GetMapping("/kakao/login")
+	public String kakao(HttpServletResponse response) {
+		try {
+			kakao.getCode(response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "/user/index";
+	}
+
+	// 카카오 로그인(토큰 api)
+	@RequestMapping(value = "/kakao")
+	public String kakaoLogin(HttpServletResponse response, Model model, HttpServletRequest request,
+			@RequestParam(value = "code", defaultValue = "false") String code,
+			@RequestParam(value = "state", defaultValue = "false") String state,
+			@RequestParam(value = "client_secret", defaultValue = "false") String client_secret) throws Exception {
+		String result = "/user/index";
+		HttpSession ses = request.getSession();
+		String accessToken = kakao.getAccessToken(code); // 인가코드로 토큰을 받아오기
+		MemberDTO userInfo = kakao.getUserInfo(accessToken); // 토큰으로 유저정보 받아오기
+		ses.setAttribute("accessToken", accessToken); // 세션에 토큰 저장
+		System.out.println(userInfo);
+		// 받아온 이메일로 members 테이블 조회
+		LoginDTO loginMember = memberService.selectMemberByEmail(userInfo);
+		// 카카오 로그인 이메일과 동일한 이메일을 찾았다면 해당 데이터로 로그인
+		if (loginMember != null) {
+			ses.setAttribute("loginMember", loginMember);
+			System.out.println("로그인 정보 : " + loginMember);
+		} else {
+			model.addAttribute("userInfo", userInfo);
+			result = "/user/pages/member/signUpKakao";
+		}
+
+		return result;
+	}
+
+	// 카카오 회원가입(간편가입)
+	@PostMapping(value = "/kakao/signUp")
+	public String kakaoSignUp(MemberDTO memberDTO, Model model) {
+		System.out.println(memberDTO);
+		// 우편번호/주소/상세주소
+		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
+		try {
+			if (memberService.signUp(memberDTO) == 1) {
+				System.out.println("카카오 간편가입 완료");
+				LoginDTO loginDTO = new LoginDTO();
+				loginDTO.setMember_id(memberDTO.getMember_id());
+				loginDTO.setMember_pwd(memberDTO.getMember_pwd());
+				LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에
+																		// 조회한다.
+				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장
+			} else {
+				System.out.println("잘못된 접근(가입에 필요한 데이터 부족");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "/user/index";
+	}
+
 }

@@ -14,70 +14,114 @@
 	rel="stylesheet">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <style>
 </style>
 </head>
 
 <body>
+
+	<!-- header -->
 	<jsp:include page="../header.jsp"></jsp:include>
-
-	<div class="contentContainer container">
-		<jsp:include page="../myPage_side.jsp"></jsp:include>
-		<main class="right-pane">
-
-			<h1>회원 정보 수정</h1>
-			<c:if test="${empty sessionScope.auth}">
-				<form class="row" action="/member/auth" method="post">
-					<div class="auth">
-						<div class="input-group">
-							<span class="input-group-text">비밀번호</span> <input type="password"
-								class="form-control" id="pwd" name="pwd">
-						</div>
-						<button class="btn" type="submit">확인</button>
+	<!-- / header -->
+	<!-- Start Breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-md-6 col-12">
+					<div class="breadcrumbs-content">
+						<h1 class="page-title">MyPage</h1>
 					</div>
-				</form>
-			</c:if>
-			<c:if test="${not empty sessionScope.auth}">
-				<form id="form">
-					<div class="form-group input-group">
-						별명<input type="text" id="nickname" name="nickname">
-					</div>
-					<div id="gender" class="area">
-						성별<span id="genderStatus"></span><input type="hidden" value="">
-					</div>
-					<div class="form-check">
-						<input type="radio" class="form-check-input" id="M" name="gender"
-							value="M"> <label class="form-check-label" for="M">남자</label>
-					</div>
-					<div class="form-check">
-						<input type="radio" class="form-check-input" id="F" name="gender"
-							value="F"> <label class="form-check-label" for="F">여자</label>
-					</div>
-					<div class="form-check">
-						<input type="radio" class="form-check-input" id="N" name="gender"
-							value="N"> <label class="form-check-label" for="N">미선택</label>
-					</div>
-					<div class="form-group input-group">
-						휴대폰<input type="text" id="phone_number" name="phone_number"><span
-							id="phoneStatus"></span><input type="hidden" value="">
-					</div>
-					<div class="form-group input-group">
-						주소<input type="text" id="address" name="address" readonly
-							onclick="selectAddress(this);">
-					</div>
-					<div class="form-group input-group">
-						상세주소<input type="text" id="address2" name="address2">
-					</div>
-					<div class="form-group input-group">
-						이메일<input type="text" id="email" name="email"><span
-							id="emailStatus"></span><input type="hidden" value="">
-					</div>
-					<button id="button" class="btn btn-info" type="button" value="수정하기">수정하기</button>
-				</form>
-			</c:if>
-		</main>
+				</div>
+				<div class="col-lg-6 col-md-6 col-12">
+					<ul class="breadcrumb-nav">
+						<li><a href="index.html"><i class="lni lni-home"></i>
+								Home</a></li>
+						<li><a href="javascript:void(0)">MyPage</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
 	</div>
+	<!-- End Breadcrumbs -->
+	<section class="product-grids section">
+		<div class="contentContainer container">
+			<div class="row">
+				<!-- sideBar -->
+				<jsp:include page="../myPageSideBar.jsp">
+					<jsp:param name="pageName" value="modiInfo" />
+				</jsp:include>
+				<!-- / sideBar -->
+				<!-- contents -->
+				<div class="col-lg-9 col-12" id="modiInfoView">
+					<main class="right-pane">
+
+						<h1>회원 정보 수정</h1>
+						<c:if test="${empty sessionScope.auth}">
+							<form class="row" action="/member/auth" method="post">
+								<div class="auth">
+									<div class="input-group">
+										<span class="input-group-text">비밀번호</span> <input
+											type="password" class="form-control" id="pwd" name="pwd">
+									</div>
+									<button class="btn" type="submit">확인</button>
+								</div>
+							</form>
+						</c:if>
+						<c:if test="${not empty sessionScope.auth}">
+							<form id="form">
+								<div class="form-group input-group">
+									별명<input type="text" id="nickname" name="nickname">
+								</div>
+								<div id="gender" class="area">
+									성별<span id="genderStatus"></span><input type="hidden" value="">
+								</div>
+								<div class="form-check">
+									<input type="radio" class="form-check-input" id="M"
+										name="gender" value="M"> <label
+										class="form-check-label" for="M">남자</label>
+								</div>
+								<div class="form-check">
+									<input type="radio" class="form-check-input" id="F"
+										name="gender" value="F"> <label
+										class="form-check-label" for="F">여자</label>
+								</div>
+								<div class="form-check">
+									<input type="radio" class="form-check-input" id="N"
+										name="gender" value="N"> <label
+										class="form-check-label" for="N">미선택</label>
+								</div>
+								<div class="form-group input-group">
+									휴대폰<input type="text" id="phone_number" name="phone_number"><span
+										id="phoneStatus"></span><input type="hidden" value="">
+								</div>
+								<div class="form-group input-group">
+									우편번호<input type="text" id="zipCode" name="zipCode" readonly
+										onclick="selectAddress();">
+								</div>
+								<div class="form-group input-group">
+									주소<input type="text" id="address" name="address" readonly
+										onclick="selectAddress();">
+								</div>
+								<div class="form-group input-group">
+									상세주소<input type="text" id="address2" name="address2">
+								</div>
+								<div class="form-group input-group">
+									이메일<input type="text" id="email" name="email"><span
+										id="emailStatus"></span><input type="hidden" value="">
+								</div>
+								<button id="button" class="btn btn-info" type="button"
+									value="수정하기">수정하기</button>
+							</form>
+						</c:if>
+					</main>
+				</div>
+				<!-- / contents -->
+
+			</div>
+		</div>
+	</section>
 
 	<jsp:include page="../footer.jsp"></jsp:include>
 </body>
@@ -219,6 +263,7 @@ let tmpEmail = "tmpEmail";
 		tmpEmail = data.email; // 전역변수에 저장
 		$("#nickname").val(data.nickname);
 		$("#phone_number").val(data.phone_number);
+		$("#zipCode").val(data.zipCode);
 		$("#address").val(data.address);
 		$("#address2").val(data.address2);
 		$("#email").val(data.email);
@@ -286,13 +331,14 @@ let tmpEmail = "tmpEmail";
 });
 	// daum 주소 api
 	// 주소칸에서 onclick으로 호출
-	function selectAddress(obj) {
+	function selectAddress() {
 	    new daum.Postcode({
 	        oncomplete: function(data) {
 	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
 	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
 	            console.log(data);
-	            $(obj).val(data.zonecode + "/" + data.address);
+	            $("#zipCode").val(data.zonecode);
+	            $("#address").val(data.address);
 	        }
 	    }).open();
 	}
