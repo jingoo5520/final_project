@@ -22,27 +22,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
-$(document).ready(function() {
-	/* getDeliveryInfo(); */
+function showDeliveryModal(message) {
+	$("#deliveryModal").modal("show");
+	$("#deliveryModal .modal-text").text(message);
 	
-});
-
-function getDeliveryInfo() {
-	
-	$.ajax({
-		async: false,
-		type: 'GET',
-		url: '/member/myPage/getDeliveryInfo',
-		dataType: 'json',
-        success : function(response) {
-        	console.log(response);
-        	makeDeliveryList(response.deliveryList, response.memberInfo);
-        },
-        error : function(response) {
-            /* console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);    */    
-        }
-	})
-	
+	setTimeout(function() {
+		$('#deliveryModal').modal('hide');
+	}, 750);
 }
 
 </script>
@@ -118,19 +104,13 @@ function getDeliveryInfo() {
 </style>
 <script type="text/javascript">
 	function sendData() {
-		/* let postCode = $("#postcodeNew").val();
-		let address = $("#addressNew").val();
-		let detailAddress = $("#detailAddressNew").val(); */
-		
 		let postCode = validateInfo($("#postcodeNew").val());
 		let address = validateInfo($("#addressNew").val());
 		let detailAddress = validateInfo($("#detailAddressNew").val());
 		let deliveryName = validateInfo($("#deliveryName").val());
 		
-		console.log(postCode, address, detailAddress, deliveryName);
-		
 		if (!postCode || !address || !detailAddress || !deliveryName) {
-			alert("정보를 입력해주세요");
+			showDeliveryModal("정보를 입력해주세요");
 			return;
 		}
 		
@@ -152,7 +132,6 @@ function getDeliveryInfo() {
 	}
 	
 	function validateInfo(value) {
-		console.log(value);
 		if (value == "") {
 			return false;
 		}
@@ -223,9 +202,9 @@ function getDeliveryInfo() {
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="javascript:void(0)">MyPage</a></li>
-						<li>배송지 관리</li>
+						<li><a href="../"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li><a href="/member/myPage/manageDelivery">배송지 관리</a></li>
 						<li>배송지 추가</li>
 					</ul>
 				</div>
@@ -304,6 +283,7 @@ function getDeliveryInfo() {
 
 
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
+	<jsp:include page="myPage_deliveryModal.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>

@@ -39,7 +39,6 @@ $(document).ready(function() {
 		let productPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
 		totalPrices += productPriceText;
 	});
-	console.log(totalPrices);
 	
 	$(".totalPrice").text(totalPrices.toLocaleString() + " 원");
 	
@@ -47,7 +46,6 @@ $(document).ready(function() {
 		let productPointText = parseInt($.trim($(this).text().replace(" P", "").replace(/,/g, "")));
 		totalPoints += productPointText;
 	});
-	console.log(totalPoints);
 	
 	$(".totalPoint").text(totalPoints.toLocaleString() + " P");
 	
@@ -57,7 +55,6 @@ $(document).ready(function() {
 	
 	if(levelInfo) {
 		levelDC = parseFloat("${levelInfo.level_dc }");
-		console.log(levelDC);
 	}
 	
 	let levelDCPrice = 0;
@@ -156,7 +153,7 @@ function countDown(productNo) {
 	let quantity = parseInt($("#"+productNo + "_quantity").text());
 	
 	if (quantity <= 1) {
-		alert("최소수량 1개 이하로 내릴 수 없습니다.");
+		showCartModal("최소수량 1개 이하로 내릴 수 없습니다.");
 	} else {
 		$("#"+productNo + "_quantity").text(quantity - 1);
 	} 
@@ -168,10 +165,9 @@ function applyQuantity(productNo) {
 	let quantity = parseInt($("#"+productNo + "_quantity").text());
 	
 	if (quantity < 1) {
-		alert("최소수량 1개 이하로 내릴 수 없습니다.");
+		showCartModal("최소수량 1개 이하로 내릴 수 없습니다.");
 		location.reload();
 	} else {
-		console.log("수량 : " + quantity + ", 상품 번호 : " + productNo);
 		
 		$.ajax({
 		    url: 'updateQuantity',
@@ -182,35 +178,23 @@ function applyQuantity(productNo) {
 		    	},
 		    dataType: 'json',
 		    success: function(data) {
-		        // 요청이 성공했을 때 실행되는 콜백 함수
-		        console.log(data);
-		        
 		        if (data == "success") {
-		            // 수정 성공 시 페이지 새로 고침
 		            location.reload();
 		        } else if (data == "fail"){
-		            // 수정 실패 시 에러 메시지 표시
-		            alert('수정에 실패했습니다. 다시 시도해주세요.');
-		        } else {
-		        	// 로그인 안했음
-		        	alert("로그인 안했는데요?");
+		            showCartModal('수정에 실패했습니다. 다시 시도해주세요.');
 		        }
 		    },
 		    error: function() {
 		    },
 		    complete: function(data) {
 		    	// 요청이 성공했을 때 실행되는 콜백 함수
-		        console.log(data);
 		        
 		        if (data.status == 200) {
 		            // 수정 성공 시 페이지 새로 고침
 		            location.reload();
 		        } else if (data.responseText == 400){
 		            // 수정 실패 시 에러 메시지 표시
-		            alert('수정에 실패했습니다. 다시 시도해주세요.');
-		        } else if (data.responseText == 401){
-		        	// 로그인 안했음
-		        	alert("로그인 안했는데요?");
+		            showCartModal('수정에 실패했습니다. 다시 시도해주세요.');
 		        }
 		    }
 		});
@@ -219,74 +203,72 @@ function applyQuantity(productNo) {
 }
 
 function removeItem(productNo) {
-	
-	let isConfirmed = confirm("선택한 상품을 삭제 하시겠습니까?");
-	
-	if (isConfirmed) {
-		$.ajax({
-		    url: 'removeCartItem',
-		    type: 'POST',
-		    data: {
-		    	productNo : productNo
-		    	},
-		    dataType: 'json',
-		    success: function(data) {
-		    },
-		    error: function() {
-		    },
-		    complete: function(xhr) {
-		        
-		        if (xhr.status == 200) {
-		            location.reload();
-		        } else if (xhr.status == 400) {
-		            alert('상품 삭제에 실패했습니다. 다시 시도해주세요.');
-		        } else if (xhr.status == 401) {
-		            alert("로그인 안했는데요?");
-		        }
-		    }
-		});
-	}
-	
+	$("#deleteCartModal .modal-text").text("상품을 삭제하시겠습니까?");
+	$("#deleteCart").off("click").on("click", function() {
+        deleteCart(productNo);
+    });
+	$("#deleteCartModal").modal("show");
+}
+
+function deleteCart(productNo) {
+	$.ajax({
+	    url: 'removeCartItem',
+	    type: 'POST',
+	    data: {
+	    	productNo : productNo
+	    	},
+	    dataType: 'json',
+	    success: function(data) {
+	    },
+	    error: function() {
+	    },
+	    complete: function(xhr) {
+	        if (xhr.status == 200) {
+	        	$("#deleteCartModal").modal("hide");
+	            location.reload();
+	        } else if (xhr.status == 400) {
+	            showCartModal('상품 삭제에 실패했습니다. 다시 시도해주세요.');
+	        }
+	    }
+	});
 }
 
 function removeCheckedItem() {
-    let isConfirmed = confirm("선택한 상품을 삭제 하시겠습니까?");
+    $("#deleteCartModal .modal-text").text("선택한 상품들을 삭제하시겠습니까?");
+    $("#deleteCart").off("click").on("click", function() {
+        deleteCheckedCart();
+    });
+    $("#deleteCartModal").modal("show");
+}
+
+function deleteCheckedCart() {
+    let productNos = [];
     
-    if (isConfirmed) {
-        let checkboxes = $('input[type="checkbox"].checkProduct');
-        let productNos = [];
-        
-        for (let i = 0; i < checkboxes.length; i++) {
-            let checkbox = checkboxes[i];
-            if (checkbox.checked) {
-                productNos.push(parseInt(checkbox.id));
+    $('input[type="checkbox"].checkProduct:checked').each(function() {
+        productNos.push(parseInt(this.id));
+    });
+
+    $.ajax({
+        url: 'removeCheckedItems',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(productNos),
+        dataType: 'json',
+        success: function(data) {
+        },
+        error: function() {
+        },
+        complete: function(data) {
+            if (data.status == 200) {
+            	$("#deleteCartModal").modal("hide");
+                location.reload();
+            } else if (data.responseText == 400) {
+                showCartModal('상품 삭제에 실패했습니다. 다시 시도해주세요.');
             }
         }
-        
-        console.log(productNos);
-        
-        $.ajax({
-            url: 'removeCheckedItems',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(productNos),  // 단순 배열로 전송
-            dataType: 'json',
-            success: function(data) {
-            },
-            error: function() {
-            },
-            complete: function(data) {
-                if (data.status == 200) {
-                    location.reload();
-                } else if (data.responseText == 400) {
-                    alert('상품 삭제에 실패했습니다. 다시 시도해주세요.');
-                } else if (data.responseText == 401) {
-                    alert("로그인 안했는데요?");
-                }
-            }
-        });
-    }
+    });
 }
+
 
 function checkedOrder() {
 	let productsInfo = [];
@@ -305,15 +287,20 @@ function checkedOrder() {
         }
     }
 
-	console.log(productsInfo);
-	
-	// 숨겨진 필드에 JSON 형식으로 저장
     $('.productInfos').val(JSON.stringify(productsInfo));
 
-    // 폼 제출
     $('.orderForm').submit();
 	
 }
+
+function showCartModal(message) {
+	  $("#cartModal").modal("show");
+		$("#cartModal .modal-text").text(message);
+		
+		setTimeout(function() {
+		$('#cartModal').modal('hide');
+		}, 750);
+ }
 
 </script>
 
@@ -523,8 +510,8 @@ input[type="checkbox"]:hover {
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
 						<li><a href="../"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="../">Shop</a></li>
-						<li>Cart</li>
+                        <li><a href="/product/jewelry">Shop</a></li>
+                        <li>장바구니</li>
 					</ul>
 				</div>
 			</div>
@@ -779,6 +766,8 @@ input[type="checkbox"]:hover {
 	
 
 	<jsp:include page="../footer.jsp"></jsp:include>
+	<jsp:include page="cartModal.jsp"></jsp:include>
+	<jsp:include page="deleteCartModal.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>

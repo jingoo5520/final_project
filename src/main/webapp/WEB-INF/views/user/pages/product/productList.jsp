@@ -431,8 +431,8 @@
 
     <jsp:include page="../footer.jsp"></jsp:include>
     
-    <jsp:include page="../cart/cartModal.jsp"></jsp:include>
-
+    <jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
+    
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
 	</a>

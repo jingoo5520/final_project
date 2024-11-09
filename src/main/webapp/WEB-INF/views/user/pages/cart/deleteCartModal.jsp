@@ -9,19 +9,19 @@
 <title>배송지 삭제 모달창</title>
 <style type="text/css">
 	
-	.modal-content .modal-header{
+	#deleteCartModal .modal-content .modal-header{
 		margin: 0;
 		height: 65px;
 		border: none !important;
 	}
 	
-	.modal-content .modal-body {
+	#deleteCartModal .modal-content .modal-body {
 		height: 100px;
 		border: none !important;
 		
 	}
 	
-	.modal-content .modal-body .modal-text {
+	#deleteCartModal .modal-content .modal-body .modal-text {
 		height: 20px;
 		text-align: center;
 		font-weight: bold;
@@ -29,15 +29,16 @@
 		color: rgb(34,34,34);
 		display: block;
 	}
-	.modal-content .modal-footer {
+	#deleteCartModal .modal-content .modal-footer {
 		height: 60px;
 		padding:0;
 		display: flex;
 		justify-content: space-between !important;
 		margin:0 !important;
+		border:none;
 	}
 	
-	.modal-content .modal-footer #cancleDelete {
+	#deleteCartModal .modal-content .modal-footer #cancleDelete {
 		width: 248px;
 		height:60px;
 		font-size: 18px;
@@ -49,7 +50,7 @@
 		margin: 0;
 	}
 	
-	.modal-content .modal-footer #deleteDelivery {
+	#deleteCartModal .modal-content .modal-footer #deleteCart {
 		width: 248px;
 		height:60px;
 		font-size: 18px;
@@ -66,7 +67,7 @@
 </head>
 <body>
 	<!-- The Modal -->
-	<div class="modal fade" id="deleteDeliveryModal">
+	<div class="modal fade" id="deleteCartModal">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 			
@@ -77,18 +78,15 @@
 			
 				<!-- Modal body -->
 				<div class="modal-body">
-					<p class="modal-text">배송지를 지우시겠습니까?</p>
+					<p class="modal-text">선택한 상품을 삭제하시겠습니까?</p>
 				</div>
 			
 				<!-- Modal footer -->
-				<form action="/member/myPage/deleteDelivery" method="post">
-					<div class="modal-footer">
-						<button type="button" id="cancleDelete" data-bs-dismiss="modal">뒤로가기</button>
-						<input type="hidden" id="deleteDeliveryNo" name="deliveryNo">
-						<button type="submit" id="deleteDelivery">삭제하기</button>
-					</div>
-				</form>
-			
+				<div class="modal-footer">
+					<button type="button" id="cancleDelete" data-bs-dismiss="modal">뒤로가기</button>
+					<button type="button" id="deleteCart">삭제하기</button>
+				</div>
+				
 			</div>
 		</div>
 	</div>

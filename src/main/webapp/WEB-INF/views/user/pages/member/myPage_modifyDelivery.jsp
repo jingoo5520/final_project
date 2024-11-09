@@ -28,6 +28,15 @@ $(document).ready(function() {
 	
 });
 
+function showDeliveryModal(message) {
+	$("#deliveryModal").modal("show");
+	$("#deliveryModal .modal-text").text(message);
+	
+	setTimeout(function() {
+		$('#deliveryModal').modal('hide');
+	}, 750);
+}
+
 function getDeliveryInfo(deliveryNo) {
 	
 	$.ajax({
@@ -37,7 +46,6 @@ function getDeliveryInfo(deliveryNo) {
 		url: '/member/myPage/getDeliveryInfo',
 		dataType: 'json',
         success : function(response) {
-        	console.log(response);
         	makeDeliveryInfo(response.deliveryInfo, response.memberInfo);
         },
         error : function(response) {
@@ -141,10 +149,8 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 		let detailAddress = validateInfo($("#detailAddressNew").val());
 		let deliveryName = validateInfo($("#deliveryName").val());
 		
-		console.log(postCode, address, detailAddress, deliveryName);
-		
 		if (!postCode || !address || !detailAddress || !deliveryName) {
-			alert("정보를 입력해주세요");
+			showDeliveryModal("정보를 입력해주세요");
 			return;
 		}
 		
@@ -164,7 +170,6 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 	}
 	
 	function validateInfo(value) {
-		console.log(value);
 		if (value == "") {
 			return false;
 		}
@@ -230,15 +235,15 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">배송지 추가</h1>
+						<h1 class="page-title">배송지 수정</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="javascript:void(0)">MyPage</a></li>
-						<li>배송지 관리</li>
-						<li>배송지 추가</li>
+						<li><a href="../"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li><a href="/member/myPage/manageDelivery">배송지 관리</a></li>
+						<li>배송지 수정</li>
 					</ul>
 				</div>
 			</div>
@@ -319,6 +324,7 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 
 
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
+	<jsp:include page="myPage_deliveryModal.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>

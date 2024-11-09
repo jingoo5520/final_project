@@ -355,7 +355,7 @@ function addCart(productNo) {
     <!-- End Item Details -->
     
 
-<jsp:include page="../cart/cartModal.jsp"></jsp:include>
+<jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
 
 <jsp:include page="../footer.jsp"></jsp:include>
 

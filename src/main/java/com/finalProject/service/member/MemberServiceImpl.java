@@ -185,12 +185,6 @@ public class MemberServiceImpl implements MemberService {
 		for (UseCouponDTO coupon : couponList) {
 			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
 			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
-
-			if (coupon.getMember().equals("All")) {
-				coupon.setCoupon_name("[회원 전체 지급]" + coupon.getCoupon_name());
-			} else {
-				coupon.setCoupon_name("[특별 회원 지급]" + coupon.getCoupon_name());
-			}
 		}
 		return couponList;
 	}
