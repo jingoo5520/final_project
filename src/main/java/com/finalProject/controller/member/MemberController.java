@@ -217,14 +217,16 @@ public class MemberController {
 	@RequestMapping(value = "/logout")
 	public String logout(HttpServletRequest request) {
 		HttpSession ses = request.getSession();
-		kakao.kakaoLogout((String)ses.getAttribute("accessToken"));
 		ses.removeAttribute("loginMember");
 		ses.removeAttribute("rememberPath");
 		ses.removeAttribute("auth");
 		System.out.println("로그아웃");
+		if (ses.getAttribute("accessToken") != null) {
+			kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
+		}
 		return "redirect:/";
 	}
-	
+
 	// 마이페이지 (내정보수정 페이지)
 	@RequestMapping(value = "/myPage/modiInfo")
 	public String myPage(HttpServletRequest request) {
@@ -232,8 +234,7 @@ public class MemberController {
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_modiInfo";
 	}
-	
-	
+
 	// 마이페이지 (주문 / 배송 조회)
 	@RequestMapping(value = "/myPage/viewOrder")
 	public String myPage_viewOrder(HttpServletRequest request) {
@@ -402,7 +403,9 @@ public class MemberController {
 				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)
 				cookie.setPath("/"); // 모든 경로에서 사용 가능
 				response.addCookie(cookie); // 쿠키 저장(삭제)
-				kakao.kakaoLogout((String)ses.getAttribute("accessToken"));
+				if (ses.getAttribute("accessToken") != null) {
+					kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
+				}
 			} else {
 				json = new ResponseData("fail", "탈퇴 실패");
 			}
@@ -633,6 +636,7 @@ public class MemberController {
 		// 카카오 로그인 이메일과 동일한 이메일을 찾았다면 해당 데이터로 로그인
 		if (loginMember != null) {
 			ses.setAttribute("loginMember", loginMember);
+			System.out.println("로그인 정보 : " + loginMember);
 		} else {
 			model.addAttribute("userInfo", userInfo);
 			result = "/user/pages/member/signUpKakao";
@@ -653,7 +657,8 @@ public class MemberController {
 				LoginDTO loginDTO = new LoginDTO();
 				loginDTO.setMember_id(memberDTO.getMember_id());
 				loginDTO.setMember_pwd(memberDTO.getMember_pwd());
-				LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에 조회한다.
+				LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에
+																		// 조회한다.
 				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장
 			} else {
 				System.out.println("잘못된 접근(가입에 필요한 데이터 부족");
@@ -664,6 +669,5 @@ public class MemberController {
 
 		return "/user/index";
 	}
-	
 
 }

@@ -21,11 +21,15 @@
 			</when>
 			<when test="key == 'email'">
 				where email = #{value}
+				and member_status = 'active'
 			</when>
 			<when test="key == 'phone'">
 				where phone_number = #{value}
+				and member_status =
+				'active'
 			</when>
 		</choose>
+
 	</select>
 
 	<!-- 회원가입 -->
@@ -51,13 +55,14 @@
 	<select id="selectAutoLoginData" resultType="LoginDTO">
 		select * from
 		members where autologin_code = #{autologin_code} and autologin_date >
-		now()
+		now() and member_status = 'active'
 	</select>
 
 	<!-- 마이 페이지 회원 정보 조회 -->
 	<select id="selectMemberById" resultType="MemberDTO">
 		select * from members
 		where member_id = #{member_id}
+		and member_status = 'active'
 	</select>
 
 	<!-- 마이 페이지 회원 정보 수정 -->
@@ -142,17 +147,18 @@
 		#{address}, 'M', #{member_id})
 	</insert>
 
-	<!-- 기본주소로 저장(회원가입) -->
+	<!-- 이메일로 회원 조회(카카오 로그인) -->
 	<select id="selectMemberByEmail" resultType="LoginDTO">
 		select * from
-		members where email = #{email}
+		members where email = #{email} and member_status = 'active'
 	</select>
 
 	<!-- 주문페이지에서 입력한 주소로 회원 주소지 변경 -->
 	<update id="updateAddress">
 		update members
 		set address = #{deliveryAddress}
-		where member_id = #{memberId}
+		where
+		member_id = #{memberId}
 	</update>
 
 	<!-- 배송지 저장 -->
@@ -183,15 +189,21 @@
 		resultType="com.finalProject.model.UseCouponDTO">
 		select p.coupon_no, p.coupon_code, p.pay_date,
 		p.expire_date, p.member,
-		DATEDIFF(p.expire_date, #{currentTime}) as remaining_days,
-		c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount, c.coupon_dc_rate
+		DATEDIFF(p.expire_date, #{currentTime}) as
+		remaining_days,
+		c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount,
+		c.coupon_dc_rate
 		from coupon_paid p
 		join coupons c
-		on p.coupon_no = c.coupon_no
+		on p.coupon_no =
+		c.coupon_no
 		left join coupon_used u
-		on u.coupon_code = p.coupon_code and u.member_id = #{memberId}
-		where (p.member = #{memberId} or p.member = 'all')
-		and #{currentTime} &gt;= p.pay_date and #{currentTime} &lt; p.expire_date
+		on u.coupon_code = p.coupon_code and
+		u.member_id = #{memberId}
+		where (p.member = #{memberId} or p.member =
+		'all')
+		and #{currentTime} &gt;= p.pay_date and #{currentTime} &lt;
+		p.expire_date
 		and u.coupon_code is null
 	</select>
 
