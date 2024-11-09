@@ -36,12 +36,13 @@ public interface OrderService {
 	void deleteOrder(String orderId);
 	
 	void makePayment(String orderId, Integer amount, String payModule, String method, HttpSession session) throws Exception;
-
-	String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception;
-
+	
+	String makeOrder(PaymentRequestDTO request, boolean isMember, HttpSession session) throws Exception;
+	
 	void makeGuest(PaymentRequestDTO request, String orderId);
 
 	List<OrderProductsDTO> getOrderListOfMember(String memberId);
 
 	void cancelOrder(CancelOrderRequestDTO request) throws Exception;
+
 }

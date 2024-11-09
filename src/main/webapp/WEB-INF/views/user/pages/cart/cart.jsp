@@ -297,7 +297,7 @@ function removeCheckedItem() {
 }
 
 function logWindowSize() {   
-   let width = window.screen.width();
+   let width = window.width
     
     if (width >= 1837) {
         $('.hide-total').hide();
