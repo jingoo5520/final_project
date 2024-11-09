@@ -27,79 +27,91 @@
 		const successMessage = '${successMessage}';
 		
 		if (successMessage) {
-			alert(successMessage);
+			$(".preloader").hide();
+			$("#deliveryModal").modal("show");
+			$("#deliveryModal .modal-text").text(successMessage);
+			
+			setTimeout(function() {
+			$('#deliveryModal').modal('hide');
+			}, 750);
 		}
-	});
-
-function getDeliveryInfo() {
-	
-	$.ajax({
-		async: false,
-		type: 'GET',
-		url: '/member/myPage/getDeliveryInfo',
-		dataType: 'json',
-        success : function(response) {
-        	console.log(response);
-        	makeDeliveryList(response.deliveryList, response.memberInfo);
-        },
-        error : function(response) {
-            /* console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);    */    
-        }
-	})
-	
-}
-
-function makeDeliveryList(deliveryList, memberInfo) {
-	let mainDelivery = "";
-	let output = "";
-	
-	let deliveryListCount = deliveryList.length;
-	console.log(deliveryListCount);
-	
-	$("#countDeliveries").text(deliveryListCount);
-	
-	$.each(deliveryList, function(index, item) {
-		let postcode = item.delivery_address.split("/")[0];
-		let address = item.delivery_address.split("/")[1];
-		let detailAddress = item.delivery_address.split("/")[2];
 		
-		if (item.is_main == "M") {
-			mainDelivery = `<div class="row deliveryInfoBody">
+	});
+	
+	function deleteDelivery(deliveryNo) {
+		$("#deleteDeliveryModal").modal("show");
+		$("#deleteDeliveryNo").val(deliveryNo);
+	}
+
+	function getDeliveryInfo() {
+		
+		$.ajax({
+			async: false,
+			type: 'GET',
+			url: '/member/myPage/getDeliveryInfo',
+			dataType: 'json',
+	        success : function(response) {
+	        	makeDeliveryList(response.deliveryList, response.memberInfo);
+	        },
+	        error : function(response) {
+	        }
+		})
+		
+	}
+
+	function makeDeliveryList(deliveryList, memberInfo) {
+		let mainDelivery = "";
+		let output = "";
+		let deliveryListCount = deliveryList.length;
+		
+		$("#countDeliveries").text(deliveryListCount);
+		
+		$.each(deliveryList, function(index, item) {
+			let postcode = item.delivery_address.split("/")[0];
+			let address = item.delivery_address.split("/")[1];
+			let detailAddress = item.delivery_address.split("/")[2];
+			
+			if (item.is_main == "M") {
+				mainDelivery = `<div class="row deliveryInfoBody">
+									<div class="col-lg-2 col-md-2 col-12 memberName">
+										<p>\${memberInfo.member_name}</p>
+									</div>
+									<div class="col-lg-8 col-md-8 col-12 addressInfo">
+										<p class="deliveryName">\${item.delivery_name} <span class="badge bg-danger">기본배송지</span></p>
+										<p>[\${postcode}] \${address} \${detailAddress}</p>
+									</div>
+									<div class="col-lg-1 col-md-1 col-12 modifyDelivery">
+										<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}&isMain=M'">수정</a></p>
+									</div>
+								</div>`;
+			} else {
+				output += `<div class="row deliveryInfoBody">
 								<div class="col-lg-2 col-md-2 col-12 memberName">
 									<p>\${memberInfo.member_name}</p>
 								</div>
 								<div class="col-lg-8 col-md-8 col-12 addressInfo">
-									<p class="deliveryName">\${item.delivery_name} <span class="badge bg-danger">기본배송지</span></p>
+									<p class="deliveryName">\${item.delivery_name} </p>
 									<p>[\${postcode}] \${address} \${detailAddress}</p>
 								</div>
 								<div class="col-lg-1 col-md-1 col-12 modifyDelivery">
-									<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}'">수정</a></p>
+									<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}&isMain=S'">수정</a></p>
+								</div>
+								<div class="col-lg-1 col-md-1 col-12 deleteDelivery">
+									<p><a onclick="deleteDelivery(\${item.delivery_no});">삭제</a></p>
 								</div>
 							</div>`;
-		} else {
-			output += `<div class="row deliveryInfoBody">
-							<div class="col-lg-2 col-md-2 col-12 memberName">
-								<p>\${memberInfo.member_name}</p>
-							</div>
-							<div class="col-lg-8 col-md-8 col-12 addressInfo">
-								<p class="deliveryName">\${item.delivery_name} </p>
-								<p>[\${postcode}] \${address} \${detailAddress}</p>
-							</div>
-							<div class="col-lg-1 col-md-1 col-12 modifyDelivery">
-								<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}'">수정</a></p>
-							</div>
-							<div class="col-lg-1 col-md-1 col-12 deleteDelivery">
-								<p><a onclick="deleteDelivery(\${item.delivery_no});">삭제</a></p>
-							</div>
-						</div>`;
-		}
-	});
-	
-	output = mainDelivery + output;
-	
-	$(".deliveryInfoList").html(output);
-	
-}
+			}
+		});
+		
+		output = mainDelivery + output;
+		
+		$(".deliveryInfoList").html(output);
+		
+	}
+
+
+
+
 </script>
 
 </head>
@@ -262,9 +274,10 @@ function makeDeliveryList(deliveryList, memberInfo) {
 		</div>
 	</section>
 
-
-
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
+	
+	<jsp:include page="myPage_deleteDeliveryModal.jsp"></jsp:include>
+	<jsp:include page="myPage_deliveryModal.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>

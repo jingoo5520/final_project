@@ -41,7 +41,7 @@ function getDeliveryInfo(deliveryNo) {
         	makeDeliveryInfo(response.deliveryInfo, response.memberInfo);
         },
         error : function(response) {
-            /* console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);    */    
+          
         }
 	})
 	
@@ -57,6 +57,7 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 	$('#detailAddressNew').val(detailAddress);
 	$('#deliveryName').val(deliveryInfo.delivery_name);
 	$('input[name="deliveryNo"]').val(deliveryInfo.delivery_no);
+	$('input[name="isMain"]').val(deliveryInfo.is_main);
 	
 	
 }
@@ -271,10 +272,12 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 				                <input type="text" class="col-md-10 col-lg-10 col-12" id="detailAddressNew" placeholder="상세주소">
 				            </div>
 				            <div class="form-check">
+				            <c:if test="${not isMain.equals('M')}">
 				                <div id="saveDeliveryDiv">
 				                    <input type="checkbox" class="form-check-input" id="saveDeliveryCheck">
 				                    <label for="saveDeliveryCheck">기본배송지로 저장</label>
 				                </div>
+							</c:if>
 				                <div id="saveAddressDiv">
 				                    <input type="checkbox" class="form-check-input" id="saveAddressCheck">
 				                    <label for="saveAddressCheck">회원정보 주소로 저장</label>
@@ -298,7 +301,7 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 								<input type="hidden" name="deliveryName">
 								<input type="hidden" name="deliveryAddress">
 								<input type="hidden" name="memberId" value="${memberInfo.member_id }">
-								<input type="hidden" name="isMain" value="S">
+								<input type="hidden" name="isMain">
 								<input type="hidden" name="deliveryNo">
 								<input type="hidden" name="deliveryType" value="modifyDelivery">
 								<div class="btn" onclick="sendData()">등록</div>

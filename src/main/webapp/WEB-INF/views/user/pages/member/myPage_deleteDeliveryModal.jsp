@@ -6,8 +6,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="EUC-KR">
-<title>장바구니 모달창</title>
+<title>배송지 삭제 모달창</title>
 <style type="text/css">
+	
 	.modal-content .modal-header{
 		margin: 0;
 		height: 65px;
@@ -36,7 +37,7 @@
 		margin:0 !important;
 	}
 	
-	.modal-content .modal-footer #keepProduct {
+	.modal-content .modal-footer #cancleDelete {
 		width: 248px;
 		height:60px;
 		font-size: 18px;
@@ -46,7 +47,7 @@
 		margin: 0;
 	}
 	
-	.modal-content .modal-footer #goCart {
+	.modal-content .modal-footer #deleteDelivery {
 		width: 248px;
 		height:60px;
 		font-size: 18px;
@@ -63,7 +64,7 @@
 </head>
 <body>
 	<!-- The Modal -->
-	<div class="modal fade" id="myModal">
+	<div class="modal fade" id="deleteDeliveryModal">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 			
@@ -74,14 +75,17 @@
 			
 				<!-- Modal body -->
 				<div class="modal-body">
-				<p class="modal-text">쇼핑백에 상품을 담았습니다.</p>
+					<p class="modal-text">배송지를 지우시겠습니까?</p>
 				</div>
 			
 				<!-- Modal footer -->
-				<div class="modal-footer">
-					<button type="button" id="keepProduct" data-bs-dismiss="modal">상품 계속보기</button>
-					<button type="button" id="goCart" data-bs-dismiss="modal">장바구니 가기</button>
-				</div>
+				<form action="/member/myPage/deleteDelivery" method="post">
+					<div class="modal-footer">
+						<button type="button" id="cancleDelete" data-bs-dismiss="modal">뒤로가기</button>
+						<input type="hidden" id="deleteDeliveryNo" name="deliveryNo">
+						<button type="submit" id="deleteDelivery">삭제하기</button>
+					</div>
+				</form>
 			
 			</div>
 		</div>

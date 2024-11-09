@@ -159,5 +159,9 @@
 		is_main = #{is_main} 
 		where delivery_no = #{delivery_no}
 	</update>
+	
+	<delete id="deleteDeliveryInfo">
+		delete from delivery_addrs where delivery_no = #{deliveryNo} 
+	</delete>
 
 </mapper>

@@ -401,9 +401,18 @@ input[type="checkbox"]:hover {
 }
 
 .cartInfo {
+	height: 384px;
+	margin: 40px 20px 0 0;
+	padding-top : 40px !important;
+	background-color: #FFFFFF;
+	padding: 0;
+	border: 1px solid #eee;
+	border-radius: 4px;
+}
+
+.cartInfo .container {
 	height: 180px;
-	margin-bottom: 100px;
-	margin-top: 80px;
+	
 }
 
 #instruction {
@@ -421,15 +430,18 @@ input[type="checkbox"]:hover {
 }
 
 .hero-area {
-	margin: 40px 0 40px 0 !important;
+	border: 1px solid #eee;
+	border-radius: 4px;
+	margin-bottom: 40px !important;
 	display: flex;
    	flex-direction: column;
    	align-items: center;
-	
+	padding-bottom: 40px;
 }
 
 .warning {
-	height: 100px;
+	padding-top: 80px !important;
+	height: 180px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -731,6 +743,7 @@ input[type="checkbox"]:hover {
 				</c:otherwise>
 			</c:choose>
 			<!-- Total Amount -->
+		<c:if test="${not empty cartItems || not empty cookieCartItems }">
 			<div class="total-amount cart-total">
 				<div class="cartInfo container">
 					<span id="instruction">장바구니 이용안내</span>
@@ -756,7 +769,9 @@ input[type="checkbox"]:hover {
 						</form>
 				 	</div>
 				 </div>
+			 
 			 </div>
+		 </c:if>
 			 <!--/ End Total Amount -->
 		</div>
 	</div>

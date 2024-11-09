@@ -1677,6 +1677,18 @@
   
   <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
   <script>
+	  function validateEmail(email) {
+	 	 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		 return emailPattern.test(email);
+	  }
+	  
+	  function validateData(data) {
+	 	 if (data == null || data == undefined || data == "") {
+	 		 return false;
+	 	 }
+		 return true;
+	  }
+	  
 	  let selectedPaymentMethod = null;
 
 	  function selectPaymentMethod(method) {
@@ -1699,30 +1711,62 @@
 	            console.log(productsInfo);
 		    }
 
-            const paymentType = document.querySelector("#payment_type").value;
-            // const totalPrice = parseInt(document.querySelector(".totalPrice").textContent.replace(/\D/g, "")) // 예) "453,000원" -> 453000
             const saveDeliveryType = document.querySelector("#saveDeliveryType").value;
             const deliveryName = document.querySelector("#deliveryName").value;
             const pointDCText = document.querySelector("#pointDC").textContent;
             const pointDC = parseInt(pointDCText.replace(/,/g, ''), 10);
             const couponUse = document.querySelector("#couponUse").value;
-            const deliveryAddress = document.querySelector("#deliveryAddressHidden").value + document.querySelector("#detailAddressNew").value;
             const deliveryRequest = document.querySelector("input[name='deliveryRequest']").value;
-            // const deliveryCost = parseInt(document.querySelector("#deliveryCost").textContent.replace(/\D/g, "")) // 예) "2500 원" -> 2500
             const ordererId = document.querySelector("input[name='ordererId']").value;
+            
+            const paymentType = document.querySelector("#payment_type").value;
+            const deliveryAddress = document.querySelector("#deliveryAddressHidden").value + document.querySelector("#detailAddressNew").value;
             const ordererName = document.querySelector("input[name='ordererName']").value;
             const phoneNumber = document.querySelector("input[name='phoneNumber']").value;
             const email = document.querySelector("input[name='email']").value;
-
+            
+			if (!validateData(ordererName)) {
+				alert("성함을 입력해주세요.");
+            	return;       	
+            }
+            
+			if (!validateData(phoneNumber)) {
+				alert("핸드폰 번호를 입력해주세요.");
+            	return;
+			}
+			
+			if (!validateData(email)) {
+            	alert("이메일을 입력해주세요.");
+            	return;
+            }
+            
+            if (!validateEmail(email)) {
+            	alert("유효하지 않은 이메일입니다.");
+            	return;
+            }
+            
+            if (!validateData(deliveryAddress)) {
+            	alert("주소를 입력해주세요.");
+            	return;
+            }
+            
+            if (!validateData(document.querySelector("#detailAddressNew").value)) {
+            	alert("상세주소를 입력해주세요.");
+            	return;
+            }
+            
+            if (!validateData(paymentType) {
+            	alert("결제 수단을 선택해주세요.");
+            	return;
+            }
+            
             const paymentData = {
                 productsInfo,
-                // totalPrice,
                 paymentType,
                 saveDeliveryType,
                 deliveryName,
                 deliveryAddress,
                 deliveryRequest,
-                // deliveryCost,
                 ordererId,
                 ordererName,
                 phoneNumber,

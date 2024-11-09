@@ -73,5 +73,8 @@ public interface MemberDAO {
 	
 	// 배송지 수정
 	void updateDelivery(DeliveryDTO deliveryDTO) throws Exception;
+	
+	// 배송지 삭제
+	void deleteDelivery(int deliveryNo) throws Exception;
 
 }

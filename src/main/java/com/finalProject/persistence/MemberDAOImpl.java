@@ -213,4 +213,10 @@ public class MemberDAOImpl implements MemberDAO {
 		ses.update(ns + "updateDeliveryInfo", deliveryDTO);
 	}
 	
+	// 배송지 삭제
+	@Override
+	public void deleteDelivery(int deliveryNo) throws Exception {
+		ses.delete(ns + "deleteDeliveryInfo", deliveryNo);
+	}
+	
 }

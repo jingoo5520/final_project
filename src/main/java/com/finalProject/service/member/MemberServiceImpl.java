@@ -184,5 +184,11 @@ public class MemberServiceImpl implements MemberService {
 		memberDAO.updateDelivery(deliveryDTO);
 		
 	}
+	
+	// 배송지 삭제
+	@Override
+	public void deleteDelivery(int deliveryNo) throws Exception {
+		memberDAO.deleteDelivery(deliveryNo);
+	}
 
 }

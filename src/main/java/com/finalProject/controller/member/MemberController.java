@@ -275,12 +275,13 @@ public class MemberController {
 	
 	// 마이페이지 (배송지 수정)
 	@RequestMapping(value = "/mypage/modifyDelivery")
-	public String myPage_modifyDelivery(@RequestParam("deliveryNo") int deliveryNo , HttpServletRequest request, HttpSession session, Model model) {
+	public String myPage_modifyDelivery(@RequestParam("deliveryNo") int deliveryNo, @RequestParam("isMain") String isMain, HttpServletRequest request, HttpSession session, Model model) {
 		System.out.println("배송지 추가 페이지로 이동");
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		model.addAttribute("memberInfo", loginMember);
 		model.addAttribute("deliveryNo", deliveryNo);
+		model.addAttribute("isMain", isMain);
 		return "/user/pages/member/myPage_modifyDelivery";
 	}
 	
@@ -292,12 +293,9 @@ public class MemberController {
 		List<DeliveryDTO> deliveryList = null;
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		System.out.println(loginDTO.getMember_id());
-		
 		try {
 			deliveryList = memberService.getDeliveryList(loginDTO.getMember_id());
 			for (DeliveryDTO deliveryDTO : deliveryList) {
-				System.out.println(deliveryDTO.toString());
 				if (deliveryNo != 0) {
 					if (deliveryDTO.getDelivery_no() == deliveryNo) {
 						map.put("deliveryInfo", deliveryDTO);
@@ -324,13 +322,8 @@ public class MemberController {
 			@RequestParam("deliveryType") String deliveryType,
 			RedirectAttributes redirectAttributes) {
 		
-		System.out.println(deliveryInfo.toString());
-		System.out.println(deliveryType);
 		if (deliveryType.contains("saveDelivery")) {
 			// 배송지 저장
-			System.out.println("배송지 저장 탭임");
-			System.out.println(deliveryInfo.toString());
-	
 			try {
 				memberService.saveDelivery(deliveryInfo);
 				redirectAttributes.addFlashAttribute("successMessage", "배송지가 추가되었습니다");
@@ -342,15 +335,10 @@ public class MemberController {
 	
 		if (deliveryType.contains("saveAddress")) {
 			// 회원 정보 주소 수정
-			System.out.println("회원 주소 정보 수정 탭임");
-			System.out.println(deliveryInfo.toString());
-	
 			try {
 				if (memberService.updateAddress(deliveryInfo)) {
-					System.out.println("회원 정보 수정 완료");
 					redirectAttributes.addFlashAttribute("successMessage", "회원 주소로 수정되었습니다");
 				} else {
-					System.out.println("수정 안됨");
 					return "/user/pages/warning";
 				}
 			} catch (Exception e) {
@@ -362,65 +350,63 @@ public class MemberController {
 		return "redirect:/member/myPage/manageDelivery";
 	}
 	
-	// 마이페이지 (배송지 추가)
-		@PostMapping("/myPage/modifyDelivery")
-		public String modifyDelivery(
-				@ModelAttribute DeliveryVO deliveryInfo, 
-				@RequestParam("deliveryType") String deliveryType,
-				@RequestParam("deliveryNo") int deliveryNo,
-				RedirectAttributes redirectAttributes) {
-			
-			System.out.println(deliveryInfo);
-			System.out.println(deliveryType);
-			System.out.println(deliveryNo);
-			
-			
-			DeliveryDTO deliveryDTO = DeliveryDTO.builder()
-												 .delivery_no(deliveryNo)
-												 .delivery_name(deliveryInfo.getDeliveryName())
-												 .delivery_address(deliveryInfo.getDeliveryAddress())
-												 .member_id(deliveryInfo.getMemberId())
-												 .is_main(deliveryInfo.getIsMain())
-												 .build();
-			
-			System.out.println(deliveryDTO);
-			
-			System.out.println(deliveryInfo.toString());
-			System.out.println(deliveryType);
-			if (deliveryType.contains("modifyDelivery")) {
-				// 배송지 수정
-				System.out.println("배송지 수정 탭임");
-				System.out.println(deliveryInfo.toString());
+	// 마이페이지 (배송지 수정)
+	@PostMapping("/myPage/modifyDelivery")
+	public String modifyDelivery(
+			@ModelAttribute DeliveryVO deliveryInfo, 
+			@RequestParam("deliveryType") String deliveryType,
+			@RequestParam("deliveryNo") int deliveryNo,
+			RedirectAttributes redirectAttributes) {
 		
-				try {
-					memberService.modifyDelivery(deliveryDTO);
-					redirectAttributes.addFlashAttribute("successMessage", "배송지가 수정되었습니다");
-				} catch (Exception e) {
-					e.printStackTrace();
-					return "/user/pages/warning";
-				}
+		DeliveryDTO deliveryDTO = DeliveryDTO.builder()
+											 .delivery_no(deliveryNo)
+											 .delivery_name(deliveryInfo.getDeliveryName())
+											 .delivery_address(deliveryInfo.getDeliveryAddress())
+											 .member_id(deliveryInfo.getMemberId())
+											 .is_main(deliveryInfo.getIsMain())
+											 .build();
+		
+		if (deliveryType.contains("modifyDelivery")) {
+			// 배송지 수정
+			try {
+				memberService.modifyDelivery(deliveryDTO);
+				redirectAttributes.addFlashAttribute("successMessage", "배송지가 수정되었습니다");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
 			}
-		
-			if (deliveryType.contains("saveAddress")) {
-				// 회원 정보 주소 수정
-				System.out.println("회원 주소 정보 수정 탭임");
-				System.out.println(deliveryInfo.toString());
-		
-				try {
-					if (memberService.updateAddress(deliveryInfo)) {
-						System.out.println("회원 정보 수정 완료");
-					} else {
-						System.out.println("수정 안됨");
-						return "/user/pages/warning";
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					return "/user/pages/warning";
-				}
-			}
-			
-			return "redirect:/member/myPage/manageDelivery";
 		}
+	
+		if (deliveryType.contains("saveAddress")) {
+			// 회원 정보 주소 수정
+			try {
+				if (memberService.updateAddress(deliveryInfo)) {
+					redirectAttributes.addFlashAttribute("successMessage", "회원 주소로 수정되었습니다");
+				} else {
+					return "/user/pages/warning";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
+	
+	// 마이페이지 (배송지 삭제)
+	@PostMapping("/myPage/deleteDelivery")
+	public String deleteDelivery(@RequestParam("deliveryNo") int deliveryNo, RedirectAttributes redirectAttributes) {
+		try {
+			memberService.deleteDelivery(deliveryNo);
+			redirectAttributes.addFlashAttribute("successMessage", "배송지가 삭제되었습니다");
+		} catch (Exception e) {
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("successMessage", "배송지가 삭제에 실패했습니다");
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
 	
 	// 마이페이지 인증(정보 수정시 비밀번호를 확인함.)
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
