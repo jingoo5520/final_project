@@ -223,6 +223,7 @@ public class MemberController {
 		return "/user/pages/member/myPage_modiInfo";
 	}
 	
+	
 	// 마이페이지 (주문 / 배송 조회)
 	@RequestMapping(value = "/myPage/viewOrder")
 	public String myPage_viewOrder(HttpServletRequest request) {

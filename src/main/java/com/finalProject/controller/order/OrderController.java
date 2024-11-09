@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.order.CancelOrderRequestDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderProductsDTO;
@@ -109,6 +111,12 @@ public class OrderController {
         
  		return "redirect:/order";
     }
+
+	@PostMapping("/order/payMethod")
+	public ResponseEntity<String> setPayMethod(@RequestParam("method") String method, HttpSession session) {
+		session.setAttribute("payMethod", method);
+		return ResponseEntity.ok("method 저장 완료");
+	}
 	
 	// 사용자가 설정한 데이터를 가지고 주문 테이블 튜플 생성
 	@PostMapping("/orderProducts")
@@ -160,7 +168,7 @@ public class OrderController {
 		Map<String, String> resultMap = new HashMap<>();
 			try {
 	        	boolean isMember = session.getAttribute("loginMember") == null ? false : true; // 로그인 여부로 회원, 비회원 여부 알아내기
-				session.setAttribute("orderId", orderService.makeOrder(paymentRequest, isMember)); // 비회원은 orderId가 "non_member"이다.
+				session.setAttribute("orderId", orderService.makeOrder(paymentRequest, isMember, session)); // 비회원은 orderId가 "non_member"이다.
 				String orderId = (String) session.getAttribute("orderId");
 				System.out.println("세션에 저장된 orderId : " + orderId);
 				if (isMember == false) {
@@ -176,7 +184,7 @@ public class OrderController {
 				resultMap.put("result", "fail");
 				resultMap.put("message", "주문 생성 실패");
 				return ResponseEntity.badRequest().body(resultMap);
-		}        
+		}
 	}
 	
 	@PostMapping("/getDeliveryList")
@@ -297,39 +305,40 @@ public class OrderController {
 		// TODO : 이 아래의 부분은 트랜잭션 처리해야 함. 
 		// NOTE : 오류가 발생 시 현재 로그인된 멤버의 orders 테이블 행을 삭제한다. 
 		// 그리고 뷰에서 결제하기 버튼을 누르면 orders 테이블 행을 처음부터 다시 만들어서 삽입한다.
-		// TODO : 시크릿 키, github나 클라이언트에 노출되면 안됨. 시크릿 키를 별도의 파일에 넣어서 관리할 것		
-		
+		// TODO : 시크릿 키, github나 클라이언트에 노출되면 안됨. 시크릿 키를 별도의 파일에 넣어서 관리할 것
+		// TODO : 네이버페이, 카카오페이도 이 트랜잭션 구조로 바뀌어야 함
+		String response;
+		Map<String, String> result;
 		try {
+			System.out.println("결제방법 : " + (String) session.getAttribute("payMethod")); // TODO
+			// DB에 업데이트, 트랜잭션 처리됨.
+			orderService.makePayment(
+					orderId,
+					queryPrice,
+					"T",
+					(String) session.getAttribute("payMethod"),
+					session
+				);
 			String secretKey = "test_sk_ma60RZblrq7opZYeabb63wzYWBn1";
 			// 시크릿 키 인코딩
 			String encodedSecretKey = Base64.getEncoder().encodeToString((secretKey + ":").getBytes());
-			Map<String, String> result;
 			// 토스 서버에 결제승인 요청 보냄
 			result = orderService.requestApproval(encodedSecretKey, paymentKey, amount, orderId);
-			String response = result.get("response");
-			// 응답 JSON문자열을 자바 맵으로 파싱
-			Map<String, Object> responseMap = gson.fromJson(response, Map.class);
-			int responseCode = Integer.valueOf(result.get("httpResponseCode"));
-			// TODO : 결제 끝나고 이동하는 페이지 깔끔하게 다시 만들어야 함.
-			System.out.println("토스서버의 결제승인응답 : " + result);
-			if (responseCode == HttpURLConnection.HTTP_OK) {
-				System.out.println("결제방법 : " + responseMap.get("method").toString());
-				// DB에 업데이트, 트랜잭션 처리됨.
-				orderService.makePayment(
-						orderId,
-						(int) Float.parseFloat(responseMap.get("totalAmount").toString()),
-						"T",
-						responseMap.get("method").toString(),
-						session
-					);
-				return "/user/pages/order/temp_01"; // 결제 성공
-			}
+			response = result.get("response");
 		} catch (Exception e) {
 			e.printStackTrace();
 			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
 			return "/user/pages/order/temp_02"; // 결제 실패
 		}
-		return "/user/pages/order/temp_02"; // 결제 실패
+		
+		Map<String, Object> responseMap = gson.fromJson(response, Map.class); // 응답 JSON문자열을 자바 맵으로 파싱
+		int responseCode = Integer.valueOf(result.get("httpResponseCode"));
+		System.out.println("토스서버의 결제승인응답 : " + result);
+		if (responseCode == HttpURLConnection.HTTP_OK) {
+			return "/user/pages/order/temp_01"; // 결제 성공
+		} else {
+			return "/user/pages/order/temp_02"; // 결제 실패
+		}
 	}
 	
 	@GetMapping("/approveNaverPay")
@@ -481,8 +490,8 @@ public class OrderController {
 		return "/user/pages/order/orderList";
 	}
 	
-	@PostMapping("/cancelOrder")
-	public String cancelOrder(@RequestParam int orderNo, Model model) {
+	@GetMapping("/cancelOrder")
+	public String showCancelOrderPage(@RequestParam int orderNo, Model model) {
 		System.out.println("주문취소(or 반품/환불) 페이지 접속");
 		System.out.println("주문번호는 " + orderNo);
 		model.addAttribute("orderNo", orderNo);
@@ -508,6 +517,24 @@ public class OrderController {
 	public String getLoginedId(HttpSession session) {
 		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
 		return loginDTO.getMember_id();
+	}
+	
+	@PostMapping("/cancelOrder")
+	public ResponseEntity<Map<String, String>> cancelOrder(
+			@RequestBody CancelOrderRequestDTO requestDTO
+			) {
+		System.out.println("CancelOrderRequestDTO : " + requestDTO);
+		Map<String, String> resultMap = new HashMap<>();
+		try {
+			orderService.cancelOrder(requestDTO);
+			resultMap.put("result", "success");
+			return ResponseEntity.ok(resultMap);
+		} catch (Exception e) {
+			resultMap.put("result", "fail");
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(resultMap);
+		}
+		
 	}
 	
 //	@GetMapping("/cancelAPItest/")

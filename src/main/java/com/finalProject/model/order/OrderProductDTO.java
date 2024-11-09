@@ -14,6 +14,8 @@ import lombok.ToString;
 @ToString
 @Builder
 public class OrderProductDTO {
+	private String cancel_status;
+	private int orderproduct_no;
 	private int product_no;
 	private String product_name;
 	private int quantity;

@@ -22,16 +22,17 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.order.CancelOrderRequestDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderProductsDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductDiscountDTO;
 import com.finalProject.persistence.order.OrderDAO;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-	
 	@Inject
 	private OrderDAO orderDAO;
 	
@@ -41,27 +42,60 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Override
-	public String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception {
+	public String makeOrder(PaymentRequestDTO request, boolean isMember, HttpSession session) throws Exception {
 		System.out.println("orders 테이블 행 삽입 전 회원/비회원 확인. 회원? : " + isMember);
 		String orderId = orderDAO.makeOrder(request, isMember);
-		this.saveExpectedTotalPrice(calculateTotalPrice(request, orderId, isMember), orderId); // 예상결제금액 저장
+		this.setExpectedPrices(request, orderId, isMember, session);
 		return orderId;
 	}
 	
-	private int calculateTotalPrice(PaymentRequestDTO request, String orderId, boolean isMember) {
-		int total = 0;
+	// 총 예상결제금액과 상품별 금액, 상품별 포인트를 설정한다. 
+	private int setExpectedPrices(PaymentRequestDTO request, String orderId, boolean isMember, HttpSession session) throws Exception {
+		// TODO : 새로 작성하고 있는 코드
+//		int expectedTotalPrice = 0;
+//		List<Integer> productPrices = new ArrayList<>();
+//		List<Integer> productPoints = new ArrayList<>();
+//		List<ProductDiscountDTO> discountInfo = orderDAO.getDiscountInfoByProduct(orderId, session);
+//		System.out.println("discountInfo : " + discountInfo);
+//		// working...
+//		return 0;
+		
+		// TODO : 기존 코드, 새로 교체해야 함
+		int expectedTotalPrice = 0;
+		for (OrderRequestDTO product : request.getProductsInfo()) {
+			int price = product.getProductNo() * product.getQuantity();
+		}
+		
 		for (OrderRequestDTO product : request.getProductsInfo()) {
 			System.out.println("product : " + product.toString());
-			total += (orderDAO.getPrice(product.getProductNo()) * product.getQuantity());
+			expectedTotalPrice += (orderDAO.getPrice(product.getProductNo()) * product.getQuantity());
 		}
-		total += orderDAO.selectDeliveryCost(orderId);
+		expectedTotalPrice += orderDAO.selectDeliveryCost(orderId);
 		if (isMember == true) {
 			OrderMemberDTO memberInfo = orderDAO.selectMemberInfo(request.getOrdererId());
-			total = (int) (total * (1f - memberInfo.getLevel_dc()));
+			expectedTotalPrice = (int) (expectedTotalPrice * (1f - memberInfo.getLevel_dc()));
 			// TODO : 쿠폰 할인 적용해야 함
 		}
-		return total;
+		this.saveExpectedTotalPrice(expectedTotalPrice, orderId); // 예상결제금액 저장
+		return expectedTotalPrice; 
+		
 	}
+	
+	// working : 상품마다 환불해야 할 금액, 포인트 설정
+//	@Override
+//	private void setRefundInfoByProduct(PaymentRequestDTO request, String orderId, int totalPrice) {
+//		int totalPoint = request.getPointDC();
+//		Lisg<OrderRequestDTO> products = request.getProductsInfo();
+//		List<Integer> productPrice = new ArrayList<>();
+//		List<Integer> productPoint = new ArrayList<>();
+//		for (int i = 0; i < products.size(); i++) {
+//			if (i == products.size()) { // 마지막 요소일때는
+//				
+//			}
+//		}
+//	}
+
+
 	
 	@Override
 	public void makeGuest(PaymentRequestDTO request, String orderId) {
@@ -75,34 +109,32 @@ public class OrderServiceImpl implements OrderService {
 	public void makePayment(String orderId, Integer amount, String payModule, String method, HttpSession session) throws Exception {
 		// NOTE : 이 트랜잭션에서 예외가 발생해도 이미 생성된 orders의 테이블의 행은 삭제되지 않음
 		// 그러므로 컨트롤러의 catch 블록에서 orders 테이블의 행을 삭제함
+		System.out.println("makePayment 함수 실행, method 매개변수 : " + method);
 		
 		boolean isMember = session.getAttribute("loginMember") == null ? false : true;
 		
-		// 비회원일 때
-		if (isMember == false) {
-			if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
-				throw new DataAccessException("결제 정보 생성 실패") {}; 
-			}
-			return;
+		if (isMember == true) {
+			// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
+			// 쿠폰 사용
+			if (orderDAO.useCoupon(orderId) != 1) {
+				throw new DataAccessException("쿠폰 사용 실패") {};
+			};
+			// 포인트 적립
+			if (orderDAO.updatePoint(orderId) != true) {
+				throw new DataAccessException("포인트 적립 실패") {}; 
+			};
+			// 회원등급 수정
+			if (orderDAO.updateUserLevel(orderId) != true) {
+				throw new DataAccessException("회원등급 수정 실패") {}; 
+			};
 		}
-		
-		// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
-		// 쿠폰 사용
-		if (orderDAO.useCoupon(orderId) != 1) {
-			throw new DataAccessException("쿠폰 사용 실패") {};
-		};
-		// 포인트 적립
-		if (orderDAO.updatePoint(orderId) != true) {
-			throw new DataAccessException("포인트 적립 실패") {}; 
-		};
-		// 회원등급 수정
-		if (orderDAO.updateUserLevel(orderId) != true) {
-			throw new DataAccessException("회원등급 수정 실패") {}; 
-		};
 		
 		if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
 			throw new DataAccessException("결제 정보 생성 실패") {}; 
 		}
+		
+		orderDAO.updateOrderStatus(method, orderId);
+		
 		// TODO : 장바구니에서 결제한 물품 삭제
 	}
 	
@@ -387,9 +419,9 @@ public class OrderServiceImpl implements OrderService {
 			OrderProductsDTO order = new OrderProductsDTO();
 			order.setOrderId(orderId);
 			Map<String, Object> orderInfo = orderDAO.getOrderInfo(orderId);
-			System.out.println("orderInfo.order_id : " + (String) orderInfo.get("order_id"));
-			System.out.println("orderInfo : " + orderInfo);
-			System.out.println("orderInfo.order_status : " + (String) orderInfo.get("order_status"));
+			// System.out.println("orderInfo.order_id : " + (String) orderInfo.get("order_id"));
+			// System.out.println("orderInfo : " + orderInfo);
+			// System.out.println("orderInfo.order_status : " + (String) orderInfo.get("order_status"));
 			Timestamp time = (Timestamp) orderInfo.get("order_date");
 			order.setOrderDate( time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) );
 			Map<String, String> dict = new HashMap<>();
@@ -401,7 +433,7 @@ public class OrderServiceImpl implements OrderService {
 			dict.put("6", "배송완료");
 			order.setOrderStatus(dict.get((String) orderInfo.get("order_status")));
 			List<OrderProductDTO> products = orderDAO.getProductList(orderId);
-			System.out.println("products : " + products);
+			// System.out.println("products : " + products);
 			order.setProducts(products);
 			System.out.println("order : " + order);
 			result.add(order);
@@ -409,4 +441,24 @@ public class OrderServiceImpl implements OrderService {
 		return result;
 	}
 
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void cancelOrder(CancelOrderRequestDTO request) throws Exception {
+		if (orderDAO.makeCancel(
+				request.getOrderId(),
+				request.getProducts(), 
+				request.getCancelType(),
+				request.getCancelReason()) != request.getProducts().size()) {
+			throw new DataAccessException("취소 정보 삽입 실패") {};
+		}
+		orderDAO.updateAccountInfo(
+				request.getOrderId(),
+				request.getAccountOwner(),
+				request.getAccountBank(),
+				request.getAccountNumber()
+				);
+	}
+	
+	// working...
+	// public getCancelProcessStatus(String orderId, String )
 }

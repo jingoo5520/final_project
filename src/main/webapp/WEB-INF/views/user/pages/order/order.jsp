@@ -1436,7 +1436,7 @@
 												<h6 class="heading-6 font-weight-400 payment-title">결제 수단을 선택해주세요.</h6>
 												<div class="payment-option-wrapper">
 													<div class="single-payment-option">
-														<input type="radio" name="paymentMethod" id="paymentMethod-1" onclick="selectPaymentMethod('CARD')" checked>
+														<input type="radio" name="paymentMethod" id="paymentMethod-1" onclick="selectPaymentMethod('CARD')">
 														<label for="paymentMethod-1">
 															<p>카드 결제</p>
 														</label>
@@ -1815,6 +1815,24 @@
             console.log("amount : " + amount)
             console.log("orderName : " + orderName)
 			
+            
+			$.ajax({
+				async : false,
+				type : 'POST',
+				url : "/order/payMethod",
+				data : {
+					method: selectedPaymentMethod
+				},
+				dataType: "json",
+				contentType : 'application/x-www-form-urlencoded',
+				success : function(response) {
+					console.log("/order/payMethod의 response : " + JSON.stringify(response))
+				},
+				error : function(request, status, error) {
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+				}
+			})
+				
 			switch (selectedPaymentMethod) {
 			case "CARD":
 				await payment.requestPayment({
@@ -1986,7 +2004,7 @@
 				  amount: amount,
 				  orderId: orderId,
 				  orderName: orderName,
-				  successUrl: window.location.origin + "/payment/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
+				  successUrl: window.location.origin + "/payment/success.html?method=CARD", // 결제 요청이 성공하면 리다이렉트되는 URL
 				  failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
 				  card: {
 					  useEscrow: false,

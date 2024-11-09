@@ -7,16 +7,19 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.LoginDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductDiscountDTO;
 
 @Repository
 public class OrderDAOImpl implements OrderDAO {
@@ -80,6 +83,8 @@ public class OrderDAOImpl implements OrderDAO {
 			// 기본값으로 "non_member"가 지정되어 있는데 이걸 UUID로 바꿔준다.
 			request.setOrdererId(UUID.randomUUID().toString()); 
 		}
+		
+		// order 정보 작성
 		String orderId = UUID.randomUUID().toString();
 		Map<String, Object> params = new HashMap<>();
 		params.put("request", request);
@@ -89,10 +94,10 @@ public class OrderDAOImpl implements OrderDAO {
 			throw new DataAccessException("주문 정보 생성 실패") {};
 			// return null;
 		};
-		// order_products에 insert
 		
 		// params 초기화
 		params = new HashMap<>();
+		// orderProduct 정보 작성
 		List<Object> productInfoList = new ArrayList<>();
 		for (OrderRequestDTO product : request.getProductsInfo()) {
 			Map<String, Object> productParams = new HashMap<>();
@@ -101,7 +106,6 @@ public class OrderDAOImpl implements OrderDAO {
 			productInfoList.add(productParams);
 		}
 		System.out.println("productInfoList : " + productInfoList);
-		// working...
 		params.put("productInfoList", productInfoList);
 		params.put("orderId", orderId);
 		int insertedRowNum = ses.insert(ns + "insertOrderProduct", params);
@@ -112,6 +116,24 @@ public class OrderDAOImpl implements OrderDAO {
 			// return null;
 		}
 		return ses.selectOne(ns + "selectUncompletedOrderId", request.getOrdererId());
+	}
+	
+	@Override
+	public List<ProductDiscountDTO> getDiscountInfoByProduct(String orderId, HttpSession session) {
+		boolean isMember = false;
+		String memberId = "";
+		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
+		if (loginDTO == null) {
+			isMember = false;
+		} else {
+			isMember = true;
+			memberId = loginDTO.getMember_name();
+		}
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		params.put("isMember", isMember);
+		params.put("memberId", memberId);
+		return ses.selectList(ns + "selectDiscountInfoByProduct", params);
 	}
 	
 	@Transactional(rollbackFor={Exception.class})
@@ -207,7 +229,7 @@ public class OrderDAOImpl implements OrderDAO {
 		params.put("orderId", orderId);
 		params.put("amount", amount);
 		params.put("moduleName", payModule);
-		if (method != null && method.equals("가상계좌")) {
+		if (method.equals("VIRTUAL_ACCOUNT")) { // 가상계좌
 			params.put("status", "A");
 		} else { // 카카오페이, 네이버페이 포함
 			params.put("status", "S");
@@ -223,12 +245,23 @@ public class OrderDAOImpl implements OrderDAO {
 		}
 		return true;
 	}
+	
+	@Override
+	public void updateOrderStatus(String payMethod, String orderId) throws Exception {
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		if (payMethod.equals("VIRTUAL_ACCOUNT")) { // 가상계좌
+			params.put("status", 1); // 결제대기
+		} else {
+			params.put("status", 2); // 결제완료
+		}
+		ses.update(ns + "updateOrderStatus", params);
+	}
 
 	@Override
 	public List<String> getOrderIdList(String memberId) {
 		return ses.selectList(ns + "selectOrderId", memberId);
 	}
-
 
 	@Override
 	public Map<String, Object> getOrderInfo(String orderId) {
@@ -240,4 +273,23 @@ public class OrderDAOImpl implements OrderDAO {
 		return ses.selectList(ns + "selectProductList", orderId);
 	}
 
+	@Override
+	public int makeCancel(String orderId, List<Integer> productNoList, String cancelType, String cancelReason) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		params.put("productNoList", productNoList);
+		params.put("cancelType", cancelType);
+		params.put("cancelReason", cancelReason);
+		return ses.insert(ns + "insertCancel", params);
+	}
+	
+	@Override
+	public void updateAccountInfo(String orderId, String depositName, String depositBank, String depoistAccount) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		params.put("depositName", depositName);
+		params.put("depositBank", depositBank);
+		params.put("depoistAccount", depoistAccount);
+		ses.update(ns + "updateAccountInfo", params);
+	}
 }
