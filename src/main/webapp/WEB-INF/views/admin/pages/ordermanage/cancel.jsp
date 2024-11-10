@@ -3,36 +3,50 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr"
+	data-theme="theme-default" data-assets-path="/resources/assets/admin/"
+	data-template="vertical-menu-template-free">
 <head>
 
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-<title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+<title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin
+	Template - Pro</title>
 
 <meta name="description" content="" />
 
 <!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="/resources/assets/admin/img/favicon/favicon.ico" />
+<link rel="icon" type="image/x-icon"
+	href="/resources/assets/admin/img/favicon/favicon.ico" />
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+	rel="stylesheet" />
 
 <!-- Icons. Uncomment required icon fonts -->
-<link rel="stylesheet" href="/resources/assets/admin/vendor/fonts/boxicons.css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/fonts/boxicons.css" />
 
 <!-- Core CSS -->
-<link rel="stylesheet" href="/resources/assets/admin/vendor/css/core.css" class="template-customizer-core-css" />
-<link rel="stylesheet" href="/resources/assets/admin/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/css/core.css"
+	class="template-customizer-core-css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/css/theme-default.css"
+	class="template-customizer-theme-css" />
 <link rel="stylesheet" href="/resources/assets/admin/css/demo.css" />
 
 <!-- Vendors CSS -->
-<link rel="stylesheet" href="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
-<link rel="stylesheet" href="/resources/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
 
 <!-- Page CSS -->
 
@@ -156,29 +170,138 @@
 	
 	
 	$(function() {
-
+		function tossCancelRequest(paymentKey, cancelReason, amount = null) {
+			let encodedSecretKey = null
+			let cancelResponse = null
+			
+			// encodedSecretKey 취득
+			$.ajax({
+				async: false,
+				url: '/order/tossSecretKey',
+				type: 'GET',
+				dataType: "json",
+				success: function(response) {
+					encodedSecretKey = response.encodedSecretKey
+					console.log("encodedSecretKey : " + encodedSecretKey)
+				},
+				error: function(xhr, status, error) {
+					console.error(`Error: , `);
+				   console.error(xhr.responseText);
+				}
+			})
+			
+			if (cancelReason == null) {
+				cancelReason = ''
+			}
+			let requestObj = {
+				 cancelReason: cancelReason,
+			}
+			if (amount != null) {
+				requestObj.cancelAmount = amount
+			}
+			
+			$.ajax({
+				 async: false,
+				 url: `https://api.tosspayments.com/v1/payments/\${paymentKey}/cancel`,
+				 method: 'POST',
+				 headers: {
+				   'Authorization': `Basic \${encodedSecretKey}`,
+				   'Content-Type': 'application/json',
+				 },
+				 data: JSON.stringify(requestObj),
+				 success: function(response) {
+					 cancelResponse = response
+					 console.log(response);
+				 },
+				 error: function(xhr, status, error) {
+				   console.error(`Error: , `);
+				   console.error(xhr.responseText);
+				 }
+			});
+			return cancelResponse
+		}
+			
+			function kakaopayCancelRequest(paymentId, cancelReason, amount) {
+				let response = null
+				$.ajax({
+					async: false,
+					url: "/order/KakaoPayCancel",
+					type: "POST",
+					contentType: "application/json",
+					dataType: 'json',
+					data: JSON.stringify({
+						paymentId: paymentId,
+						amount: "" + amount,
+						cancelReason: cancelReason,
+					}),
+					success: function(res) {
+						response = res.response
+						console.log(res);
+					},
+					error: function(xhr, status, error) {
+						console.error(`Error: , `);
+						console.error(xhr.responseText);
+					}
+				});
+				return JSON.parse(response)
+			}
+		    function naverpayCancelRequest(paymentId, cancelReason, amount) {
+				let response = null
+				$.ajax({
+					async: false,
+					url: "/order/NaverPayCancel",
+					type: "POST",
+					contentType: "application/json",
+					dataType: 'json',
+					data: JSON.stringify({
+						paymentId: paymentId,
+						amount: "" + amount,
+						cancelReason: cancelReason,
+					}),
+					success: function(res) {
+						response = res.response
+						console.log(res);
+					},
+					error: function(xhr, status, error) {
+						console.error(`Error: , `);
+						console.error(xhr.responseText);
+					}
+				});
+				return JSON.parse(response)
+			}
 		
 		  $("#confirmDeleteBtn").on('click', function() {
-		        let cancelNo = $("#modalCancelNo").text().replace("취소번호 : ", "").replace("번을 ", ""); // 취소번호 추출
-				let orderNo = $("#modalOrderNo").text().replace("주문번호 : ", "");
-		        let cancelType= $("#cancelStatus").text().replace("취소타입 : " , "").trim();
-		        
+		        let cancelNo = parseInt($("#modalCancelNo").text().replace("취소번호 : ", "").replace("번을 ", "")); // 취소번호 추출
+				let orderNo = parseInt($("#modalOrderNo").text().replace("주문번호 : ", ""));
+		        let cancelType = $("#cancelStatus").text().replace("취소타입 : " , "").trim();
+		        let orderId = $("#orderId").text().replace("주문 아이디 :" ,"").trim();
+		        let cancelReason = $()
 		        console.log(cancelNo);
 		        console.log(orderNo);
-		        console.log(cancelStatus);
+		        console.log(orderId);
 		        
 		        $.ajax({
-		            url: '/admin/order/changeStatus', // 서버 URL
+		            url: '/admin/order/cancelOrder', // 서버 URL
 		            type: 'POST',
 		            contentType: 'application/json' ,
-		            data: {
-		                cancel_no: cancelNo , // 취소번호 전송
-		                order_product_no : orderNo ,  // 주문번호 정송
-		                cancel_type : cancelType // 취소 구분 
-		            },
+		            data: JSON.stringify({
+		                cancelNo: cancelNo,
+		                orderNo: orderNo,
+		                orderId: orderId
+		            }),
 		            success: function(data) {
-		                console.log(data); // 성공 시 서버 응답 데이터 출력
-		                // 추가적으로 처리할 내용 (예: 성공 메시지 표시, 페이지 리로드 등)
+		            	console.log(typeof data.paid_amount);
+		            	console.log(typeof data.payment_module_key);
+		                console.log(data);
+		                let canelReason = data.cancel_reason.replace(" ", "").trim();
+		                console.log(canelReason);
+		                if(data.payment_method == 'T') {
+		                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount = null);
+		                } else if (data.payment_method == 'K') {
+		                	kakaopayCancelRequest(data.payment_module_key, canelReason, data.paid_amount);
+		                } else if (data.payment_method == 'N') {
+		                	naverpayCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount);
+		                }
 		            },
 		            error: function(error) {
 		                console.error(error); // 에러 시 콘솔에 에러 출력
@@ -242,13 +365,14 @@
 			            output += '<tr>' +
 			                '<td>'+checkBoxHtml+ '</td>' +
 			                '<td>' + cancel.cancel_no + '</td>' +
-			                '<td>' + cancel.oreder_id + '</td>' +
+			                '<td>' + cancel.order_id + '</td>' +
 			                '<td>' + cancel.order_product_no + '</td>' +
 			                '<td>' + formattedDate + '</td>' +
 			                '<td>' + cancel.cancel_complete_date + '</td>' +
 			                '<td>' + cancel.cancel_retract_date + '</td>' +
 			                '<td>' + cancel.cancel_type + '</td>' +
-			                '<td>' + cancel.cancel_status + '</td>' +			          
+			                '<td>' + cancel.cancel_status + '</td>' +
+			                '<td>' + cancel.cancel_reason + '</td>' +	
 			                '</tr>';
 			        });
 
@@ -283,10 +407,13 @@
 
 			<div class="layout-page">
 				<!-- Navbar -->
-				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
-					<div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-						<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-							<i class="bx bx-menu bx-sm"></i>
+				<nav
+					class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+					id="layout-navbar">
+					<div
+						class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+						<a class="nav-item nav-link px-0 me-xl-4"
+							href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
 				</nav>
@@ -310,15 +437,17 @@
 												<div class="card h-100">
 													<h5 class="card-title mt-3" align="center" id="orderNo">주문번호 : ${top.order_product_no}</h5>
 													<div class="card-body">
-														<p class="card-text">주문 아이디 : ${top.order_id}</p>
+														<p class="card-text" id="orderId">주문 아이디 :${top.order_id}</p>
 														<p class="card-text">취소번호 : ${top.cancel_no}</p>
-														<p class="card-text">
-															신청날짜 :
-															<fmt:formatDate value="${top.cancel_apply_date}" pattern="yyyy-MM-dd" />
+														<p class="card-text">신청날짜 : <fmt:formatDate
+																value="${top.cancel_apply_date}" pattern="yyyy-MM-dd" />
 														</p>
-														<p class="card-text" id="cancelStatus">취소타입 : ${top.cancel_type}</p>
+														<p class="card-text" id="cancelStatus">취소타입 :
+															${top.cancel_type}</p>
 														<p class="card-text">취소상태 : ${top.cancel_status}</p>
-														<button class="btn btn-outline-primary changeStatus" data-bs-toggle="modal" data-bs-target="#modalToggle2" value="${top.cancel_no}">취소 처리</button>
+														<button class="btn btn-outline-primary changeStatus"
+															data-bs-toggle="modal" data-bs-target="#modalToggle2"
+															value="${top.cancel_no}">취소 처리</button>
 													</div>
 												</div>
 											</div>
@@ -337,15 +466,17 @@
 												<div class="card h-100">
 													<h5 class="card-title mt-3" align="center" id="orderNo">주문번호 : ${top.order_product_no}</h5>
 													<div class="card-body">
-														<p class="card-text">주문 아이디 : ${top.order_id}</p>
+														<p class="card-text" id="orderId">주문 아이디 : ${top.order_id}</p>
 														<p class="card-text">취소번호 : ${top.cancel_no}</p>
-														<p class="card-text">
-															신청날짜 :
-															<fmt:formatDate value="${top.cancel_apply_date}" pattern="yyyy-MM-dd" />
+														<p class="card-text">신청날짜 : <fmt:formatDate
+																value="${top.cancel_apply_date}" pattern="yyyy-MM-dd" />
 														</p>
-														<p class="card-text" id="cancelStatus">취소타입 : ${top.cancel_type}</p>
+														<p class="card-text" id="cancelStatus">취소타입 :
+															${top.cancel_type}</p>
 														<p class="card-text">취소상태 : ${top.cancel_status}</p>
-														<button class="btn btn-outline-primary changeStatus" data-bs-toggle="modal" data-bs-target="#modalToggle2" value="${top.cancel_no}">취소 처리</button>
+														<button class="btn btn-outline-primary changeStatus"
+															data-bs-toggle="modal" data-bs-target="#modalToggle2"
+															value="${top.cancel_no}">취소 처리</button>
 													</div>
 												</div>
 											</div>
@@ -359,57 +490,80 @@
 								<div class="container-xxl flex-grow-1 container-p-y mb-3">
 									<div class="card accordion-item active mb-3">
 										<h2 class="accordion-header" id="headingOne">
-											<button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionOne" aria-expanded="false" aria-controls="accordionOne">
+											<button type="button" class="accordion-button collapsed"
+												data-bs-toggle="collapse" data-bs-target="#accordionOne"
+												aria-expanded="false" aria-controls="accordionOne">
 												<h5>검색</h5>
 											</button>
 										</h2>
 
 
-										<div id="accordionOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+										<div id="accordionOne"
+											class="accordion-collapse collapse show"
+											data-bs-parent="#accordionExample">
 											<div class="accordion-body">
 
 												<div class="row mb-3" style="border-top: 1px solid">
-													<label class="col-sm-2 col-form-label" for="basic-default-name">취소 타입</label>
+													<label class="col-sm-2 col-form-label"
+														for="basic-default-name">취소 타입</label>
 													<div class="col-sm-10 d-flex align-items-center">
 														<div class="form-check-inline" id=>
-															<input name="cancel_type" class="form-check-input" type="checkbox" value="cancel" id="cancel_type_c" checked="checked" /> <label class="form-check-label" for="product_m"> 취소 </label>
+															<input name="cancel_type" class="form-check-input"
+																type="checkbox" value="cancel" id="cancel_type_c"
+																checked="checked" /> <label class="form-check-label"
+																for="product_m"> 취소 </label>
 														</div>
 														<div class="form-check-inline">
-															<input name="cancel_type" class="form-check-input" type="checkbox" value="refund" id="cancel_type_r" checked="checked" /> <label class="form-check-label" for="product_p"> 반품 </label>
+															<input name="cancel_type" class="form-check-input"
+																type="checkbox" value="return" id="cancel_type_r"
+																checked="checked" /> <label class="form-check-label"
+																for="product_p"> 반품 </label>
 														</div>
 
 													</div>
 												</div>
 												<div class="row mb-3">
-													<label class="col-sm-2 col-form-label" for="basic-default-name">취소 상태</label>
+													<label class="col-sm-2 col-form-label"
+														for="basic-default-name">취소 상태</label>
 													<div class="col-sm-10 d-flex align-items-center">
 
 														<div class="form-check-inline">
-															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소대기" id="cancel_status_wait" checked="checked" /> <label class="form-check-label" for="product_p"> 대기 </label>
+															<input name="cancel_status" class="form-check-input"
+																type="checkbox" value="취소 요청" id="cancel_status_wait"
+																checked="checked" /> <label class="form-check-label"
+																for="product_p"> 대기 </label>
 														</div>
 														<div class="form-check-inline">
-															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소완료" id="cancel_status_comple" checked="checked" /> <label class="form-check-label" for="product_c"> 완료 </label>
+															<input name="cancel_status" class="form-check-input"
+																type="checkbox" value="취소 완료" id="cancel_status_comple"
+																checked="checked" /> <label class="form-check-label"
+																for="product_c"> 완료 </label>
 														</div>
 													</div>
 												</div>
 
 												<div class="row mb-3">
-													<label class="col-sm-2 col-form-label" for="basic-default-name">취소 신청 날짜</label>
+													<label class="col-sm-2 col-form-label"
+														for="basic-default-name">취소 신청 날짜</label>
 													<div class="col-sm-10 d-flex align-items-center">
 														<div class="form-check-inline">
-															<input name="cancel_apply_date_start" class="form-control" type="date" value="" id="html5-date-input">
+															<input name="cancel_apply_date_start"
+																class="form-control" type="date" value=""
+																id="html5-date-input">
 														</div>
 														<div class="form-check-inline">
 															<span class="mx-2">-</span>
 														</div>
 														<div class="form-check-inline">
-															<input name="cancel_apply_date_end" class="form-control" type="date" value="" id="html5-date-input">
+															<input name="cancel_apply_date_end" class="form-control"
+																type="date" value="" id="html5-date-input">
 														</div>
 													</div>
 												</div>
 												<div class="row justify-content-end">
 													<div class="col-sm-10">
-														<button type="button" class="btn btn-primary" id="searchCancel">Search</button>
+														<button type="button" class="btn btn-primary"
+															id="searchCancel">Search</button>
 													</div>
 												</div>
 
@@ -437,13 +591,21 @@
 											<tbody id="memberTableBody" class="table-border-bottom-0">
 												<c:forEach var="cancle" items="${CancleList}">
 													<tr>
-														<td><input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="${member.member_id}" <c:if test="\${fn:contains(checkedMemberIdList , member.member_id)}">checked</c:if> /></td>
+														<td><input name="checkMember"
+															class="form-check-input memberCheckBox" type="checkbox"
+															value="${member.member_id}"
+															<c:if test="\${fn:contains(checkedMemberIdList , member.member_id)}">checked</c:if> /></td>
 														<td>${cancle.cancel_no }</td>
 														<td>${cancle.order_product_no}</td>
 														<td>${cancle.order_id }</td>
-														<td><fmt:formatDate value="${cancle.cancel_apply_date}" pattern="yyyy-MM-dd" /></td>
-														<td><fmt:formatDate value="${cancle.cancel_complete_date}" pattern="yyyy-MM-dd" /></td>
-														<td><fmt:formatDate value="${cancle.cancel_retract_date}" pattern="yyyy-MM-dd" /></td>
+														<td><fmt:formatDate
+																value="${cancle.cancel_apply_date}" pattern="yyyy-MM-dd" /></td>
+														<td><fmt:formatDate
+																value="${cancle.cancel_complete_date}"
+																pattern="yyyy-MM-dd" /></td>
+														<td><fmt:formatDate
+																value="${cancle.cancel_retract_date}"
+																pattern="yyyy-MM-dd" /></td>
 														<td>${cancle.cancel_type}</td>
 														<td>${cancle.cancel_status}</td>
 														<td>${cancle.cancel_reason}</td>
@@ -459,51 +621,51 @@
 											<ul class="pagination justify-content-center" id="paging">
 												<c:choose>
 													<c:when test="${PagingInfo.pageNo == 1}">
-														<li class="page-item prev disabled">
-															<a class="page-link" href="javascript:void(0);">
-																<i class="tf-icon bx bx-chevrons-left"></i>
-															</a>
-														</li>
+														<li class="page-item prev disabled"><a
+															class="page-link" href="javascript:void(0);"> <i
+																class="tf-icon bx bx-chevrons-left"></i>
+														</a></li>
 													</c:when>
 													<c:otherwise>
-														<li class="page-item prev">
-															<a class="page-link" href="javascript:void(0);">
-																<i class="tf-icon bx bx-chevrons-left"></i>
-															</a>
-														</li>
+														<li class="page-item prev"><a class="page-link"
+															href="javascript:void(0);"> <i
+																class="tf-icon bx bx-chevrons-left"></i>
+														</a></li>
 													</c:otherwise>
 												</c:choose>
 
-												<c:forEach var="i" begin="${PagingInfo.startPageNoCurBlock}" end="${PagingInfo.endPageNoCurBlock}">
+												<c:forEach var="i" begin="${PagingInfo.startPageNoCurBlock}"
+													end="${PagingInfo.endPageNoCurBlock}">
 													<c:choose>
 														<c:when test="${PagingInfo.pageNo == i}">
-															<li class="page-item active">
-																<a class="page-link" href="javascript:void(0);" onclick="showCancelList(${PagingInfo.pageNo})">${i}</a>
+															<li class="page-item active"><a class="page-link"
+																href="javascript:void(0);"
+																onclick="showCancelList(${PagingInfo.pageNo})">${i}</a>
 															</li>
 														</c:when>
 														<c:otherwise>
-															<li class="page-item">
-																<a class="page-link" href="javascript:void(0);" onclick="showCancelList(${i})">${i}</a>
-															</li>
+															<li class="page-item"><a class="page-link"
+																href="javascript:void(0);"
+																onclick="showCancelList(${i})">${i}</a></li>
 														</c:otherwise>
 													</c:choose>
 
 												</c:forEach>
 
 												<c:choose>
-													<c:when test="${PagingInfo.pageNo == PagingInfo.totalPageCnt}">
-														<li class="page-item disabled">
-															<a class="page-link" href="javascript:void(0);">
-																<i class="tf-icon bx bx-chevrons-right"></i>
-															</a>
-														</li>
+													<c:when
+														test="${PagingInfo.pageNo == PagingInfo.totalPageCnt}">
+														<li class="page-item disabled"><a class="page-link"
+															href="javascript:void(0);"> <i
+																class="tf-icon bx bx-chevrons-right"></i>
+														</a></li>
 													</c:when>
 													<c:otherwise>
-														<li class="page-item next">
-															<a class="page-link" href="javascript:void(0);" onclick="showCancelList(${i+1})">
-																<i class="tf-icon bx bx-chevrons-right"></i>
-															</a>
-														</li>
+														<li class="page-item next"><a class="page-link"
+															href="javascript:void(0);"
+															onclick="showCancelList(${i+1})"> <i
+																class="tf-icon bx bx-chevrons-right"></i>
+														</a></li>
 													</c:otherwise>
 												</c:choose>
 
@@ -518,21 +680,26 @@
 
 							</div>
 							<footer class="content-footer footer bg-footer-theme">
-								<div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+								<div
+									class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
 									<div class="mb-2 mb-md-0">
 										©
 										<script>
 										document
 												.write(new Date().getFullYear());
 									</script>
-										, made with ❤️ by
-										<a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+										, made with ❤️ by <a href="https://themeselection.com"
+											target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
 									</div>
 									<div>
-										<a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-										<a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
-										<a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-4">Documentation</a>
-										<a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank" class="footer-link me-4">Support</a>
+										<a href="https://themeselection.com/license/"
+											class="footer-link me-4" target="_blank">License</a> <a
+											href="https://themeselection.com/" target="_blank"
+											class="footer-link me-4">More Themes</a> <a
+											href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
+											target="_blank" class="footer-link me-4">Documentation</a> <a
+											href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
+											target="_blank" class="footer-link me-4">Support</a>
 									</div>
 								</div>
 							</footer>
@@ -542,12 +709,15 @@
 
 				</div>
 			</div>
-			<div class="modal fade" id="modalToggle2" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none;" aria-hidden="true">
+			<div class="modal fade" id="modalToggle2"
+				aria-labelledby="modalToggleLabel" tabindex="-1"
+				style="display: none;" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" id="modalOrderNo"></h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"
+								aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
 							<span id="modalCancelNo"></span>정말로 취소 완료하시겠습니까?
@@ -562,13 +732,15 @@
 			<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
 			<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
 			<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-			<script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+			<script
+				src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
 			<script src="/resources/assets/admin/vendor/js/menu.js"></script>
 			<!-- endbuild -->
 
 			<!-- Vendors JS -->
-			<script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
+			<script
+				src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
 
 			<!-- Main JS -->
 			<script src="/resources/assets/admin/js/main.js"></script>

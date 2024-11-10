@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.order.AdminCancleVO;
+import com.finalProject.model.admin.order.AdminPaymentVO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
 import com.finalProject.model.admin.product.PagingInfo;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
@@ -54,10 +55,10 @@ public class OrdersServiceImpl implements OrdersService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(oDAO.getTotalPostCnt());
 
-		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
-		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+		pi.setTotalPageCnt(); // �쟾泥� �럹�씠吏� �닔 �꽭�똿
+		pi.setStartRowIndex(); // �쁽�옱 �럹�씠吏��뿉�꽌 蹂댁뿬二쇨린 �떆�옉�븷 湲��쓽 index踰덊샇
 
-		// 페이징 블럭
+		// �럹�씠吏� 釉붾윮
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
@@ -69,10 +70,10 @@ public class OrdersServiceImpl implements OrdersService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(oDAO.getSearchTotalPostCnt(map));
 
-		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
-		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+		pi.setTotalPageCnt(); // �쟾泥� �럹�씠吏� �닔 �꽭�똿
+		pi.setStartRowIndex(); // �쁽�옱 �럹�씠吏��뿉�꽌 蹂댁뿬二쇨린 �떆�옉�븷 湲��쓽 index踰덊샇
 
-		// 페이징 블럭
+		// �럹�씠吏� 釉붾윮
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
@@ -101,6 +102,12 @@ public class OrdersServiceImpl implements OrdersService {
 		returnMap.put("PagingInfo", pagingInfo);
 
 		return returnMap;
+	}
+
+	@Override
+	public AdminPaymentVO getPaymentModuleKeyByOrderId(int cancelNo) {
+
+		return oDAO.getPaymentModuleKeyByOrderId(cancelNo);
 	}
 
 }

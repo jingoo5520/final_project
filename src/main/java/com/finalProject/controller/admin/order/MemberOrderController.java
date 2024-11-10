@@ -12,10 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.order.AdminCancleVO;
+import com.finalProject.model.admin.order.AdminGetCancel;
+import com.finalProject.model.admin.order.AdminPaymentVO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.service.admin.orders.OrdersService;
@@ -62,13 +65,39 @@ public class MemberOrderController {
 		return "admin/pages/total/test";
 	}
 
-	@RequestMapping("changeStatus")
+	@RequestMapping(value = "cancelOrder", method = RequestMethod.POST)
 	@ResponseBody
-	public void ChangeStatus(@RequestParam("cancel_no") String cancel_no,
-			@RequestParam("orderproduct_no") String orderproduct_no) {
+	public ResponseEntity<AdminPaymentVO> ChangeStatus(@RequestBody AdminGetCancel cancelDto) {
 
-		System.out.println("?!@$!@$" + cancel_no);
-		System.out.println("!%!@%!%!" + orderproduct_no);
+		try {
+			if (cancelDto == null || cancelDto.getCancelNo() <= 0 || cancelDto.getOrderNo() <= 0) {
+				throw new IllegalArgumentException("취소번호와 주문번호는 필수 입니다.");
+			}
+
+			// cancelNo를 통해 refund 객체 조회
+			AdminPaymentVO refund = os.getPaymentModuleKeyByOrderId(cancelDto.getCancelNo());
+
+			if (refund.getPayment_method() == null || refund.getPayment_method() == "" || refund.getPaid_amount() <= 0
+					|| refund.getPayment_module_key() == null || refund.getPayment_module_key() == "") {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // refund가 없다면 404 반환
+			}
+
+			// 필요한 값 출력 (디버깅 용도)
+			System.out.println("!%41414!%!" + cancelDto.getOrderNo());
+			System.out.println(refund.getCancel_reason());
+			System.out.println(refund.getPaid_amount());
+			System.out.println(refund.getPayment_module_key());
+			System.out.println(refund.getPayment_method());
+
+			return new ResponseEntity<>(refund, HttpStatus.OK); // 성공 시 200 반환
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 400 Bad Request
+		} catch (Exception e) {
+			// 예상치 못한 예외 처리
+			e.printStackTrace(); // 로그를 남기기 위해 스택 트레이스를 출력
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+		}
 	}
 
 	@RequestMapping("searchFilter")
@@ -80,12 +109,13 @@ public class MemberOrderController {
 		System.out.println(search.toString());
 		try {
 			returnMap = os.getSearchFilter(search, dto);
-			return ResponseEntity.ok(returnMap); // 성공적으로 데이터를 반환
+			return ResponseEntity.ok(returnMap); // �꽦怨듭쟻�쑝濡� �뜲�씠�꽣瑜� 諛섑솚
 		} catch (Exception e) {
 			returnMap.put("fail", "fail");
 			System.err.println("Error occurred: " + e.getMessage());
-			// 로깅 처리
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnMap); // 에러 발생 시 500 상태 코드 반환
+			// 濡쒓퉭 泥섎━
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnMap); // �뿉�윭 諛쒖깮 �떆 500 �긽�깭 肄붾뱶
+																							// 諛섑솚
 		}
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.order.AdminCancleVO;
+import com.finalProject.model.admin.order.AdminPaymentVO;
 
 @Repository
 public class OrdersDAOImpl implements OrdersDAO {
@@ -44,6 +45,12 @@ public class OrdersDAOImpl implements OrdersDAO {
 	public int getSearchTotalPostCnt(Map<String, Object> map) {
 		// TODO Auto-generated method stub
 		return ses.selectOne(ns + "getCountSearchCancle", map);
+	}
+
+	@Override
+	public AdminPaymentVO getPaymentModuleKeyByOrderId(int cancelNo) {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getPaymentModuleKeyByOrderId", cancelNo);
 	}
 
 }

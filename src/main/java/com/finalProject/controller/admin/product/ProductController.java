@@ -140,16 +140,16 @@ public class ProductController {
 			}
 
 			if (ps.saveProduct(productDTO, list, realPath) == 1) {
-				System.out.println("���옣 �꽦怨�");
+				System.out.println("占쏙옙占쎌삢 占쎄쉐�⑨옙");
 				response.sendRedirect("/admin/productmanage/productSave");
 			} else {
-				pu.removeFile(list); // �떎�뙣 �떆 �뙆�씪 �궘�젣
+				pu.removeFile(list); // 占쎈뼄占쎈솭 占쎈뻻 占쎈솁占쎌뵬 占쎄텣占쎌젫
 				response.sendRedirect("/admin/productmanage/productSave");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			log.error("�뙆�씪 �뾽濡쒕뱶 以� �삤瑜� 諛쒖깮: {}", e.getMessage());
-			pu.removeFile(list); // �삤瑜� 諛쒖깮 �떆 �뙆�씪 �궘�젣
+			log.error("占쎈솁占쎌뵬 占쎈씜嚥≪뮆諭� 餓ο옙 占쎌궎�몴占� 獄쏆뮇源�: {}", e.getMessage());
+			pu.removeFile(list); // 占쎌궎�몴占� 獄쏆뮇源� 占쎈뻻 占쎈솁占쎌뵬 占쎄텣占쎌젫
 
 		}
 	}

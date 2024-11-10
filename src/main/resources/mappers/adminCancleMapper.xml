@@ -28,10 +28,12 @@
 				#{status}
 			</foreach>
 		</if>
-		<if test="cancel_apply_date_start != null and cancel_apply_date_start != ''">
+		<if
+			test="cancel_apply_date_start != null and cancel_apply_date_start != ''">
 			AND cancel_apply_date &gt;= #{cancel_apply_date_start}
 		</if>
-		<if test="cancel_apply_date_end != null and cancel_apply_date_end != ''">
+		<if
+			test="cancel_apply_date_end != null and cancel_apply_date_end != ''">
 			AND cancel_apply_date &lt;= #{cancel_apply_date_end}
 		</if>
 	</select>
@@ -71,4 +73,26 @@
 		limit #{startRowIndex} ,
 		#{viewPostCntPerPage}
 	</select>
+
+	<select id="getPaymentModuleKeyByOrderId"
+		resultType="com.finalProject.model.admin.order.AdminPaymentVO">
+		SELECT
+		o.payment_module_key AS payment_module_key,
+		c.cancel_reason AS cancel_reason,
+		op.paid_amount AS paid_amount,
+		p.payment_method AS payment_method
+		FROM
+		cancels c
+		JOIN
+		orders o ON c.order_id = o.order_id
+		JOIN
+		order_products op ON
+		c.order_product_no = op.orderproduct_no
+		JOIN
+		payments p ON c.order_id =
+		p.order_id
+		WHERE c.cancel_no = #{cancelNo};
+	</select>
+
+
 </mapper>
