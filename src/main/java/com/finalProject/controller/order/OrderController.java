@@ -527,18 +527,11 @@ public class OrderController {
 			cancelAmount = Integer.valueOf(requestMap.get("amount"));
 		}
 		String cancelReason = requestMap.get("cancelReason");
-		System.out.println(paymentId);
 		Map<String, String> resultMap = orderService.requestApprovalKakaopayCancel(paymentId, cancelReason,
 				cancelAmount);
-
 		return ResponseEntity.ok(resultMap);
 	}
-	String cancelReason = requestMap.get("cancelReason");
-	Map<String, String> resultMap = orderService.requestApprovalKakaopayCancel(paymentId, cancelReason, cancelAmount);
-	return ResponseEntity.ok(resultMap);
-	}
-	
-	
+
 	@GetMapping("/cancelAPItest")
 	public String cancelAPItest1() {
 		return "/user/pages/order/cancelAPItest";
