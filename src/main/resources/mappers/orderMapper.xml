@@ -139,9 +139,11 @@
 	</insert>
 	
 	<select id="selectDiscountInfoByProduct" resultType="com.finalProject.model.order.ProductDiscountDTO">
-		select op.orderproduct_no, 
+		select op.orderproduct_no,
+			op.product_price as productPrice,
+			op.order_count as orderCount,
 			op.product_dc_rate as discountByItem,
-			c.coupon_dc_amount as sumDiscountByCoupon, 
+			c.coupon_dc_amount as sumDiscountByCoupon, <!-- 쿠폰은 주문당 하나만 사용 가능함 -->
 			c.coupon_dc_rate as multipliedDiscountByCoupon,
 			o.use_point as sumDiscountByPoint, <!-- 비회원의 경우는 0임 -->
 			case 
@@ -206,8 +208,14 @@
 	</select>
 	
 	<!-- 예상 결제금액 저장하기 -->
-	<update id="updateExpectedTotalPrice">
-		update orders set total_price_expected = #{amount} where order_id = #{orderId}
+	<update id="updateExpectedTotalPriceWithDeliveryCost">
+		update orders set total_price_expected = (#{amount} + deliver_cost) where order_id = #{orderId}
+	</update>
+	
+	<update id="updateRefundPriceByProduct">
+		update order_products 
+		set paid_amount = #{refundPrice}, assigned_point = #{refundPoint}
+		where orderproduct_no = #{orderproduct_no}
 	</update>
 	
 	<!-- 결제모듈 키 저장하기(결제취소 등에 쓰임) -->

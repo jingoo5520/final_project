@@ -15,9 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -168,7 +166,8 @@ public class OrderController {
 		Map<String, String> resultMap = new HashMap<>();
 			try {
 	        	boolean isMember = session.getAttribute("loginMember") == null ? false : true; // 로그인 여부로 회원, 비회원 여부 알아내기
-				session.setAttribute("orderId", orderService.makeOrder(paymentRequest, isMember, session)); // 비회원은 orderId가 "non_member"이다.
+	        	Map<String, Object> orderResult = orderService.makeOrder(paymentRequest, isMember, session);
+				session.setAttribute("orderId", (String) orderResult.get("orderId")); // 비회원은 orderId가 "non_member"이다.
 				String orderId = (String) session.getAttribute("orderId");
 				System.out.println("세션에 저장된 orderId : " + orderId);
 				if (isMember == false) {
@@ -177,7 +176,7 @@ public class OrderController {
 				resultMap.put("result", "success");
 				resultMap.put("message", "Payment processed successfully");
 				resultMap.put("orderId", orderId);
-				resultMap.put("totalPrice", String.valueOf(orderService.getExpectedTotalPrice(orderId)));
+				resultMap.put("totalPrice", orderResult.get("expectedTotalPrice").toString());
 				return ResponseEntity.ok(resultMap);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -233,28 +232,6 @@ public class OrderController {
 	public void saveOrderIdToSession(@RequestParam("orderId") String orderId, HttpSession session) {
 		System.out.println("orderId " + orderId + " 가 서버 세션에 저장됨");
 		session.setAttribute("orderId", orderId);
-	}
-	
-	// deprecated : /orderProducts에서 예상금액 칼럼을 채워넣음
-	@PostMapping("/payment/saveExpectedTotalPrice")
-	public ResponseEntity<Map<String, String>> saveAmount(
-			@RequestParam("value") int amount,
-			HttpSession session
-			) {
-		System.out.println("서버에 저장될 예상 결제 금액 : " + amount);
-		String orderId = (String) session.getAttribute("orderId");
-		Map<String, String> resultMap = new HashMap<>();
-		try {
-			orderService.saveExpectedTotalPrice(amount, orderId);
-			resultMap.put("orderId", orderId);
-			resultMap.put("result", "success");
-			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
-			resultMap.put("result", "fail");
-			return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.BAD_REQUEST);
-		}
 	}
 	
 	// NOTE : 결제가 성공하면 토스 결제 모듈이 쿼리스트링을 달고 페이지로 보낸다. 
@@ -355,13 +332,18 @@ public class OrderController {
 		
 		String orderId = (String) session.getAttribute("orderId");
 		try {
+			// 네이버페이 서버에 결제요청
+			String responseCode = orderService.requestApprovalNaverpayPayment(paymentId).get("httpResponseCode");
+			if (Integer.valueOf(responseCode) != HttpURLConnection.HTTP_OK) {
+				throw new IOException("네이버 페이 결제 승인 요청 실패: 응답 코드 " + responseCode);
+			}
 			// 트랜잭션 처리
 			orderService.setPaymentModuleKey(orderId, paymentId);
 			orderService.makePayment(
 					orderId,
 					orderService.getExpectedTotalPrice(orderId),
 					"N", // 네이버페이
-					null, 
+					"NAVER_PAY", 
 					session
 				);
 			return "/user/pages/order/temp_01"; // 결제 성공
@@ -449,7 +431,7 @@ public class OrderController {
 						orderId,
 						orderService.getExpectedTotalPrice(orderId),
 						"K", // 카카오페이
-						null, 
+						"KAKAO_PAY", 
 						session
 					);
 				outputResponseMap.put("result", "success");
@@ -507,11 +489,6 @@ public class OrderController {
 	}
 	
 	
-	@GetMapping("/cancelAPItest")
-	public String cancelAPItest() {
-		return "/user/pages/order/cancelAPItest";
-	}
-	
 	@GetMapping("/getLoginedId")
 	@ResponseBody
 	public String getLoginedId(HttpSession session) {
@@ -537,9 +514,64 @@ public class OrderController {
 		
 	}
 	
-//	@GetMapping("/cancelAPItest/")
-//	public String cancelAPItest() {
-//		return "/user/pages/order/cancelAPItest";
+	@GetMapping("/order/tossSecretKey")
+	public ResponseEntity<Map<String, String>> getTossSecretKey() {
+		// TODO : admin만 이 API에 접근할 수 있게 막아야 함
+		String secretKey = "test_sk_ma60RZblrq7opZYeabb63wzYWBn1";
+		String encodedSecretKey = Base64.getEncoder().encodeToString((secretKey + ":").getBytes());
+		Map<String, String> resultMap = new HashMap<>();
+		resultMap.put("encodedSecretKey", encodedSecretKey);
+		return ResponseEntity.ok(resultMap);
+	}
+	
+//	@GetMapping("/order/naverKeys")
+//	public ResponseEntity<Map<String, String>> getNaverKeys() {
+//		// TODO : admin만 이 API에 접근할 수 있게 막아야 함
+//		String clientId = "HN3GGCMDdTgGUfl0kFCo";
+//		String clientSecret = "ftZjkkRNMR";
+//		String chainId = "S2VnY2NSaHlhb3V";
+//		Map<String, String> resultMap = new HashMap<>();
+//		resultMap.put("clientId", clientId);
+//		resultMap.put("clientSecret", clientSecret);
+//		resultMap.put("chainId", chainId);
+//		return ResponseEntity.ok(resultMap);
 //	}
 	
+	@PostMapping("/order/NaverPayCancel")
+	public ResponseEntity<Map<String, String>> cancelNaverPay(
+				@RequestBody Map<String, String> requestMap
+			) {
+		// TODO : admin만 이 API에 접근할 수 있게 막아야 함
+		String paymentId = requestMap.get("paymentId");
+		Integer cancelAmount = null;
+		if (requestMap.get("amount") != null) {
+			cancelAmount = Integer.valueOf(requestMap.get("amount"));
+		}
+		String cancelReason = requestMap.get("cancelReason");
+		Map<String, String> resultMap = orderService.requestApprovalNaverpayCancel(paymentId, cancelReason, cancelAmount);
+		return ResponseEntity.ok(resultMap);
+	}
+	
+	@PostMapping("/order/KakaoPayCancel")
+	public ResponseEntity<Map<String, String>> cancelKaKaoPay(
+			@RequestBody Map<String, String> requestMap
+		) {
+	// TODO : admin만 이 API에 접근할 수 있게 막아야 함
+	String paymentId = requestMap.get("paymentId");
+	Integer cancelAmount = null;
+	if (requestMap.get("amount") != null) {
+		cancelAmount = Integer.valueOf(requestMap.get("amount"));
+	}
+	String cancelReason = requestMap.get("cancelReason");
+	Map<String, String> resultMap = orderService.requestApprovalKakaopayCancel(paymentId, cancelReason, cancelAmount);
+	return ResponseEntity.ok(resultMap);
+}
+	
+	
+	@GetMapping("/cancelAPItest")
+	public String cancelAPItest1() {
+		return "/user/pages/order/cancelAPItest";
+	}
+	
+
 }

@@ -1436,7 +1436,7 @@
 												<h6 class="heading-6 font-weight-400 payment-title">결제 수단을 선택해주세요.</h6>
 												<div class="payment-option-wrapper">
 													<div class="single-payment-option">
-														<input type="radio" name="paymentMethod" id="paymentMethod-1" onclick="selectPaymentMethod('CARD')">
+														<input type="radio" name="paymentMethod" id="paymentMethod-1" onclick="selectPaymentMethod('CARD')" checked>
 														<label for="paymentMethod-1">
 															<p>카드 결제</p>
 														</label>
@@ -1677,7 +1677,8 @@
   
   <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
   <script>
-	  let selectedPaymentMethod = null;
+  	  // 기본 결제 수단은 카드로 설정
+	  let selectedPaymentMethod = 'CARD';
 
 	  function selectPaymentMethod(method) {
 		selectedPaymentMethod = method;

@@ -207,7 +207,9 @@
 		$(".button .btn").each(function() {
 			$(this).click(function() {
 				let orderId = $(this).attr("attr-order-id")
-				let aOrder = orderInfo.find((o) => o.orderId = orderId)
+				let aOrder = orderInfo.find((o) => o.orderId == orderId)
+				console.log("aOrder : " + JSON.stringify(aOrder))
+				console.log("orderId : " + orderId)
 				let cancelType = $(this).attr("attr-cancel-type")
 				onOrderCancelBtnClicked(aOrder, cancelType)
 			})
@@ -266,6 +268,7 @@
 
 	function onOrderCancelBtnClicked(orderJson, cancelType) {
 		let orderId = orderJson.orderId
+		console.log("orderJson in onOrderCancelBtnClicked : " + JSON.stringify(orderJson))
 		$("#productsView").html("")
 		tags = ""
 		tags += `<div class="card">`

@@ -17,6 +17,8 @@ import lombok.ToString;
 @Builder
 public class ProductDiscountDTO {
 	private int orderproduct_no;
+	private int productPrice; // 할인이 하나도 적용되지 않은 상품의 가격
+	private int orderCount; // 주문한 상품의 개수
 	
 	//======================================================================================  
 	// 개별상품별 퍼센트 할인
@@ -38,13 +40,13 @@ public class ProductDiscountDTO {
 	// multipliedDiscountByCoupon = 0.07
 	// NOTE : 쿠폰은 한 주문에 하나만 적용 가능하다고 가정했음.
 	//======================================================================================  
-	private int multipliedDiscountByCoupon;
+	private float multipliedDiscountByCoupon;
 	//======================================================================================  
 	// 전체상품의 등급 퍼센티지 할인량
 	// 예를 들어서 회원이 골드 등급인 경우에는
 	// multipliedDiscountByMemberLevel = 0.05
 	//======================================================================================
-	private int multipliedDiscountByMemberLevel;
+	private float multipliedDiscountByMemberLevel;
 	//======================================================================================  
 	// 전체상품의 포인트 할인량
 	// 예를 들어서 10000 포인트를 사용했다면
