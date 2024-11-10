@@ -21,5 +21,7 @@ public class AdminReviewDetailDTO {
 	private String member_id;
 	private String review_title;
 	private String review_content;
+	private String review_show;
 	private Timestamp register_date;
+	private String delete_reason;
 }

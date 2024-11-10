@@ -47,64 +47,111 @@
 	let pageCntPerBlock = 10;
 	
 	$(function(){
+		$('[name="regDate_end"]').val(dateFormat(new Date()));
+		
 		showReviewList(pageNo);
 	});
 	
 	// 리뷰 리스트 출력
 	function showReviewList(pageNo) {
+		event.preventDefault();
+		
+		let formData = $("#searchFilter").serializeArray();
+		
+		formData.forEach(function(item){
+			if (item.name == 'regDate_start') {
+				if (item.value == '') {
+					item.value = "1900-01-01 00:00:00";
+				} else {
+					item.value += " 00:00:00";
+				}
+			} else if (item.name == 'regDate_end'){
+				if (item.value == '') {
+					item.value = dateFormat(new Date());
+				} else {
+					item.value += " 23:59:59";
+				}
+			} else if(item.name == 'product_no'){
+				if (item.value == '') {
+					item.value = 0;
+				} else {
+					item.value = parseInt(item.value);
+				}
+			}
+			
+			
+		});
+		
+		formData.push({name: 'pageNo',value: pageNo });
+		formData.push({name: 'pagingSize',value: pagingSize });
+		formData.push({name: 'pageCntPerBlock',value: pageCntPerBlock });
+		
+		formData.forEach(function(item){
+			console.log(item);
+		});
 		
 		$.ajax({
 			url : '/admin/review/getReviewList',
-			type : 'GET',
+			type : 'POST',
+			data : formData,
 			dataType : 'json',
-			data : {
-				"pageNo" : pageNo,
-				"pagingSize" : pagingSize,
-				"pageCntPerBlock" : pageCntPerBlock
-			},
 			success : function(data) {
 				console.log(data);
 	
 				let listOutput = '';
 				let paginationOutput = '';
+				let noDataTableBody = `<tr id="noDataTableBody">
+			        <td colspan="100%" class="text-center p-3">
+		            	<div class="d-flex justify-content-center">검색된 문의가 없습니다.</div>
+			        </td>
+			    </tr>`;
 	
-				$.each(data.list, function(index, review) {
-					let regDate = dateFormat(review.register_date);
-
-					listOutput += `<tr onclick="location.href='/admin/review/adminReviewDetail?reviewNo=\${review.review_no}'">` 
-							+ '<td>' + review.review_no + '</td>'
-							+ '<td>' + review.product_no + '</td>' 
-							+ '<td>' + review.member_id + '</td>' 
-							+ '<td>' + review.review_title + '</td>'
-							+ '<td>' + regDate + '</td>'
-							+ '</tr>';
-				});
-	
-				$('#reviewTableBody').html(listOutput);
-				
-				if(data.pi.pageNo == 1){
-					paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
-				} else {
-					paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${data.pi.pageNo} - 1)"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
-				}
-				
-				
-				for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
-					if(i == data.pi.pageNo) {
-						paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${i},)">\${i}</a></li>`;
+			    if(data.list.length != 0){
+					$.each(data.list, function(index, review) {
+						let regDate = dateFormat(review.register_date);
+						let hasReply = review.has_reply ? "O" : "";
+						let isDelete = review.review_show == 'S' ? "" : "O";
+						
+						listOutput += `<tr onclick="location.href='/admin/review/adminReviewDetail?reviewNo=\${review.review_no}'">` 
+								+ '<td>' + review.review_no + '</td>'
+								+ '<td>' + review.product_no + '</td>' 
+								+ '<td>' + review.member_id + '</td>' 
+								+ '<td>' + review.review_title + '</td>'
+								+ '<td>' + regDate + '</td>'
+								+ '<td>' + hasReply + '</td>'
+								+ '<td>' + isDelete + '</td>'
+								+ '</tr>';
+					});
+		
+					$('#reviewTableBody').html(listOutput);
+					
+					if(data.pi.pageNo == 1){
+						paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
 					} else {
-						paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${i})">\${i}</a></li>`;	
+						paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${data.pi.pageNo} - 1)"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
 					}
-				}
-				
-				
-				if(data.pi.pageNo == data.pi.totalPageCnt){
-					paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-				} else {
-					paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${data.pi.pageNo} + 1)"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
-				}
-				
-				$('.pagination').html(paginationOutput);
+					
+					
+					for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
+						if(i == data.pi.pageNo) {
+							paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${i},)">\${i}</a></li>`;
+						} else {
+							paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${i})">\${i}</a></li>`;	
+						}
+					}
+					
+					
+					if(data.pi.pageNo == data.pi.totalPageCnt){
+						paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+					} else {
+						paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showReviewList(\${data.pi.pageNo} + 1)"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+					}
+					
+					$('.pagination').html(paginationOutput);
+			    } else {
+			    	$('#reviewTableBody').html(noDataTableBody);
+					$('.pagination').html("");
+			    }
 			},
 			error : function(error) {
 				console.log(error);
@@ -169,17 +216,72 @@ table tr:hover {
 					<!-- Content -->
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
-						<div class="card">
+						<div class="card accordion-item active">
+							<h2 class="accordion-header" id="headingOne">
+								<button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionOne" aria-expanded="false" aria-controls="accordionOne">
+									<h5>필터</h5>
+								</button>
+							</h2>
+
+							<div id="accordionOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<form id="searchFilter">
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="product_no">상품 번호</label>
+											<div class="col-sm-10">
+												<input type="number" name="product_no" id="" class="form-control" placeholder="product_no" aria-label="" aria-describedby="" />
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="member_id">회원 ID</label>
+											<div class="col-sm-10">
+												<input type="text" name="member_id" id="" class="form-control" placeholder="member_id" aria-label="" aria-describedby="" />
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="member_name">회원 이름</label>
+											<div class="col-sm-10">
+												<input type="text" name="member_name" id="" class="form-control" placeholder="member_name" aria-label="" aria-describedby="" />
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="basic-default-name">작성 시간</label>
+											<div class="col-sm-10 d-flex align-items-center">
+												<div class="form-check-inline">
+													<input name="regDate_start" class="form-control" type="date" value="" id="">
+												</div>
+												<div class="form-check-inline">
+													<span class="mx-2">-</span>
+												</div>
+												<div class="form-check-inline">
+													<input name="regDate_end" class="form-control" type="date" value="" id="">
+												</div>
+											</div>
+										</div>
+										<div class="row justify-content-end">
+											<div class="col-sm-10">
+												<button type="submit" class="btn btn-primary" onclick="showReviewList(pageNo)">Search</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						
+						
+						<div class="card mt-4">
 							<h5 class="card-header">리뷰 목록</h5>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
 									<thead class="table-light">
 										<tr>
-											<th class="col-2">리뷰 번호</th>
-											<th class="col-2">상품 번호</th>
+											<th class="col-1">리뷰 번호</th>
+											<th class="col-1">상품 번호</th>
 											<th class="col-2">회원</th>
 											<th class="col-4">리뷰 제목</th>
 											<th class="col-2">작성 날짜</th>
+											<th class="col-1">답변 상태</th>
+											<th class="col-1">삭제 여부</th>
 										</tr>
 									</thead>
 									<tbody id="reviewTableBody" class="table-border-bottom-0">

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.review.ReviewReplyDTO;
+import com.finalProject.model.admin.review.ReviewSearchFilterDTO;
 import com.finalProject.service.admin.review.AdminReviewService;
 
 @Controller
@@ -34,14 +36,13 @@ public class adminReviewController {
 	}
 
 	// 리뷰 리스트 가져오기
-	@GetMapping("/getReviewList")
+	@PostMapping("/getReviewList")
 	@ResponseBody
-	public Map<String, Object> getCouponList(@RequestParam int pageNo, @RequestParam int pagingSize,
-			@RequestParam int pageCntPerBlock) {
+	public Map<String, Object> getReviewList(@ModelAttribute ReviewSearchFilterDTO dto) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		try {
-			data = arService.getReviewList(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock));
+			data = arService.getReviewList(dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -83,12 +84,10 @@ public class adminReviewController {
 //		String memberId = loginDTO.getMember_id();
 
 		String replyTitle = "[Re] " + reviewTitle;
-		
-		
-		ReviewReplyDTO dto = ReviewReplyDTO.builder().
-				product_no(productNo).
-				member_id("jingoo5520").
-				review_no(reviewReplyNo).review_ref(reviewNo).review_title(replyTitle).review_content(replyContent).build();
+
+		ReviewReplyDTO dto = ReviewReplyDTO.builder().product_no(productNo).member_id("jingoo5520")
+				.review_no(reviewReplyNo).review_ref(reviewNo).review_title(replyTitle).review_content(replyContent)
+				.build();
 
 		try {
 			arService.writeReviewReply(dto);
@@ -96,6 +95,23 @@ public class adminReviewController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = "fail";
+		}
+
+		return new ResponseEntity<String>(result, HttpStatus.OK);
+	}
+
+	// 리뷰 삭제
+	@PostMapping("/deleteReview")
+	@ResponseBody
+	public ResponseEntity<String> deleteCoupon(@RequestParam int reviewNo, @RequestParam String reason) {
+		String result = "";
+
+		try {
+			arService.deleteReview(reviewNo, reason);
+			result = "success";
+		} catch (Exception e) {
+			result = "fail";
+			e.printStackTrace();
 		}
 
 		return new ResponseEntity<String>(result, HttpStatus.OK);

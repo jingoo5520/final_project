@@ -50,7 +50,6 @@
 			reviewReplyNo = replyNo;
 		}
 		
-		
 		$.ajax({
 			url : '/admin/review/saveReviewReply',
 			type : 'POST',
@@ -64,7 +63,28 @@
 			},
 			success : function(data) {
 				console.log(data);
-				// location.href = "/admin/inquiry/adminInquiries";
+				location.href = "/admin/review/adminReviews";
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+	
+	// 리뷰 삭제
+	function deleteReview(){
+		
+		$.ajax({
+			url : '/admin/review/deleteReview',
+			type : 'POST',
+			dataType: 'text',
+			data : {
+				"reviewNo" : ${reviewDetail.review_no},
+				"reason" : $("#reviewDeleteReason").val()
+			},
+			success : function(data) {
+				console.log(data);
+				location.href = "/admin/review/adminReviews";
 			},
 			error : function(error) {
 				console.log(error);
@@ -167,17 +187,67 @@
 								<div class="mb-3 row">
 									<label for="" class="col-md-2 col-form-label">리뷰 답글</label>
 									<div class="col-md-10">
-										<textarea id="replyContent" rows="15" class="form-control">${reviewReply.review_content }</textarea>
+										<c:choose>
+											<c:when test="${reviewDetail.review_show == 'D'}">
+												<textarea id="replyContent" rows="15" class="form-control" readonly>${reviewReply.review_content }</textarea>
+											</c:when>
+											<c:otherwise>
+												<textarea id="replyContent" rows="15" class="form-control">${reviewReply.review_content }</textarea>
+											</c:otherwise>
+										</c:choose>
+
 									</div>
 								</div>
+
+								<c:if test="${reviewDetail.review_show == 'D'}">
+									<hr class="mt-4">
+
+									<div class="mb-3 row">
+										<label for="" class="col-md-2 col-form-label">삭제 사유</label>
+										<div class="col-md-10">
+											<textarea id="" rows="3" class="form-control" readonly>${reviewDetail.delete_reason }</textarea>
+										</div>
+									</div>
+								</c:if>
+
+
 							</div>
 
 						</div>
 
 						<div id="saveInquiryReplyBtnArea">
 							<button id="" type="button" class="btn btn-outline-primary mt-4 me-1" onclick="location.href='/admin/review/adminReviews'">목록으로 돌아가기</button>
-							<button id="saveInquiryReplyBtn" type="button" class="btn btn-outline-primary mt-4" onclick="saveReviewReply(${reviewReply.review_no})">답글 저장</button>
+							<c:if test="${reviewDetail.review_show == 'S'}">
+								<button id="" type="button" class="btn btn-outline-danger mt-4 me-1" data-bs-toggle="modal" data-bs-target="#deleteReviewModal" onclick="">리뷰 삭제</button>
+								<button id="saveInquiryReplyBtn" type="button" class="btn btn-outline-primary mt-4" onclick="saveReviewReply(${reviewReply.review_no})">답글 저장</button>
+							</c:if>
+
+
 						</div>
+
+						<!-- 리뷰 삭제 모달 -->
+						<div id="deleteReviewModal" class="modal fade" tabindex="-1" aria-hidden="true">
+							<div class="modal-dialog modal-sm" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="editModalTitle">쿠폰 삭제</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<div class="mb-3">
+											<label class="form-label" for="basic-default-message">삭제 사유</label>
+											<textarea id="reviewDeleteReason" class="form-control"></textarea>
+										</div>
+									</div>
+
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Close</button>
+										<button type="button" class="btn btn-danger" onclick="deleteReview()">Delete</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- / 리뷰 삭제 모달 -->
 
 					</div>
 				</div>

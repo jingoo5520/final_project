@@ -8,12 +8,13 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
-import com.finalProject.model.admin.coupon.CouponDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.admin.review.AdminReviewDTO;
 import com.finalProject.model.admin.review.AdminReviewDetailDTO;
 import com.finalProject.model.admin.review.ReviewImgDTO;
 import com.finalProject.model.admin.review.ReviewReplyDTO;
+import com.finalProject.model.admin.review.ReviewSearchFilterDTO;
 import com.finalProject.persistence.admin.review.AdminReviewDAO;
 
 @Service
@@ -23,12 +24,15 @@ public class AdminReviewServiceImpl implements AdminReviewService {
 	AdminReviewDAO arDao;
 
 	@Override
-	public Map<String, Object> getReviewList(PagingInfoNewDTO pagingInfoDTO) throws Exception {
-
-		PagingInfoNew pi = new PagingInfoNew(pagingInfoDTO);
+	public Map<String, Object> getReviewList(ReviewSearchFilterDTO dto) throws Exception {
+		int pageNo = dto.getPageNo();
+		int pagingSizeg = dto.getPagingSize();
+		int pageCntPerBlock = dto.getPageCntPerBlock();
+		
+		PagingInfoNew pi = new PagingInfoNew(new PagingInfoNewDTO(pageNo, pagingSizeg, pageCntPerBlock));
 
 		// setter 호출
-		pi.setTotalDataCnt(arDao.selectTotalReviewCnt());
+		pi.setTotalDataCnt(arDao.selectTotalReviewCnt(dto));
 
 		pi.setTotalPageCnt();
 		pi.setStartRowIndex();
@@ -39,7 +43,7 @@ public class AdminReviewServiceImpl implements AdminReviewService {
 		pi.setEndPageNoCurBlock();
 
 		Map<String, Object> result = new HashMap<String, Object>();
-		List<CouponDTO> list = arDao.selectReviewList(pi);
+		List<AdminReviewDTO> list = arDao.selectReviewList(dto, pi);
 
 		result.put("pi", pi);
 		result.put("list", list);
@@ -68,11 +72,20 @@ public class AdminReviewServiceImpl implements AdminReviewService {
 
 		// 신규 작성
 		if (dto.getReview_no() == 0) {
+			arDao.updateReviewHasReply(dto.getReview_ref());
 			result = arDao.insertReviewReply(dto);
 		} else {
 			result = arDao.updateReviewReply(dto);
 		}
+		
+		
+		
 		return result;
+	}
+
+	@Override
+	public int deleteReview(int reviewNo, String reason) throws Exception {
+		return arDao.deleteReview(reviewNo, reason);
 	}
 
 }

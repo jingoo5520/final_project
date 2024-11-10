@@ -14,11 +14,10 @@
 	<select id="selectAllInquiryWithPi"
 		resultType="InquiryDetailDTO">
 		select
-		inquiry_no, member_id, product_no, inquiry_title,
-		inquiry_content, inquiry_reg_date, inquiry_status, inquiry_type
-		from
-		inquiries
-		order by inquiry_no desc
+		i.inquiry_no, i.member_id, i.product_no, i.inquiry_title,
+		i.inquiry_content, i.inquiry_reg_date, i.inquiry_status, i.inquiry_type, m.member_name
+		from inquiries i join members m on i.member_id = m.member_id
+		order by i.inquiry_no desc
 		limit #{startRowIndex},
 		#{viewDataCntPerPage}
 	</select>
@@ -64,10 +63,11 @@
 
 	<!-- 문의 답글 작성 -->
 	<insert id="insertInquiryReply">
-		insert into inquiry_replies 
+		insert into inquiry_replies
 		(inquiry_no, reply_content, admin_id)
 		values
-		(#{inquiry_no}, #{reply_content}, #{admin_id}) 
+		(#{inquiry_no}, #{reply_content},
+		#{admin_id})
 	</insert>
 
 	<!-- 문의 답글 수정하기 -->
@@ -78,17 +78,92 @@
 		#{reply_content}
 		where inquiry_reply_no = #{inquiry_reply_no}
 	</update>
-	
+
 	<!-- 문의 답글 작성 후 문의 상태 변경 -->
-	
 	<update id="updateInquiryStatus">
 		update inquiries
 		set
 		inquiry_status = 'C'
-		where inquiry_no = #{inquiryNo}
+		where
+		inquiry_no = #{inquiryNo}
 	</update>
-	
-	
-	
 
+	<!-- 문의 총 개수 가져오기(필터) -->
+	<select id="selectFilteredMemberCnt" resultType="int">
+		select count(*)
+		from inquiries i join members m on i.member_id = m.member_id
+		where 1=1
+		<if test="statuses != null and statuses.length > 0">
+			and (
+			<foreach item="status" collection="statuses" separator=" OR ">
+				i.inquiry_status
+				= #{status}
+			</foreach>
+			)
+		</if>
+
+		<if test="types != null and types.length > 0">
+			and (
+			<foreach item="type" collection="types" separator=" OR ">
+				i.inquiry_type = #{type}
+			</foreach>
+			)
+		</if>
+
+		<if test="member_id != null and member_id != ''">
+			AND i.member_id LIKE CONCAT('%', #{member_id}, '%')
+		</if>
+
+		<if test="member_name != null and member_name != ''">
+			AND m.member_name LIKE CONCAT('%', #{member_name}, '%')
+		</if>
+		
+		<![CDATA[
+		and i.inquiry_reg_date >= #{regDate_start}
+		and i.inquiry_reg_date <= #{regDate_end}
+		]]>
+	</select>
+
+	<!-- 문의 리스트 가져오기(필터) -->
+	<select id="selectFilteredInquiryList"
+		resultType="InquiryDetailDTO">
+		select i.inquiry_no, i.member_id, i.inquiry_title, i.inquiry_reg_date,
+		i.inquiry_status, i.inquiry_type, m.member_name
+		from inquiries i join members m on i.member_id = m.member_id
+		where 1=1
+		<if test="dto.statuses != null and dto.statuses.length > 0">
+			and (
+			<foreach item="status" collection="dto.statuses"
+				separator=" OR ">
+				i.inquiry_status
+				= #{status}
+			</foreach>
+			)
+		</if>
+
+		<if test="dto.types != null and dto.types.length > 0">
+			and (
+			<foreach item="type" collection="dto.types" separator=" OR ">
+				i.inquiry_type = #{type}
+			</foreach>
+			)
+		</if>
+
+		<if test="dto.member_id != null and dto.member_id != ''">
+			AND i.member_id LIKE CONCAT('%', #{dto.member_id}, '%')
+		</if>
+
+		<if test="dto.member_name != null and dto.member_name != ''">
+			AND m.member_name LIKE CONCAT('%', #{dto.member_name}, '%')
+		</if>
+		
+		<![CDATA[
+		and i.inquiry_reg_date >= #{dto.regDate_start}
+		and i.inquiry_reg_date <= #{dto.regDate_end}
+		]]>
+
+		order by i.inquiry_reg_date desc
+		limit #{pi.startRowIndex},
+		#{pi.viewDataCntPerPage}
+	</select>
 </mapper>

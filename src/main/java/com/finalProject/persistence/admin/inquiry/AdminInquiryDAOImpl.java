@@ -1,6 +1,8 @@
 package com.finalProject.persistence.admin.inquiry;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
+import com.finalProject.model.admin.inquiry.InquirySearchFilterDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
 
@@ -58,6 +61,20 @@ public class AdminInquiryDAOImpl implements AdminInquiryDAO {
 	@Override
 	public int updateInquiryStatus(int inquiryNo) throws Exception {
 		return ses.update(ns + "updateInquiryStatus", inquiryNo);
+	}
+
+	@Override
+	public int getTotalFilterdInquiryCnt(InquirySearchFilterDTO dto) throws Exception {
+		return ses.selectOne(ns + "selectFilteredMemberCnt", dto);
+	}
+
+	@Override
+	public List<InquiryDetailDTO> selectFilteredInquiryList(InquirySearchFilterDTO dto, PagingInfoNew pi) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("dto", dto);
+		params.put("pi", pi);
+		
+		return ses.selectList(ns + "selectFilteredInquiryList", params);
 	}
 } 
 
