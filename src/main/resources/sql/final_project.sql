@@ -51,3 +51,20 @@ select member_pwd from members where member_id = 'ckdgus12' and email = 'fhtkwhg
 -- 비밀번호 찾기(랜덤비밀번호 지정)
 update members
 set member_pwd = sha2('xptmxm12', 256) where member_id = 'ckdgus12' and member_status = 'active';
+
+-- 내 찜목록 불러오기
+select product_no from wishes where member_id = '2';
+
+-- 찜 상태 확인
+select count(*) from wishes where member_id = '1' and product_no = '226';
+
+-- 찜 정보 추가
+insert into wishes (member_id, product_no)
+values ('1', '240');
+
+-- 찜 정보 삭제
+delete from wishes where member_id = '1' and product_no = '240';
+
+-- 기본주소로 저장(회원가입)
+insert into delivery_addrs (delivery_name, delivery_address, is_main, member_id)
+values ('테스터의집', '00000/테스트시 테스트구 테스트동/테스트호', 'M', 'ckdgus12');

@@ -64,6 +64,27 @@
 			$(".totalProductCount").text(totalCount + " 개");
 			$(".totalPrice").text((totalPrices + 2500).toLocaleString('ko-KR') + " 원");
 			
+			// 쿠폰 리스트 호출
+			if ("${orderMember}" !== "") {
+				console.log("login함 : ${orderMember.member_id}");
+				let memberId = "${orderMember.member_id}";
+				$.ajax({
+					url: '/getCouponList',
+					type: 'POST',
+					dataType: "json",
+					data: { memberId: memberId },
+					success: function(data) {
+						console.log(data);
+						makeCouponListWithData(data);
+					},
+					error: function(data) {
+						console.log(data);
+					}
+				});
+			} else {
+				console.log("login 안함 : ${orderMember.member_id}");
+			}
+			
 			// css 및 input 태그 값 수정 js
 			
 			$('.deliveryOption').change(function() {
@@ -152,7 +173,12 @@
 			    $(this).val(inputVal);
 			});
 			
-			$('input[name="point"]').on('keyup', function() {
+			$('input[name="point"]').on('focus', function() {
+			    // 처음 입력 시 기본값 0을 지웁니다.
+			    if ($(this).val() === '0') {
+			        $(this).val('');
+			    }
+			}).on('keyup', function() {
 
 			    let inputVal = $(this).val().replace(/[^0-9]/g, '');
 			    
@@ -161,29 +187,41 @@
 			    let totalPrice = parseInt($.trim($(".totalPrice").eq(0).text().replace(" 원", "").replace(/,/g, ""))) - 2500;
 			    console.log(totalPrice);
 			    
-			    let memberPoint = Number($("#memberPoint").text());
+			    let memberPoint = parseInt($("#memberPoint").text().replace(/,/g, ""));
 
-			    if (memberPoint != null && Number(inputVal) > memberPoint) {
+			    if (memberPoint != null && parseInt(inputVal) > memberPoint) {
 			        inputVal = memberPoint;
 			    }
 
 			    if (Number(inputVal) > totalPrice) {
 			        alert('포인트는 총 상품 금액을 초과할 수 없습니다.');
-			        inputVal = totalPrice;
+			        inputVal = Math.floor(totalPrice / 100) * 100;
 			    }
 			    
 			    $(this).val(inputVal);
+			}).on('blur', function() {
+			    // 포커스를 잃었을 때 값이 비어 있다면 0으로 설정
+			    let inputVal = $(this).val().replace(/[^0-9]/g, '');
+			    if (inputVal === '') {
+			        $(this).val('0');
+			    } else {
+			    	inputVal = inputVal === '' ? 0 : Math.floor(inputVal / 100) * 100;
+			    	$(this).val(inputVal);
+			    }
 			});
 			
 			$('#allPointsUse').change(function() {
-				let memberPoint =parseInt($.trim($("#memberPoint").text().replace(" ", "").replace(/,/g, "")));
+				let memberPoint = parseInt($.trim($("#memberPoint").text().replace(/,/g, "")));
 				let totalPrice = parseInt($.trim($(".totalPrice").eq(0).text().replace(" 원", "").replace(/,/g, ""))) - 2500;
 				
+				console.log(memberPoint);
+				console.log(totalPrice);
 	            if ($(this).is(':checked')) {
-	            	if (Number(memberPoint) > totalPrice) {
-				    	$('input[name="point"]').val(totalPrice);
+	            	if (memberPoint > totalPrice) {
+				    	$('input[name="point"]').val(Math.floor(totalPrice / 100) * 100);
+				    } else {
+				    	$('input[name="point"]').val(memberPoint);
 				    }
-	            	
 	            } else {
 	            	$('input[name="point"]').val(0);
 	            }
@@ -209,14 +247,18 @@
 		    $("#detailAddressNew").val("");
 		}
 		
+		function showInputNewAddress() {
+		    $("#saveDeliveryType").val("none");
+		    $("#postcodeList").val("");
+		    $("#addressList").val("");
+		    $("#detailAddressList").val("");
+		    $("#deliveryName").val("");
+		    $("#savedDeliveryName").val("");
+		}
+		
 		function pointUse() {
-			let totalProductDcPrice = 0;
+			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
 			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
-			
-			$(".dcPrice").each(function() {
-				let productDcPriceText = parseInt($.trim($(this).text().replace(/,/g, "")));
-				totalProductDcPrice += productDcPriceText;
-			});
 			
 			let usePoint = Number($('input[name="point"]').val());
 			$("#pointDC").text(usePoint.toLocaleString('ko-KR'));
@@ -225,6 +267,216 @@
 			$("#totalDCPrices").text((totalProductDcPrice + usePoint).toLocaleString('ko-KR') + " 원");
 			
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice + usePoint) + 2500).toLocaleString('ko-KR') + " 원");
+			$('input[name="point"]').prop("readonly", true);
+			$("#allPointsUse").prop('disabled', true);
+			$('input[name="point"]').css('background-color', '#E6E6E6');
+			
+			let output = '<div class="btn" onclick="resetPoint();">취소</div>';
+			$("#pointUseDiv").html(output);
+		}
+		
+		function setPointUse(setPoint) {
+			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
+			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
+			
+			let usePoint = Number($('input[name="point"]').val());
+			$("#usePoint").val(usePoint - setPoint);
+			$("#pointDC").text((usePoint - setPoint).toLocaleString('ko-KR'));
+			
+			$("#totalDCPrices").text((totalProductDcPrice - setPoint).toLocaleString('ko-KR') + " 원");
+			
+			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice - setPoint) + 2500).toLocaleString('ko-KR') + " 원");
+		
+			$('input[name="point"]').val(usePoint - setPoint);
+		}
+		
+		function resetPoint() {
+			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
+			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
+			
+			let usePoint = Number($('input[name="point"]').val());
+			$("#pointDC").text(usePoint.toLocaleString('ko-KR'));
+			$("#usePoint").val(0);
+			$('input[name="point"]').val(0);
+			$("#allPointsUse").prop('disabled', false);
+			$("#allPointsUse").prop('checked', false);
+			
+			$("#totalDCPrices").text((totalProductDcPrice - usePoint).toLocaleString('ko-KR') + " 원");
+			
+			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice) + usePoint + 2500).toLocaleString('ko-KR') + " 원");
+			$('input[name="point"]').prop("readonly", false);
+			$('input[name="point"]').css('background-color', '#FFFFFF');
+			
+			let output = '<div class="btn" onclick="pointUse();">사용</div>';
+			$("#pointUseDiv").html(output);
+		}
+		
+		function showCouponList(memberId) {
+			$("#couponModal").modal("show");
+		}
+		
+		function makeCouponListWithData(json) {
+			let output = "";
+			let allCoupon = "";
+			$.each(json.couponList, function (index, item) {
+								
+				if (item.member == "All") {
+					allCoupon = "<div class='couponCard card mt-30 mb-30' id=" + "'"+ item.coupon_no + "_coupon'>";
+					allCoupon += "<div class='card-header'>전체 지급 쿠폰</div><div class='card-body'>";
+					allCoupon += "<h3>" + item.coupon_name + "</h3>";
+					
+					if (item.coupon_dc_type == "R") {
+						allCoupon += "<h4>" + item.coupon_dc_rate + " % 할인</h4>";
+					} else if (item.coupon_dc_type == "A"){
+						allCoupon += "<h4>" + item.coupon_dc_amount + " 원 할인</h4>";
+					}
+					
+					allCoupon += "<div><p>지급 날짜 : " + item.pay_date + "</p>";
+					allCoupon += "<p>남은 기한 : " + item.remaining_days + "일</p>";
+					allCoupon += "</div></div><div class='card-footer'>";
+					allCoupon += "<div class='button'>";
+					if (item.coupon_dc_type == "R") {
+						allCoupon += `<div class='btn' onclick="applyCouponByRate('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_rate + `');">등록</div></div></div></div>`;
+					} else if (item.coupon_dc_type == "A"){
+						allCoupon += `<div class='btn' onclick="applyCouponByAmount('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_amount + `');">등록</div></div></div></div>`;
+					}
+				} else {
+					output += "<div class='couponCard card mt-30 mb-30' id=" + "'"+ item.coupon_no + "_coupon'>";
+					output += "<div class='card-header'>특별 지급 쿠폰</div><div class='card-body'>";
+					output += "<h3>" + item.coupon_name + "</h3>";
+					
+					if (item.coupon_dc_type == "R") {
+						output += "<h4>" + (item.coupon_dc_rate * 100) + " % 할인</h4>";
+					} else if (item.coupon_dc_type == "A"){
+						output += "<h4>" + item.coupon_dc_amount + " 원 할인</h4>";
+					}
+					
+					output += "<div><p>지급 날짜 : " + item.pay_date + "</p>";
+					output += "<p>남은 기한 : " + item.remaining_days + "일</p>";
+					output += "</div></div><div class='card-footer'>";
+					output += "<div class='button'>";
+					if (item.coupon_dc_type == "R") {
+						output += `<div class='btn' onclick="applyCouponByRate('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_rate + `');">등록</div></div></div></div>`;
+					} else if (item.coupon_dc_type == "A"){
+						output += `<div class='btn' onclick="applyCouponByAmount('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_amount + `');">등록</div></div></div></div>`;
+					}
+				}
+				
+				
+			});
+			output = output + allCoupon;
+			
+			$("#couponModal .modal-body").html(output);
+		}
+		
+		function applyCouponByRate(couponCode, couponNo, couponName, dcRate) {
+			let originalPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
+			let couponDcPrice = originalPrice * parseFloat(dcRate);
+			
+			let output = `<div class='btn' onclick="resetCouponByRate('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcRate + `');">취소</div>`;
+			
+			applyCouponDc(couponDcPrice);
+			applyCouponInfo(couponCode, couponName);
+			$("#" + couponNo + "_coupon .button").html(output);
+			
+			$('.couponCard').each(function() {
+			    var $couponCard = $(this);
+			    var id = $couponCard.attr('id'); // 현재 카드의 id 속성 가져오기
+
+			    if (id == couponNo + '_coupon') {
+			        // id가 'abcd'인 경우
+			        $couponCard.find('.button .btn').css('pointer-events', 'auto');
+			    } else {
+			        // id가 'abcd'가 아닌 경우
+			    	$couponCard.find('.button .btn').css('display', 'none');
+			    }
+			});
+		}
+		
+		function applyCouponByAmount(couponCode, couponNo, couponName, dcAmount) {
+			let couponDcPrice = parseInt(dcAmount);
+			let output = `<div class='btn' onclick="resetCouponByAmount('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcAmount + `');">취소</div>`;
+			
+			applyCouponDc(couponDcPrice);
+			applyCouponInfo(couponCode, couponName);
+
+			$("#" + couponNo + "_coupon .button").html(output);
+			
+			$('.couponCard').each(function() {
+			    var $couponCard = $(this);
+			    var id = $couponCard.attr('id'); // 현재 카드의 id 속성 가져오기
+
+			    if (id == couponNo + '_coupon') {
+			        // id가 'abcd'인 경우
+			        $couponCard.find('.button .btn').css('pointer-events', 'auto');
+			    } else {
+			        // id가 'abcd'가 아닌 경우
+			        $couponCard.find('.button .btn').css('display', 'none');
+			    }
+			});
+		}
+		
+		function resetCouponByRate(couponCode, couponNo, couponName, dcRate) {
+			let originalPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
+			let couponDcPrice = originalPrice * parseFloat(dcRate);
+			let output = `<div class='btn' onclick="applyCouponByRate('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcRate + `');">등록</div>`;
+			
+			resetCouponDc(parseInt(couponDcPrice));
+			resetCouponInfo(couponCode, couponName);
+			$("#" + couponNo + "_coupon .button").html(output);
+			
+			$('.couponCard').each(function() {
+			    var $couponCard = $(this);
+			    $couponCard.find('.button .btn').show();
+			});
+		}
+		
+		function resetCouponByAmount(couponCode, couponNo, couponName, dcAmount) {
+			let couponDcPrice = parseInt(dcAmount);
+			let output = `<div class='btn' onclick="applyCouponByAmount('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcAmount + `');">등록</div>`;
+			
+			resetCouponDc(parseInt(couponDcPrice));
+			resetCouponInfo(couponCode, couponName);
+			$("#" + couponNo + "_coupon .button").html(output);
+			
+			$('.couponCard').each(function() {
+			    var $couponCard = $(this);
+			    $couponCard.find('.button .btn').show();
+			});
+		}
+		
+		
+		function applyCouponInfo(couponCode, couponName) {
+			$("#couponUse").val(couponCode);
+			$("#couponName").val(couponName);
+			
+			$("#couponModal").modal('hide');
+		}
+		
+		function resetCouponInfo(couponCode, couponName) {
+			$("#couponUse").val("");
+			$("#couponName").val("");
+		}
+		
+		function applyCouponDc(couponDcPrice) {
+			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
+			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
+			$("#totalDCPrices").text((totalProductDcPrice + couponDcPrice).toLocaleString('ko-KR') + " 원");
+			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice + couponDcPrice) + 2500).toLocaleString('ko-KR') + " 원");
+			
+			let totalPrice = parseInt($.trim($(".totalPrice").text().replace(" 원", "").replace(/,/g, "")));
+            let usePoint = parseInt($("#pointDC").text().replace(/,/g, ''), 10);
+			
+			if (totalPrice < 2500 && usePoint > 0) {
+				setPointUse(couponDcPrice);
+			}
+		}
+		
+		function resetCouponDc(couponDcPrice) {
+			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
+			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
+			$("#totalDCPrices").text((totalProductDcPrice - couponDcPrice).toLocaleString('ko-KR') + " 원");
+			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice) + couponDcPrice + 2500).toLocaleString('ko-KR') + " 원");
 		}
 		
 		function handleDeliveryOptionChange() {
@@ -285,11 +537,12 @@
 						document.getElementById('detailAddressList').focus();
 						document.getElementById('detailAddressList').value = "";
 						
-						// Set hidden input value
 						document.getElementById('deliveryAddressHidden').value = 
 							document.getElementById('postcodeList').value + '/' + 
 							document.getElementById('addressList').value + '/' + 
 							document.getElementById('detailAddressList').value;
+						
+						document.getElementById('savedDeliveryName').value = "";
 					} else if (type === 'New') {
 						document.getElementById('postcodeNew').value = data.zonecode;
 						document.getElementById('addressNew').value = addr + extraAddr;
@@ -297,7 +550,6 @@
 						document.getElementById('detailAddressNew').focus();
 						document.getElementById('detailAddressNew').value = "";
 						
-						// Set hidden input value
 						document.getElementById('deliveryAddressHidden').value = 
 							document.getElementById('postcodeNew').value + '/' + 
 							document.getElementById('addressNew').value + '/' + 
@@ -307,18 +559,18 @@
 			}).open();
 		}
 		
-		function showDeliveryList(memberId) {
+		function getDeliveryList(memberId) {
 			console.log(memberId);
 			$.ajax({
 				async: false,
-				url: '/showDeliveryList',
+				url: '/getDeliveryList',
 				type: 'POST',
 				dataType: "json",
 				data: { memberId: memberId },
 				success: function(data) {
 					console.log(data);
 					makeDeliveryListWithData(data);
-					$('#myModal').modal('show');
+					$('#deliveryModal').modal('show');
 				},
 				error: function(data) {
 					console.log(data);
@@ -337,14 +589,14 @@
 				
 				
 				if (item.is_main == "M") {
-					mainDelivery = "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "'>";
+					mainDelivery = "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "_delivery'>";
 					mainDelivery += "<div class='card-header'>기본배송지</div><div class='card-body'>";
 					mainDelivery += "<h3>" + item.delivery_name + "</h3>";
 					mainDelivery += "<div>" + item.delivery_address + "</div></div><div class='card-footer'>";
 					mainDelivery += "<div class='button'>";
 					mainDelivery += `<div class='btn' onclick="applyAddress('` + item.delivery_address + `', '` + item.delivery_name + `');">등록</div></div></div></div>`;
 				} else {
-					output += "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "'>";
+					output += "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "_delivery'>";
 					output += "<div class='card-header'>배송지</div><div class='card-body'>";
 					output += "<h3>" + item.delivery_name + "</h3>";
 					output += "<div>" + item.delivery_address + "</div></div><div class='card-footer'>";
@@ -357,7 +609,7 @@
 			console.log(output);
 			output = mainDelivery + output;
 			
-			$(".modal-body").html(output);
+			$("#deliveryModal .modal-body").html(output);
 		}
 		
 		function applyAddress(deliveryAddress, deliveryName) {
@@ -373,8 +625,8 @@
 		    $("#deliveryAddressHidden").val(deliveryAddress);
 		    $("#deliveryName").val(deliveryName);
 		    
-		    $("#myModal").modal('hide');
-		    $(".modal-body").html("");
+		    $("#deliveryModal").modal('hide');
+		    $("#deliveryModal .modal-body").html("");
 		}
 		
 		function getMemberAddress() {
@@ -407,6 +659,19 @@
 		        detailAddress.value = "";
 		        document.getElementById('deliveryAddressHidden').value = "";
 		    }
+		}
+		
+		function getMainDelivery(mainDeliveryAddress, mainDeliveryName) {
+			let postcode = mainDeliveryAddress.split("/")[0];
+			let address = mainDeliveryAddress.split("/")[1];
+			let detailAddress = mainDeliveryAddress.split("/")[2];
+		    
+		    $("#postcodeList").val(postcode);
+		    $("#addressList").val(address);
+		    $("#detailAddressList").val(detailAddress);
+		    $("#savedDeliveryName").val(mainDeliveryName);
+		    $("#deliveryAddressHidden").val(mainDeliveryAddress);
+		    $("#deliveryName").val(mainDeliveryName);
 		}
 		
 		function useCouponCode() {
@@ -665,7 +930,7 @@
 									<div class="row align-items-center product-list">
 										<div class="col-lg-1 col-md-1 col-12">
 											<a href="/product/productDetail?productNo=${orderProduct.product_no }">
-												<img class="productImage" src="${orderProduct.image_main_url }" alt="productImage">
+												<img class="productImage" src="${orderProduct.image_url }" alt="productImage">
 											</a>
 										</div>
 										<div class="col-lg-5 col-md-5 col-12">
@@ -804,7 +1069,7 @@
 									<nav>
 										<div class="nav nav-tabs" id="nav-tab" role="tablist">
 											<button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true" onclick="showDeliveryList()">배송지 목록</button>
-											<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">신규입력</button>
+											<button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false" onclick="showInputNewAddress()">신규입력</button>
 										</div>
 									</nav>
 								<!--====== 배송지 정보 헤더 끝 (회원) ======-->
@@ -818,8 +1083,8 @@
 										    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
 										        <div class="single-form form-default">
 										        	<div class="button deliveryListTap mb-30 row align-items-center">
-										                <div class="btn col-lg-6 col-md-6 col-12" id="mainDelivery">기본배송지</div>
-										                <div class="btn col-lg-6 col-md-6 col-12" id="deliveryList" onclick="showDeliveryList('${orderMember.member_id}')">배송지 목록</div>
+										                <div class="btn col-lg-6 col-md-6 col-12" id="mainDelivery" onclick="getMainDelivery('${orderMember.delivery_address}', '${orderMember.delivery_name }')">기본배송지</div>
+										                <div class="btn col-lg-6 col-md-6 col-12" id="deliveryList" onclick="getDeliveryList('${orderMember.member_id}')">배송지 목록</div>
 								            		</div>
 										            <div class="form-input form addressForm">
 										                <h5 class="ordererHeader">주소</h5>
@@ -998,8 +1263,8 @@
 												<div class="col-lg-6 col-md-6 col-12">
 													<input type="text" placeholder="point" name="point" value="0">
 												</div>
-												<div class="button col-lg-4 col-md-4 col-12">
-													<div class="btn" onclick="useCoupon()">사용</div>
+												<div class="button col-lg-4 col-md-4 col-12" id="pointUseDiv">
+													<div class="btn" onclick="pointUse();">사용</div>
 												</div>
 											</div>
 										</div>
@@ -1229,16 +1494,15 @@
 					<c:when test="${not empty orderMember }">
 						<div class="checkout-sidebar-coupon">
 							<p>쿠폰 입력</p>
-							<form action="#">
-								<div class="single-form form-default">
-									<div class="form-input form">
-										<input type="text" placeholder="쿠폰 번호를 입력하세요" name="couponUse" id="couponUse">
-									</div>
-									<div class="button">
-										<button class="btn">쿠폰 적용</button>
-									</div>
+							<div class="single-form form-default">
+								<div class="form-input form">
+									<input type="text" placeholder="쿠폰을 등록하세요" name="couponName" id="couponName" onclick="showCouponList('${orderMember.member_id}')" readonly>
+									<input type="hidden" name="couponUse" id="couponUse">
 								</div>
-							</form>
+								<div class="button">
+									<button class="btn" onclick="showCouponList('${orderMember.member_id}')">쿠폰 조회</button>
+								</div>
+							</div>
 						</div>
 						<div class="checkout-sidebar-price-table mt-30">
 							<div class="sub-total-price" style="color: black;">
@@ -1277,7 +1541,8 @@
 						<div class="checkout-sidebar-coupon" style="display: none;">
 							<div class="single-form form-default">
 								<div class="form-input form">
-									<input type="text" placeholder="쿠폰 번호를 입력하세요" name="couponUse" id="couponUse">
+									<input type="text" placeholder="쿠폰을 등록하세요" name="couponName" id="couponName" readonly>
+									<input type="hidden" name="couponUse" id="couponUse">
 								</div>
 								<div class="button">
 									<button class="btn" onclick="useCouponCode()">쿠폰 적용</button>
@@ -1329,6 +1594,7 @@
     <!--====== Checkout Form Steps Part Ends ======-->
 	
 	<jsp:include page="deliveryModal.jsp"></jsp:include>
+	<jsp:include page="couponModal.jsp"></jsp:include>
 	
     <jsp:include page="../footer.jsp"></jsp:include>
     
@@ -1411,7 +1677,8 @@
   
   <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
   <script>
-	  let selectedPaymentMethod = null;
+  	  // 기본 결제 수단은 카드로 설정
+	  let selectedPaymentMethod = 'CARD';
 
 	  function selectPaymentMethod(method) {
 		selectedPaymentMethod = method;
@@ -1434,7 +1701,7 @@
 		    }
 
             const paymentType = document.querySelector("#payment_type").value;
-            const totalPrice = parseInt(document.querySelector(".totalPrice").textContent.replace(/\D/g, "")) // 예) "453,000원" -> 453000
+            // const totalPrice = parseInt(document.querySelector(".totalPrice").textContent.replace(/\D/g, "")) // 예) "453,000원" -> 453000
             const saveDeliveryType = document.querySelector("#saveDeliveryType").value;
             const deliveryName = document.querySelector("#deliveryName").value;
             const pointDCText = document.querySelector("#pointDC").textContent;
@@ -1442,7 +1709,7 @@
             const couponUse = document.querySelector("#couponUse").value;
             const deliveryAddress = document.querySelector("#deliveryAddressHidden").value + document.querySelector("#detailAddressNew").value;
             const deliveryRequest = document.querySelector("input[name='deliveryRequest']").value;
-            const deliveryCost = parseInt(document.querySelector("#deliveryCost").textContent.replace(/\D/g, "")) // 예) "2500 원" -> 2500
+            // const deliveryCost = parseInt(document.querySelector("#deliveryCost").textContent.replace(/\D/g, "")) // 예) "2500 원" -> 2500
             const ordererId = document.querySelector("input[name='ordererId']").value;
             const ordererName = document.querySelector("input[name='ordererName']").value;
             const phoneNumber = document.querySelector("input[name='phoneNumber']").value;
@@ -1450,13 +1717,13 @@
 
             const paymentData = {
                 productsInfo,
-                totalPrice,
+                // totalPrice,
                 paymentType,
                 saveDeliveryType,
                 deliveryName,
                 deliveryAddress,
                 deliveryRequest,
-                deliveryCost,
+                // deliveryCost,
                 ordererId,
                 ordererName,
                 phoneNumber,
@@ -1470,6 +1737,7 @@
 			// 주문 테이블 생성
 			let isOrderMade = false
 			let orderId = null
+			let totalPrice = null
             $.ajax({
             	async: false,
                 url: '/orderProducts',
@@ -1480,6 +1748,7 @@
                 success: function(response) {
                     console.log('Success:', response);
                     orderId = response.orderId
+                    totalPrice = parseInt(response.totalPrice)
 					isOrderMade = true
                 },
                 error: function(xhr, status, error) {
@@ -1489,19 +1758,38 @@
             });
             if (isOrderMade == false) {return} // 주문 테이블 생성이 제대로 안되었을 때 함수 종료
             
-            console.log("now here")
 			// @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
 			let amount = {
 				currency: "KRW",
 				value: totalPrice,
 			}
+            console.log("amount : " + JSON.stringify(amount))
 			let orderName =  $(".product-name").find("a").text()
+			orderName = orderName.substring(0, 20)
 			if ($(".product-name").length > 1) {
 				orderName += ("외 " + ($(".product-name").length - 1) + "건")
 			}
             console.log("amount : " + amount)
             console.log("orderName : " + orderName)
 			
+            
+			$.ajax({
+				async : false,
+				type : 'POST',
+				url : "/order/payMethod",
+				data : {
+					method: selectedPaymentMethod
+				},
+				dataType: "json",
+				contentType : 'application/x-www-form-urlencoded',
+				success : function(response) {
+					console.log("/order/payMethod의 response : " + JSON.stringify(response))
+				},
+				error : function(request, status, error) {
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+				}
+			})
+				
 			switch (selectedPaymentMethod) {
 			case "CARD":
 				await payment.requestPayment({
@@ -1673,7 +1961,7 @@
 				  amount: amount,
 				  orderId: orderId,
 				  orderName: orderName,
-				  successUrl: window.location.origin + "/payment/success.html", // 결제 요청이 성공하면 리다이렉트되는 URL
+				  successUrl: window.location.origin + "/payment/success.html?method=CARD", // 결제 요청이 성공하면 리다이렉트되는 URL
 				  failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
 				  card: {
 					  useEscrow: false,

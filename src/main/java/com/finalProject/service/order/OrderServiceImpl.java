@@ -6,63 +6,182 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-
-import com.finalProject.model.order.OrderMemberDTO;
-import com.finalProject.model.order.OrderProductDTO;
-import com.finalProject.model.order.OrderRequestDTO;
-import com.finalProject.model.order.PaymentRequestDTO;
-import com.finalProject.persistence.order.OrderDAO;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.order.CancelOrderRequestDTO;
+import com.finalProject.model.order.OrderMemberDTO;
+import com.finalProject.model.order.OrderProductDTO;
+import com.finalProject.model.order.OrderProductsDTO;
+import com.finalProject.model.order.OrderRequestDTO;
+import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductDiscountCalculatedDTO;
+import com.finalProject.model.order.ProductDiscountDTO;
 import com.finalProject.persistence.order.OrderDAO;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-	
 	@Inject
 	private OrderDAO orderDAO;
 	
 	@Override
-	@Transactional(rollbackFor={Exception.class})
-	public String makeOrder(PaymentRequestDTO request) throws Exception {
-		// TODO : 로그인 여부로 회원, 비회원 여부 알아내기
-		// 일단 로그인한 회원이라고 가정하고 만듬
-		String orderId = orderDAO.makeOrder(request);
-		if (orderId == null) {
-			throw new DataAccessException("주문 정보 생성 실패") {};
+	public void deleteOrder(String orderId) {
+		orderDAO.deleteOrder(orderId);
+	}
+	
+	@Override
+	public Map<String, Object> makeOrder(PaymentRequestDTO request, boolean isMember, HttpSession session) throws Exception {
+		Map<String, Object> result = new HashMap<>();
+		System.out.println("orders 테이블 행 삽입 전 회원/비회원 확인. 회원? : " + isMember);
+		String orderId = orderDAO.makeOrder(request, isMember);
+		Integer expectedTotalPrice = this.setExpectedPrices(request, orderId, isMember, session);
+		result.put("orderId", orderId);
+		result.put("expectedTotalPrice", expectedTotalPrice);
+		return result;
+	}
+	
+	// 총 예상결제금액과 상품별 금액, 상품별 포인트를 설정한다. 
+	private int setExpectedPrices(PaymentRequestDTO request, String orderId, boolean isMember, HttpSession session) throws Exception {
+		int expectedTotalPrice = 0;
+		List<ProductDiscountDTO> discountInfo = orderDAO.getDiscountInfoByProduct(orderId, session);
+		List<ProductDiscountCalculatedDTO> productDiscountCalculated = new ArrayList<>();
+		
+		for (int i = 0; i < request.getProductsInfo().size(); i++) {
+			productDiscountCalculated.add(new ProductDiscountCalculatedDTO().builder()
+												.orderproduct_no(discountInfo.get(i).getOrderproduct_no())
+												.build()); // orderProduct_no 설정
+			ProductDiscountDTO p = discountInfo.get(i);
+			expectedTotalPrice += (
+				p.getProductPrice() * p.getOrderCount() * 
+				// 총 % 할인 (쿠폰 할인 + 멤버 등급 할인 + 상품 자체 할인)
+				(1 - (p.getMultipliedDiscountByCoupon() + p.getMultipliedDiscountByMemberLevel() + p.getDiscountByItem() ))
+			);
+			System.out.println( "아이템의 % 할인 : " + p.getProductPrice() * p.getOrderCount() * 
+					(p.getMultipliedDiscountByCoupon() + p.getMultipliedDiscountByMemberLevel() + p.getDiscountByItem()) );
 		}
-		return orderId;
+		// 절대값 할인 (쿠폰 할인 + 포인트 할인)
+		expectedTotalPrice -= (
+				discountInfo.get(0).getSumDiscountByCoupon() + discountInfo.get(0).getSumDiscountByPoint()
+			);
+		System.out.println("절대값 할인 : " + (discountInfo.get(0).getSumDiscountByCoupon() + discountInfo.get(0).getSumDiscountByPoint()));
+		// 이 시점에서 expectedTotalPrice는 할인이 모두 적용된 값 (택배값 미포함)
+		
+		// 가중치 계산
+		int denominator = 0;
+		for (ProductDiscountDTO p : discountInfo) {
+			denominator += (p.getProductPrice() * p.getOrderCount() * (1 - p.getDiscountByItem()) );
+		} // 상품 자체 할인이 적용된 금액을 가중치의 분모로 활용
+		Iterator<ProductDiscountCalculatedDTO> iter = productDiscountCalculated.iterator();
+		for (ProductDiscountDTO p : discountInfo) {
+			double weight = ( p.getProductPrice() * p.getOrderCount() * (1 - p.getDiscountByItem()) ) / denominator;
+			iter.next().setWeight(weight); // 가중치 설정
+		} 
+		
+		for (int i = 0; i < request.getProductsInfo().size(); i++) {			
+			if (i == 0) { // 리스트의 첫번째 요소이면
+				int remainedPoint = discountInfo.get(i).getSumDiscountByPoint();
+				int allocatedPoint = (int) Math.round(productDiscountCalculated.get(i).getWeight() * remainedPoint);
+				productDiscountCalculated.get(i).setRemainedPoint(remainedPoint - allocatedPoint);
+				productDiscountCalculated.get(i).setRefundPoint(allocatedPoint);
+				System.out.println("remainedPoint : " + remainedPoint);
+				System.out.println("allocatedPoint : " + allocatedPoint);
+			} else if (i != request.getProductsInfo().size() - 1) { 
+				int remainedPoint = productDiscountCalculated.get(i - 1).getRemainedPoint();
+				int allocatedPoint = (int) Math.round(productDiscountCalculated.get(i).getWeight() * discountInfo.get(i).getSumDiscountByPoint());
+				productDiscountCalculated.get(i).setRemainedPoint(remainedPoint - allocatedPoint);
+				productDiscountCalculated.get(i).setRefundPoint(allocatedPoint);
+				System.out.println("remainedPoint : " + remainedPoint);
+				System.out.println("allocatedPoint : " + allocatedPoint);
+			} else { // 리스트의 마지막 요소이면
+				int allocatedPoint = productDiscountCalculated.get(i - 1).getRemainedPoint();
+				productDiscountCalculated.get(i).setRemainedPoint(0);
+				productDiscountCalculated.get(i).setRefundPoint(allocatedPoint);
+				System.out.println("allocatedPoint : " + allocatedPoint);
+			}
+		} // 할당된 포인트의 합이 무조건 discountInfo.get(i).getSumDiscountByPoint()과 같아지게 계산됨
+		
+		for (int i = 0; i < request.getProductsInfo().size(); i++) {
+			if (i == 0) { // 리스트의 첫번째 요소이면
+				int remainedPrice = expectedTotalPrice;
+				int allocatedPrice = (int) Math.round(productDiscountCalculated.get(i).getWeight() * expectedTotalPrice);
+				productDiscountCalculated.get(i).setRemainedPrice(remainedPrice - allocatedPrice);
+				productDiscountCalculated.get(i).setRefundPrice(allocatedPrice);
+				System.out.println("remainedPrice : " + remainedPrice);
+				System.out.println("allocatedPrice : " + allocatedPrice);
+			} else if (i != request.getProductsInfo().size() - 1) { 
+				int remainedPrice = productDiscountCalculated.get(i - 1).getRemainedPrice();
+				int allocatedPrice = (int) Math.round(productDiscountCalculated.get(i).getWeight() * expectedTotalPrice);
+				productDiscountCalculated.get(i).setRemainedPrice(remainedPrice - allocatedPrice);
+				productDiscountCalculated.get(i).setRefundPrice(allocatedPrice);
+				System.out.println("remainedPrice : " + remainedPrice);
+				System.out.println("allocatedPrice : " + allocatedPrice);
+			} else { // 리스트의 마지막 요소이면
+				int allocatedPrice = productDiscountCalculated.get(i - 1).getRemainedPrice();
+				productDiscountCalculated.get(i).setRefundPrice(allocatedPrice);
+				productDiscountCalculated.get(i).setRemainedPrice(0);
+				System.out.println("allocatedPrice : " + allocatedPrice);
+			}
+		}
+		
+		System.out.println("productDiscountCalculated : " + productDiscountCalculated);
+		orderDAO.updateExpectedTotalPriceWithDeliveryCost(orderId, expectedTotalPrice); // 배송비를 더해서 DB에 저장
+		orderDAO.updateRefundPriceByProduct(productDiscountCalculated);
+		return orderDAO.getExpectedTotalPrice(orderId);
+	}
+	
+	@Override
+	public void makeGuest(PaymentRequestDTO request, String orderId) {
+		if (orderDAO.makeGuest(request, orderId) != 1) {
+			throw new DataAccessException("비회원 정보 생성 실패") {};
+		}
 	}
 	
 	@Override
 	@Transactional(rollbackFor={Exception.class})
-	public void makePayment(String orderId, Integer amount, String payModule, String method) throws Exception {
-		// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
-		// 쿠폰 사용
-		if (orderDAO.useCoupon(orderId) != 1) {
-			throw new DataAccessException("쿠폰 사용 실패") {};
-		};
-		// 포인트 적립
-		if (orderDAO.updatePoint(orderId) != true) {
-			throw new DataAccessException("포인트 적립 실패") {}; 
-		};
-		// 회원등급 수정
-		if (orderDAO.updateUserLevel(orderId) != true) {
-			throw new DataAccessException("회원등급 수정 실패") {}; 
-		};
+	public void makePayment(String orderId, Integer amount, String payModule, String method, HttpSession session) throws Exception {
+		// NOTE : 이 트랜잭션에서 예외가 발생해도 이미 생성된 orders의 테이블의 행은 삭제되지 않음
+		// 그러므로 컨트롤러의 catch 블록에서 orders 테이블의 행을 삭제함
+		System.out.println("makePayment 함수 실행, method 매개변수 : " + method);
+		
+		boolean isMember = session.getAttribute("loginMember") == null ? false : true;
+		
+		if (isMember == true) {
+			// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
+			// 쿠폰 사용
+			if (orderDAO.useCoupon(orderId) != 1) {
+				throw new DataAccessException("쿠폰 사용 실패") {};
+			};
+			// 포인트 적립
+			if (orderDAO.updatePoint(orderId) != true) {
+				throw new DataAccessException("포인트 적립 실패") {}; 
+			};
+			// 회원등급 수정
+			if (orderDAO.updateUserLevel(orderId) != true) {
+				throw new DataAccessException("회원등급 수정 실패") {}; 
+			};
+		}
 		
 		if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
 			throw new DataAccessException("결제 정보 생성 실패") {}; 
 		}
+		
+		orderDAO.updateOrderStatus(method, orderId);
+		
 		// TODO : 장바구니에서 결제한 물품 삭제
 	}
 	
@@ -77,14 +196,6 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public String getPaymentModuleKey(String orderId) {
 		return orderDAO.getPaymentModuleKey(orderId);
-	}
-	
-	@Override
-	@Transactional(rollbackFor={Exception.class})
-	public void saveExpectedTotalPrice(int amount, String orderId) throws Exception {
-		if (orderDAO.updateExpectedTotalPrice(orderId, amount) != 1) {
-			throw new DataAccessException("DB 조작 실패") {};
-		}
 	}
 	
 	@Override
@@ -181,6 +292,193 @@ public class OrderServiceImpl implements OrderService {
 			e.printStackTrace();
 		}
 	    return resultMap;
+	}
+	
+	@Override
+	public Map<String, String> requestApprovalNaverpayPayment(String paymentId) {
+		Map<String, String> resultMap = new HashMap<>();
+		try {
+		    // Create a URL object for the desired URL
+		    URL url = new URL("https://dev.apis.naver.com/naverpay-partner/naverpay/payments/v2.2/apply/payment");
+		    // Open a connection to the URL using the HttpURLConnection class
+		    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		    // Set the request method to GET
+		    connection.setRequestMethod("POST");
+		    // Add any headers you want to send with the request
+		    // TODO : 내 네이버페이 키는 별도의 파일에 보관 요망
+		    connection.setRequestProperty("X-Naver-Client-Id", "HN3GGCMDdTgGUfl0kFCo");
+		    connection.setRequestProperty("X-Naver-Client-Secret", "ftZjkkRNMR");
+		    connection.setRequestProperty("X-NaverPay-Chain-Id", "S2VnY2NSaHlhb3V");
+		    connection.setRequestProperty("X-NaverPay-Idempotency-Key", UUID.randomUUID().toString());
+		    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		    connection.setDoOutput(true);
+		    connection.setDoInput(true);
+		    // Connect to the server
+		    connection.connect();
+
+		    String postParams = "paymentId=" + paymentId;
+		    OutputStream os = connection.getOutputStream();
+		    byte[] input = postParams.getBytes();
+		    os.write(input, 0, input.length);
+		    
+		    // 응답 코드 확인
+	        int responseCode = connection.getResponseCode();
+	        resultMap.put("httpResponseCode", String.valueOf(responseCode));
+	        StringBuilder response = new StringBuilder();
+	        if (responseCode == HttpURLConnection.HTTP_OK) {
+			    // Read the response from the server
+			    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			    String line;
+			    while ((line = reader.readLine()) != null) {
+			        response.append(line);
+			    }
+			    reader.close();
+	        } else { 
+	        	// 서버로부터 에러 읽기
+	        	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8")); 
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line.trim());
+                }
+                reader.close();
+	        }
+		    // 응답 결과
+		    System.out.println("응답 결과 : " + response.toString());
+		    // Disconnect from the server
+		    connection.disconnect();
+		    resultMap.put("response", response.toString());
+		} catch (IOException e) {
+			System.out.println("네이버페이 결제 준비 실패");
+			e.printStackTrace();
+		}
+		return resultMap;
+	}
+	
+	@Override
+	public Map<String, String> requestApprovalNaverpayCancel(String paymentId, String cancelReason, Integer cancelAmount) {
+		Map<String, String> resultMap = new HashMap<>();
+		try {
+		    // Create a URL object for the desired URL
+		    URL url = new URL("https://dev.apis.naver.com/naverpay-partner/naverpay/payments/v1/cancel");
+		    // Open a connection to the URL using the HttpURLConnection class
+		    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		    // Set the request method to GET
+		    connection.setRequestMethod("POST");
+		    // Add any headers you want to send with the request
+		    // TODO : 내 네이버페이 키는 별도의 파일에 보관 요망
+		    connection.setRequestProperty("X-Naver-Client-Id", "HN3GGCMDdTgGUfl0kFCo");
+		    connection.setRequestProperty("X-Naver-Client-Secret", "ftZjkkRNMR");
+		    connection.setRequestProperty("X-NaverPay-Chain-Id", "S2VnY2NSaHlhb3V");
+		    connection.setRequestProperty("X-NaverPay-Idempotency-Key", UUID.randomUUID().toString());
+		    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		    connection.setDoOutput(true);
+		    connection.setDoInput(true);
+		    // Connect to the server
+		    connection.connect();
+
+		    String postParams = String.format(
+	                "paymentId=%s&cancelAmount=%d&taxScopeAmount=%d&taxExScopeAmount=%d&cancelReason=%s&cancelRequester=%s",
+	                paymentId, cancelAmount, cancelAmount, 0, cancelReason, "2" // 가맹점 관리자
+	        );
+		    OutputStream os = connection.getOutputStream();
+		    byte[] input = postParams.getBytes();
+		    os.write(input, 0, input.length);
+		    
+		    // 응답 코드 확인
+	        int responseCode = connection.getResponseCode();
+	        resultMap.put("httpResponseCode", String.valueOf(responseCode));
+	        StringBuilder response = new StringBuilder();
+	        if (responseCode == HttpURLConnection.HTTP_OK) {
+			    // Read the response from the server
+			    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			    String line;
+			    while ((line = reader.readLine()) != null) {
+			        response.append(line);
+			    }
+			    reader.close();
+	        } else { 
+	        	// 서버로부터 에러 읽기
+	        	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8")); 
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line.trim());
+                }
+                reader.close();
+	        }
+		    // 응답 결과
+		    System.out.println("응답 결과 : " + response.toString());
+		    // Disconnect from the server
+		    connection.disconnect();
+		    resultMap.put("response", response.toString());
+		} catch (IOException e) {
+			System.out.println("네이버페이 결제 취소 실패");
+			e.printStackTrace();
+		}
+		return resultMap;
+	}
+	
+	@Override
+	public Map<String, String> requestApprovalKakaopayCancel(String paymentId, String cancelReason, Integer cancelAmount) {
+		Map<String, String> resultMap = new HashMap<>();
+		try {
+		    // Create a URL object for the desired URL
+		    URL url = new URL("https://open-api.kakaopay.com/online/v1/payment/cancel");
+		    // Open a connection to the URL using the HttpURLConnection class
+		    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		    // Set the request method to GET
+		    connection.setRequestMethod("POST");
+		    // Add any headers you want to send with the request
+		    // TODO : 내 네이버페이 키는 별도의 파일에 보관 요망
+		    connection.setRequestProperty("Authorization", "SECRET_KEY DEV13F237E02B1F92076F010653B0F0AFFB6B814");
+		    connection.setRequestProperty("Content-Type", "application/json");
+		    connection.setDoOutput(true);
+		    connection.setDoInput(true);
+		    // Connect to the server
+		    connection.connect();
+
+		    String jsonInputString = String.format("{"
+		    		+ "\"cid\": \"TC0ONETIME\","
+		    		+ "\"tid\": \"%s\","
+		    		+ "\"cancel_amount\": %d,"
+		    		+ "\"cancel_tax_free_amount\": 0,"
+		    		+ "\"payload\": \"%s\""
+					+ "}", paymentId, cancelAmount, cancelReason);
+
+		    OutputStream os = connection.getOutputStream();
+		    byte[] input = jsonInputString.getBytes();
+		    os.write(input, 0, input.length);
+		    
+		    // 응답 코드 확인
+	        int responseCode = connection.getResponseCode();
+	        resultMap.put("httpResponseCode", String.valueOf(responseCode));
+	        StringBuilder response = new StringBuilder();
+	        if (responseCode == HttpURLConnection.HTTP_OK) {
+			    // Read the response from the server
+			    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			    String line;
+			    while ((line = reader.readLine()) != null) {
+			        response.append(line);
+			    }
+			    reader.close();
+	        } else { 
+	        	// 서버로부터 에러 읽기
+	        	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8")); 
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line.trim());
+                }
+                reader.close();
+	        }
+		    // 응답 결과
+		    System.out.println("응답 결과 : " + response.toString());
+		    // Disconnect from the server
+		    connection.disconnect();
+		    resultMap.put("response", response.toString());
+		} catch (IOException e) {
+			System.out.println("카카오페이 결제 취소 실패");
+			e.printStackTrace();
+		}
+		return resultMap;
 	}
 	
 	@Override
@@ -337,4 +635,56 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return resultMap;
 	}
+
+	@Override
+	public List<OrderProductsDTO> getOrderListOfMember(String memberId) {
+		List<OrderProductsDTO> result = new ArrayList<>();
+		List<String> orders = orderDAO.getOrderIdList(memberId);
+		System.out.println(memberId + "의 order id 리스트 : " + orders);
+		for (String orderId : orders) {
+			OrderProductsDTO order = new OrderProductsDTO();
+			order.setOrderId(orderId);
+			Map<String, Object> orderInfo = orderDAO.getOrderInfo(orderId);
+			// System.out.println("orderInfo.order_id : " + (String) orderInfo.get("order_id"));
+			// System.out.println("orderInfo : " + orderInfo);
+			// System.out.println("orderInfo.order_status : " + (String) orderInfo.get("order_status"));
+			Timestamp time = (Timestamp) orderInfo.get("order_date");
+			order.setOrderDate( time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) );
+			Map<String, String> dict = new HashMap<>();
+			dict.put("1", "결제대기");
+			dict.put("2", "결제완료");
+			dict.put("3", "상품준비중");
+			dict.put("4", "배송준비중");
+			dict.put("5", "배송중");
+			dict.put("6", "배송완료");
+			order.setOrderStatus(dict.get((String) orderInfo.get("order_status")));
+			List<OrderProductDTO> products = orderDAO.getProductList(orderId);
+			// System.out.println("products : " + products);
+			order.setProducts(products);
+			System.out.println("order : " + order);
+			result.add(order);
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void cancelOrder(CancelOrderRequestDTO request) throws Exception {
+		if (orderDAO.makeCancel(
+				request.getOrderId(),
+				request.getProducts(), 
+				request.getCancelType(),
+				request.getCancelReason()) != request.getProducts().size()) {
+			throw new DataAccessException("취소 정보 삽입 실패") {};
+		}
+		orderDAO.updateAccountInfo(
+				request.getOrderId(),
+				request.getAccountOwner(),
+				request.getAccountBank(),
+				request.getAccountNumber()
+				);
+	}
+	
+	// working...
+	// public getCancelProcessStatus(String orderId, String )
 }

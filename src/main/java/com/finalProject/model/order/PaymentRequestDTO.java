@@ -17,13 +17,11 @@ import lombok.ToString;
 @Builder
 public class PaymentRequestDTO {
 	private List<OrderRequestDTO> productsInfo; // 상품번호 + 수량 정보 리스트
-	private int totalPrice; // 총 예상 결제 금액
     private String paymentType; // 결제 방법
     private String saveDeliveryType; // 배송지 저장 구분
     private String deliveryName; // 배송지 이름
     private String deliveryAddress; // 배송지 주소
     private String deliveryRequest; // 배송 요청사항
-    private int deliveryCost;
     private String ordererId; // 주문자 ID
     private String ordererName; // 주문자 이름
     private String phoneNumber; // 주문자 전화번호

@@ -296,8 +296,8 @@ function removeCheckedItem() {
     }
 }
 
-function logWindowSize() {
-   let width = $(window).width();
+function logWindowSize() {   
+   let width = window.width
     
     if (width >= 1837) {
         $('.hide-total').hide();
@@ -578,7 +578,7 @@ input[type="checkbox"]:hover {
 										<div class="col-lg-1 col-md-1 col-12">
 											<a
 												href="/product/productDetail?productNo=${item.product_no }"><img
-												src="${item.image_main_url }" alt="#"></a>
+												src="${item.image_url }" alt="#"></a>
 										</div>
 										<div class="col-lg-3 col-md-3 col-12">
 											<h5 class="product-name">
@@ -654,7 +654,7 @@ input[type="checkbox"]:hover {
 										<div class="col-lg-1 col-md-1 col-12">
 											<a
 												href="/product/productDetail?productNo=${item.product_no }"><img
-												src="${item.image_main_url }" alt="#"></a>
+												src="${item.image_url }" alt="#"></a>
 										</div>
 										<div class="col-lg-3 col-md-2 col-12">
 											<h5 class="product-name">
