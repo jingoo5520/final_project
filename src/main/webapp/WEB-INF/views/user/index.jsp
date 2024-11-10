@@ -153,7 +153,7 @@
 						<!-- Start Single Product -->
 						<div class="single-product">
 							<div class="product-image" style="height: 300px;">
-								<img src="${product.image_main_url }" style="height: 100%; object-fit: cover;" />
+								<img src="${product.image_url }" style="height: 100%; object-fit: cover;" />
 								<div class="button buttonArea">
 									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a> 
 									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a>

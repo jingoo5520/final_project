@@ -3,10 +3,13 @@ package com.finalProject.persistence.order;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductDiscountDTO;
 
 public interface OrderDAO {
 
@@ -51,7 +54,6 @@ public interface OrderDAO {
 	int makeCancel(String orderId, List<Integer> orderproductNoList, String cancelType, String cancelReason);
 	
 	void updateAccountInfo(String orderId, String depositName, String depositBank, String depoistAccount);
-
-
-
+	
+	List<ProductDiscountDTO> getDiscountInfoByProduct(String orderId, HttpSession session);
 }
