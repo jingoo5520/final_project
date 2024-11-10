@@ -565,7 +565,7 @@ public class OrderController {
 	String cancelReason = requestMap.get("cancelReason");
 	Map<String, String> resultMap = orderService.requestApprovalKakaopayCancel(paymentId, cancelReason, cancelAmount);
 	return ResponseEntity.ok(resultMap);
-}
+	}
 	
 	
 	@GetMapping("/cancelAPItest")
