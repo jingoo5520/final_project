@@ -665,7 +665,7 @@ public class OrderServiceImpl implements OrderService {
 			// System.out.println("orderInfo : " + orderInfo);
 			// System.out.println("orderInfo.order_status : " + (String) orderInfo.get("order_status"));
 			Timestamp time = (Timestamp) orderInfo.get("order_date");
-			order.setOrderDate( time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) );
+			order.setOrderDate( time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) );
 			Map<String, String> dict = new HashMap<>();
 			dict.put("1", "결제대기");
 			dict.put("2", "결제완료");
@@ -686,13 +686,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	@Transactional(rollbackFor={Exception.class})
 	public void cancelOrder(CancelOrderRequestDTO request) throws Exception {
-		if (orderDAO.makeCancel(
+		orderDAO.makeCancel(
 				request.getOrderId(),
-				request.getProducts(), 
+				request.getProducts(),
 				request.getCancelType(),
-				request.getCancelReason()) != request.getProducts().size()) {
-			throw new DataAccessException("취소 정보 삽입 실패") {};
-		}
+				request.getCancelReason());
 		orderDAO.updateAccountInfo(
 				request.getOrderId(),
 				request.getAccountOwner(),

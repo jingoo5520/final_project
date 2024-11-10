@@ -19,6 +19,7 @@ import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductCancelRequestDTO;
 import com.finalProject.model.order.ProductDiscountCalculatedDTO;
 import com.finalProject.model.order.ProductDiscountDTO;
 
@@ -288,10 +289,10 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public int makeCancel(String orderId, List<Integer> productNoList, String cancelType, String cancelReason) {
+	public int makeCancel(String orderId, List<ProductCancelRequestDTO> productRequestList, String cancelType, String cancelReason) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("orderId", orderId);
-		params.put("productNoList", productNoList);
+		params.put("productRequestList", productRequestList);
 		params.put("cancelType", cancelType);
 		params.put("cancelReason", cancelReason);
 		return ses.insert(ns + "insertCancel", params);

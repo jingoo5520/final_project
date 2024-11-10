@@ -259,7 +259,7 @@ public class OrderController {
 			// (입력단에서 다시 테이블 삽입시켜야 함.)
 			// (입력단에서 테이블 삽입할 때 기존 아이디로 orders 테이블에 뭔가 있다면 삭제하고 다시 넣는 처리가 필요할 듯)
 			// TODO : 실패 페이지 깔끔하게 다시 만들어야 함
-			return "/user/pages/order/temp_02";
+			return "/user/pages/order/orderFail";
 		} else {
 			System.out.println("결제 금액 조작 체크 통과");
 		}
@@ -276,7 +276,7 @@ public class OrderController {
 			model.addAttribute("message", "잘못된 요청입니다. 다시 한번 시도해주세요.");
 			orderService.deleteOrder(orderId);
 			// TODO : 실패 페이지 깔끔하게 다시 만들어야 함
-			return "/user/pages/order/temp_02";
+			return "/user/pages/order/orderFail";
 		}
 		
 		// TODO : 이 아래의 부분은 트랜잭션 처리해야 함. 
@@ -305,16 +305,16 @@ public class OrderController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
-			return "/user/pages/order/temp_02"; // 결제 실패
+			return "/user/pages/order/orderFail"; // 결제 실패
 		}
 		
 		Map<String, Object> responseMap = gson.fromJson(response, Map.class); // 응답 JSON문자열을 자바 맵으로 파싱
 		int responseCode = Integer.valueOf(result.get("httpResponseCode"));
 		System.out.println("토스서버의 결제승인응답 : " + result);
 		if (responseCode == HttpURLConnection.HTTP_OK) {
-			return "/user/pages/order/temp_01"; // 결제 성공
+			return "/user/pages/success"; // 결제 성공
 		} else {
-			return "/user/pages/order/temp_02"; // 결제 실패
+			return "/user/pages/order/orderFail"; // 결제 실패
 		}
 	}
 	
@@ -327,7 +327,7 @@ public class OrderController {
 			) {
 		System.out.println("네이버페이 resultCode : " + resultCode);
 		if (!resultCode.equals("Success")) {
-			return "/user/pages/order/temp_02"; // 결제 실패
+			return "/user/pages/order/orderFail"; // 결제 실패
 		}
 		
 		String orderId = (String) session.getAttribute("orderId");
@@ -346,11 +346,11 @@ public class OrderController {
 					"NAVER_PAY", 
 					session
 				);
-			return "/user/pages/order/temp_01"; // 결제 성공
+			return "/user/pages/success"; // 결제 성공
 		} catch (Exception e) {
 			e.printStackTrace();
 			orderService.deleteOrder(orderId); // orders 테이블에서 행 삭제
-			return "/user/pages/order/temp_02"; // 결제 실패
+			return "/user/pages/order/orderFail"; // 결제 실패
 		}
 	}
 	
@@ -449,16 +449,16 @@ public class OrderController {
 		}
 	}
 	
-	// 임시 성공 페이지
-	@GetMapping("/pages/order/temp_01")
+	// 주문 성공 페이지
+	@GetMapping("/pages/order/success")
 	public String showSuccessPage() {
-		return "/user/pages/order/temp_01";
+		return "/user/pages/success";
 	}
 	
-	// 임시 실패 페이지
-	@GetMapping("/pages/order/temp_02")
+	// 주문 실패 페이지
+	@GetMapping("/pages/order/orderFail")
 	public String showFailPage() {
-		return "/user/pages/order/temp_02";
+		return "/user/pages/order/orderFail";
 	}
 	
 	// 임시 취소 페이지
@@ -573,5 +573,9 @@ public class OrderController {
 		return "/user/pages/order/cancelAPItest";
 	}
 	
-
+	@GetMapping("/successPageTest")
+	public String successPageTest() {
+		return "/user/pages/success";
+	}
+	
 }

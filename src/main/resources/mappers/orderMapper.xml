@@ -337,10 +337,27 @@
 	</select>
 	
 	<insert id="insertCancel">
-		insert into cancels (order_id, order_product_no, cancel_type, cancel_status, cancel_reason)
-		<foreach item="productNo" index="index" collection="productNoList" separator=" UNION ALL ">
-	        select #{orderId}, #{productNo}, #{cancelType}, '취소 요청', #{cancelReason}
+		insert into cancels (order_id, order_product_no, cancel_type, cancel_status, cancel_retract_date, cancel_reason)
+		<foreach item="product" index="index" collection="productRequestList" separator=" UNION ALL ">
+	        select 
+	        	#{orderId}, 
+	        	#{product.orderproductNo},
+	        	#{cancelType},
+	        	case
+	        		when #{product.request} = '환불취소' then '취소 철회'
+	        		when #{product.request} = '환불신청' then '취소 요청'
+	        	end,
+	        	case
+	        		when #{product.request} = '환불취소' then current_timestamp
+	        		when #{product.request} = '환불신청' then null
+	        	end,
+	        	#{cancelReason}
 	    </foreach>
+	    on duplicate key update
+	    	cancel_type = values(cancel_type),
+	    	cancel_status = values(cancel_status),
+	    	cancel_retract_date = values(cancel_retract_date),
+	    	cancel_reason = values(cancel_reason)
 	</insert>
 	
 	<update id="updateAccountInfo">

@@ -39,7 +39,7 @@
 		
 	}
 	
-	.info {
+	.warning {
 		height: 300px;
 		display: flex;
 		flex-direction: column;
@@ -64,22 +64,9 @@
 		align-items: center;
 	}
 	
-	.infoContentHead {
-		font-size: 20px !important;
-		font-weight: bold !important;
-		color: black !important;
-		margin-bottom: 10px;
-		text-align: center !important;
-	}
-	
-	.infoImg {
+	.warningImg {
     	margin-bottom: 20px;
     	text-align: center;
-	}
-	
-	.infoImg img {
-		width: 64px;
-		height: 64px;
 	}
 	
 	.warningInfoHead {
@@ -117,17 +104,20 @@
 
 	<!-- Start Hero Area -->
 	<section class="hero-area">
-		<div class="info">
-			<div class="infoImg">
-				<img alt="성공" src="/resources/assets/user/images/info/success.png">
+		<div class="warning">
+			<div class="warningImg">
+				<img alt="경고" src="/resources/assets/user/images/error/warning.png">
 			</div>
-			<div class="infoBody">
-				<p class="infoContentHead">
-					<!-- 콘텐츠 태그 삽입 -->
-					<span>주문이 완료되었습니다!</span>
+			<div class="warningInfo">
+				<p class="warningInfoHead">
+					<span> 주문 실패 <br>
+					 이용에 불편을 드려 죄송합니다. 
+					</span>
 				</p>
-				<p class="infoContent">
-					<!-- 콘텐츠 태그 삽입 -->
+				<p class="warningInfoBody">
+					 일시적인 오류 혹은 변경으로 주문을 완료할 수 없습니다.<br>
+					 잠시 후에 다시 시도해주십시오.<br>
+					 감사합니다. 
 				</p>
 			</div>
 		</div>
@@ -136,10 +126,11 @@
 				<a class="btn goMain" href="/">메인으로</a>
 			</div>
 		</div>
+		
 	</section>
 	<!-- End Shipping Info -->
 
-	<jsp:include page="footer.jsp"></jsp:include>
+	<jsp:include page="../footer.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
