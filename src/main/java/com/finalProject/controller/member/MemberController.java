@@ -3,6 +3,7 @@ package com.finalProject.controller.member;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -19,17 +20,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finalProject.model.DeliveryDTO;
+import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.ResponseData;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.ResponseData;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.util.KakaoUtil;
 import com.finalProject.util.ReceiveMailPOP3;
@@ -266,7 +271,160 @@ public class MemberController {
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_history";
 	}
-
+	
+	// 마이페이지 (배송지 관리)
+	@RequestMapping(value = "/myPage/manageDelivery")
+	public String myPage_manageAddresses(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_manageDelivery";
+	}
+	
+	// 마이페이지 (배송지 추가)
+	@RequestMapping(value = "/myPage/addDeliveryPage")
+	public String myPage_addDelivery(HttpServletRequest request, HttpSession session, Model model) {
+		System.out.println("배송지 추가 페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		model.addAttribute("memberInfo", loginMember);
+		return "/user/pages/member/myPage_addDelivery";
+	}
+	
+	// 마이페이지 (배송지 수정)
+	@RequestMapping(value = "/mypage/modifyDelivery")
+	public String myPage_modifyDelivery(@RequestParam("deliveryNo") int deliveryNo, @RequestParam("isMain") String isMain, HttpServletRequest request, HttpSession session, Model model) {
+		System.out.println("배송지 추가 페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		model.addAttribute("memberInfo", loginMember);
+		model.addAttribute("deliveryNo", deliveryNo);
+		model.addAttribute("isMain", isMain);
+		return "/user/pages/member/myPage_modifyDelivery";
+	}
+	
+	// 마이페이지 (배송지 정보 조회)
+	@GetMapping("/myPage/getDeliveryInfo")
+	@ResponseBody
+	public Map<String, Object> getDeliveryInfo(@RequestParam(value="deliveryNo", required=false, defaultValue="0") int deliveryNo, HttpSession session) {
+		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
+		List<DeliveryDTO> deliveryList = null;
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		try {
+			deliveryList = memberService.getDeliveryList(loginDTO.getMember_id());
+			for (DeliveryDTO deliveryDTO : deliveryList) {
+				if (deliveryNo != 0) {
+					if (deliveryDTO.getDelivery_no() == deliveryNo) {
+						map.put("deliveryInfo", deliveryDTO);
+					}
+				}
+			}
+			
+			if (deliveryNo == 0) {
+				map.put("deliveryList", deliveryList);
+			}
+			
+			map.put("memberInfo", loginDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return map;
+	}
+	
+	// 마이페이지 (배송지 추가)
+	@PostMapping("/myPage/saveDelivery")
+	public String saveDelivery(
+			@ModelAttribute DeliveryVO deliveryInfo, 
+			@RequestParam("deliveryType") String deliveryType,
+			RedirectAttributes redirectAttributes) {
+		
+		if (deliveryType.contains("saveDelivery")) {
+			// 배송지 저장
+			try {
+				memberService.saveDelivery(deliveryInfo);
+				redirectAttributes.addFlashAttribute("successMessage", "배송지가 추가되었습니다");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		} 
+	
+		if (deliveryType.contains("saveAddress")) {
+			// 회원 정보 주소 수정
+			try {
+				if (memberService.updateAddress(deliveryInfo)) {
+					redirectAttributes.addFlashAttribute("successMessage", "회원 주소로 수정되었습니다");
+				} else {
+					return "/user/pages/warning";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
+	
+	// 마이페이지 (배송지 수정)
+	@PostMapping("/myPage/modifyDelivery")
+	public String modifyDelivery(
+			@ModelAttribute DeliveryVO deliveryInfo, 
+			@RequestParam("deliveryType") String deliveryType,
+			@RequestParam("deliveryNo") int deliveryNo,
+			RedirectAttributes redirectAttributes) {
+		
+		DeliveryDTO deliveryDTO = DeliveryDTO.builder()
+											 .delivery_no(deliveryNo)
+											 .delivery_name(deliveryInfo.getDeliveryName())
+											 .delivery_address(deliveryInfo.getDeliveryAddress())
+											 .member_id(deliveryInfo.getMemberId())
+											 .is_main(deliveryInfo.getIsMain())
+											 .build();
+		
+		if (deliveryType.contains("modifyDelivery")) {
+			// 배송지 수정
+			try {
+				memberService.modifyDelivery(deliveryDTO);
+				redirectAttributes.addFlashAttribute("successMessage", "배송지가 수정되었습니다");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		}
+	
+		if (deliveryType.contains("saveAddress")) {
+			// 회원 정보 주소 수정
+			try {
+				if (memberService.updateAddress(deliveryInfo)) {
+					redirectAttributes.addFlashAttribute("successMessage", "회원 주소로 수정되었습니다");
+				} else {
+					return "/user/pages/warning";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
+	
+	// 마이페이지 (배송지 삭제)
+	@PostMapping("/myPage/deleteDelivery")
+	public String deleteDelivery(@RequestParam("deliveryNo") int deliveryNo, RedirectAttributes redirectAttributes) {
+		try {
+			memberService.deleteDelivery(deliveryNo);
+			redirectAttributes.addFlashAttribute("successMessage", "배송지가 삭제되었습니다");
+		} catch (Exception e) {
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("successMessage", "배송지가 삭제에 실패했습니다");
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
+	
 	// 마이페이지 인증(정보 수정시 비밀번호를 확인함.)
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
 	public String auth(HttpServletRequest request, @RequestParam("pwd") String member_pwd) {

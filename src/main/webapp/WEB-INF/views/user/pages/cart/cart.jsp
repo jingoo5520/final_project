@@ -31,14 +31,6 @@
 
 $(document).ready(function() {
 	
-	logWindowSize();
-	
-    // 창 크기가 변경될 때마다 크기를 찍기
-    $(window).resize(function() {
-        logWindowSize();
-    });
-	
-	
 	let productCount = $("div.cart-single-list").length;
 	let totalPrices = 0;
 	let totalPoints = 0;
@@ -47,7 +39,6 @@ $(document).ready(function() {
 		let productPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
 		totalPrices += productPriceText;
 	});
-	console.log(totalPrices);
 	
 	$(".totalPrice").text(totalPrices.toLocaleString() + " 원");
 	
@@ -55,7 +46,6 @@ $(document).ready(function() {
 		let productPointText = parseInt($.trim($(this).text().replace(" P", "").replace(/,/g, "")));
 		totalPoints += productPointText;
 	});
-	console.log(totalPoints);
 	
 	$(".totalPoint").text(totalPoints.toLocaleString() + " P");
 	
@@ -65,7 +55,6 @@ $(document).ready(function() {
 	
 	if(levelInfo) {
 		levelDC = parseFloat("${levelInfo.level_dc }");
-		console.log(levelDC);
 	}
 	
 	let levelDCPrice = 0;
@@ -164,7 +153,7 @@ function countDown(productNo) {
 	let quantity = parseInt($("#"+productNo + "_quantity").text());
 	
 	if (quantity <= 1) {
-		alert("최소수량 1개 이하로 내릴 수 없습니다.");
+		showCartModal("최소수량 1개 이하로 내릴 수 없습니다.");
 	} else {
 		$("#"+productNo + "_quantity").text(quantity - 1);
 	} 
@@ -176,10 +165,9 @@ function applyQuantity(productNo) {
 	let quantity = parseInt($("#"+productNo + "_quantity").text());
 	
 	if (quantity < 1) {
-		alert("최소수량 1개 이하로 내릴 수 없습니다.");
+		showCartModal("최소수량 1개 이하로 내릴 수 없습니다.");
 		location.reload();
 	} else {
-		console.log("수량 : " + quantity + ", 상품 번호 : " + productNo);
 		
 		$.ajax({
 		    url: 'updateQuantity',
@@ -190,35 +178,23 @@ function applyQuantity(productNo) {
 		    	},
 		    dataType: 'json',
 		    success: function(data) {
-		        // 요청이 성공했을 때 실행되는 콜백 함수
-		        console.log(data);
-		        
 		        if (data == "success") {
-		            // 수정 성공 시 페이지 새로 고침
 		            location.reload();
 		        } else if (data == "fail"){
-		            // 수정 실패 시 에러 메시지 표시
-		            alert('수정에 실패했습니다. 다시 시도해주세요.');
-		        } else {
-		        	// 로그인 안했음
-		        	alert("로그인 안했는데요?");
+		            showCartModal('수정에 실패했습니다. 다시 시도해주세요.');
 		        }
 		    },
 		    error: function() {
 		    },
 		    complete: function(data) {
 		    	// 요청이 성공했을 때 실행되는 콜백 함수
-		        console.log(data);
 		        
 		        if (data.status == 200) {
 		            // 수정 성공 시 페이지 새로 고침
 		            location.reload();
 		        } else if (data.responseText == 400){
 		            // 수정 실패 시 에러 메시지 표시
-		            alert('수정에 실패했습니다. 다시 시도해주세요.');
-		        } else if (data.responseText == 401){
-		        	// 로그인 안했음
-		        	alert("로그인 안했는데요?");
+		            showCartModal('수정에 실패했습니다. 다시 시도해주세요.');
 		        }
 		    }
 		});
@@ -227,108 +203,71 @@ function applyQuantity(productNo) {
 }
 
 function removeItem(productNo) {
-	
-	let isConfirmed = confirm("선택한 상품을 삭제 하시겠습니까?");
-	
-	if (isConfirmed) {
-		$.ajax({
-		    url: 'removeCartItem',
-		    type: 'POST',
-		    data: {
-		    	productNo : productNo
-		    	},
-		    dataType: 'json',
-		    success: function(data) {
-		    },
-		    error: function() {
-		    },
-		    complete: function(xhr) {
-		        
-		        if (xhr.status == 200) {
-		            location.reload();
-		        } else if (xhr.status == 400) {
-		            alert('상품 삭제에 실패했습니다. 다시 시도해주세요.');
-		        } else if (xhr.status == 401) {
-		            alert("로그인 안했는데요?");
-		        }
-		    }
-		});
-	}
-	
+	$("#deleteCartModal .modal-text").text("상품을 삭제하시겠습니까?");
+	$("#deleteCart").off("click").on("click", function() {
+        deleteCart(productNo);
+    });
+	$("#deleteCartModal").modal("show");
+}
+
+function deleteCart(productNo) {
+	$.ajax({
+	    url: 'removeCartItem',
+	    type: 'POST',
+	    data: {
+	    	productNo : productNo
+	    	},
+	    dataType: 'json',
+	    success: function(data) {
+	    },
+	    error: function() {
+	    },
+	    complete: function(xhr) {
+	        if (xhr.status == 200) {
+	        	$("#deleteCartModal").modal("hide");
+	            location.reload();
+	        } else if (xhr.status == 400) {
+	            showCartModal('상품 삭제에 실패했습니다. 다시 시도해주세요.');
+	        }
+	    }
+	});
 }
 
 function removeCheckedItem() {
-    let isConfirmed = confirm("선택한 상품을 삭제 하시겠습니까?");
+    $("#deleteCartModal .modal-text").text("선택한 상품들을 삭제하시겠습니까?");
+    $("#deleteCart").off("click").on("click", function() {
+        deleteCheckedCart();
+    });
+    $("#deleteCartModal").modal("show");
+}
+
+function deleteCheckedCart() {
+    let productNos = [];
     
-    if (isConfirmed) {
-        let checkboxes = $('input[type="checkbox"].checkProduct');
-        let productNos = [];
-        
-        for (let i = 0; i < checkboxes.length; i++) {
-            let checkbox = checkboxes[i];
-            if (checkbox.checked) {
-                productNos.push(parseInt(checkbox.id));
+    $('input[type="checkbox"].checkProduct:checked').each(function() {
+        productNos.push(parseInt(this.id));
+    });
+
+    $.ajax({
+        url: 'removeCheckedItems',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(productNos),
+        dataType: 'json',
+        success: function(data) {
+        },
+        error: function() {
+        },
+        complete: function(data) {
+            if (data.status == 200) {
+            	$("#deleteCartModal").modal("hide");
+                location.reload();
+            } else if (data.responseText == 400) {
+                showCartModal('상품 삭제에 실패했습니다. 다시 시도해주세요.');
             }
         }
-        
-        console.log(productNos);
-        
-        $.ajax({
-            url: 'removeCheckedItems',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(productNos),  // 단순 배열로 전송
-            dataType: 'json',
-            success: function(data) {
-            },
-            error: function() {
-            },
-            complete: function(data) {
-                if (data.status == 200) {
-                    location.reload();
-                } else if (data.responseText == 400) {
-                    alert('상품 삭제에 실패했습니다. 다시 시도해주세요.');
-                } else if (data.responseText == 401) {
-                    alert("로그인 안했는데요?");
-                }
-            }
-        });
-    }
+    });
 }
-
-function logWindowSize() {   
-   let width = window.width
-    
-    if (width >= 1837) {
-        $('.hide-total').hide();
-        $('.total-amount.fixed-total').show();
-    } else {
-        $('.hide-total').show();
-        $('.total-amount.fixed-total').hide();
-    }
-}
-
-$(window).scroll(function() {
-	let width = $(window).width(); // 현재 문서의 너비
-	var scrollTop = $(window).scrollTop();
-	var documentHeight = $(document).height();
-	var windowHeight = $(window).height();
-	var remainingScroll = documentHeight - (scrollTop + windowHeight);
-	
-	 if (width >= 1837) {
-	        $('.hide-total').hide();
-	        
-	        if (remainingScroll <= 552) {
-	            $('.total-amount.fixed-total').hide();
-	        } else {
-	            $('.total-amount.fixed-total').show();
-	        }
-	    } else {
-	        $('.hide-total').show();
-	        $('.total-amount.fixed-total').hide();
-	    }
-	
-});
 
 
 function checkedOrder() {
@@ -348,15 +287,20 @@ function checkedOrder() {
         }
     }
 
-	console.log(productsInfo);
-	
-	// 숨겨진 필드에 JSON 형식으로 저장
     $('.productInfos').val(JSON.stringify(productsInfo));
 
-    // 폼 제출
     $('.orderForm').submit();
 	
 }
+
+function showCartModal(message) {
+	  $("#cartModal").modal("show");
+		$("#cartModal .modal-text").text(message);
+		
+		setTimeout(function() {
+		$('#cartModal').modal('hide');
+		}, 750);
+ }
 
 </script>
 
@@ -443,29 +387,19 @@ input[type="checkbox"]:hover {
 	color: #807e6f;
 }
 
-.fixed-total {
-    position: fixed;
-    top: 442px;
-    right: 60px;
-    width: 300px;
-    height: 404px;
-    background-color: #a8a691;
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3), 0 10px 15px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-    z-index: 1000;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 0;
-    padding: 0; /* 상단 패딩 제거 */
+.cartInfo {
+	height: 384px;
+	margin: 40px 20px 0 0;
+	padding-top : 40px !important;
+	background-color: #FFFFFF;
+	padding: 0;
+	border: 1px solid #eee;
+	border-radius: 4px;
 }
 
-.fixed-right {
-    padding: 0;
-    margin: 10px !important;/* 상단 마진을 음수로 설정하여 빈 공간 줄이기 */
-}
-
-.bingonggans {
+.cartInfo .container {
 	height: 180px;
-	margin-bottom: 100px;
+	
 }
 
 #instruction {
@@ -480,6 +414,72 @@ input[type="checkbox"]:hover {
 	padding-left: 15px;
 	position: relative;
 	margin-bottom: 5px;
+}
+
+.hero-area {
+	border: 1px solid #eee;
+	border-radius: 4px;
+	margin-bottom: 40px !important;
+	display: flex;
+   	flex-direction: column;
+   	align-items: center;
+	padding-bottom: 40px;
+}
+
+.warning {
+	padding-top: 80px !important;
+	height: 180px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.goList {
+	width: 223px;
+	height: 60px;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 60px;
+	padding: 20px 30px 0 30px !important;
+}
+
+.repositBtn {
+	height: 150px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.warningImg {
+   	margin-bottom: 20px;
+   	text-align: center;
+}
+
+.warningInfoHead {
+	font-size: 16px !important;
+	font-weight: bold !important;
+	color: black !important;
+	margin-bottom: 10px;
+	text-align: center !important;
+}
+
+.warningInfoHead span {
+    display: block; 
+}
+
+.cart-total {
+	display: flex;
+	justify-content: right;
+}
+
+.cart-total .cartInfo{
+	max-width: 846px;
+}
+
+.cart-total .right {
+	width: 450px;
 }
 
 </style>
@@ -510,8 +510,8 @@ input[type="checkbox"]:hover {
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
 						<li><a href="../"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="../">Shop</a></li>
-						<li>Cart</li>
+                        <li><a href="/product/jewelry">Shop</a></li>
+                        <li>장바구니</li>
 					</ul>
 				</div>
 			</div>
@@ -708,43 +708,45 @@ input[type="checkbox"]:hover {
 							</c:forEach>
 						</c:if>
 					</div>
-					<!-- Total Amount -->
-					<div class="total-amount fixed-total ">
-						<div class="right fixed-right">
-							<ul>
-								<li>총 상품금액<span class="totalPrice">0</span></li>
-								<li>상품 할인금액<span class="dcProduct">0</span></li>
-								<li>등급 할인금액<span class="dcLevel"></span></li>
-								<li class="last">총 결제금액<span class="totalPay">0</span></li>
-								<li>총 적립예정포인트<span class="totalPoint">0</span></li>
-							</ul>
-							<div class="button">
-								<form action="/order" method="post" class="orderForm">
-									<input type="hidden" class="productInfos" name="productInfos">
-									<a onclick="checkedOrder();" class="btn">총 (<span class="checkedProductCount"></span>) <span class="totalPay">0</span><br />결제하기</a>
-									<a href="/product/jewelry/all" class="btn">상품 보러 가기</a>
-								</form>
-						 	</div>
-						 </div>
-					 </div>
-					 <!--/ End Total Amount -->
 				</c:when>
 				<c:otherwise>
-					<h1>장바구니에 상품이 없습니다.</h1>
-					<div class="button">
-						<a href="/product/jewelry/all" class="btn btn">상품 보러 가기</a>
-					</div>
+					<section class="hero-area">
+						<div class="warning">
+							<div class="warningImg">
+								<img alt="경고" src="/resources/assets/user/images/error/warning.png">
+							</div>
+							<div class="warningInfo">
+								<p class="warningInfoHead">
+									<span> 장바구니에 담긴 상품이 없습니다. </span>
+								</p>
+							</div>
+						</div>
+						<div class="repositBtn">
+							<div class="button">
+								<a href="/product/jewelry/all" class="btn btn goList">상품 보러 가기</a>
+							</div>
+						</div>
+					</section>
 				</c:otherwise>
 			</c:choose>
 			<!-- Total Amount -->
-			<div class="total-amount hide-total">
+		<c:if test="${not empty cartItems || not empty cookieCartItems }">
+			<div class="total-amount cart-total">
+				<div class="cartInfo container">
+					<span id="instruction">장바구니 이용안내</span>
+					<ul id="instructionList">
+						<li>상품 옵션에 따라 결제 금액이 변경 될 수 있습니다.</li>
+						<li>쇼핑백 보관 기간 중 상품 가격이나 혜택이 변동 될수 있습니다.</li>
+						<li>쇼핑백의 상품을 찜 하시면 지속적으로 보실 수 있습니다.</li>
+					</ul>
+				</div>
 				<div class="right">
 					<ul>
-						<li>총 상품금액<span class="totalPrice">0</span></li>
-						<li>상품 할인금액<span class="dcProduct">0</span></li>
-						<li>등급 할인금액<span class="dcLevel"></span></li>
-						<li class="last">총 결제금액<span class="totalPay">0</span></li>
-						<li>총 적립예정포인트<span class="totalPoint">0</span></li>
+						<li><b>총 상품금액</b><span class="totalPrice">0</span></li>
+						<li><b>상품 할인금액</b><span class="dcProduct">0</span></li>
+						<li><b>등급 할인금액</b><span class="dcLevel"></span></li>
+						<li class="last"><b>총 결제금액</b><span class="totalPay">0</span></li>
+						<li><b>총 적립예정포인트</b><span class="totalPoint">0</span></li>
 					</ul>
 					<div class="button">
 						<form action="/order" method="post" class="orderForm">
@@ -754,21 +756,18 @@ input[type="checkbox"]:hover {
 						</form>
 				 	</div>
 				 </div>
+			 
 			 </div>
+		 </c:if>
 			 <!--/ End Total Amount -->
 		</div>
 	</div>
 	<!--/ End Shopping Cart -->
-	<div class="bingonggans container">
-		<span id="instruction">장바구니 이용안내</span>
-		<ul id="instructionList">
-			<li>상품 옵션에 따라 결제 금액이 변경 될 수 있습니다.</li>
-			<li>쇼핑백 보관 기간 중 상품 가격이나 혜택이 변동 될수 있습니다.</li>
-			<li>쇼핑백의 상품을 찜 하시면 지속적으로 보실 수 있습니다.</li>
-		</ul>
-	</div>
+	
 
 	<jsp:include page="../footer.jsp"></jsp:include>
+	<jsp:include page="cartModal.jsp"></jsp:include>
+	<jsp:include page="deleteCartModal.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>

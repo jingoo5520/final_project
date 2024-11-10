@@ -71,4 +71,10 @@ public interface MemberService {
 	// 쿠폰 목록 조회
 	List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception;
 	
+	// 배송지 수정
+	void modifyDelivery(DeliveryDTO deliveryDTO) throws Exception;
+	
+	// 배송지 삭제
+	void deleteDelivery(int deliveryNo) throws Exception;
+	
 }

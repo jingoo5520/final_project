@@ -170,8 +170,7 @@
 
 	<!-- 기본배송지 데이터 조회 -->
 	<select id="selectMainDelivery" resultType="Integer">
-		select delivery_no
-		from delivery_addrs where member_id = #{member_id}
+		select delivery_no from delivery_addrs where member_id = #{member_id} and is_main = "M"
 	</select>
 
 	<!-- 기존의 기본배송지를 일반배송지로 변경 -->
@@ -206,5 +205,17 @@
 		p.expire_date
 		and u.coupon_code is null
 	</select>
+	
+	<update id="updateDeliveryInfo">
+		update delivery_addrs set 
+		delivery_name = #{delivery_name}, 
+		delivery_address = #{delivery_address},
+		is_main = #{is_main} 
+		where delivery_no = #{delivery_no}
+	</update>
+	
+	<delete id="deleteDeliveryInfo">
+		delete from delivery_addrs where delivery_no = #{deliveryNo} 
+	</delete>
 
 </mapper>
