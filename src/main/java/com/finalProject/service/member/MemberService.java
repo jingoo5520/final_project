@@ -49,6 +49,15 @@ public interface MemberService {
 	
 	// 회원의 찜목록 조회
 	int[] getWishList(String member_id)throws Exception;
+
+	// 찜 토글 동작(찜하기, 찜해제)
+	int saveWish(int product_no, String member_id)throws Exception;
+
+	// 기본주소로 저장(회원가입)
+	void saveAdddress(MemberDTO memberDTO, String addressName)throws Exception;
+
+	// 이메일로 회원 조회(카카오 로그인)
+	LoginDTO selectMemberByEmail(MemberDTO userInfo)throws Exception;
 	
 	// 주문페이지에서 입력한 주소로 회원 주소지 변경
 	boolean updateAddress(DeliveryVO deliveryVO) throws Exception;
