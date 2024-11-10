@@ -533,7 +533,12 @@ public class OrderController {
 
 		return ResponseEntity.ok(resultMap);
 	}
-
+	String cancelReason = requestMap.get("cancelReason");
+	Map<String, String> resultMap = orderService.requestApprovalKakaopayCancel(paymentId, cancelReason, cancelAmount);
+	return ResponseEntity.ok(resultMap);
+	}
+	
+	
 	@GetMapping("/cancelAPItest")
 	public String cancelAPItest1() {
 		return "/user/pages/order/cancelAPItest";

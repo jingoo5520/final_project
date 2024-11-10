@@ -14,8 +14,45 @@
 	<script>hljs.highlightAll();</script>
 </head>
 <body>
+
+	<script>
+	function kakaopayCancelRequest(paymentId, cancelReason, amount) {
+		let response = null
+		$.ajax({
+			async: false,
+			url: "/order/KakaoPayCancel",
+			type: "POST",
+			contentType: "application/json",
+			dataType: 'json',
+			data: JSON.stringify({
+				paymentId: paymentId,
+				amount: "" + amount,
+				cancelReason: cancelReason,
+			}),
+			success: function(res) {
+				response = res.response
+			},
+			error: function(xhr, status, error) {
+				console.error(`Error: ${status}, ${error}`);
+				console.error(xhr.responseText);
+			}
+		});
+		return JSON.parse(response)
+	}
+	
+	function kakaopayAPITest(id, reason, amount) {
+		let result = kakaopayCancelRequest(id, reason, amount)
+		console.log("카카오페이APITest 응답 결과 : ")
+		console.log(result)
+	}
+	</script>
+
+	<h1>카카오페이 API 테스트</h1>
+	<button onclick="kakaopayAPITest('T72fe5bd05806393039b', '이유는 없다', 10000)">카카오페이APITest</button>
+	
 	<h1>이 cancels 테이블의 정보로 API를 실험해보세요</h1>
 	<p>K : 카카오페이, T : 토스, N : 네이버페이</p>
+	
 	<table>
 	<tbody><tr><th colspan="10"><pre><code>select p.payment_method , c.*<br>from cancels c<br>join payments p on p.order_id = c.order_id<br></code></pre></th></tr><tr><th>payment_method</th><th>cancel_no</th><th>order_id</th><th>cancel_apply_date</th><th>cancel_complete_date</th><th>cancel_retract_date</th><th>cancel_type</th><th>cancel_status</th><th>cancel_reason</th><th>order_product_no</th></tr><tr class="odd"><td>K</td><td>34</td><td>472d75f3-2ddd-4773-9f4a-8c7d168e6ed0</td><td>2024-11-10 08:28:16.000</td><td>&nbsp;</td><td>&nbsp;</td><td>cancel</td><td>취소 요청</td><td>목걸이는 필요없어요<br>배송 언제되요</td><td>348</td></tr>
 		<tr><td>T</td><td>38</td><td>797c5f05-f448-4517-99f2-8d6ee255b873</td><td>2024-11-10 08:29:53.000</td><td>&nbsp;</td><td>&nbsp;</td><td>cancel</td><td>취소 요청</td><td>취소할께요</td><td>312</td></tr>

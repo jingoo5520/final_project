@@ -452,14 +452,27 @@ public class OrderServiceImpl implements OrderService {
 			// Connect to the server
 			connection.connect();
 
-			ObjectMapper mapper = new ObjectMapper();
-			ObjectNode json = mapper.createObjectNode();
-			json.put("cid", "TC0ONETIME");
-			json.put("tid", paymentId);
-			json.put("cancel_amount", cancelAmount);
-			json.put("cancel_tax_free_amount", 0);
-			json.put("payload", cancelReason);
-			String jsonInputString = mapper.writeValueAsString(json);
+		    ObjectMapper mapper = new ObjectMapper();
+		    ObjectNode json = mapper.createObjectNode();
+		    json.put("cid", "TC0ONETIME");
+		    json.put("tid", paymentId);
+		    json.put("cancel_amount", cancelAmount);
+		    json.put("cancel_tax_free_amount", 0);
+		    json.put("payload", cancelReason);
+		    String jsonInputString = mapper.writeValueAsString(json);
+		    
+//		    String jsonInputString = String.format("{"
+//		    		+ "\"cid\": \"TC0ONETIME\","
+//		    		+ "\"tid\": \"%s\","
+//		    		+ "\"cancel_amount\": %d,"
+//		    		+ "\"cancel_tax_free_amount\": 0,"
+//		    		+ "\"payload\": \"%s\""
+//					+ "}", paymentId, cancelAmount, cancelReason);
+		    
+		    System.out.println("paymentId : " + paymentId);
+		    System.out.println("cancelAmount : " + cancelAmount);
+		    System.out.println("cancelReason : " + cancelReason);
+		    System.out.println("jsonInputString : " + jsonInputString);
 
 //	          String jsonInputString = String.format("{"
 //	                + "\"cid\": \"TC0ONETIME\","
