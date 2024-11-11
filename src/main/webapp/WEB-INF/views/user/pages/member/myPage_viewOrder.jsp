@@ -155,18 +155,62 @@
 			<div class="cart-list-title">
 				<div class="row align-items-center">
 					<div class="col-lg-1 col-md-1 col-12"></div>
-					<div class="col-lg-4 col-md-4 col-12"><p>상품정보</p></div>
+					<div class="col-lg-4 col-md-4 col-12"><p>주문이름</p></div>
 					<div class="col-lg-2 col-md-2 col-12"><p>주문일자/주문번호</p></div>
 					<div class="col-lg-2 col-md-2 col-12"><p>처리상태</p></div>
 					<div class="col-lg-3 col-md-3 col-12"><p>변경/처리</p></div>
 				</div>
 			</div>`
 		
+		// orderInfo를 최근순으로 정렬
+		orderInfo.sort((a, b) => 
+				new Date(b.orderDate) - new Date(a.orderDate) 
+			);
+		
+			
 		for (orderJson of orderInfo) {
 			let orderDate = orderJson.orderDate
 			let orderId = orderJson.orderId
 			let orderStatus = orderJson.orderStatus
-
+			let products = orderJson.products
+			tags += `<div class="cart-single-list grid-container">`
+			tags += `<div class="row align-items-center">`
+			tags += `<div class="col-lg-1 col-md-1 col-12">`
+			tags += `<img src=\${products[0].image_url} alt="#">` // TODO : alt image 삽입
+			tags += `</div>`
+			tags += `<div class="col-lg-4 col-md-4 col-12">`
+			if (products.length >= 2) {
+				tags += `<p>\${products[0].product_name}외 \${products.length - 1}건</p>`
+			} else {
+				tags += `<p>\${products[0].product_name}</p>`
+			}
+			tags += `</div>`
+			tags += `<div class="col-lg-2 col-md-2 col-12">`
+			tags += `<p>\${orderDate}</p>`
+			tags += `<p>\${orderId}</p>`
+			tags += `</div>`
+			tags += `<div class="col-lg-2 col-md-2 col-12">`
+			tags += `<p>\${orderStatus}</p>`
+			tags += `</div>`
+			tags += `<div class="col-lg-2 col-md-2 col-12">`
+			// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
+			if (orderStatus == "결제완료") {
+				tags += makeButtonTag("cancel", orderId)
+			} else if (orderStatus == "배송완료") {
+				tags += makeButtonTag("return", orderId)
+			} else {
+				tags += "<p></p>" // 아무것도 표시하지 않음
+			}
+			tags += `</div>`
+			tags += `</div>` // class="row align-items-center" end
+			tags += `</div>` // class="cart-single-list grid-container" end
+		}
+		tags += '</div>' // class="cart-list-head" end
+			
+/* 		for (orderJson of orderInfo) {
+			let orderDate = orderJson.orderDate
+			let orderId = orderJson.orderId
+			let orderStatus = orderJson.orderStatus
 			for (product of orderJson.products) {
 				tags += `<div class="cart-single-list grid-container">`
 				tags += `<div class="row align-items-center">`
@@ -201,13 +245,17 @@
 				tags += `</div>` // class="cart-single-list grid-container" end
 			}
 		}
-		tags += '</div>' // class="cart-list-head" end
+		tags += '</div>' // class="cart-list-head" end */
+		
+		
 		$("#productsView").html(tags)
 		// 버튼에 이벤트 핸들러 부착
-		$(".button .btn").each(function() {
+ 		$(".button .btn").each(function() {
 			$(this).click(function() {
 				let orderId = $(this).attr("attr-order-id")
-				let aOrder = orderInfo.find((o) => o.orderId = orderId)
+				let aOrder = orderInfo.find((o) => o.orderId == orderId)
+				console.log("aOrder : " + JSON.stringify(aOrder))
+				console.log("orderId : " + orderId)
 				let cancelType = $(this).attr("attr-cancel-type")
 				onOrderCancelBtnClicked(aOrder, cancelType)
 			})
@@ -266,6 +314,7 @@
 
 	function onOrderCancelBtnClicked(orderJson, cancelType) {
 		let orderId = orderJson.orderId
+		console.log("orderJson in onOrderCancelBtnClicked : " + JSON.stringify(orderJson))
 		$("#productsView").html("")
 		tags = ""
 		tags += `<div class="card">`
@@ -285,6 +334,7 @@
 			</div>
 		</div>`
 		
+		// working...
 		for (product of orderJson.products) {
 			tags += `<div class="cart-single-list col-12">`
 			tags += `
@@ -294,53 +344,33 @@
 					</div>
 					<div class="col-lg-4 col-md-4 col-12">
 						<p>\${product.product_name}</p>
-					</div>
-					<div class="col-lg-4 col-md-4 col-12">
-						<p>\${orderJson.orderStatus}</p>
-					</div>
-					<div class="col-lg-3 col-md-3 col-12">
-						<input class="form-check-input" type="checkbox" attr-orderproduct-no=\${product.orderproduct_no}></input>
-					</div>
+					</div>`
+			if (product.cancel_status == "None") {
+				tags +=`<div class="col-lg-4 col-md-4 col-12">
+					<p>\${orderJson.orderStatus}</p>
 				</div>`
+			} else {
+				tags +=`<div class="col-lg-4 col-md-4 col-12">
+					<p>\${product.cancel_status}</p>
+				</div>`
+			}
+			if (product.cancel_status == "None") {
+				tags +=`<div class="col-lg-3 col-md-3 col-12">
+					<input class="form-check-input" type="checkbox" attr-orderproduct-no=\${product.orderproduct_no} attr-checked-msg="환불신청" onclick="showInfoForCheckbox(this)"></input>
+					<span></span>
+				</div>`
+			} else if (product.cancel_status == "환불대기중") {
+				tags +=`<div class="col-lg-3 col-md-3 col-12">
+					<input class="form-check-input" type="checkbox" attr-orderproduct-no=\${product.orderproduct_no} attr-checked-msg="환불취소" onclick="showInfoForCheckbox(this)"}></input>
+					<span></span>
+				</div>`
+			} else if (product.cancel_status == "환불취소" || product.cancel_status == "환불완료") {
+				tags += `<p></p>`
+			}
+			tags += `</div>`
 			tags += `</div>`
 		} // for_end
 
-		// 단순 참고용, 삭제해도 좋음
-/* 		{
-		    "orderDate": "2024.11.06",
-		    "orderId": "6f143a86-eeee-4a0c-917b-13b41034dce7",
-		    "orderStatus": "결제완료",
-		    "products": [
-		      {
-		        "product_no": 324,
-		        "product_name": "[강진구 PICK] ETER HEART 귀걸이 (JJEREQ3BF693SR000)",
-		        "quantity": 2,
-		        "product_price": 125800,
-		        "product_dc_type": null,
-		        "dc_rate": 0,
-		        "image_url": "https://webimg.jestina.co.kr/UpData2/item/G2000026727/20231116090734ZM.jpg"
-		      },
-		      {
-		        "product_no": 413,
-		        "product_name": "[강진구 PICK] J.Fenella 14K 발찌 (JJJTAQ1BS058R4230)",
-		        "quantity": 1,
-		        "product_price": 321300,
-		        "product_dc_type": "P",
-		        "dc_rate": 0.15,
-		        "image_url": "https://webimg.jestina.co.kr/UpData2/item/G2024347/20220620094812ZM.jpg"
-		      },
-		      {
-		        "product_no": 245,
-		        "product_name": "BASIC PERLINA 14K 바로크 담수진주 목걸이(JJP1NF4BF222R4420)",
-		        "quantity": 1,
-		        "product_price": 398000,
-		        "product_dc_type": "P",
-		        "dc_rate": 0.1,
-		        "image_url": "https://webimg.jestina.co.kr/UpData2/item/G2000027308/20240802130457ZM.png"
-		      }
-		    ]
-	  } 			*/
-		
 		tags += `<p>신청사유</p>`
 
 		tags += `<div class="form-group col-12">`
@@ -372,11 +402,22 @@
 		$("#productsView").html(tags)
 	} // function end
 	
+	function showInfoForCheckbox(elt) {
+		if ($(elt).is(":checked")) {
+			$(elt).next().html($(elt).attr("attr-checked-msg"))
+		} else {
+			$(elt).next().html("")
+		}
+	}
+	
 	function submitOrderCancel(cancelType) {
 		let products = []
 		$(".form-check-input").each(function() {
 			if ($(this).is(':checked')) {
-				products.push($(this).attr("attr-orderproduct-no"))
+				let p = {}
+				p.orderproductNo = ($(this).attr("attr-orderproduct-no"))
+				p.request = ($(this).attr("attr-checked-msg"))
+				products.push(p)
 			}
 		})
 		let orderId = $("#order-id").text()
@@ -515,14 +556,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">Shop Grid</h1>
+						<h1 class="page-title">주문 / 배송 조회</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="javascript:void(0)">Shop</a></li>
-						<li>Shop Grid</li>
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li>주문 / 배송 조회</li>
 					</ul>
 				</div>
 			</div>

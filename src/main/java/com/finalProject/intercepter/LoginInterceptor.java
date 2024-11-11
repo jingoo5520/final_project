@@ -1,6 +1,5 @@
 package com.finalProject.intercepter;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,7 +16,6 @@ import org.springframework.web.util.WebUtils;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.service.member.MemberService;
-import com.finalProject.util.RememberPath;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -113,14 +111,14 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					response.sendRedirect("/admin");
 				} else {
 					if (!rememberPath.equals("null")) { // rememberPath가 있다면
-						if(rememberPath.contains("/order")) { // 주문 요청에서 왔다면
+						if (rememberPath.contains("/order")) { // 주문 요청에서 왔다면
 							String productInfos = (String) ses.getAttribute("productInfos");
 							ses.removeAttribute("productInfos");
 							if (productInfos != null) {
-								request.setAttribute("productInfos", productInfos);
-					            RequestDispatcher dispatcher = request.getRequestDispatcher("/order");
-					            dispatcher.forward(request, response);
-					        }
+								request.setAttribute("productInfosAttribute", productInfos);
+								RequestDispatcher dispatcher = request.getRequestDispatcher("/order");
+								dispatcher.forward(request, response);
+							}
 						} else {
 							response.sendRedirect(rememberPath); // rememberPath로 보냄
 							System.out.println("rememberPath있음 : " + rememberPath);

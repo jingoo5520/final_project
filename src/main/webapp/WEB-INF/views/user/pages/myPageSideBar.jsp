@@ -50,8 +50,9 @@ h5 {
 					<h3>마이페이지</h3>
 					<ul class="list">
 						<li><h5>쇼핑 내역</h5></li>
-						<li><a href="/member/myPage/viewOrder" class="<%="viewOrder".equals(request.getParameter("pageName")) ? "active" : ""%>">주문/배송 조회</a></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">취소/교환 내역</a></li>
+						<li><a href="/member/myPage/viewOrder" class="<%="viewOrder".equals(request.getParameter("pageName")) ? "active" : ""%>">주문 / 배송 조회</a></li>
+						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">취소 / 교환 내역</a></li>
+						<li><a href="/member/myPage/manageDelivery" class="<%="manageDelivery".equals(request.getParameter("pageName")) ? "active" : ""%>">배송지 관리</a></li>
 					</ul>
 					<hr>
 					<ul class="list">

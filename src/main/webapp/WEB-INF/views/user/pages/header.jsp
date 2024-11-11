@@ -78,34 +78,6 @@
 						<!-- End Header Logo -->
 					</div>
 					<div class="col-lg-5 col-md-7 d-xs-none">
-						<!-- Start Main Menu Search -->
-						<div class="main-menu-search">
-							<!-- navbar search start -->
-							<div class="navbar-search search-style-5">
-								<div class="search-select">
-									<div class="select-position">
-										<select id="select1">
-											<option selected>All</option>
-											<option value="1">option 01</option>
-											<option value="2">option 02</option>
-											<option value="3">option 03</option>
-											<option value="4">option 04</option>
-											<option value="5">option 05</option>
-										</select>
-									</div>
-								</div>
-								<div class="search-input">
-									<input type="text" placeholder="Search" />
-								</div>
-								<div class="search-btn">
-									<button>
-										<i class="lni lni-search-alt"></i>
-									</button>
-								</div>
-							</div>
-							<!-- navbar search Ends -->
-						</div>
-						<!-- End Main Menu Search -->
 					</div>
 					<div class="col-lg-4 col-md-2 col-5">
 						<div class="middle-right-area" style="flex-direction: row; justify-content: flex-end;">
@@ -144,15 +116,15 @@
 							</button>
 							<div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
 								<ul id="nav" class="navbar-nav ms-auto">
-									<li class="nav-item"><a href="/product/jewelry?category=195" class="active" aria-label="Toggle navigation">earring</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=196" class="" aria-label="Toggle navigation">nacklace</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=197" class="" aria-label="Toggle navigation">bangle</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=198" class="" aria-label="Toggle navigation">ring</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=200" class="" aria-label="Toggle navigation">coupling</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=201" aria-label="Toggle navigation">anklet</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=202" aria-label="Toggle navigation">pendant</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=203" aria-label="Toggle navigation">piercing</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=204" aria-label="Toggle navigation">etc</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=195" class="<%="earring".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">earring</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=196" class="<%="nacklace".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">nacklace</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=197" class="<%="bangle".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">bangle</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=198" class="<%="ring".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">ring</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=200" class="<%="coupling".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">coupling</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=201" class="<%="anklet".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">anklet</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=202" class="<%="pendant".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">pendant</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=203" class="<%="piercing".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">piercing</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=204" class="<%="etc".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">etc</a></li>
 								</ul>
 							</div>
 							<!-- navbar collapse -->

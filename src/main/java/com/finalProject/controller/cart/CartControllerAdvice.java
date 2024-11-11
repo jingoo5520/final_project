@@ -65,9 +65,6 @@ public class CartControllerAdvice {
 								}
 							}
 						}
-						
-						
-						
 						cartItemCount += cookieCartItems.length - matchedProductCount;
 					}
 				}
@@ -88,6 +85,7 @@ public class CartControllerAdvice {
 		}
 		
 		model.addAttribute("cartItemCount", cartItemCount);
+		model.addAttribute("sibal", "sibural");
 	}
 	
 	

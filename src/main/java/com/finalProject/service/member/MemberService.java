@@ -77,4 +77,10 @@ public interface MemberService {
 	// 네이버 간편가입
 	int signUpNaver(MemberDTO memberDTO)throws Exception;
 	
+	// 배송지 수정
+	void modifyDelivery(DeliveryDTO deliveryDTO) throws Exception;
+	
+	// 배송지 삭제
+	void deleteDelivery(int deliveryNo) throws Exception;
+	
 }

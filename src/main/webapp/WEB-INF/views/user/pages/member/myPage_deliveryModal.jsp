@@ -6,32 +6,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="EUC-KR">
-<title>주문 모달창</title>
+<title>배송지 모달창</title>
 <style type="text/css">
 
-	#cartModal .modal-dialog {
+	#deliveryModal .modal-dialog {
 		position: absolute;
 		left: 50%;
 		transform: translateX(-50%);
 		margin: 0;
 	}
 	
-	#cartModal .modal-content {
+	#deliveryModal .modal-content {
 		width: 300px;
 	}
 	
-	#cartModal .modal-content .modal-header{
+	.modal-content .modal-header{
 		margin: 0;
 		height: 30px;
 		border: none !important;
 	}
 	
-	#cartModal .modal-content .modal-body {
+	.modal-content .modal-body {
 		height: 100px;
 		border: none !important;
+		
 	}
 	
-	#cartModal .modal-content .modal-body .modal-text {
+	.modal-content .modal-body .modal-text {
 		height: 20px;
 		text-align: center;
 		font-weight: bold;
@@ -45,7 +46,7 @@
 </head>
 <body>
 	<!-- The Modal -->
-	<div class="modal fade" id="cartModal">
+	<div class="modal fade" id="deliveryModal">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 			

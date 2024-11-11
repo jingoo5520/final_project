@@ -158,7 +158,9 @@ function addCart(productNo) {
 
 <body>
 
-<jsp:include page="../header.jsp"></jsp:include>
+<jsp:include page="../header.jsp">
+	<jsp:param name="categoryName" value="${products[0].category_name}" />
+</jsp:include>
 
     <!-- Preloader -->
     <div class="preloader">
@@ -209,15 +211,15 @@ function addCart(productNo) {
             <main id="gallery">
                 <div class="main-img">
                     <c:forEach var="product" items="${products}">
-                        <c:if test="${product.image_sub_url == 'M'}">
-                            <img src="${product.image_main_url}" id="current" alt="Main Image">
+                        <c:if test="${product.image_type == 'M'}">
+                            <img src="${product.image_url}" id="current" alt="Main Image">
                         </c:if>
                     </c:forEach>
                 </div>
 							    <div class="images">
 							        <!-- 서브 이미지를 표시 -->
 							        <c:forEach var="image" items="${products}">
-							                <img src="${image.image_main_url}" class="img" alt="Sub Image">
+							                <img src="${image.image_url}" class="img" alt="Sub Image">
 							        </c:forEach>
 							    </div>
             </main>
@@ -355,7 +357,7 @@ function addCart(productNo) {
     <!-- End Item Details -->
     
 
-<jsp:include page="../cart/cartModal.jsp"></jsp:include>
+<jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
 
 <jsp:include page="../footer.jsp"></jsp:include>
 

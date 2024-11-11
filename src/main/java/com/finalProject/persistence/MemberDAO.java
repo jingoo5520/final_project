@@ -70,6 +70,12 @@ public interface MemberDAO {
 	
 	// 쿠폰 목록 조회
 	List<UseCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
+	
+	// 배송지 수정
+	void updateDelivery(DeliveryDTO deliveryDTO) throws Exception;
+	
+	// 배송지 삭제
+	void deleteDelivery(int deliveryNo) throws Exception;
 
 	// 찜 상태 확인(찜이 되있다면 1, 아니면 0)
 	int checkWishStatus(Map<String, Object> map)throws Exception;
