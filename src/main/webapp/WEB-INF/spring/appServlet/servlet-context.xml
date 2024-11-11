@@ -47,6 +47,7 @@
 			<mapping path="/member/viewLogin" />
 			<mapping path="/member/login" />
 			<mapping path="/member/kakao/signUp" /> <!-- 카카오 간편가입후 바로 로그인 -->
+			<mapping path="/member/naver/signUp" /> <!-- 네이버 간편가입후 바로 로그인 -->
 			<beans:ref bean="loginInterceptor" />
 		</interceptor>
 	</interceptors>
@@ -59,6 +60,9 @@
 			<mapping path="/member/myPage/modiPwd" />
 			<mapping path="/member/myPage/withdraw" />
 			<mapping path="/member/myPage/history" />
+			<mapping path="/member/wishList" />
+			
+			<mapping path="/order" />
 			
 			<mapping path="/serviceCenter/inquiries" />
 			<mapping path="/serviceCenter/writeInquiry" />

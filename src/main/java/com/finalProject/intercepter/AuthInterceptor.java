@@ -23,12 +23,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		if (ses.getAttribute("loginMember") == null) { // 로그인이 안된경우
 			System.out.println("로그인 안됨");
-			
 			if(uri.contains("/order")) { // 주문 요청인 경우
-	            System.out.println(request.getParameter("productInfos"));
-	            ses.setAttribute("productInfos", request.getParameter("productInfos"));
-	         }
-			
+				System.out.println(request.getParameter("productInfos"));
+				ses.setAttribute("productInfos", request.getParameter("productInfos"));
+			}
 			response.sendRedirect("/member/viewLogin"); // 로그인 페이지로 이동
 			result = false;
 		} else { // 로그인이 되어있는 경우
@@ -39,6 +37,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 				System.out.println("로그인 되있음");
 				System.out.println("원래 있던 페이지 : " + uri);
 				result = true;
+				if(uri.contains("/order")) { // 주문 요청인 경우
+					System.out.println(request.getParameter("productInfos"));
+					ses.setAttribute("productInfos", request.getParameter("productInfos"));
+				}
 				// 페이지에 대한 권한 인증 작업이 필요하면 밑에 추가
 			}
 		}

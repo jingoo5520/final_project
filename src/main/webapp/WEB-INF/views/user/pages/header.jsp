@@ -84,7 +84,7 @@
 
 							<div class="navbar-cart">
 								<div class="wishlist">
-									<a href="javascript:void(0)"> <i class="lni lni-heart"></i> <span class="total-items">0</span>
+									<a href="${pageContext.request.contextPath}/member/wishList"> <i class="lni lni-heart"></i> <span class="total-items">0</span>
 									</a>
 								</div>
 								<div class="cart-items">
