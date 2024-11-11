@@ -158,7 +158,9 @@ function addCart(productNo) {
 
 <body>
 
-<jsp:include page="../header.jsp"></jsp:include>
+<jsp:include page="../header.jsp">
+	<jsp:param name="categoryName" value="${products[0].category_name}" />
+</jsp:include>
 
     <!-- Preloader -->
     <div class="preloader">

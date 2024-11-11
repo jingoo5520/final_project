@@ -62,6 +62,7 @@
 			
 			<mapping path="/serviceCenter/inquiries" />
 			<mapping path="/serviceCenter/writeInquiry" />
+			<mapping path="/order" />
 			<beans:ref bean="authInterceptor" />
 		</interceptor>
 	</interceptors>
