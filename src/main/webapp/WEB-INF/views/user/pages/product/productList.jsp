@@ -115,7 +115,9 @@
 }
 </style>
 <body>
-	<jsp:include page="../header.jsp"></jsp:include>
+	<jsp:include page="../header.jsp">
+		<jsp:param name="categoryName" value="${products[0].category_name}" />
+	</jsp:include>
 	<!-- 찜목록 잘 받아오는지 확인 -->
 	<c:forEach var="item" items="${wishList}">
 		<div>${item}</div>

@@ -49,14 +49,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">Find Id</h1>
+						<h1 class="page-title">아이디 찾기</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i>
+						<li><a href="/"><i class="lni lni-home"></i>
 								Home</a></li>
-						<li>Find Id</li>
+						<li>아이디 찾기</li>
 					</ul>
 				</div>
 			</div>
@@ -72,7 +72,7 @@
 					<form class="card login-form" action="/member/login" method="post">
 						<div class="card-body">
 							<div class="title">
-								<p>회원가입때 입력한 이메일을 입력하세요.</p>
+								<p>회원가입 당시 입력했던 이메일을 입력해주세요.</p>
 							</div>
 							<div class="form-group input-group">
 								<label for="reg-fn">이메일</label> <input class="form-control"

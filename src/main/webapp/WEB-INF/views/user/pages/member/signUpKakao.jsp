@@ -83,14 +83,13 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">Registration</h1>
+						<h1 class="page-title">회원가입</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i>
-								Home</a></li>
-						<li>Registration</li>
+						<li><a href="/"><i class="lni lni-home"></i>Home</a></li>
+						<li>회원가입 (KAKAO)</li>
 					</ul>
 				</div>
 			</div>

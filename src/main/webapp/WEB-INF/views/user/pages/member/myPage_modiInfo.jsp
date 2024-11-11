@@ -31,14 +31,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">MyPage</h1>
+						<h1 class="page-title">내정보수정</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i>
-								Home</a></li>
-						<li><a href="javascript:void(0)">MyPage</a></li>
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li>내정보수정</li>
 					</ul>
 				</div>
 			</div>

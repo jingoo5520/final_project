@@ -202,7 +202,7 @@ function showDeliveryModal(message) {
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="../"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
 						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
 						<li><a href="/member/myPage/manageDelivery">배송지 관리</a></li>
 						<li>배송지 추가</li>
