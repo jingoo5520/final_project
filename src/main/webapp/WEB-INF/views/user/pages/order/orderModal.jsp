@@ -9,29 +9,29 @@
 <title>주문 모달창</title>
 <style type="text/css">
 
-	#cartModal .modal-dialog {
+	#orderModal .modal-dialog {
 		position: absolute;
 		left: 50%;
 		transform: translateX(-50%);
 		margin: 0;
 	}
 	
-	#cartModal .modal-content {
+	#orderModal .modal-content {
 		width: 300px;
 	}
 	
-	#cartModal .modal-content .modal-header{
+	#orderModal .modal-content .modal-header{
 		margin: 0;
 		height: 30px;
 		border: none !important;
 	}
 	
-	#cartModal .modal-content .modal-body {
+	#orderModal .modal-content .modal-body {
 		height: 100px;
 		border: none !important;
 	}
 	
-	#cartModal .modal-content .modal-body .modal-text {
+	#orderModal .modal-content .modal-body .modal-text {
 		height: 20px;
 		text-align: center;
 		font-weight: bold;
@@ -45,7 +45,7 @@
 </head>
 <body>
 	<!-- The Modal -->
-	<div class="modal fade" id="cartModal">
+	<div class="modal fade" id="orderModal">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 			

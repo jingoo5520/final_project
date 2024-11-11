@@ -52,6 +52,7 @@ h5 {
 						<li><h5>쇼핑 내역</h5></li>
 						<li><a href="/member/myPage/viewOrder" class="<%="viewOrder".equals(request.getParameter("pageName")) ? "active" : ""%>">주문/배송 조회</a></li>
 						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">취소/교환 내역</a></li>
+						<li><a href="/member/myPage/manageDelivery" class="<%="manageDelivery".equals(request.getParameter("pageName")) ? "active" : ""%>">배송지 관리</a></li>
 					</ul>
 					<hr>
 					<ul class="list">
@@ -68,9 +69,9 @@ h5 {
 					<hr>
 					<ul class="list">
 						<li><h5>회원 정보</h5></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">회원 정보 수정</a></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">비밀 번호 변경</a></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">회원 탈퇴</a></li>
+						<li><a href="${pageContext.request.contextPath}/member/myPage/modiInfo" class="<%="modiInfo".equals(request.getParameter("pageName")) ? "active" : ""%>">회원 정보 수정</a></li>
+						<li><a href="${pageContext.request.contextPath}/member/myPage/modiPwd" class="<%="modiPwd".equals(request.getParameter("pageName")) ? "active" : ""%>">비밀 번호 변경</a></li>
+						<li><a href="${pageContext.request.contextPath}/member/myPage/withdraw" class="<%="withdraw".equals(request.getParameter("pageName")) ? "active" : ""%>">회원 탈퇴</a></li>
 					</ul>
 				</div>
 				<!-- End Single Widget -->

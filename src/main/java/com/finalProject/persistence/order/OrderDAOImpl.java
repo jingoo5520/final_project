@@ -7,16 +7,21 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.LoginDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductCancelRequestDTO;
+import com.finalProject.model.order.ProductDiscountCalculatedDTO;
+import com.finalProject.model.order.ProductDiscountDTO;
 
 @Repository
 public class OrderDAOImpl implements OrderDAO {
@@ -80,6 +85,8 @@ public class OrderDAOImpl implements OrderDAO {
 			// 기본값으로 "non_member"가 지정되어 있는데 이걸 UUID로 바꿔준다.
 			request.setOrdererId(UUID.randomUUID().toString()); 
 		}
+		
+		// order 정보 작성
 		String orderId = UUID.randomUUID().toString();
 		Map<String, Object> params = new HashMap<>();
 		params.put("request", request);
@@ -89,10 +96,10 @@ public class OrderDAOImpl implements OrderDAO {
 			throw new DataAccessException("주문 정보 생성 실패") {};
 			// return null;
 		};
-		// order_products에 insert
 		
 		// params 초기화
 		params = new HashMap<>();
+		// orderProduct 정보 작성
 		List<Object> productInfoList = new ArrayList<>();
 		for (OrderRequestDTO product : request.getProductsInfo()) {
 			Map<String, Object> productParams = new HashMap<>();
@@ -101,7 +108,6 @@ public class OrderDAOImpl implements OrderDAO {
 			productInfoList.add(productParams);
 		}
 		System.out.println("productInfoList : " + productInfoList);
-		// working...
 		params.put("productInfoList", productInfoList);
 		params.put("orderId", orderId);
 		int insertedRowNum = ses.insert(ns + "insertOrderProduct", params);
@@ -112,6 +118,24 @@ public class OrderDAOImpl implements OrderDAO {
 			// return null;
 		}
 		return ses.selectOne(ns + "selectUncompletedOrderId", request.getOrdererId());
+	}
+	
+	@Override
+	public List<ProductDiscountDTO> getDiscountInfoByProduct(String orderId, HttpSession session) {
+		boolean isMember = false;
+		String memberId = "";
+		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
+		if (loginDTO == null) {
+			isMember = false;
+		} else {
+			isMember = true;
+			memberId = loginDTO.getMember_id();
+		}
+		Map<String, Object> params = new HashMap<>();
+		params.put("orderId", orderId);
+		params.put("isMember", isMember);
+		params.put("memberId", memberId);
+		return ses.selectList(ns + "selectDiscountInfoByProduct", params);
 	}
 	
 	@Transactional(rollbackFor={Exception.class})
@@ -144,12 +168,23 @@ public class OrderDAOImpl implements OrderDAO {
 		return ses.selectOne(ns + "selectExpectedTotalPrice", orderId);
 	}
 	
+	// amount에 배달료를 더해서 예상총결제금액을 업데이트한다.
 	@Override
-	public int updateExpectedTotalPrice(String orderId, int amount) {
+	public int updateExpectedTotalPriceWithDeliveryCost(String orderId, int amount) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderId", orderId);
 		params.put("amount", amount);
-		return ses.update(ns + "updateExpectedTotalPrice", params);
+		return ses.update(ns + "updateExpectedTotalPriceWithDeliveryCost", params);
+	}
+	
+	@Override
+	public int updateRefundPriceByProduct(List<ProductDiscountCalculatedDTO> productDiscountCalculated) {
+		int updatedRow = 0;
+		for (ProductDiscountCalculatedDTO p : productDiscountCalculated) {
+			ses.update(ns + "updateRefundPriceByProduct", p);
+			updatedRow++;
+		}
+		return updatedRow;
 	}
 	
 	@Override
@@ -207,11 +242,12 @@ public class OrderDAOImpl implements OrderDAO {
 		params.put("orderId", orderId);
 		params.put("amount", amount);
 		params.put("moduleName", payModule);
-		if (method.equals("가상계좌")) {
-			params.put("status", "A");
-		} else { // 카카오페이, 네이버페이 포함
+		if (method.equals("VIRTUAL_ACCOUNT")) {
+			params.put("status", "A"); // 토스 - 가상계좌
+		} else {
 			params.put("status", "S");
 		}
+		
 		// NOTE : 결제 테이블의 deposit_name, deposit_bank, deposit_account는 추후에 환불받을 때 입금해야 하는 계좌이다.
 		// 회원이 환불 신청할 때 작성하는 폼에서 받아와야 함
 		params.put("deposit_name", null);
@@ -228,10 +264,11 @@ public class OrderDAOImpl implements OrderDAO {
 	public void updateOrderStatus(String payMethod, String orderId) throws Exception {
 		Map<String, Object> params = new HashMap<>();
 		params.put("orderId", orderId);
-		if (payMethod.equals("가상계좌")) {
-			params.put("status", 1); // 결제대기
+		
+		if (payMethod.equals("VIRTUAL_ACCOUNT")) {
+			params.put("status", "1"); // 토스 - 가상계좌
 		} else {
-			params.put("status", 2); // 결제완료
+			params.put("status", "2");
 		}
 		ses.update(ns + "updateOrderStatus", params);
 	}
@@ -252,10 +289,10 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public int makeCancel(String orderId, List<Integer> productNoList, String cancelType, String cancelReason) {
+	public int makeCancel(String orderId, List<ProductCancelRequestDTO> productRequestList, String cancelType, String cancelReason) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("orderId", orderId);
-		params.put("productNoList", productNoList);
+		params.put("productRequestList", productRequestList);
 		params.put("cancelType", cancelType);
 		params.put("cancelReason", cancelReason);
 		return ses.insert(ns + "insertCancel", params);
@@ -270,4 +307,6 @@ public class OrderDAOImpl implements OrderDAO {
 		params.put("depoistAccount", depoistAccount);
 		ses.update(ns + "updateAccountInfo", params);
 	}
+
+
 }

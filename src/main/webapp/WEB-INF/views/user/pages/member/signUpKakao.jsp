@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원가입</title>
+<title>카카오 간편가입</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link
@@ -111,18 +111,21 @@
 						<form class="row" action="/member/kakao/signUp" method="post">
 							<div class="col-sm-12">
 								<div class="form-group">
-									<label for="reg-id">아이디</label> <input class="form-control"
-										type="text" name="member_id" id="member_id" value="${userInfo.email}" readonly >
+									<label for="reg-id">*아이디</label> <input class="form-control"
+										type="text" name="member_id" id="member_id"><span
+										id="idStatus"></span> <input type="hidden" value="">
 								</div>
 							</div>
 							<!-- 카카오 api로 받아온 유저 정보 -->
 							<input type="hidden" name="email" value="${userInfo.email }">
-							<input type="hidden" name="nickname" value="${userInfo.nickname }">
-							<input type="hidden" name="birthday" value="${userInfo.birthday }">
-							<input type="hidden" name="gender" value="${userInfo.gender }">
+							<input type="hidden" name="nickname"
+								value="${userInfo.nickname }"> <input type="hidden"
+								name="birthday" value="${userInfo.birthday }"> <input
+								type="hidden" name="gender" value="${userInfo.gender }">
 							<input type="hidden" name="address" value="${userInfo.address }">
 							<input type="hidden" name="zipCode" value="${userInfo.zipCode }">
-							<input type="hidden" name="address2" value="${userInfo.address2 }">
+							<input type="hidden" name="address2"
+								value="${userInfo.address2 }">
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-pw">*비밀번호</label> <input class="form-control"
@@ -192,11 +195,28 @@
 	<script src="/resources/assets/user/js/main.js"></script>
 </body>
 <script type="text/javascript">
+var idExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{6,15}$/; // 아이디 정규식(영문자, 숫자를 포함한 6자 이상 15자 이하)
 	var phoneExp = /010(-\d{4}-\d{4}|\d{8})$/; // 휴대폰 번호 정규식 (010-1234-5678), 01012345678 형식만 허용
 	var pwdExp = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/; // 비밀번호 정규식(영문자, 숫자를 포함한 8자이상 20자 이하)
 	var nameExp = /^[가-힣]{2,8}$/; // 이름 정규식(한글만 가능 2글자 이상 8자 이하)
 
 	$(function() {
+		
+		// 아이디 입력중
+		$("#member_id").keyup(function() {
+	        let tmp = $("#member_id").val();
+	        if (isCheck("member_id", tmp, idExp, "영문자, 숫자를 포함한 6자 이상 15자 이하", "red")) {
+	            dbCheck("id", tmp).then(isAvailable => {
+	                if (isAvailable) {
+	                    isMsg("member_id", "사용가능한 ID 입니다.", "blue", true);
+	                } else {
+	                    isMsg("member_id", "이미 사용중인 ID 입니다.", "red", false);
+	                }
+	            }).catch(error => {
+	                isMsg("member_id", error, "red");
+	            });
+	        }
+	    });
 		
 		// 휴대폰번호 입력중
 		$("#phone_number").keyup(function() {
