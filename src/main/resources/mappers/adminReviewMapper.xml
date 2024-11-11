@@ -21,6 +21,8 @@
 			AND m.member_name LIKE CONCAT('%', #{member_name}, '%')
 		</if>
 		
+		and r.review_type = 'review'
+		
 		<![CDATA[
 		and r.register_date >= #{regDate_start}
 		and r.register_date <= #{regDate_end}

@@ -115,7 +115,7 @@
 						listOutput += `<tr onclick="location.href='/admin/review/adminReviewDetail?reviewNo=\${review.review_no}'">` 
 								+ '<td>' + review.review_no + '</td>'
 								+ '<td>' + review.product_no + '</td>' 
-								+ '<td>' + review.member_id + '</td>' 
+								+ `<td>\${review.member_id}(\${review.member_name})</td>` 
 								+ '<td>' + review.review_title + '</td>'
 								+ '<td>' + regDate + '</td>'
 								+ '<td>' + hasReply + '</td>'
