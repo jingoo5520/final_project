@@ -149,16 +149,20 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional(rollbackFor = { Exception.class })
 	public void saveDelivery(DeliveryVO deliveryVO) throws Exception {
-
-		// 기본배송지 데이터 조회
-		Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryVO.getMemberId());
-
-		if (mainDeliveryNo != null) {
-			// 기존의 기본배송지를 일반배송지로 변경
-			memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
+		
+			
+		if (deliveryVO.getIsMain().equals("M")) {
+			// 기본 배송지로 저장할 때
+			// 기본배송지 데이터 조회
+			Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryVO.getMemberId());
+			
+			if (mainDeliveryNo != null) {
+				// 기존의 기본배송지를 일반배송지로 변경
+				memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
+			}
 		}
-
-		// 기본배송지로 저장
+		
+		// 배송지 저장
 		memberDAO.insertDelivery(deliveryVO);
 
 	}
@@ -181,14 +185,34 @@ public class MemberServiceImpl implements MemberService {
 		for (UseCouponDTO coupon : couponList) {
 			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
 			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
-
-			if (coupon.getMember().equals("All")) {
-				coupon.setCoupon_name("[회원 전체 지급]" + coupon.getCoupon_name());
-			} else {
-				coupon.setCoupon_name("[특별 회원 지급]" + coupon.getCoupon_name());
-			}
 		}
 		return couponList;
+	}
+
+	// 배송지 수정
+	@Override
+	@Transactional(rollbackFor={Exception.class})
+	public void modifyDelivery(DeliveryDTO deliveryDTO) throws Exception {
+		if (deliveryDTO.getIs_main().equals("M")) {
+			// 기본 배송지로 저장할 때
+			// 기본배송지 데이터 조회
+			Integer mainDeliveryNo = memberDAO.selectMainDeliveryNo(deliveryDTO.getMember_id());
+			
+			if (mainDeliveryNo != null) {
+				// 기존의 기본배송지를 일반배송지로 변경
+				memberDAO.updateDeliveryMainToSub(mainDeliveryNo);
+			}
+		}
+		
+		// 배송지 저장
+		memberDAO.updateDelivery(deliveryDTO);
+		
+	}
+	
+	// 배송지 삭제
+	@Override
+	public void deleteDelivery(int deliveryNo) throws Exception {
+		memberDAO.deleteDelivery(deliveryNo);
 	}
 
 }

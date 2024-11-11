@@ -240,5 +240,17 @@ public class MemberDAOImpl implements MemberDAO {
 	public List<UseCouponDTO> selectCouponList(Map<String, String> param) throws Exception {
 		return ses.selectList(ns + "selectCouponList", param);
 	}
-
+	
+	// 배송지 수정
+	@Override
+	public void updateDelivery(DeliveryDTO deliveryDTO) throws Exception {
+		ses.update(ns + "updateDeliveryInfo", deliveryDTO);
+	}
+	
+	// 배송지 삭제
+	@Override
+	public void deleteDelivery(int deliveryNo) throws Exception {
+		ses.delete(ns + "deleteDeliveryInfo", deliveryNo);
+	}
+	
 }

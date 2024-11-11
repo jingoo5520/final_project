@@ -19,7 +19,7 @@ import lombok.ToString;
 @Builder
 public class CancelOrderRequestDTO {
 	private String orderId;
-	private List<Integer> products; //orderproduct_no들의 list
+	private List<ProductCancelRequestDTO> products; // orderproductNo, request("환불신청" or "환불취소")가 담겨있음
 	private String cancelReason;
 	private String cancelType;
 	private String accountOwner;
