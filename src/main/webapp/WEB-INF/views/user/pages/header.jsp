@@ -116,14 +116,14 @@
 							</button>
 							<div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
 								<ul id="nav" class="navbar-nav ms-auto">
-									<li class="nav-item"><a href="/product/jewelry?category=195" class="<%="earring".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">earring</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=196" class="<%="nacklace".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">nacklace</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=195" class="<%="earring".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">earring</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=203" class="<%="piercing".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">piercing</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=197" class="<%="bangle".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">bangle</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=201" class="<%="anklet".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">anklet</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=198" class="<%="ring".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">ring</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=200" class="<%="coupling".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">coupling</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=201" class="<%="anklet".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">anklet</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=202" class="<%="pendant".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">pendant</a></li>
-									<li class="nav-item"><a href="/product/jewelry?category=203" class="<%="piercing".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">piercing</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=204" class="<%="etc".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">etc</a></li>
 								</ul>
 							</div>

@@ -138,6 +138,7 @@ public class CartController {
 									.product_count(quantityOfCookie)
 									.product_dc_type(cookieCartDTO.getProduct_dc_type())
 									.dc_rate(cookieCartDTO.getDc_rate())
+									.category_name(cookieCartDTO.getCategory_name())
 									.build();
 							
 							cookieCartList.add(cookieCartVO);

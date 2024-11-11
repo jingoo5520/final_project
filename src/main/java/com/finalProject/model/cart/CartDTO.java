@@ -24,4 +24,5 @@ public class CartDTO {
 	private String image_url;
 	private String product_dc_type;
 	private float dc_rate;
+	private String category_name;
 }

@@ -587,7 +587,7 @@ input[type="checkbox"]:hover {
 													${item.product_name }</a>
 											</h5>
 											<p class="product-des">
-												<span><em>Type:</em> Mirrorless</span>
+												<span>${item.category_name }</span>
 											</p>
 										</div>
 										<div class="count-input-div col-lg-2 col-md-2 col-12">
@@ -663,7 +663,7 @@ input[type="checkbox"]:hover {
 													${item.product_name }</a>
 											</h5>
 											<p class="product-des">
-												<span><em>Type:</em> Mirrorless</span>
+												<span>${item.category_name }</span>
 											</p>
 										</div>
 										<div class="count-input-div col-lg-2 col-md-1 col-12">

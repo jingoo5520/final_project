@@ -113,6 +113,16 @@
 	text-overflow: ellipsis; /* 글자가 넘치는 경우 ... 표시 */
 	white-space: normal;
 }
+.stars {
+	display: flex;
+	justify-content: right;
+	align-items: center;
+}
+
+.stars i {
+	color: #ffa000;
+}
+
 </style>
 <body>
 	<jsp:include page="../header.jsp">
@@ -311,8 +321,24 @@
 
 												<div class="product-info">
 													<!-- Category 출력 부분 -->
-
-													<span class="category"> ${product.category_name } </span>
+													<div class="row scoreDiv">
+														<span class="category col-md-6 col-lg-6 col-12"> ${product.category_name } </span>
+						                                <c:if test="${not empty product.average_score and product.average_score != 0.0}">
+															<div class="starScore col-md-6 col-lg-6 col-12">
+																<ul class="stars">
+																	<c:forEach var="index" begin="1" end="5">
+																		<c:if test="${index <= product.average_score }">
+											                                <li><i class="lni lni-star-filled"></i></li>
+											                            </c:if>
+											                            <c:if test="${index > product.average_score }">
+											                            	<li><i class="lni lni-star"></i></li>
+											                            </c:if>
+									                                </c:forEach>
+								                                	<li><i>${product.average_score }</i></li>
+									                            </ul>
+															</div>
+						                                </c:if>
+													</div>
 
 													<h4 class="title">
 														<a
@@ -346,8 +372,7 @@
 																pattern="#,###" /> 원
 														</span>
 													</div>
-
-
+														
 												</div>
 											</div>
 											<!-- End Single Product -->
