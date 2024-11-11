@@ -76,18 +76,15 @@
 							</div>
 							<div class="social-login">
 								<div class="row">
-									<div class="col-lg-4 col-md-4 col-12">
+									<div class="col-lg-6 col-md-4 col-12">
 										<a
 											href="${pageContext.request.contextPath}/member/kakao/login"><img
 											src="/resources/images/kakao_login_medium.png"></a>
 									</div>
-									<div class="col-lg-4 col-md-4 col-12">
-										<a class="btn twitter-btn" href="javascript:void(0)"><i
-											class="lni lni-twitter-original"></i> 미구현</a>
-									</div>
-									<div class="col-lg-4 col-md-4 col-12">
-										<a class="btn google-btn" href="javascript:void(0)"><i
-											class="lni lni-google"></i> 미구현</a>
+									<div class="col-lg-6 col-md-4 col-12">
+										<a
+											href="${pageContext.request.contextPath}/member/naver/login"><img
+											src="/resources/images/btnG_완성형.png"></a>
 									</div>
 								</div>
 							</div>

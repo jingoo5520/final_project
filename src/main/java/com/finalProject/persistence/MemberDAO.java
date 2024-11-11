@@ -85,6 +85,12 @@ public interface MemberDAO {
 
 	// 이메일로 회원 조회(카카오 로그인)
 	LoginDTO selectMemberByEmail(MemberDTO userInfo)throws Exception;
+
+	// naver_id로 회원 조회(네이버 로그인)
+	LoginDTO selectMemberByNaverId(String naver_id)throws Exception;
+
+	// 네이버 간편가입
+	int signUpNaver(MemberDTO memberDTO)throws Exception;
 	
 
 

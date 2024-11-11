@@ -206,5 +206,21 @@
 		p.expire_date
 		and u.coupon_code is null
 	</select>
+	
+	<!-- naver_id로 회원 조회(네이버 로그인) -->
+	<select id="selectMemberByNaverId" resultType="LoginDTO">
+		select * from
+		members where naver_id = #{naver_id} and member_status = 'active'
+	</select>
+	
+	<!-- 네이버 회원가입 -->
+	<insert id="signUpMemberByNaver">
+		insert into members(member_id, member_name,
+		member_pwd, phone_number, birthday, gender, email, address, nickname, naver_id)
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256),
+		#{phone_number},
+		#{birthday}, #{gender}, #{email}, #{address},
+		#{nickname}, #{naver_id})
+	</insert>
 
 </mapper>

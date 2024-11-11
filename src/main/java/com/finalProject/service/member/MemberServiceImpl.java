@@ -191,4 +191,16 @@ public class MemberServiceImpl implements MemberService {
 		return couponList;
 	}
 
+	// naver_id로 회원 조회(네이버 로그인)
+	@Override
+	public LoginDTO selectMemberByNaverId(String naver_id) throws Exception {
+		
+		return memberDAO.selectMemberByNaverId(naver_id);
+	}
+
+	@Override
+	public int signUpNaver(MemberDTO memberDTO) throws Exception {
+		return memberDAO.signUpNaver(memberDTO);
+	}
+
 }
