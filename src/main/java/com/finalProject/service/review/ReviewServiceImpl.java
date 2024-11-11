@@ -139,5 +139,79 @@ public class ReviewServiceImpl implements ReviewService {
 	public List<String> getReviewImages(int reviewNo) throws Exception {
 		return RDao.selectReviewImage(reviewNo);
 	}
-	
+
+	// 관리자 답글 리뷰 수정 불가
+	@Override
+	public boolean hasAdminReply(int reviewNo) throws Exception {
+		return RDao.checkAdminReply(reviewNo);
+	}
+
+	@Override
+	@Transactional
+	public void modifyReview(int reviewNo, String reviewTitle, String reviewContent, int reviewScore,
+	                         MultipartFile[] files, List<String> existFiles, List<String> removedFiles, HttpServletRequest request) throws Exception {
+	    
+	    // 리뷰 데이터 수정
+	    ReviewDTO reviewDTO = new ReviewDTO();
+	    reviewDTO.setReview_no(reviewNo);
+	    reviewDTO.setReview_title(reviewTitle);
+	    reviewDTO.setReview_content(reviewContent);
+	    reviewDTO.setReview_score(reviewScore);
+
+	    // 데이터베이스에서 리뷰 업데이트
+	    RDao.updateReview(reviewDTO);
+
+	    // 서버 실제 파일 저장 경로 설정
+	    String url = "/resources/reviewImg";
+	    String realPath = request.getSession().getServletContext().getRealPath(url);
+
+	    // 1. 삭제할 파일 처리
+	    if (removedFiles != null && !removedFiles.isEmpty()) {
+	        for (String imageUrl : removedFiles) {
+	            // 데이터베이스에서 파일 삭제
+	            RDao.deleteReviewImage(imageUrl);
+
+	            // 실제 서버 파일 삭제
+	            String fullPath = request.getSession().getServletContext().getRealPath(imageUrl);
+	            File file = new File(fullPath);
+	            if (file.exists()) {
+	                file.delete();
+	            }
+	        }
+	    }
+
+	    // 2. 새 파일 저장 처리
+	    if (files != null && files.length > 0) {
+	        for (MultipartFile file : files) {
+	            if (!file.isEmpty()) {
+	                try {
+	                    // 고유 파일명 생성
+	                    String fileName = "Review" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+	                    String filePath = realPath + File.separator + fileName;
+
+	                    // 파일 서버에 저장
+	                    File destinationFile = new File(filePath);
+	                    file.transferTo(destinationFile);
+
+	                    // 이미지 정보 DTO에 저장 및 데이터베이스에 삽입
+	                    ReviewDTO reviewImageDTO = new ReviewDTO();
+	                    reviewImageDTO.setReview_no(reviewNo);
+	                    
+	                    // 상대 경로 설정
+	                    String relativePath = "/resources" + filePath.split("resources")[1].replace("\\", "/");
+	                    reviewImageDTO.setImage_url(relativePath);
+
+	                    // 데이터베이스에 이미지 정보 저장
+	                    RDao.modifyinsertReviewImage(reviewImageDTO);
+	                } catch (IOException e) {
+	                    throw new RuntimeException("파일 저장 중 오류 발생", e);
+	                }
+	            }
+	        }
+	    }
+	}
+
 }
+
+	
+

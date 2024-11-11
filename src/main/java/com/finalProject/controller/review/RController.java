@@ -1,6 +1,7 @@
 package com.finalProject.controller.review;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.review.ReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
@@ -185,30 +188,64 @@ public class RController {
         	return "redirect:/member/viewLogin"; // 로그인 정보가 없을 경우 로그인 페이지로 리다이렉트
         }
         
-        
-        
     	if (loginMember != null) {
-    		
-
     		model.addAttribute("reviewImages", reviewImages); // 이미지 리스트를 JSP로 전달
     		model.addAttribute("reviews", reviewDetail);
     	}
     	return "/user/pages/review/reviewDetail";
     }
     
-    @PostMapping("/modifyReview")
-    public ResponseEntity<String> modifyReview(HttpServletRequest request, ReviewDTO reviewDTO) {
-    	
+
+	@GetMapping("/modifyReview")
+	public String modifyReviewPage(@RequestParam(value = "reviewNo") int reviewNo, Model model, HttpServletRequest request) throws Exception {
+		
         HttpSession session = request.getSession();
         LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
         
-        // 로그인 정보 확인
-        if (loginMember != null) {
-        	
-        }
+        // 리뷰 기본정보 가져오기
+        List<ReviewDetailDTO> reviewDetail = service.getReviewDetail(reviewNo);
         
-//        return "/user/pages/review/reviewDetail";
-        return null;
+        // 리뷰 이미지 리스트 가져오기
+		List<String> reviewImages = service.getReviewImages(reviewNo);
+		
+    	if (loginMember != null) {
+    		model.addAttribute("reviewImages", reviewImages);
+    		model.addAttribute("reviews", reviewDetail); // 이미지 리스트를 JSP로 전달
+    	}
+
+		return "/user/pages/review/modifyReview";
+	}
+    
+    
+    @PostMapping("/modifyReview")
+    public ResponseEntity<String> modifyReview(
+    		@RequestParam("reviewNo") int reviewNo,@RequestParam("reviewTitle") String reviewTitle,
+            @RequestParam("reviewContent") String reviewContent,@RequestParam("reviewScore") int reviewScore,
+            @RequestParam(value = "files", required = false) MultipartFile[] files,@RequestParam(value = "existFiles", required = false) List<String> existFiles,
+            @RequestParam(value = "removedFiles", required = false) List<String> removedFiles, HttpServletRequest request) throws Exception {
+    	
+        HttpSession session = request.getSession();
+        LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+
+        // 로그인 여부 및 권한 확인
+        if (loginMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 후 이용해주세요.");
+        }
+
+        // 수정 불가 조건 확인
+        if (service.hasAdminReply(reviewNo)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("관리자 답글이 있는 리뷰는 수정할 수 없습니다.");
+        }
+
+
+        try {
+            // 서비스에 데이터 전달
+        	service.modifyReview(reviewNo, reviewTitle, reviewContent, reviewScore, files, existFiles, removedFiles, request);
+            return ResponseEntity.ok("수정 성공");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
+        }
     }
 	
 	

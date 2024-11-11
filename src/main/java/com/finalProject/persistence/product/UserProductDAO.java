@@ -2,29 +2,41 @@ package com.finalProject.persistence.product;
 
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
 
 public interface UserProductDAO {
     
-    // »óÇ° Ãâ·Â
-    List<ProductDTO> selectProductsByPage(int offset, int pageSize) throws Exception;
+	// ì œí’ˆ ëª©ë¡
+	List<ProductDTO> selectProductsByPage(int offset, int pageSize) throws Exception;
 
-    // ÆäÀÌÁö³×ÀÌ¼Ç
-    int selectProductCount() throws Exception;
+	// ì „ì²´ ì œí’ˆ ìˆ˜ ì¡°íšŒ
+	int selectProductCount() throws Exception;
 
-    // Ä«Å×°í¸® ¹øÈ£¿¡ µû¸¥ »óÇ° ¼ö Á¶È¸
-    int selectProductCountByCategory(Map<String, Object> params) throws Exception;
-    
-    // Ä«Å×°í¸® ¹øÈ£¿Í ÆäÀÌÁö¿¡ µû¸¥ »óÇ° Á¶È¸
-    List<ProductDTO> selectProductsByCategoryAndPage(Map<String, Object> params) throws Exception;
+	// ì¹´í…Œê³ ë¦¬ë³„ ì œí’ˆ ìˆ˜ ì¡°íšŒ
+	int selectProductCountByCategory(Map<String, Object> params) throws Exception;
 
-    List<ProductDTO> getProductById(int productId) throws Exception;
+	// ì¹´í…Œê³ ë¦¬ë³„ í˜ì´ì§€ë³„ ì œí’ˆ ì¡°íšŒ
+	List<ProductDTO> selectProductsByCategoryAndPage(Map<String, Object> params) throws Exception;
 
-    ProductDTO getProductDetailById(int productId) throws Exception;
+	// ì œí’ˆ IDë¡œ ì œí’ˆ ì¡°íšŒ
+	List<ProductDTO> getProductById(int productId) throws Exception;
 
-    // ÃÑ °Ô½Ã¹° ¼ö Á¶È¸
-    int countSearchResult(String search, Integer category) throws Exception;
+	// ì œí’ˆ ìƒì„¸ ì •ë³´ ì¡°íšŒ
+	ProductDTO getProductDetailById(int productId) throws Exception;
 
-    // °Ë»öµÈ »óÇ° Á¶È¸
-    List<ProductDTO> searchProducts(String search, Integer category, int startRowIndex, int pageSize, String sortOrder);
+	// ê²€ìƒ‰ì–´ì™€ ì¹´í…Œê³ ë¦¬ì— ë§ëŠ” ê²Œì‹œë¬¼ ìˆ˜ ì¡°íšŒ
+	int countSearchResult(String search, Integer category) throws Exception;
+
+	// ê²€ìƒ‰ëœ ì œí’ˆ ëª©ë¡ ì¡°íšŒ
+	List<ProductDTO> searchProducts(String search, Integer category, int startRowIndex, int pageSize, String sortOrder) throws Exception;
+
+	// ë¦¬ë·° ì¡°íšŒ
+	List<ReviewDetailDTO> selectReview(@Param("product_no") int productNo) throws Exception;
+
+	// ë¦¬ë·° ì´ë¯¸ì§€ ì¡°íšŒ
+	List<String> selectReviewImg(@Param("product_no") int productNo) throws Exception;
 }

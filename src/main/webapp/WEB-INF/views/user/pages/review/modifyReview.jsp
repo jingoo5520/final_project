@@ -22,149 +22,126 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         let fileList = [];
+        let existFileList = [];
+        
+		$("#fileInput").on("change", function(){
+			// 이미지 파일만 업로드 가능
+			const imageTypes = ["image/jpeg", "image/png"];
+			
+			// 중복 이름 거르기
+			$.each(this.files, function(index, file){
+				if (!imageTypes.includes(file.type)) {
+		            console.log("이미지 파일이 아닙니다", file.name);
+		            console.log(file.type);
+		            return; 
+		        }
+				
+				let inFileList = fileList.some(function(f){
+					return f.name === file.name; 
+				}); 
+				
+				let inExistFileList = existFileList.some(function(f){
+					return f.image_url === file.name; 
+				});
+					
+				if(!inFileList && !inExistFileList) {
+					fileList.push(file);
+				}
+			});
+			console.log(fileList);
+			console.log(existFileList);
+			showFiles();
+		});
+		
+		// 첨부파일 제거
+		$(document).on("click", ".remove-item", function(){
+			let parentLi = $(this).parent();
+			
+			for(let i = 0; i < existFileList.length; i++){
+				if(existFileList[i].image_url == parentLi.text().trim()){
+					console.log(existFileList[i].image_url + "삭제완료");		
+					existFileList.splice(i, 1);
+					parentLi.remove();
+					break;
+				}
+			}
+			
+			for(let i = 0; i < fileList.length; i++){
+				if(fileList[i].name == parentLi.text().trim()){
+					console.log(fileList[i] + "삭제완료");		
+					fileList.splice(i, 1);
+					parentLi.remove();
+					break;
+				}
+			}
+			
+			console.log(fileList);
+			console.log(existFileList);
+			showFiles();
+		})
+		
+	// 첨부파일 리스트 보여주기
+	function showFiles(){
+		let listOutput = '';
+		
+		existFileList.forEach(function(file){
+			listOutput += `<li>\${file.image_url} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;	
+		});
+		
+		fileList.forEach(function(file){
+			listOutput += `<li>\${file.name} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;
+		});
+			
+		$(".fileList").html(listOutput);
+	}
 
-        $(function() {
-            $('#reviewTitle').on('input', function() {
-                checkFormCompletion();
-            });
+	// 수정 완료
+	function modifyReview(){
+		let reviewNo = "${param.reviewNo}";
+		let reviewTitle = $("#reviewTitle").val();
+		let reviewContent = $("#reviewContent").val();
+		let reviewScore = $("#reviewScore").val();
+		let formData = new FormData();
+		
+		console.log(reviewNo + reviewTitle + reviewContent + reviewScore);
+		formData.append('reviewNo', Number(reviewNo));
+		formData.append('reviewTitle', reviewTitle);
+		formData.append('reviewContent', reviewContent);
+		formData.append('reviewScore', reviewScore);
+		
+		
+		for (let i = 0; i < fileList.length; i++) {
+	        formData.append('files', fileList[i]);
+	    }
+		
+		for (let i = 0; i < existFileList.length; i++) {
+	        formData.append('existFiles', existFileList[i].image_url);
+	    }
+		
+		for(const x of formData) {
+			console.log(x);
+		};
+		
+		$.ajax({
+			url : '/review/modifyReview',
+			type : 'POST',
+			dataType: 'text',
+			processData: false,
+	        contentType: false, 
+			data : formData,
+			success : function(data) {
+				console.log(data);
+				location.href = "/review/reviewDetail?reviewNo=${param.reviewNo}";
+			},
+			error : function(error) {
+				alert("관리자가 답글을 단 게시글이거나 입력조건을 충족하지 못했을때 수정이 안됩니다.");
+				
+				console.log(error);
 
-            $('#reviewContent').on('input', function() {
-                checkFormCompletion();
-            });
-
-            $("#fileInput").on("change", function() {
-
-                $.each(this.files, function(index, file) {
-                    // 중복 파일 거르기
-                    if (!fileList.some(function(f) {
-                            return f.name === file.name
-                        })) {
-                        fileList.push(file);
-                        console.log(fileList);
-                    }
-                });
-
-                showFiles();
-            });
-
-            // 첨부파일 제거
-            $(document).on("click", ".remove-item", function() {
-                let parentLi = $(this).parent();
-
-                for (let i = 0; i < fileList.length; i++) {
-                    if (fileList[i].name == parentLi.text().trim()) {
-                        console.log(fileList[i] + "삭제완료");
-                        fileList.splice(i, 1);
-                        parentLi.remove();
-                        break;
-                    }
-                }
-
-                console.log(fileList);
-                showFiles();
-            })
-
-        });
-
-        // 첨부파일 리스트 보여주기
-        function showFiles() {
-            let listOutput = '';
-
-            fileList.forEach(function(file) {
-                listOutput += `<li>\${file.name} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;
-            });
-
-            $(".fileList").html(listOutput);
-        }
-
-        // 리뷰 저장
-        function saveReview() {
-            let reviewTitle = $("#reviewTitle").val();
-            let reviewContent = $("#reviewContent").val();
-            let reviewScore = $("#reviewScore").val();
-            let product_no = $("#product_no").val();
-
-            let formData = new FormData();
-
-
-            formData.append('review_title', reviewTitle);
-            formData.append('review_content', reviewContent);
-            formData.append('review_score', reviewScore);
-            formData.append('product_no', product_no);
-
-            for (let i = 0; i < fileList.length; i++) {
-                formData.append('files', fileList[i]);
-            }
-
-            // 별점 선택 여부 확인
-            if (reviewScore == 0) {
-                const proceed = confirm("별점 선택을 안 하셨습니다. 작성 완료 하시겠습니까?");
-                if (!proceed) {
-                    alert("별점을 선택해주세요."); // 별점 선택을 요청하는 메시지
-                    return; // 함수 종료, 작성 완료로 진행하지 않음
-                }
-            }
-
-            $.ajax({
-                url: '/review/writeReview',
-                type: 'POST',
-                dataType: 'text',
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(data) {
-                    console.log(data);
-                    location.href = "/review/writtenByReview";
-                },
-                error: function(error) {
-                    console.log("다메다메");
-                    console.log(error);
-                }
-            });
-        }
-
-        // 모든 폼에 입력값이 있는지 체크
-        function checkFormCompletion() {
-            let reviewTitleCheck = reviewTitleValid();
-            let reviewContentCheck = reviewContentValid();
-            let reviewScoreCheck = reviewScoreValid();
-
-            if (reviewTitleCheck && reviewContentCheck && reviewScoreCheck) {
-                $("#saveReviewBtn").prop('disabled', false);
-            } else {
-                $("#saveReviewBtn").prop('disabled', true);
-            }
-        }
-
-        // 리뷰 제목 검사
-        function reviewTitleValid() {
-            let valid = false;
-
-            if ($('#reviewTitle').val().length > 0) {
-                valid = true;
-            }
-            return valid;
-        }
-
-        // 리뷰 내용 검사
-        function reviewContentValid() {
-            let valid = false;
-
-            if ($('#reviewContent').val().length > 0) {
-                valid = true;
-            }
-            return valid;
-        }
-
-        // 리뷰 점수 유효성 검사
-        function reviewScoreValid() {
-            let valid = false;
-
-            if ($('#reviewScore').val().length > 0) {
-                valid = true;
-            }
-            return valid;
-        }
+			}
+		
+		})
+	}
 
 
         $(document).ready(function() {
@@ -263,6 +240,7 @@
 
     <jsp:include page="/WEB-INF/views/user/pages/header.jsp"></jsp:include>
 
+
     <!-- Start Breadcrumbs -->
     <div class="breadcrumbs">
         <div class="container">
@@ -329,7 +307,7 @@
                                         <div class="single-form form-default">
                                             <label>리뷰 제목</label>
                                             <div class="form-input form">
-                                                <input id="reviewTitle" name="review_title" type="text" placeholder="리뷰 제목을 입력하세요." value="${review.review_title}" readonly>
+                                                <input id="reviewTitle" name="review_title" type="text" placeholder="리뷰 제목을 입력하세요." value="${review.review_title}" >
                                             </div>
                                         </div>
                                     </div>
@@ -339,7 +317,7 @@
                                             <label>별점</label>
                                             <div id="starRating" class="star-rating">
                                                 <c:forEach begin="1" end="5" var="star">
-                                                    <i class="star ${star <= review.review_score ? 'selected' : ''}" data-value="${star}" style="pointer-events: none;">&#9733;</i>
+                                                    <i class="star ${star <= review.review_score ? 'selected' : ''}" data-value="${star}" >&#9733;</i>
                                                 </c:forEach>
                                             </div>
                                             <input type="hidden" id="reviewScore" name="reviewScore" value="${review.review_score}">
@@ -359,7 +337,7 @@
                                         <div class="single-form form-default">
                                             <label>리뷰 내용</label>
                                             <div class="form-input form">
-                                                <textarea id="reviewContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" readonly>${review.review_content}</textarea>
+                                                <textarea id="reviewContent" rows="15" style="resize: none; padding: 10px 20px; height: 100%;" >${review.review_content}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -368,15 +346,32 @@
                                         <div class="single-form form-default">
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-sm-12" style="padding: 5px;">
-            <c:forEach var="image" items="${reviewImages}">
-                <img src="${image}" class="img-fluid" alt="Review Image" style="padding: 5px;">
-            </c:forEach>
+										            <c:forEach var="image" items="${reviewImages}">
+										                <img src="${image}" class="img-fluid" alt="Review Image" style="padding: 5px;">
+										            </c:forEach>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    
                                 </c:forEach>
+                                                                    <div class="col-md-6">
+                                        <div class="single-form form-default">
+                                            <label>이미지 첨부</label>
+                                            <div class="single-form form-default button" style="margin-top: 0px">
+                                                <input type="file" id="fileInput" name="files" multiple style="display: none;" />
+                                                <button class="btn" onclick="document.getElementById('fileInput').click(); return false;">이미지 첨부하기</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="single-form form-default">
+                                            <label>첨부된 이미지</label>
+                                            <ul class="fileList list mt-1">
+
+                                            </ul>
+                                        </div>
+                                    </div>
                             </div>
 
                         </section>
@@ -388,11 +383,8 @@
                         <button class="btn" onclick="location.href='/review/writableReview'">
                             목록으로 돌아가기
                         </button>
-                        <button id="modifyReviewBtn" class="btn" onclick="location.href='/review/modifyReview?reviewNo=${param.reviewNo}'">
-                            수정
-                        </button>
-                        <button id="deleteReviewBtn" class="btn" onclick="#">
-                            삭제
+                        <button id="saveReviewBtn" class="btn" onclick="modifyReview()">
+                            수정완료
                         </button>
 
                     </div>

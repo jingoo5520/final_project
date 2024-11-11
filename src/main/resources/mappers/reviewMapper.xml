@@ -129,4 +129,32 @@ where
         ri.review_no = #{review_no}
 </select>
 
+    <!-- 리뷰 업데이트 쿼리 -->
+    <update id="updateReview" parameterType="ReviewDTO">
+        UPDATE reviews
+        SET review_title = #{review_title},
+            review_content = #{review_content},
+            review_score = #{review_score}
+        WHERE review_no = #{review_no}
+    </update>
+
+    <!-- 리뷰 이미지 삭제 쿼리 -->
+    <delete id="deleteReviewImage" parameterType="String">
+        DELETE FROM review_images
+        WHERE image_url = #{image_url}
+    </delete>
+
+    <!-- 리뷰 이미지 추가 (수정 시) 쿼리 -->
+    <insert id="insertReviewImage" parameterType="ReviewDTO">
+        INSERT INTO review_images (review_no, image_url)
+        VALUES (#{review_no}, #{image_url})
+    </insert>
+
+    <!-- 관리자 답글 여부 확인 쿼리 -->
+    <select id="checkAdminReply" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM reviews
+        WHERE review_ref = #{review_no} AND review_type = 'reply'
+    </select>
+
 </mapper>

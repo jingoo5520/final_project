@@ -31,6 +31,7 @@ public class ReviewDetailDTO {
 	private String product_name;
 	private String product_image_url;
 	private String review_image_url;
+	private String nickname;
 
 	
 	

@@ -239,8 +239,6 @@
                                         </div>
                                         <div class="col-lg-2 col-md-2 col-12">
                                             <fmt:formatDate value="${review.register_date}" pattern="yyyy-MM-dd (EEE)" /><br>
-                                            <a href="/review/reviewDetail?reviewNo=${review.review_no}">수정</a>
-                                            <button class=button>삭제</button>
                                         </div>
                                     </div>
                                 </div>

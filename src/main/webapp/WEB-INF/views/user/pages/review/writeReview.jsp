@@ -26,6 +26,13 @@
         $(function() {
             $('#reviewTitle').on('input', function() {
                 checkFormCompletion();
+                
+                // 리뷰 제목이 92바이트를 넘는지 확인
+                let byteLength = getByteLength($(this).val());
+                if (byteLength > 90) {
+                    alert('리뷰 제목 제한을 넘었습니다.'); // 알림 메시지
+                    $(this).val(truncateToByteLength($(this).val(), 90)); // 92바이트로 제한
+                }
             });
 
             $('#reviewContent').on('input', function() {
@@ -140,9 +147,10 @@
     	function reviewTitleValid() {
     		let valid = false;
 
-    		if ($('#reviewTitle').val().length > 0) {
-    			valid = true;
-    		}
+            // 리뷰 제목이 92바이트를 넘지 않는지 확인
+            if (getByteLength($('#reviewTitle').val()) > 0 && getByteLength($('#reviewTitle').val()) <= 90) {
+                valid = true;
+            }
     		return valid;
     	}
     	
@@ -165,6 +173,20 @@
     		}
     		return valid;
     	}
+        
+        // 문자열의 바이트 길이 계산
+        function getByteLength(str) {
+            return new Blob([str]).size;
+        }
+
+        // 문자열을 지정된 바이트 길이로 자르기
+        function truncateToByteLength(str, maxBytes) {
+            let truncatedStr = str;
+            while (getByteLength(truncatedStr) > maxBytes) {
+                truncatedStr = truncatedStr.slice(0, -1);
+            }
+            return truncatedStr;
+        }
         
         
         $(document).ready(function() {

@@ -4,30 +4,36 @@ import java.util.List;
 
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
 
 public interface UserProductService {
 
-	// »óÇ° Ãâ·Â
-	List<ProductDTO> getProductsByPage(int page, int pageSize) throws Exception;
-	
-	// »óÇ°¼ö °¡Á®¿À±â
-	int getProductCount() throws Exception;
+    // ì œí’ˆ ëª©ë¡
+    List<ProductDTO> getProductsByPage(int page, int pageSize) throws Exception;
+    
+    // ì œí’ˆì˜ ì´ ê°œìˆ˜
+    int getProductCount() throws Exception;
 
-	// Ä«Å×°í¸®º° »óÇ° Ãâ·Â
-	List<ProductDTO> getProductsByCategoryAndPage(Integer category, int page, int pageSize, String sortOrder) throws Exception;
+    // ì¹´í…Œê³ ë¦¬ë³„ ì œí’ˆ ëª©ë¡
+    List<ProductDTO> getProductsByCategoryAndPage(Integer category, int page, int pageSize, String sortOrder) throws Exception;
 
-	// Ä«Å×°í¸®º° »óÇ° ¼ö °Ë»ö
-	int getProductCountByCategory(Integer category) throws Exception;
+    // ì¹´í…Œê³ ë¦¬ë³„ ì œí’ˆ ìˆ˜ ì¡°íšŒ
+    int getProductCountByCategory(Integer category) throws Exception;
 
-	List<ProductDTO> getProductInfo(int productId) throws Exception;
+    List<ProductDTO> getProductInfo(int productId) throws Exception;
 
-	// content °¡Á®¿À´Â ¸Ş¼­µå
-	ProductDTO getProductDetailById(int productId) throws Exception;
+    // content ìƒì„¸ ì •ë³´ ë©”ì„œë“œ
+    ProductDTO getProductDetailById(int productId) throws Exception;
 
-	// ÃÑ °Ô½Ã¹° ¼ö Á¶È¸
-	int countSearchResults(String search, Integer category) throws Exception;
+    // ê²€ìƒ‰ ê²Œì‹œë¬¼ ìˆ˜ ì¡°íšŒ
+    int countSearchResults(String search, Integer category) throws Exception;
 
-	// °Ë»ö °á°ú Á¶È¸
-	List<ProductDTO> searchProducts(String search, Integer category, PagingInfo pagingInfo, String sortOrder) throws Exception;
-	
+    // ê²€ìƒ‰ ê²°ê³¼ ì¡°íšŒ
+    List<ProductDTO> searchProducts(String search, Integer category, PagingInfo pagingInfo, String sortOrder) throws Exception;
+
+    // ìƒí’ˆ ë¦¬ë·° ì¡°íšŒ
+    List<ReviewDetailDTO> getReviewDetail(int productNo) throws Exception;
+
+    // ìƒí’ˆ ë¦¬ë·° ì´ë¯¸ì§€ ì¶œë ¥
+    List<String> getReviewImgs(int productNo) throws Exception;
 }

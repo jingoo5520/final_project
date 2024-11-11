@@ -80,4 +80,29 @@ public class ReviewDAOImpl implements ReviewDAO {
 		return ses.selectList(ns + "selectReviewImages", reviewNo);
 	}
 
+    // 리뷰 업데이트
+    @Override
+    public void updateReview(ReviewDTO reviewDTO) throws Exception {
+        ses.update(ns + "updateReview", reviewDTO);
+    }
+
+    // 리뷰 이미지 삭제
+    @Override
+    public void deleteReviewImage(String imageUrl) throws Exception {
+        ses.delete(ns + "deleteReviewImage", imageUrl);
+    }
+
+    // 리뷰 이미지 추가 (수정 시)
+    @Override
+    public void modifyinsertReviewImage(ReviewDTO reviewImageDTO) throws Exception {
+        ses.insert(ns + "insertReviewImage", reviewImageDTO);
+    }
+
+    // 관리자 답글 여부 확인
+    @Override
+    public boolean checkAdminReply(int reviewNo) throws Exception {
+        Integer count = ses.selectOne(ns + "checkAdminReply", reviewNo);
+        return count != null && count > 0;
+    }
+
 }

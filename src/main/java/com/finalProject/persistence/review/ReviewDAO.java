@@ -34,6 +34,17 @@ public interface ReviewDAO {
 	// 리뷰 이미지
 	List<String> selectReviewImage(int reviewNo) throws Exception;
 
+	// 리뷰 수정
+	void updateReview(ReviewDTO reviewDTO) throws Exception;
+
+	// 리뷰 이미지 삭제
+	void deleteReviewImage(String imageUrl) throws Exception;
+
+	// 리뷰 이미지 추가
+	void modifyinsertReviewImage(ReviewDTO reviewImageDTO) throws Exception;
+
+	boolean checkAdminReply(int reviewNo) throws Exception;
+
 
 
 

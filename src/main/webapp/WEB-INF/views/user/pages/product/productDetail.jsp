@@ -182,7 +182,7 @@
 <body>
 
     <jsp:include page="../header.jsp"></jsp:include>
-
+<div>${reviewImg }</div>
     <!-- Preloader -->
     <div class="preloader">
         <div class="preloader-inner">
@@ -345,38 +345,52 @@
                 </div>
             </div>
             <div class="row justify-content-center">
-                <!-- justify-content-center로 중앙 정렬 -->
-                <div class="col-lg-12 col-12">
-                    <!-- col-lg-6으로 넓이를 제한 -->
-                    <div class="single-block">
-                        <div class="reviews">
-                            <h4 class="title text-center">너무 고마워서 돌아가버리실거같은 고객님들의 생생정보통 리뷰</h4> <!-- 제목 가운데 정렬 -->
-                            <!-- Start Single Review -->
-                            <div class="single-review text-center">
-                                <!-- 리뷰 중앙 정렬 -->
-                                <img src="" alt="#">
-                                <div class="review-info">
-                                    <h4>여긴 title 이 들어가겠지
-                                        <span>곽다훈</span>
-                                    </h4>
-                                    <ul class="stars">
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                    </ul>
-                                    <p>여긴 내용이 들어갈거고</p>
-                                </div>
+            
+<div class="col-lg-12 col-12">
+    <div class="single-block">
+        <div class="reviews">
+            <h4 class="title text-center">라뷰</h4>
+            
+            <!-- Check if reviews list is empty -->
+            <c:if test="${empty reviews}">
+                <p class="text-center">리뷰가 없습니다.</p>
+            </c:if>
+            
+            <!-- Start Single Review -->
+            <c:forEach var="review" items="${reviews}">
+                <div class="single-review text-center">
+                    <img src="/resources/images/nobody.png">
+                    <div class="review-info">
+                        <h4>${review.review_title}
+                            <span>${review.nickname}</span>
+                        </h4>
+                        <div>
+	                        작성일 : ${review.register_date}
+                        </div> 
+                        
+                        <ul class="stars">
+                            <c:forEach begin="1" end="5" var="star">
+                                <li>
+                                    <i class="${star <= review.review_score ? 'lni lni-star-filled' : 'lni lni-star'}"></i>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                        
+                        <p>${review.review_content}</p>
+                        <c:forEach var="reviewImg" items="${reviewImgs}">
+                            <div>
+                                <img alt="${reviewImg}" src="${reviewImg}">
                             </div>
-                            <!-- End Single Review -->
-
-
-                            <!-- End Single Review -->
-
-                        </div>
+                        </c:forEach>
                     </div>
                 </div>
+            </c:forEach>
+            <!-- End Single Review -->
+        </div>
+    </div>
+</div>
+
+                
             </div>
         </div>
     </section>

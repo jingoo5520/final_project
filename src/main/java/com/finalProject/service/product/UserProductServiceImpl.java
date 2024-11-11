@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.persistence.product.UserProductDAO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,6 +70,20 @@ public class UserProductServiceImpl implements UserProductService {
 	@Override
 	public int countSearchResults(String search, Integer category) throws Exception {
 		return pDao.countSearchResult(search, category);
+	}
+
+	@Override
+	public List<ReviewDetailDTO> getReviewDetail(int productNo) throws Exception {
+	    List<ReviewDetailDTO> reviews = pDao.selectReview(productNo);
+//	    System.out.println("서비스에서 조회된 리뷰 목록: " + reviews);
+	    return reviews;
+	}
+
+	@Override
+	public List<String> getReviewImgs(int productNo) throws Exception {
+	    List<String> images = pDao.selectReviewImg(productNo);
+//	    System.out.println("서비스에서 조회된 리뷰 이미지 목록: " + images);
+	    return images;
 	}
 
 }

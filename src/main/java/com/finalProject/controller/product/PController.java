@@ -1,16 +1,21 @@
 package com.finalProject.controller.product;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.PagingInfoDTO;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ReviewDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.service.product.UserProductService;
+import com.finalProject.service.review.ReviewService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +26,8 @@ public class PController {
 
     @Autowired
     private UserProductService service;
+    
+
 
     // 1. 전체 상품을 표시함 (카테고리 선택 없이 전체 상품 표시)
     @GetMapping("/jewelry/all")
@@ -150,19 +157,29 @@ public class PController {
         return "/user/pages/product/productList";  // JSP 페이지로 반환
     }
 
-    // 3. 상품의 세부 정보를 표시함
+    // 3. 상품의 세부 정보
     @GetMapping("/jewelry/detail")
     public String showProductDetail(
-            @RequestParam("productNo") int productId,
+            @RequestParam("productNo") int productNo,
             Model model) throws Exception {
 
         // 상품 상세 정보 조회
-        List<ProductDTO> products = service.getProductInfo(productId);
-
+        List<ProductDTO> products = service.getProductInfo(productNo);
         // 세부 상품 정보 조회
-        ProductDTO product = service.getProductDetailById(productId);
+        ProductDTO product = service.getProductDetailById(productNo);
+        
+        // 상품 리뷰 조회
+        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
+        // 상품 리뷰 이미지 조회
+        List <String> reviewImgs = service.getReviewImgs(productNo);
+        
+		System.out.println(seeReview);
+		System.out.println(reviewImgs);
 
         // Model에 데이터 추가
+        model.addAttribute("reviews", seeReview);
+        model.addAttribute("reviewImgs", reviewImgs);
+        
         model.addAttribute("products", products);
         model.addAttribute("product_content", product.getProduct_content());
         model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 계산된 가격 추가
@@ -253,4 +270,6 @@ public class PController {
     	
     	return "/user/pages/product/productList";
     }
+    
+    
 }

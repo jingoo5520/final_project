@@ -3,6 +3,9 @@ package com.finalProject.service.review;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.finalProject.model.review.ReviewPagingInfo;
 import com.finalProject.model.review.ReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
@@ -32,5 +35,12 @@ public interface ReviewService {
 
 	// 리뷰이미지
 	List<String> getReviewImages(int reviewNo) throws Exception;
+
+	// 관리자 답글이 있는경우 수정 불가
+	boolean hasAdminReply(int reviewNo) throws Exception;
+
+	// 수정 데이터 전달
+	void modifyReview(int reviewNo, String reviewTitle, String reviewContent, int reviewScore, MultipartFile[] files,
+			List<String> existFiles, List<String> removedFiles, HttpServletRequest request) throws Exception;
 
 }
