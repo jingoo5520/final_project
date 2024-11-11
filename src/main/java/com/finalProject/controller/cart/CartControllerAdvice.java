@@ -85,6 +85,7 @@ public class CartControllerAdvice {
 		}
 		
 		model.addAttribute("cartItemCount", cartItemCount);
+		model.addAttribute("sibal", "sibural");
 	}
 	
 	
