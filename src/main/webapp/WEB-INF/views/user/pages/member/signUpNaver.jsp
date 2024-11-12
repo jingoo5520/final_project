@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원가입</title>
+<title>네이버 간편가입</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link
@@ -64,13 +64,6 @@
 </style>
 
 <body>
-	<!--[if lte IE 9]>
-      <p class="browserupgrade">
-        You are using an <strong>outdated</strong> browser. Please
-        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
-        your experience and security.
-      </p>
-    <![endif]-->
 
 	<!-- Preloader -->
 	<div class="preloader">
@@ -90,13 +83,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">회원가입</h1>
+						<h1 class="page-title">Registration</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
-						<li>회원가입</li>
+						<li><a href="index.html"><i class="lni lni-home"></i>
+								Home</a></li>
+						<li>Registration</li>
 					</ul>
 				</div>
 			</div>
@@ -111,10 +105,10 @@
 				<div class="col-lg-6 offset-lg-3 col-md-10 offset-md-1 col-12">
 					<div class="register-form">
 						<div class="title">
-							<h3>ELOLIA 회원가입</h3>
+							<h3>네이버 간편가입</h3>
 							<p></p>
 						</div>
-						<form class="row" action="/member/signUp" method="post">
+						<form class="row" action="/member/naver/signUp" method="post">
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-id">*아이디</label> <input class="form-control"
@@ -147,39 +141,10 @@
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="reg-nn">별명</label> <input class="form-control"
-										type="text" name="nickname" id="nickname"><span
+										type="text" name="nickname" id="nickname"
+										value="${userInfo.nickname }"><span
 										id="nicknameStatus"></span> <input type="hidden" value="">
 								</div>
-							</div>
-							<div class="col-sm-12">
-								<div class="form-group">
-									<label for="reg-bd">생일</label> <input class="form-control"
-										type="date" name="birthday" id="birthday"><span
-										id="birthdayStatus"></span> <input type="hidden" value="">
-								</div>
-							</div>
-							<div class="col-sm-12">
-								<div id="gender" class="area">
-									성별<span id="genderStatus"></span><input type="hidden" value="">
-								</div>
-								<div class="form-check">
-									<input type="radio" class="form-check-input" id="M"
-										name="gender" value="M"> <label
-										class="form-check-label" for="M">남자</label>
-								</div>
-								<div class="form-check">
-									<input type="radio" class="form-check-input" id="F"
-										name="gender" value="F"> <label
-										class="form-check-label" for="F">여자</label>
-								</div>
-								<div class="form-check">
-									<input type="radio" class="form-check-input" id="N"
-										name="gender" value="N"> <label
-										class="form-check-label" for="N">미선택</label>
-								</div>
-							</div>
-							<div class="form-group">
-								<span id=""></span> <input type="hidden" value="">
 							</div>
 							<div class="col-sm-12">
 								<div class="form-group" style="margin-bottom: 0px">
@@ -268,7 +233,11 @@
 									</div>
 								</div>
 							</div>
-
+							<!-- 네이버 api로 받아온 유저 정보 -->
+							<input type="hidden" name="gender" value="${userInfo.gender }">
+							<input type="hidden" name="naver_id" value="${userInfo.naver_id }">
+							<input type="hidden" name="birthday"
+								value="${userInfo.birthday }">
 							<div class="button">
 								<button class="btn" type="submit" value="회원가입"
 									onclick="return checkData();">회원 가입</button>
@@ -309,28 +278,17 @@
 	<script src="/resources/assets/user/js/main.js"></script>
 </body>
 <script type="text/javascript">
-	var idExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{6,15}$/; // 아이디 정규식(영문자, 숫자를 포함한 6자 이상 15자 이하)
-	var phoneExp = /010(-\d{4}-\d{4}|\d{8})$/; // 휴대폰 번호 정규식 (010-1234-5678), 01012345678 형식만 허용
-	var emailExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 정규식(testuser@test.com)
-	var pwdExp = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/; // 비밀번호 정규식(영문자, 숫자를 포함한 8자이상 20자 이하)
-	var nameExp = /^[가-힣]{2,8}$/; // 이름 정규식(한글만 가능 2글자 이상 8자 이하)
-	var birthdayExp = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/; // 생일 정규식(1900년대 또는 2000년대,  01월부터 12월, 01일부터 31일)
-	let authTime = 0; // 메일인증 시간(0초)
-	let minute = 0;
-	let seconds = 0;
+var idExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{6,15}$/; // 아이디 정규식(영문자, 숫자를 포함한 6자 이상 15자 이하)
+var phoneExp = /010(-\d{4}-\d{4}|\d{8})$/; // 휴대폰 번호 정규식 (010-1234-5678), 01012345678 형식만 허용
+var emailExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 이메일 정규식(testuser@test.com)
+var pwdExp = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/; // 비밀번호 정규식(영문자, 숫자를 포함한 8자이상 20자 이하)
+var nameExp = /^[가-힣]{2,8}$/; // 이름 정규식(한글만 가능 2글자 이상 8자 이하)
+var birthdayExp = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/; // 생일 정규식(1900년대 또는 2000년대,  01월부터 12월, 01일부터 31일)
+let authTime = 0; // 메일인증 시간(0초)
+let minute = 0;
+let seconds = 0;
+
 	$(function() {
-		
-		setInterval(function e() {
-			if(authTime > 0 && authTime < 181) {
-				--authTime;
-				minute = Math.floor(authTime / 60);
-				seconds = authTime % 60;
-				let timer = minute + ":" + seconds;
-				isMsg("mailRequest2", timer, "gray", true);
-			} else {
-				isMsg("mailRequest2", "", "gray", false);
-			}
-		}, 1000);
 		
 		// 아이디 입력중
 		$("#member_id").keyup(function() {
@@ -425,8 +383,7 @@
 				//$("#addressName").attr("type", "hidden");
 			}
 		});
-		
-		
+				
 	});
 	
 	// daum 주소 api
@@ -442,7 +399,7 @@
 	        }
 	    }).open();
 	}
-
+	
 	// 정규식 테스트 결과에 따라 ture, false 반환
 	function isCheck(id, tmp, regExp, msg, color) {
 		if (regExp.test(tmp)) { // 정규식 유효성 true
@@ -460,125 +417,12 @@
 			return false;
 		}
 	}
-	
+
 	// 입력값에 따라 msg출력
 	function isMsg(id, msg, color, result) {
 		$("#" + id).next().text(msg);
 		$("#" + id).next().css("color", color);
 		$("#" + id).next().next().val(result);
-	}
-
-	// id, email, phone_number를 중복인지 아닌지 체크하는 ajax
-	function dbCheck(key, value) {
-		// https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise
-		// dbCheck()를 호출한 곳에서 ajax 응답결과를 기다리지 않고 동작하기 때문에, Promise 로 ajax결과값을 받은 후에 dbCheck()가 동작하도록 함.
-	    return new Promise((resolve, reject) => {
-	        $.ajax({
-	            url: "/member/isDuplicate",
-	            type: "POST",
-	            dataType: "json",
-	            data: {
-	                key: key,
-	                value: value
-	            },
-	            success: function(data) {
-	                console.log(data);
-	                if (data.status === "Duplicate") {
-	                    resolve(false); // 중복이면 false
-	                } else if (data.status === "notDuplicate") {
-	                    resolve(true); // 중복이 아니면 true
-	                }
-	            },
-	            error: function() {
-	                reject("서버 오류"); // 오류 발생 시 reject
-	            }
-	        });
-	    });
-	}
-
-	// 회원가입 실행 전 값 유효성 체크
-	function checkData() {
-		let result = true;
-		let tmp = $("#address").val();
-		if(tmp == "") {
-			$("#address").next().next().val("false");
-		} else {
-			$("#address").next().next().val("true");			
-		}
-		let idCheck = $("#member_id").next().next().val();
-		let pwdCheck = $("#member_pwd").next().next().val();
-		let pwd2Check = $("#member_pwd2").next().next().val();
-		let nameCheck = $("#member_name").next().next().val();
-		let birthdayCheck = $("#birthday").next().next().val();
-		//let genderCheck = $("#gender").next().next().val();
-		let addressCheck = $("#address").next().next().val();
-		let emailCheck = $("#email").next().next().val();
-		let phoneCheck = $("#phone_number").next().next().val();
-		//let check1Check = $("#check1").next().next().next().val();
-		let check1Check = $("#check1").prop("checked");
-		let emailAuthCheck = $("#modiMail").next().next().val();
-		
-		let text = ""; // modal의 text영역에 들어갈 내용
-		
-		if(idCheck!="true") {
-			result = false;
-			text += "<div>아이디</div>";
-		}
-		if(pwdCheck!="true") {
-			result = false;
-			text += "<div>비밀번호</div>";
-		}
-		if(pwd2Check!="true") {
-			result = false;
-			text += "<div>비밀번호 확인</div>";
-		}
-		if(nameCheck!="true") {
-			result = false;
-			text += "<div>이름</div>";
-		}
-		if(birthdayCheck!="true") {
-			result = false;
-			text += "<div>생일</div>";
-		}
-		if(addressCheck!="true") {
-			result = false;
-			text += "<div>주소</div>";
-		}
-		if(emailCheck!="true") {
-			result = false;
-			text += "<div>이메일</div>";
-		}
-		if(phoneCheck!="true") {
-			result = false;
-			text += "<div>휴대폰번호</div>";
-		}
-		if(check1Check!=true) {
-			result = false;
-			text += "<div>약관 동의</div>";
-		}
-		
-		if(emailAuthCheck!="true") {
-			result = false;
-			text += "<div>이메일 인증</div>";
-		}
-		
-		if(!result) {
-			openModal("아래 항목들을 입력해야합니다.", text);
-		}
-		
-		return result;
-	}
-	
-	// 모달 열기
-	function openModal(title, text) {
-		$("#modalcontainer").css("display", "block");
-		$("#modalTitle").text(title);
-		$("#modalText").html(text);
-	}
-	
-	// 모달 닫기
-	function closeModal() {
-		$("#modalcontainer").css("display", "none");
 	}
 	
 	// 인증메일 요청
@@ -662,10 +506,112 @@
 			complete: function () {},
 		});
 	}
-	
 
-	
+	// id, email, phone_number를 중복인지 아닌지 체크하는 ajax
+	function dbCheck(key, value) {
+		// https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise
+		// dbCheck()를 호출한 곳에서 ajax 응답결과를 기다리지 않고 동작하기 때문에, Promise 로 ajax결과값을 받은 후에 dbCheck()가 동작하도록 함.
+	    return new Promise((resolve, reject) => {
+	        $.ajax({
+	            url: "/member/isDuplicate",
+	            type: "POST",
+	            dataType: "json",
+	            data: {
+	                key: key,
+	                value: value
+	            },
+	            success: function(data) {
+	                console.log(data);
+	                if (data.status === "Duplicate") {
+	                    resolve(false); // 중복이면 false
+	                } else if (data.status === "notDuplicate") {
+	                    resolve(true); // 중복이 아니면 true
+	                }
+	            },
+	            error: function() {
+	                reject("서버 오류"); // 오류 발생 시 reject
+	            }
+	        });
+	    });
+	}
 
+	// 회원가입 실행 전 값 유효성 체크
+	function checkData() {
+		let result = true;
+		let tmp = $("#address").val();
+		if(tmp == "") {
+			$("#address").next().next().val("false");
+		} else {
+			$("#address").next().next().val("true");			
+		}
+		let text = ""; // modal의 text영역에 들어갈 내용
+		
+		let idCheck = $("#member_id").next().next().val();
+		let pwdCheck = $("#member_pwd").next().next().val();
+		let pwd2Check = $("#member_pwd2").next().next().val();
+		let nameCheck = $("#member_name").next().next().val();
+		let addressCheck = $("#address").next().next().val();
+		let emailCheck = $("#email").next().next().val();
+		let phoneCheck = $("#phone_number").next().next().val();
+		let check1Check = $("#check1").prop("checked");
+		let emailAuthCheck = $("#modiMail").next().next().val();
+		
+		if(idCheck!="true") {
+			result = false;
+			text += "<div>아이디</div>";
+		}
+		if(pwdCheck!="true") {
+			result = false;
+			text += "<div>비밀번호</div>";
+		}
+		if(pwd2Check!="true") {
+			result = false;
+			text += "<div>비밀번호 확인</div>";
+		}
+		if(nameCheck!="true") {
+			result = false;
+			text += "<div>이름</div>";
+		}
+		if(addressCheck!="true") {
+			result = false;
+			text += "<div>주소</div>";
+		}
+		if(emailCheck!="true") {
+			result = false;
+			text += "<div>이메일</div>";
+		}
+		if(phoneCheck!="true") {
+			result = false;
+			text += "<div>휴대폰번호</div>";
+		}
+		if(check1Check!=true) {
+			result = false;
+			text += "<div>약관 동의</div>";
+		}
+		
+		if(emailAuthCheck!="true") {
+			result = false;
+			text += "<div>이메일 인증</div>";
+		}
+		
+		if(!result) {
+			openModal("아래 항목들을 입력해야합니다.", text);
+		}
+		
+		return result;
+	}
+	
+	// 모달 열기
+	function openModal(title, text) {
+		$("#modalcontainer").css("display", "block");
+		$("#modalTitle").text(title);
+		$("#modalText").html(text);
+	}
+	
+	// 모달 닫기
+	function closeModal() {
+		$("#modalcontainer").css("display", "none");
+	}
 	
 </script>
 

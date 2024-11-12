@@ -1001,8 +1001,8 @@
                 </div>
                 <div class="col-lg-6 col-md-6 col-12">
                     <ul class="breadcrumb-nav">
-                        <li><a href="../"><i class="lni lni-home"></i> Home</a></li>
-                        <li><a href="/product/jewelry">Shop</a></li>
+                        <li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+                        <li><a href="/product/jewelry/all">Shop</a></li>
                         <li>주문 / 결제</li>
                     </ul>
                 </div>

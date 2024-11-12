@@ -240,17 +240,29 @@ public class MemberDAOImpl implements MemberDAO {
 	public List<UseCouponDTO> selectCouponList(Map<String, String> param) throws Exception {
 		return ses.selectList(ns + "selectCouponList", param);
 	}
-	
+
+	// naver_id로 회원 조회(네이버 로그인)
+	@Override
+	public LoginDTO selectMemberByNaverId(String naver_id) throws Exception {
+		return ses.selectOne(ns + "selectMemberByNaverId", naver_id);
+	}
+
+	// 네이버 간편가입
+	@Override
+	public int signUpNaver(MemberDTO memberDTO) throws Exception {
+		return ses.insert(ns + "signUpMemberByNaver", memberDTO);
+	}
+
 	// 배송지 수정
 	@Override
 	public void updateDelivery(DeliveryDTO deliveryDTO) throws Exception {
 		ses.update(ns + "updateDeliveryInfo", deliveryDTO);
 	}
-	
+
 	// 배송지 삭제
 	@Override
 	public void deleteDelivery(int deliveryNo) throws Exception {
 		ses.delete(ns + "deleteDeliveryInfo", deliveryNo);
 	}
-	
+
 }
