@@ -166,6 +166,11 @@
         </c:choose>
     </ul>
 </div>
+</div>
+</div>
+</div>
+</div>
+</section>
 
             <!-- / Content -->
 <!--     <h2>공지사항</h2> -->

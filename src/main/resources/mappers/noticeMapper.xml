@@ -124,9 +124,9 @@
 <!-- 	</update> -->
 	
 <!-- 	이벤트 url 저장 -->
-	<update id="updateUrl">
-		update notices set url = #{url} where notice_no = #{notice_no}
-	</update>
+<!-- 	<update id="updateUrl"> -->
+<!-- 		update notices set url = #{url} where notice_no = #{notice_no} -->
+<!-- 	</update> -->
 	
 <!-- 썸네일 이미지 저장 -->
 	<insert id="insertEvent">
@@ -153,11 +153,12 @@
     order by reg_date desc limit 8
     </select>
     
-    <update id="updateNoticeUrl">
-        update notices
-        set url = #{url}
-        where notice_no = #{noticeNo}
-    </update>
+<!-- URL 업데이트 -->
+<!-- 	<update id="updateUrl" parameterType="NoticeVO"> -->
+<!-- 	    UPDATE notices -->
+<!-- 	    SET event_url = #{url} -->
+<!-- 	    WHERE notice_no = #{noticeNo} AND notice_type = #{noticeType} -->
+<!-- 	</update> -->
     
 </mapper>
   

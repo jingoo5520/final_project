@@ -66,7 +66,7 @@ public interface NoticeDAO {
 	void saveEvent(NoticeDTO event) throws Exception;
 
 	// 썸네일 이미지 수정
-	void updateThumbnailPath(int noticeNo, String newThumbnailPath) throws Exception;
+	void updateThumbnailPath(int noticeNo, String thumbnailImage) throws Exception;
 
 	// 썸네일 이미지 삭제
 	boolean deleteThumbnail(int noticeNo) throws Exception;
@@ -75,7 +75,7 @@ public interface NoticeDAO {
 	List<NoticeDTO> getBannersWithImages() throws Exception;
 
 	// url
-	void updateNoticeUrl(NoticeVO notice) throws Exception;
+	boolean updateNoticeUrl(NoticeVO notice) throws Exception;
 
 
 	

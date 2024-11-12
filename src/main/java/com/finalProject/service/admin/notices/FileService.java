@@ -22,7 +22,7 @@ public class FileService {
 
     // 파일 업로드 메서드
     public String uploadFile(MultipartFile file, String filePrefix) throws IOException {
-        String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+        String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
 
         // 경로가 없다면 디렉토리 생성
         File uploadDir = new File(BASE_UPLOAD_DIR);
@@ -39,7 +39,7 @@ public class FileService {
     // 파일 삭제 메서드
     public boolean deleteFile(String fileName) {
 
-        String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+        String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
     	
     	File file = new File(BASE_UPLOAD_DIR + fileName);
     	

@@ -39,7 +39,7 @@ public class ImageUploadController {
                               @RequestParam("noticeType") String noticeType,
                               HttpServletRequest request) throws IOException {
 
-    	String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+    	String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
         // noticeType이 N이면 NoticeType.N, E이면 NoticeType.E로 처리
         NoticeTypeStatus.NoticeType typeEnum = "N".equals(noticeType) 
                                                   ? NoticeTypeStatus.NoticeType.N 
@@ -89,7 +89,7 @@ public class ImageUploadController {
             return ResponseEntity.badRequest().body("파일이나 noticeType이 누락되었습니다.");
         }
         try {
-        	String realPath = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+        	String realPath = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
         	// 업로드된 파일의 이름
             String fileName = uploadFile(file, noticeType, request); // noticeType 전달
             System.out.println("fileName" + fileName);
@@ -104,10 +104,10 @@ public class ImageUploadController {
     }
 
     // 이미지 파일 불러오기 처리
-    @GetMapping("/resources/inquiryImages/{imageName:.+}")
+    @GetMapping("/resources/eventImages/{imageName:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName, HttpServletRequest request) {
         try {
-        	String realPath = request.getSession().getServletContext().getRealPath("/resources/inquiryImages/");
+        	String realPath = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
             File file = new File(realPath, imageName);
 
             if (!file.exists()) {

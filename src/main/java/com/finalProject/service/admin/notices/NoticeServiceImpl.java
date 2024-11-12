@@ -133,6 +133,7 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public void updateThumbnailPath(int noticeNo, String newThumbnailPath) throws Exception {
 		nDao.updateThumbnailPath(noticeNo, newThumbnailPath);
+		
 	}
 
 	@Override
@@ -146,8 +147,10 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public void updateNoticeUrl(NoticeVO notice) throws Exception {
-		nDao.updateNoticeUrl(notice);
+	public boolean updateNoticeUrl(NoticeVO notice) throws Exception {
+	    // DAO 호출 후 결과 반환
+	    boolean result = nDao.updateNoticeUrl(notice);
+	    return result;  // true 또는 false 반환
 	}
 
 

@@ -203,11 +203,12 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public void updateThumbnailPath(int noticeNo, String newThumbnailPath) throws Exception {
+	public void updateThumbnailPath(int noticeNo, String thumbnailImage) throws Exception {
 		Map<String, Object> params = new HashMap<>();
 		params.put("noticeNo", noticeNo);
-        params.put("newThumbnailPath", newThumbnailPath);
-        ses.update(ns + "updateThumbnailPath", params);
+        params.put("thumbnailImage", thumbnailImage);
+        int result = ses.update(ns + "updateThumbnailPath", params);
+        System.out.println("result : " + result);
 	}
 
 	@Override
@@ -222,8 +223,16 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
-	public void updateNoticeUrl(NoticeVO notice) throws Exception {
-		ses.update(ns + "updateNoticeUrl", notice);
+	public boolean updateNoticeUrl(NoticeVO notice) {
+	    try {
+	        // URL 업데이트 쿼리 실행
+	        ses.update("updateUrl", notice); // updateUrl은 mapper XML에서 정의한 쿼리 ID
+	        return true;  // 성공 시 true 반환
+	    } catch (Exception e) {
+	        // 예외 발생 시 false 반환
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
 

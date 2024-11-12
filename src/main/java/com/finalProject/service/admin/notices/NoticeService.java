@@ -75,9 +75,8 @@ public interface NoticeService {
 	List<NoticeDTO> getBannersWithImages() throws Exception;
 
 	// url
-	void updateNoticeUrl(NoticeVO notice) throws Exception;
+	boolean updateNoticeUrl(NoticeVO notice) throws Exception;
 
-	
 	// 페이지네이션
 //	public int getTotalNoticeCount() throws Exception;
 //	public List<NoticeDTO> getNotices(int currentPage, int pageSize) throws Exception;
