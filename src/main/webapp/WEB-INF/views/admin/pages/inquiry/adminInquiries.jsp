@@ -46,81 +46,140 @@
 	let pagingSize = 5;
 	let pageCntPerBlock = 10;
 
-	//문의 리스트 출력
+	$(function(){
+		$('[name="regDate_end"]').val(dateFormat(new Date()));
+		
+		// 상태 체크박스 최소 한개 선택
+	    $('input[name="statuses"]').change(function() {
+	        var checkedCount = $('input[name="statuses"]:checked').length;
+	        
+	        if (checkedCount === 0) {
+	            $(this).prop('checked', true); 
+	        }
+	    });
+		
+		// 타입 체크박스 최소 한개 선택
+	    $('input[name="types"]').change(function() {
+	        var checkedCount = $('input[name="types"]:checked').length;
+	        
+	        if (checkedCount === 0) {
+	            $(this).prop('checked', true); 
+	        }
+	    });
+	});
+	
+	// 문의 리스트 출력
 	function showInquiryList(pageNo) {
+		event.preventDefault();
+		
+		let formData = $("#searchFilter").serializeArray();
+		
+		formData.forEach(function(item){
+			if (item.name == 'regDate_start') {
+				if (item.value == '') {
+					item.value = "1900-01-01 00:00:00";
+				} else {
+					item.value += " 00:00:00";
+				}
+			} else if (item.name == 'regDate_end'){
+				if (item.value == '') {
+					item.value = dateFormat(new Date());
+				} else {
+					item.value += " 23:59:59";
+				}
+			}
+		});
+		
+		formData.push({name: 'pageNo',value: pageNo })
+		formData.push({name: 'pagingSize',value: pagingSize })
+		formData.push({name: 'pageCntPerBlock',value: pageCntPerBlock })
+		
+		formData.forEach(function(item){
+			console.log(item);
+		});
 		
 		$.ajax({
-			url : '/admin/inquiry/getInquiries',
-			type : 'GET',
+			url : '/admin/inquiry/getFilteredInquiries',
+			type : 'POST',
+			data : formData,
 			dataType : 'json',
-			data : {
-				"pageNo" : pageNo,
-				"pagingSize" : pagingSize,
-				"pageCntPerBlock" : pageCntPerBlock
-			},
 			success : function(data) {
 				console.log(data);
 	
 				let listOutput = '';
 				let paginationOutput = '';
+				let noDataTableBody = `<tr id="noDataTableBody">
+			        <td colspan="100%" class="text-center p-3">
+		            	<div class="d-flex justify-content-center">검색된 문의가 없습니다.</div>
+			        </td>
+			    </tr>`;
 	
-				$.each(data.list, function(index, inquiry) {
-					let timestamp = inquiry.inquiry_reg_date;
-					let date = new Date(timestamp);
-					
-					let year = date.getFullYear();
-					let month = String(date.getMonth() + 1).padStart(2, '0'); 
-					let day = String(date.getDate()).padStart(2, '0'); 
-
-				    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
-					
-					listOutput += '<tr>' 
-						+ `<td>\${inquiry.inquiry_no}</td>`
-						+ `<td>\${inquiry.inquiry_title}</td>`
-						+ `<td>\${inquiry.member_id}</td>`
-						+ `<td>\${date}</td>`
-						+ `<td>\${inquiry.inquiry_type}</td>`
-						+ `<td>\${inquiry.inquiry_status}</td>`
-						+ '</tr>';
-				});
+			    if(data.list.length != 0){
+					$.each(data.list, function(index, inquiry) {
+						let timestamp = inquiry.inquiry_reg_date;
+						let date = new Date(timestamp);
+						
+						let year = date.getFullYear();
+						let month = String(date.getMonth() + 1).padStart(2, '0'); 
+						let day = String(date.getDate()).padStart(2, '0'); 
 	
-				$('#inquiryTableBody').html(listOutput);
+					    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
+						
+						listOutput += `<tr onclick="location.href='/admin/inquiry/adminInquiryDetail?inquiryNo=\${inquiry.inquiry_no}'">` 
+							+ `<td>\${inquiry.inquiry_no}</td>`
+							+ `<td>\${inquiry.inquiry_title}</td>`
+							+ `<td>\${inquiry.member_id}(\${inquiry.member_name})</td>`
+							+ `<td>\${date}</td>`
+							+ `<td>\${inquiry.inquiry_type}</td>`
+							+ `<td>\${inquiry.inquiry_status}</td>`
+							+ '</tr>';
+					});
+		
+					$('#inquiryTableBody').html(listOutput);
 				
-				if(data.pi.pageNo == 1){
-					paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
-				} else {
-					paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} - 1)"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
-				}
-				
-				
-				for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
-					if(i == data.pi.pageNo) {
-						paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;
+					if(data.pi.pageNo == 1){
+						paginationOutput += `<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;	
 					} else {
-						paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;	
+						paginationOutput += `<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} - 1)"><i class="tf-icon bx bx-chevrons-left"></i></a></li>`;
 					}
-				}
-				
-				
-				if(data.pi.pageNo == data.pi.totalPageCnt){
-					paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+					
+					
+					for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
+						if(i == data.pi.pageNo) {
+							paginationOutput += `<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;
+						} else {
+							paginationOutput += `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${i})">\${i}</a></li>`;	
+						}
+					}
+					
+					
+					if(data.pi.pageNo == data.pi.totalPageCnt){
+						paginationOutput +=	`<li class="page-item next disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+					} else {
+						paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} + 1)"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+					}
+					
+					$('.pagination').html(paginationOutput);
 				} else {
-					paginationOutput +=	`<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showInquiryList(\${data.pi.pageNo} + 1)"><i class="tf-icon bx bx-chevrons-right"></i></a></li>`;
+					$('#inquiryTableBody').html(noDataTableBody);
+					$('.pagination').html("");
 				}
-				
-				$('.pagination').html(paginationOutput);
 			},
 			error : function(error) {
 				console.log(error);
 			}
 		});
 	}
-
+	
+	function dateFormat(date){
+		formattedDate = `\${date.getFullYear()}-\${String(date.getMonth() + 1).padStart(2, '0')}-\${String(date.getDate()).padStart(2, '0')} \${String(date.getHours()).padStart(2, '0')}:\${String(date.getMinutes()).padStart(2, '0')}:\${String(date.getSeconds()).padStart(2, '0')}`;
+		return formattedDate;
+	}
 </script>
 </head>
 
 <style>
-table tr:hover {
+table tr:not(#noDataTableBody):hover {
 	background-color: rgba(0, 123, 255, 0.1);
 	transition: background-color 0.3s ease;
 	cursor: pointer;
@@ -155,7 +214,82 @@ table tr:hover {
 					<!-- Content -->
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
-						<div class="card">
+						<div class="card accordion-item active">
+							<h2 class="accordion-header" id="headingOne">
+								<button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionOne" aria-expanded="false" aria-controls="accordionOne">
+									<h5>필터</h5>
+								</button>
+							</h2>
+
+							<div id="accordionOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+								<div class="accordion-body">
+									<form id="searchFilter">
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="basic-default-name">문의 상태</label>
+											<div class="col-sm-10 d-flex align-items-center">
+												<div class="form-check-inline">
+													<input name="statuses" class="form-check-input" type="checkbox" value="W" id="wait" checked /> <label class="form-check-label" for="wait">Wait</label>
+												</div>
+												<div class="form-check-inline">
+													<input name="statuses" class="form-check-input" type="checkbox" value="C" id="complete" checked /> <label class="form-check-label" for="complete">Complete</label>
+												</div>
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="basic-default-name">문의 타입</label>
+											<div class="col-sm-10 d-flex align-items-center">
+												<div class="form-check-inline">
+													<input name="types" class="form-check-input" type="checkbox" value="상품" id="product" checked /> <label class="form-check-label" for="product">상품</label>
+												</div>
+												<div class="form-check-inline">
+													<input name="types" class="form-check-input" type="checkbox" value="주문" id="order" checked /> <label class="form-check-label" for="order">주문</label>
+												</div>
+												<div class="form-check-inline">
+													<input name="types" class="form-check-input" type="checkbox" value="회원" id="member" checked /> <label class="form-check-label" for="member">회원</label>
+												</div>
+												<div class="form-check-inline">
+													<input name="types" class="form-check-input" type="checkbox" value="기타" id="etc" checked /> <label class="form-check-label" for="etc">기타</label>
+												</div>
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="member_id">회원 ID</label>
+											<div class="col-sm-10">
+												<input type="text" name="member_id" id="" class="form-control" placeholder="member_id" aria-label="" aria-describedby="" />
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="member_name">회원 이름</label>
+											<div class="col-sm-10">
+												<input type="text" name="member_name" id="" class="form-control" placeholder="member_name" aria-label="" aria-describedby="" />
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="basic-default-name">작성 시간</label>
+											<div class="col-sm-10 d-flex align-items-center">
+												<div class="form-check-inline">
+													<input name="regDate_start" class="form-control" type="date" value="" id="">
+												</div>
+												<div class="form-check-inline">
+													<span class="mx-2">-</span>
+												</div>
+												<div class="form-check-inline">
+													<input name="regDate_end" class="form-control" type="date" value="" id="">
+												</div>
+											</div>
+										</div>
+										<div class="row justify-content-end">
+											<div class="col-sm-10">
+												<button type="submit" class="btn btn-primary" onclick="showInquiryList(pageNo)">Search</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="card mt-4">
 							<h5 class="card-header">문의 목록</h5>
 							<div class="table-responsive text-nowrap">
 								<table class="table">
@@ -170,16 +304,12 @@ table tr:hover {
 										</tr>
 									</thead>
 									<tbody id="inquiryTableBody" class="table-border-bottom-0">
-
 										<c:forEach var="inquiry" items="${inquiryData.list}">
-											<!-- couponList에서 쿠폰 반복 -->
 											<tr onclick="location.href='/admin/inquiry/adminInquiryDetail?inquiryNo=${inquiry.inquiry_no}'">
 												<td class="">${inquiry.inquiry_no}</td>
 												<td class="">${inquiry.inquiry_title}</td>
-												<td class="">${inquiry.member_id}</td>
-												<td>
-													<fmt:formatDate value="${inquiry.inquiry_reg_date}" pattern="yyyy-MM-dd" />
-												</td>
+												<td class="">${inquiry.member_id}(${inquiry.member_name})</td>
+												<td><fmt:formatDate value="${inquiry.inquiry_reg_date}" pattern="yyyy-MM-dd" /></td>
 												<td class="">${inquiry.inquiry_type}</td>
 												<td class="">${inquiry.inquiry_status}</td>
 											</tr>
@@ -229,7 +359,7 @@ table tr:hover {
 							<!-- / 페이지 네이션 -->
 
 						</div>
-						
+
 
 					</div>
 				</div>
@@ -259,7 +389,6 @@ table tr:hover {
 		</div>
 		<!-- / Layout page -->
 	</div>
-
 	<!-- Overlay -->
 	<div class="layout-overlay layout-menu-toggle"></div>
 

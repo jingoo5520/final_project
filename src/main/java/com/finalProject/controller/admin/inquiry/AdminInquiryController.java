@@ -5,21 +5,21 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.finalProject.model.LoginDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
+import com.finalProject.model.admin.inquiry.InquirySearchFilterDTO;
 import com.finalProject.service.admin.inquiry.AdminInquiryService;
 
 @Controller
@@ -63,6 +63,21 @@ public class AdminInquiryController {
 		return data;
 	}
 
+	// 문의 리스트 가져오기
+	@PostMapping("/getFilteredInquiries")
+	@ResponseBody
+	public Map<String, Object> getFilteredInquiries(@ModelAttribute InquirySearchFilterDTO dto) {
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		try {
+			data = aiService.getFilterdInquiryList(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return data;
+	}
+
 	// 회원 문의 상세보기 이동
 	@GetMapping("/adminInquiryDetail")
 	public String inquiryDetailPage(@RequestParam(value = "inquiryNo") int inquiryNo, Model model) {
@@ -70,8 +85,6 @@ public class AdminInquiryController {
 
 		try {
 			inquiry = aiService.getInquiry(inquiryNo);
-
-			System.out.println("inquiry: " + inquiry);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -87,8 +100,7 @@ public class AdminInquiryController {
 	// 문의 답글 저장, 수정
 	@PostMapping("/saveInquiryReply")
 	public ResponseEntity<String> saveInquiryReply(@RequestParam("inquiryNo") int inquiryNo,
-			@RequestParam("replyContent") String replyContent,
-			@RequestParam("inquiryReplyNo") int inquiryReplyNo,
+			@RequestParam("replyContent") String replyContent, @RequestParam("inquiryReplyNo") int inquiryReplyNo,
 			HttpServletRequest request) {
 		String result = "";
 
@@ -97,14 +109,12 @@ public class AdminInquiryController {
 //		String memberId = loginDTO.getMember_id();
 
 		System.out.println("reply: " + inquiryReplyNo);
-		
-		InquiryReplyDTO dto = InquiryReplyDTO.builder()
-				.inquiry_reply_no(inquiryReplyNo)
-				.inquiry_no(inquiryNo).reply_content(replyContent)
-				.admin_id("jingoo5520").build();
+
+		InquiryReplyDTO dto = InquiryReplyDTO.builder().inquiry_reply_no(inquiryReplyNo).inquiry_no(inquiryNo)
+				.reply_content(replyContent).admin_id("jingoo5520").build();
 
 		System.out.println(dto);
-		
+
 		try {
 			aiService.writeInquiryReply(dto);
 			result = "success";
