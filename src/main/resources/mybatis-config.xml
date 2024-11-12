@@ -37,6 +37,8 @@
 		
 		<typeAlias type="com.finalProject.model.admin.homepage.BannerDTO" alias="BannerDTO" />
 		
+		<typeAlias type="com.finalProject.model.admin.GenderCountDTO" alias="GenderCountDTO" />
+		<typeAlias type="com.finalProject.model.admin.LevelCountDTO" alias="LevelCountDTO" />
 		
 	</typeAliases>
 </configuration>
