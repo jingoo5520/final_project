@@ -186,7 +186,7 @@
 	</select>
 
 	<select id="selectCouponList"
-		resultType="com.finalProject.model.UseCouponDTO">
+		resultType="com.finalProject.model.PaidCouponDTO">
 		select p.coupon_no, p.coupon_code, p.pay_date,
 		p.expire_date, p.member,
 		DATEDIFF(p.expire_date, #{currentTime}) as
@@ -237,5 +237,30 @@
 		delete from delivery_addrs where delivery_no =
 		#{deliveryNo}
 	</delete>
+	
+	<select id="selectUsedCouponList" resultType="com.finalProject.model.UsedCouponDTO">
+		select c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount, c.coupon_dc_rate, 
+			   p.member, u.use_date 
+			   from coupons c 
+			   inner join coupon_paid p 
+			   on c.coupon_no = p.coupon_no 
+			   inner join coupon_used u 
+			   on u.coupon_code = p.coupon_code 
+			   where u.member_id = #{memberId}
+	</select>
+	
+	<select id="selectRecentCouponList" resultType="com.finalProject.model.RecentCouponDTO">
+		select c.coupon_name, 
+			   c.coupon_dc_type, 
+			   c.coupon_dc_amount, 
+			   c.coupon_dc_rate, 
+			   p.member, 
+			   u.use_date 
+			   from coupons c 
+			   inner join coupon_paid p 
+			   on c.coupon_no = p.coupon_no and p.pay_date > DATE_SUB(NOW(), INTERVAL 3 MONTH) 
+			   left join coupon_used u on p.coupon_code = u.coupon_code and u.member_id = #{memberId} 
+			   where p.member = 'All' or p.member = #{memberId}
+	</select>
 
 </mapper>

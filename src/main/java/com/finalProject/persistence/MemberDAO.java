@@ -7,7 +7,9 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.UsedCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.RecentCouponDTO;
 
 public interface MemberDAO {
 
@@ -69,7 +71,7 @@ public interface MemberDAO {
 	List<DeliveryDTO> selectDeliveryList(String memberId)throws Exception;
 	
 	// 쿠폰 목록 조회
-	List<UseCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
+	List<PaidCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
 	
 	// 배송지 수정
 	void updateDelivery(DeliveryDTO deliveryDTO) throws Exception;
@@ -98,6 +100,10 @@ public interface MemberDAO {
 	// 네이버 간편가입
 	int signUpNaver(MemberDTO memberDTO)throws Exception;
 	
-
-
+	// 사용한 쿠폰 조회
+	List<UsedCouponDTO> selectUsedCouponList(String memberId) throws Exception;
+	
+	// 최근 3개월 쿠폰 조회
+	List<RecentCouponDTO> selectRecentCouponList(String memberId) throws Exception;
+	
 }

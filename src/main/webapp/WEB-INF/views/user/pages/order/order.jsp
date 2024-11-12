@@ -8,10 +8,10 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>주문 결제</title>
+    <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -1056,13 +1056,13 @@
 								
 									<div class="row align-items-center product-list">
 										<div class="col-lg-1 col-md-1 col-12">
-											<a href="/product/productDetail?productNo=${orderProduct.product_no }">
-												<img class="productImage" src="${orderProduct.image_url }" alt="productImage">
+											<a href="/product/jewelry/detail?productNo=${orderProduct.product_no }">
+												<img class="productImage" src="${empty orderProduct.image_url ? '/resources/images/noP_image.png' : orderProduct.image_url}" alt="productImage">
 											</a>
 										</div>
 										<div class="col-lg-5 col-md-5 col-12">
 											<h6 class="product-name">
-												<a href="/product/productDetail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
+												<a href="/product/jewelry/detail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
 											</h6>
 											<p>
 												<span>수량: <span class="product_quantity" id="${orderProduct.product_no }_quantity">${orderProduct.quantity }</span> 개</span>
@@ -1597,7 +1597,7 @@
 										</div>
 									</div>
 						
-									<input type="hidden" name="payment_type" id="payment_type">
+									<input type="hidden" name="payment_type" id="payment_type" value="CARD">
 								</section>
 							</li>
 						</ul>
@@ -1826,7 +1826,7 @@
 			}, 750);
  	  }
 	  
-	  let selectedPaymentMethod = null;
+	  let selectedPaymentMethod = 'CARD';
 
 	  function selectPaymentMethod(method) {
 		selectedPaymentMethod = method;

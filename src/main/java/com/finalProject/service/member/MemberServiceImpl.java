@@ -14,7 +14,9 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.UsedCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.persistence.MemberDAO;
 
 @Service
@@ -174,14 +176,14 @@ public class MemberServiceImpl implements MemberService {
 
 	// 쿠폰 목록 조회
 	@Override
-	public List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception {
+	public List<PaidCouponDTO> getCouponList(String memberId, String currentTime) throws Exception {
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("memberId", memberId);
 		param.put("currentTime", currentTime);
 
-		List<UseCouponDTO> couponList = memberDAO.selectCouponList(param);
+		List<PaidCouponDTO> couponList = memberDAO.selectCouponList(param);
 
-		for (UseCouponDTO coupon : couponList) {
+		for (PaidCouponDTO coupon : couponList) {
 			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
 			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
 		}
@@ -224,6 +226,18 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void deleteDelivery(int deliveryNo) throws Exception {
 		memberDAO.deleteDelivery(deliveryNo);
+	}
+
+	// 사용한 쿠폰 조회
+	@Override
+	public List<UsedCouponDTO> getUsedCouponList(String memberId) throws Exception {
+		return memberDAO.selectUsedCouponList(memberId);
+	}
+	
+	// 최근 3개월 쿠폰 조회
+	@Override
+	public List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception {
+		return memberDAO.selectRecentCouponList(memberId);
 	}
 
 }

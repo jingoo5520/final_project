@@ -6,10 +6,10 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>Header</title>
+<title>MyPageSideBar</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -63,8 +63,8 @@ h5 {
 					<hr>
 					<ul class="list">
 						<li><h5>내 혜택</h5></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">포인트 내역 </a></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">쿠폰 내역 </a></li>
+						<li><a href="/member/myPage/pointList" class="<%="pointList".equals(request.getParameter("pageName")) ? "active" : ""%>">포인트 내역 </a></li>
+						<li><a href="/member/myPage/couponList" class="<%="couponList".equals(request.getParameter("pageName")) ? "active" : ""%>">쿠폰 내역 </a></li>
 					</ul>
 					<hr>
 					<ul class="list">

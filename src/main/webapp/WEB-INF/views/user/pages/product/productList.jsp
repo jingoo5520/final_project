@@ -9,10 +9,10 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>카테고리</title>
+    <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	
     <!-- ========================= CSS here ========================= -->
@@ -68,38 +68,54 @@
     }
     
 	function addCart(productNo) {
-		
-		console.log(productNo);
-		
 		$.ajax({
-		    url: '/addCartItem',
-		    type: 'POST',
-		    data: {
-		    	productNo : productNo
-		    	},
-		    dataType: 'json',
-		    success: function(data) {
-		        console.log(data);
-		    },
-		    error: function() {
-		    },
-		    complete: function(data) {
-		    	if (data.status == 200) {
-		            // 모달을 보여주기
-		            $('#myModal').modal('show');
+			url: '/addCartItem',
+			type: 'POST',
+			data: {
+				productNo : productNo
+			},
+			dataType: 'json',
+			success: function(data) {
+			},
+			error: function() {
+			},
+			complete: function(data) {
+				if (data.status == 200) {
+					$('#myModal').modal('show');
+					
+					// 헤더의 장바구니 수량 최신화
+					cartCountUpdate();
+					
+					// 확인 버튼 클릭 시 장바구니 페이지로 이동
+					$('#goCart').off('click').on('click', function() {
+						location.href = "/cart";
+					});
+					
+					$('#keepProduct').off('click').on('click', function() {
+						$('#myModal').modal('hide');
+					});
+				}
+			}
+		});
+	}
 	
-		            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-		            $('#goCart').off('click').on('click', function() {
-		                location.href = "/cart";
-		            });
-		            
-		            $('#keepProduct').off('click').on('click', function() {
-		                location.reload();
-		            });
-		        } else if (data.responseText == 401) {
-		            alert("잘못된 접근입니다.");
-		        }
-		    }
+	function cartCountUpdate() {
+		$.ajax({
+			url: '/cartCountUpdate',
+			type: 'POST',
+			dataType: 'json',
+			success: function(data) {
+				console.log(data);
+				if (data !== undefined) {
+					$('.cart-items .total-items').text(data);
+				}
+			},
+			error: function(data) {
+				console.error("장바구니 개수 업데이트 실패");
+				console.log(data);
+			},
+			complete: function(data) {
+			}
 		});
 	}
 	

@@ -7,7 +7,9 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.UsedCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.RecentCouponDTO;
 
 public interface MemberService {
 
@@ -69,7 +71,7 @@ public interface MemberService {
 	List<DeliveryDTO> getDeliveryList(String memberId) throws Exception;
 	
 	// 쿠폰 목록 조회
-	List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception;
+	List<PaidCouponDTO> getCouponList(String memberId, String currentTime) throws Exception;
 
 	// naver_id로 회원 조회(네이버 로그인)
 	LoginDTO selectMemberByNaverId(String naver_id)throws Exception;
@@ -82,5 +84,11 @@ public interface MemberService {
 	
 	// 배송지 삭제
 	void deleteDelivery(int deliveryNo) throws Exception;
+	
+	// 사용한 쿠폰 조회
+	List<UsedCouponDTO> getUsedCouponList(String memberId) throws Exception;
+	
+	// 최근 3개월 쿠폰 조회
+	List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception;
 	
 }

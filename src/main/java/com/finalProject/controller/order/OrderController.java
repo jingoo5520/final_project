@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
 import com.finalProject.model.order.CancelOrderRequestDTO;
 import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
@@ -49,6 +49,11 @@ public class OrderController {
 	private MemberService memberService;
 	
 	static private Gson gson = new Gson();
+	
+	@GetMapping("/order")
+	public String orderPage() {
+		return "/user/pages/warning";
+	}
 	
 	@PostMapping("/order")
 	public String orderPage(@RequestParam(value="productInfos", required=false, defaultValue="0") String productInfosParam,
@@ -212,7 +217,7 @@ public class OrderController {
 	@PostMapping("getCouponList")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> getCouponList(@RequestParam("memberId") String memberId) {
-		List<UseCouponDTO> couponList = null;
+		List<PaidCouponDTO> couponList = null;
 		LocalDateTime now = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		String currentTime = now.format(formatter);

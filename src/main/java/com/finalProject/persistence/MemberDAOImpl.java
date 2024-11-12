@@ -13,7 +13,9 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.UsedCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.RecentCouponDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -237,7 +239,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 	// 쿠폰 목록 조회
 	@Override
-	public List<UseCouponDTO> selectCouponList(Map<String, String> param) throws Exception {
+	public List<PaidCouponDTO> selectCouponList(Map<String, String> param) throws Exception {
 		return ses.selectList(ns + "selectCouponList", param);
 	}
 
@@ -263,6 +265,18 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public void deleteDelivery(int deliveryNo) throws Exception {
 		ses.delete(ns + "deleteDeliveryInfo", deliveryNo);
+	}
+	
+	// 사용한 쿠폰 조회
+	@Override
+	public List<UsedCouponDTO> selectUsedCouponList(String memberId) throws Exception {
+		return ses.selectList(ns + "selectUsedCouponList", memberId);
+	}
+
+	// 최근 3개월 쿠폰 조회
+	@Override
+	public List<RecentCouponDTO> selectRecentCouponList(String memberId) throws Exception {
+		return ses.selectList(ns + "selectRecentCouponList", memberId);
 	}
 
 }

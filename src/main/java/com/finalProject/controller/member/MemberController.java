@@ -2,6 +2,8 @@ package com.finalProject.controller.member;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,10 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.model.ResponseData;
+import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.util.KakaoUtil;
 import com.finalProject.util.NaverUtil;
@@ -285,6 +289,79 @@ public class MemberController {
 		return "/user/pages/member/myPage_history";
 	}
 	
+	// 마이페이지 (포인트 내역)
+	@RequestMapping(value = "/myPage/pointList")
+	public String myPage_pointList(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_pointList";
+	}
+	
+	// 마이페이지 (쿠폰 내역)
+	@RequestMapping(value = "/myPage/couponList")
+	public String myPage_couponList(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_couponList";
+	}
+	
+	// 마이페이지 (사용가능한 쿠폰 조회)
+	@GetMapping("/myPage/getUsedCouponList")
+	@ResponseBody
+	public Map<String, Object> getUsedCouponList(HttpSession session, Model model) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<UsedCouponDTO> usedCouponList = null;
+		
+		try {
+			usedCouponList = memberService.getUsedCouponList(loginMember.getMember_id());
+			resultMap.put("usedCouponList", usedCouponList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (사용한 쿠폰 조회)
+	@GetMapping("/myPage/getPaidCouponList")
+	@ResponseBody
+	public Map<String, Object> getPaidCouponList(HttpSession session, Model model) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PaidCouponDTO> paidCouponList = null;
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String currentTime = now.format(formatter);
+		
+		try {
+			paidCouponList = memberService.getCouponList(loginMember.getMember_id(), currentTime);
+			resultMap.put("paidCouponList", paidCouponList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (최근 3개월 쿠폰 조회)
+	@GetMapping("/myPage/getRecentCouponList")
+	@ResponseBody
+	public Map<String, Object> getRecentCouponList(HttpSession session, Model model) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<RecentCouponDTO> recentCouponList = null;
+		
+		try {
+			recentCouponList = memberService.getRecentCouponList(loginMember.getMember_id());
+			resultMap.put("recentCouponList", recentCouponList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
 	// 마이페이지 (배송지 관리)
 	@RequestMapping(value = "/myPage/manageDelivery")
 	public String myPage_manageAddresses(HttpServletRequest request) {
@@ -321,28 +398,28 @@ public class MemberController {
 	public Map<String, Object> getDeliveryInfo(@RequestParam(value="deliveryNo", required=false, defaultValue="0") int deliveryNo, HttpSession session) {
 		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
 		List<DeliveryDTO> deliveryList = null;
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
 		try {
 			deliveryList = memberService.getDeliveryList(loginDTO.getMember_id());
 			for (DeliveryDTO deliveryDTO : deliveryList) {
 				if (deliveryNo != 0) {
 					if (deliveryDTO.getDelivery_no() == deliveryNo) {
-						map.put("deliveryInfo", deliveryDTO);
+						resultMap.put("deliveryInfo", deliveryDTO);
 					}
 				}
 			}
 			
 			if (deliveryNo == 0) {
-				map.put("deliveryList", deliveryList);
+				resultMap.put("deliveryList", deliveryList);
 			}
 			
-			map.put("memberInfo", loginDTO);
+			resultMap.put("memberInfo", loginDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return map;
+		return resultMap;
 	}
 	
 	// 마이페이지 (배송지 추가)

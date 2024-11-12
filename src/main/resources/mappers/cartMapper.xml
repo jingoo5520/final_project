@@ -16,7 +16,7 @@
 		from products p 
 		inner join cart_items c 
 		on p.product_no = c.product_no
-		inner join product_images i 
+		left join product_images i 
 		on p.product_no = i.product_no and i.image_type = "M" 
 		inner join categories t 
 		on p.product_category = t.category_no 
@@ -66,9 +66,9 @@
 	<select id="selectProductInfoByCookie" resultType="com.finalProject.model.cart.CookieCartDTO">
 		select p.product_no, p.product_name, p.product_dc_type, p.dc_rate, p.product_price, i.image_url, t.category_name 
 		from products p 
-		inner join product_images i on p.product_no = i.product_no 
+		left join product_images i on p.product_no = i.product_no and i.image_type = "M" 
 		inner join categories t on p.product_category = t.category_no 
-		where i.image_type = "M" and p.product_no = #{productNo}
+		where p.product_no = #{productNo}
 	</select>
 	
 	<update id="updateQuantityWithCookieCart">
