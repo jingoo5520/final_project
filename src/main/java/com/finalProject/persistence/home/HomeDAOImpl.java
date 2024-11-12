@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.finalProject.model.admin.homepage.BannerDTO;
 import com.finalProject.model.home.HomeProductDTO;
 
 @Repository
@@ -22,4 +23,8 @@ public class HomeDAOImpl implements HomeDAO {
 		return ses.selectList(ns + "selectNewProducts", count);
 	}
 
+	@Override
+	public List<BannerDTO> selectBannerList() throws Exception {
+		return ses.selectList(ns + "selectBannerList");
+	}
 }

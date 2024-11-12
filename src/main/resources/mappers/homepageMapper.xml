@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.homepageMapper">
+
+	<!-- 이벤트 목록 가져오기 -->
+	<select id="selectEventList" resultType="EventDTO">
+		select notice_no,
+		notice_title, banner_image, thumbnail_image
+		from notices
+		where
+		notice_type = 'E' and is_delete = 'N';
+	</select>
+
+	<!-- 이벤트 가져오기 -->
+	<select id="selectEvent" resultType="EventDTO">
+		select notice_no,
+		notice_title, banner_image, thumbnail_image
+		from notices
+		where notice_no
+		= #{eventNo}
+	</select>
+
+	<!-- 배너 추가 -->
+	<insert id="insertBanner">
+		insert into banners
+		(notice_no, banner_type)
+		values(#{eventNo}, #{bannerType})
+	</insert>
+
+	<!-- 배너 목록 가져오기 -->
+	<select id="selectBannerList" resultType="BannerDTO">
+		select b.banner_no,
+		b.notice_no, b.banner_type, n.banner_image, n.thumbnail_image, n.url, n.notice_title
+		from banners b join notices n on b.notice_no = n.notice_no
+		where n.notice_type = 'E'
+	</select>
+	
+	<!-- 배너 삭제 -->
+	<delete id="deleteBanner">
+		delete from banners
+		where banner_no = #{bannerNo}
+	</delete>
+	
+	
+
+</mapper>

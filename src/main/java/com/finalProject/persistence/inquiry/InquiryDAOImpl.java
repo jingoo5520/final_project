@@ -14,6 +14,7 @@ import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
+import com.finalProject.model.inquiry.InquiryProductDTO;
 
 @Repository
 public class InquiryDAOImpl implements InquiryDAO {
@@ -24,8 +25,8 @@ public class InquiryDAOImpl implements InquiryDAO {
 	private static String ns = "com.finalProject.mappers.inquiryMapper.";
 
 	@Override
-	public int getTotalInquiryCnt() throws Exception {
-		return ses.selectOne(ns + "selectInquiryCnt");
+	public int getTotalInquiryCnt(String memberId) throws Exception {
+		return ses.selectOne(ns + "selectInquiryCnt", memberId);
 	}
 
 	@Override
@@ -88,6 +89,11 @@ public class InquiryDAOImpl implements InquiryDAO {
 	@Override
 	public InquiryReplyDTO selectInquiryReply(int inquiryNo) throws Exception {
 		return ses.selectOne(ns + "selectInquiryReply", inquiryNo);
+	}
+
+	@Override
+	public List<InquiryProductDTO> selectOrderedProducts(String memberId) throws Exception {
+		return ses.selectList(ns + "selectOrderedProducts", memberId);
 	}
 
 }

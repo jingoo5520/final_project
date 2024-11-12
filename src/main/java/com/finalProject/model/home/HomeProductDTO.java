@@ -15,8 +15,9 @@ import lombok.ToString;
 @Setter
 @ToString
 public class HomeProductDTO {
+	private int product_no;
 	private String product_name;
 	private int product_price;
 	private String category_name;
-	private String image_main_url;
+	private String image_url;
 }

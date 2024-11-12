@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -13,7 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +34,9 @@ import com.google.gson.JsonParser;
 @Component // Spring 컨테이너가 해당 클래스를 빈으로 등록
 public class KakaoUtil {
 
-	private String key;
-	private String redirectUri;
-	private String getCodeUrl;
+	private String key; // kakao REST API 키
+	private String redirectUri; // 코드발급 api에 쿼리파라미터로 포함될 uri
+	private String getCodeUrl; // kakao 로그인 api
 	private String response_type;
 	private String state;
 	private String getTokenUrl;
@@ -262,8 +265,9 @@ public class KakaoUtil {
 	}
 
 	// 로그아웃
-	public void kakaoLogout(String accessToken) {
+	public void kakaoLogout(String accessToken, HttpServletRequest request) {
 		// 로그아웃 API URL
+		HttpSession ses = request.getSession();
 		String url = "https://kapi.kakao.com/v1/user/logout";
 
 		// 헤더에 Authorization으로 액세스 토큰 추가
@@ -280,17 +284,33 @@ public class KakaoUtil {
 		if (response.getStatusCodeValue() == 200) {
 			// 로그아웃 성공
 			System.out.println("카카오 로그아웃 성공");
+			ses.removeAttribute("accessToken"); // 토큰 삭제
 		} else {
 			// 로그아웃 실패
 			System.out.println("카카오 로그아웃 실패");
 		}
 	}
+	
+	// 응답을 읽어 문자열로 반환하는 메서드
+		private String readResponse(BufferedReader br) throws IOException {
+			String line;
+			StringBuilder responseSb = new StringBuilder();
+			while ((line = br.readLine()) != null) {
+				responseSb.append(line);
+			}
+			return responseSb.toString();
+		}
 
 	// kakao.properties파일 읽기
 	private void readProperties() throws FileNotFoundException, IOException {
 		Properties prop = new Properties();
 		// 해당 경로의 properties를 받음.
-		prop.load(new FileReader("D:\\my\\coding\\Flnal_2team\\final_project\\src\\main\\resources\\kakao.properties"));
+		// 클래스패스에서 properties 파일을 읽음 src/main/resources
+	    InputStream input = getClass().getClassLoader().getResourceAsStream("kakao.properties");
+	    if (input == null) {
+	        System.out.println("kakao.properties를 찾을수 없습니다.");
+	    }
+	    prop.load(input);
 		// 필요한 값 저장
 		this.key = prop.get("key") + "";
 		this.redirectUri = prop.get("redirectUri") + "";

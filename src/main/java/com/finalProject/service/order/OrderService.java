@@ -19,9 +19,15 @@ public interface OrderService {
 
 	OrderMemberDTO getMemberInfo(String memberId);
 	
+	Map<String, String> requestApprovalNaverpayPayment(String paymentId);
+	
+	Map<String, String> requestApprovalNaverpayCancel(String paymentId, String cancelReason, Integer cancelAmount);
+
 	Map<String, String> readyKakaoPay(String name, int amount, HttpServletRequest request);
 
 	Map<String, String> requestApprovalKakaopayPayment(String tid, String pg_token);
+	
+	Map<String, String> requestApprovalKakaopayCancel(String paymentId, String cancelReason, Integer cancelAmount);
 
 	Map<String, String> requestApproval(String base64SecretKey, String paymentKey, int amount, String orderId);
 	
@@ -30,18 +36,17 @@ public interface OrderService {
 	String getPaymentModuleKey(String orderId);
 
 	int getExpectedTotalPrice(String orderId);
-
-	void saveExpectedTotalPrice(int amount, String orderId) throws Exception;
 	
 	void deleteOrder(String orderId);
 	
 	void makePayment(String orderId, Integer amount, String payModule, String method, HttpSession session) throws Exception;
-
-	String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception;
-
+	
+	Map<String, Object> makeOrder(PaymentRequestDTO request, boolean isMember, HttpSession session) throws Exception;
+	
 	void makeGuest(PaymentRequestDTO request, String orderId);
 
 	List<OrderProductsDTO> getOrderListOfMember(String memberId);
 
 	void cancelOrder(CancelOrderRequestDTO request) throws Exception;
+
 }

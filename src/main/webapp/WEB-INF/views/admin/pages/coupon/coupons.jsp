@@ -549,20 +549,6 @@
 											</div>
 										</div>
 
-										<!-- <div class="row mb-3">
-											<div class="col mb-0">
-												<button id="couponTypeBtn" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">쿠폰 타입</button>
-												<ul class="dropdown-menu">
-													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인률</a></li>
-													<li><a class="dropdown-item" href="javascript:void(0);" onclick="setCouponType(this)">할인 금액</a></li>
-												</ul>
-											</div>
-											<div class="col-8 mb-0">
-												<input type="number" id="couponDc" class="form-control" placeholder="Enter Number" name="couponDc" />
-												<div id="couponDcErrorTag"></div>
-											</div>
-										</div> -->
-
 										<div class="row mb-3">
 											<label class="col-sm-3 col-form-label" for="member_id">사용 기한</label>
 											<div class="col-sm-9">

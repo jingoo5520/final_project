@@ -46,6 +46,16 @@
 .btn i {
 	margin: 0 !important;
 }
+
+.hero-area .container {
+	width: 100% !important;
+	max-width: 100% !important;
+	padding: 0px !important;
+}
+
+.hero-area {
+	margin-top: 0 !important;
+}
 </style>
 <body>
 	<!-- Preloader -->
@@ -70,18 +80,11 @@
 						<!-- Start Hero Slider -->
 						<div class="hero-slider">
 							<!-- Start Single Slider -->
-							<div class="single-slider" style="border: 3px solid #000">
-								<div class="content">
-									<h2>1번 메인 배너</h2>
+							<c:forEach var="banner" items="${mainBannerList}">
+								<div class="single-slider">
+									<img src="${banner.banner_image}" width="100%" height="500px" style="object-fit: cover; object-position: center;">
 								</div>
-							</div>
-							<!-- End Single Slider -->
-							<!-- Start Single Slider -->
-							<div class="single-slider" style="border: 3px solid #000">
-								<div class="content">
-									<h2>2번 메인 배너</h2>
-								</div>
-							</div>
+							</c:forEach>
 							<!-- End Single Slider -->
 						</div>
 						<!-- End Hero Slider -->
@@ -98,40 +101,23 @@
 			<div class="row">
 				<div class="col-12">
 					<div class="section-title">
-						<h2>서브 배너</h2>
-						<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form.</p>
+						<h2>이벤트</h2>
 					</div>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-6 col-12">
-					<!-- Start Single Category -->
-					<div class="single-category">
-						<h3 class="heading">1번 서브배너</h3>
+
+				<c:forEach var="banner" items="${subBannerList}">
+					<div class="col-md-6 col-12">
+						<!-- Start Single Category -->
+						<div class="single-category" style="height: 350px">
+							<img src="${banner.thumbnail_image}" width="100%" height="100%" style="object-fit: cover;">
+						</div>
+						<!-- End Single Category -->
 					</div>
-					<!-- End Single Category -->
-				</div>
-				<div class="col-md-6 col-12">
-					<!-- Start Single Category -->
-					<div class="single-category">
-						<h3 class="heading">2번 서브배너</h3>
-					</div>
-					<!-- End Single Category -->
-				</div>
-				<div class="col-md-6 col-12">
-					<!-- Start Single Category -->
-					<div class="single-category">
-						<h3 class="heading">3번 서브배너</h3>
-					</div>
-					<!-- End Single Category -->
-				</div>
-				<div class="col-md-6 col-12">
-					<!-- Start Single Category -->
-					<div class="single-category">
-						<h3 class="heading">4번 서브배너</h3>
-					</div>
-					<!-- End Single Category -->
-				</div>
+				</c:forEach>
+
+
 			</div>
 		</div>
 	</section>
@@ -153,16 +139,15 @@
 						<!-- Start Single Product -->
 						<div class="single-product">
 							<div class="product-image" style="height: 300px;">
-								<img src="${product.image_main_url }" style="height: 100%; object-fit: cover;" />
+								<img src="${product.image_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 100%; object-fit: cover;" />
 								<div class="button buttonArea">
-									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a> 
-									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a>
+									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a> <a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a>
 								</div>
 							</div>
 							<div class="product-info">
 								<span class="category">${product.category_name }</span>
 								<h4 class="title">
-									<a href="product-grids.html">${product.product_name }</a>
+									<a href="/product/jewelry/detail?productNo=${product.product_no }">${product.product_name }</a>
 								</h4>
 
 								<div class="price">
@@ -181,55 +166,6 @@
 		</div>
 	</section>
 	<!-- End Trending Product Area -->
-
-	<!-- Start Shipping Info -->
-	<section class="shipping-info">
-		<div class="container">
-			<ul>
-				<!-- Free Shipping -->
-				<li>
-					<div class="media-icon">
-						<i class="lni lni-delivery"></i>
-					</div>
-					<div class="media-body">
-						<h5>Free Shipping</h5>
-						<span>On order over $99</span>
-					</div>
-				</li>
-				<!-- Money Return -->
-				<li>
-					<div class="media-icon">
-						<i class="lni lni-support"></i>
-					</div>
-					<div class="media-body">
-						<h5>24/7 Support.</h5>
-						<span>Live Chat Or Call.</span>
-					</div>
-				</li>
-				<!-- Support 24/7 -->
-				<li>
-					<div class="media-icon">
-						<i class="lni lni-credit-cards"></i>
-					</div>
-					<div class="media-body">
-						<h5>Online Payment.</h5>
-						<span>Secure Payment Services.</span>
-					</div>
-				</li>
-				<!-- Safe Payment -->
-				<li>
-					<div class="media-icon">
-						<i class="lni lni-reload"></i>
-					</div>
-					<div class="media-body">
-						<h5>Easy Return.</h5>
-						<span>Hassle Free Shopping.</span>
-					</div>
-				</li>
-			</ul>
-		</div>
-	</section>
-	<!-- End Shipping Info -->
 
 	<jsp:include page="pages/footer.jsp"></jsp:include>
 

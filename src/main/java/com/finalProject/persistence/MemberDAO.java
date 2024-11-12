@@ -70,6 +70,12 @@ public interface MemberDAO {
 	
 	// 쿠폰 목록 조회
 	List<UseCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
+	
+	// 배송지 수정
+	void updateDelivery(DeliveryDTO deliveryDTO) throws Exception;
+	
+	// 배송지 삭제
+	void deleteDelivery(int deliveryNo) throws Exception;
 
 	// 찜 상태 확인(찜이 되있다면 1, 아니면 0)
 	int checkWishStatus(Map<String, Object> map)throws Exception;
@@ -85,6 +91,12 @@ public interface MemberDAO {
 
 	// 이메일로 회원 조회(카카오 로그인)
 	LoginDTO selectMemberByEmail(MemberDTO userInfo)throws Exception;
+
+	// naver_id로 회원 조회(네이버 로그인)
+	LoginDTO selectMemberByNaverId(String naver_id)throws Exception;
+
+	// 네이버 간편가입
+	int signUpNaver(MemberDTO memberDTO)throws Exception;
 	
 
 

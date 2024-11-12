@@ -7,11 +7,12 @@ import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
+import com.finalProject.model.inquiry.InquiryProductDTO;
 
 public interface InquiryDAO {
 
 	// 총 문의 개수 가져오기
-	int getTotalInquiryCnt() throws Exception;
+	int getTotalInquiryCnt(String memberId) throws Exception;
 
 	// 유저 뷰 문의 리스트 가져오기
 	List<InquiryDTO> selectInquiryList(PagingInfoNew pi, String memberId) throws Exception;
@@ -45,6 +46,9 @@ public interface InquiryDAO {
 
 	// 문의 답글 가져오기
 	InquiryReplyDTO selectInquiryReply(int inquiryNo) throws Exception;
+
+	// 주문 상품 리스트 가져오기
+	List<InquiryProductDTO> selectOrderedProducts(String memberId) throws Exception;
 	
 	
 }

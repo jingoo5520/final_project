@@ -18,19 +18,51 @@
 </style>
 </head>
 <body>
+
+	<body>
+
+	<!-- header -->
 	<jsp:include page="../header.jsp"></jsp:include>
+	<!-- / header -->
+	<!-- Start Breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-md-6 col-12">
+					<div class="breadcrumbs-content">
+						<h1 class="page-title">비밀번호수정</h1>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-12">
+					<ul class="breadcrumb-nav">
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li>비밀번호수정</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Breadcrumbs -->
+	<section class="product-grids section">
+		<div class="contentContainer container">
+			<div class="row">
+				<!-- sideBar -->
+				<jsp:include page="../myPageSideBar.jsp">
+					<jsp:param name="pageName" value="modiPwd" />
+				</jsp:include>
+				<!-- / sideBar -->
+				<!-- contents -->
+				<div class="col-lg-9 col-12" id="modiInfoView">
+					<main class="right-pane">
 
-	<div class="contentContainer container">
-		<jsp:include page="../myPage_side.jsp"></jsp:include>
-		<main class="right-pane">
-
-			<h1>비밀번호 변경</h1>
-			<c:if test="${empty sessionScope.auth}">
+						<h1>비밀번호 변경</h1>
+						<c:if test="${empty sessionScope.auth}">
 				<form class="row" action="/member/auth" method="post">
 					<div class="auth">
 						<div class="input-group">
 							<span class="input-group-text">비밀번호</span> <input type="password"
-								class="form-control" id="pwd" name="pwd">
+											class="form-control" id="pwd" name="pwd">
 						</div>
 						<button class="btn" type="submit">확인</button>
 					</div>
@@ -40,21 +72,26 @@
 				<form id="form">
 					<div class="form-group input-group">
 						비밀번호 변경<input type="password" id="member_pwd" name="member_pwd"><span
-							id="pwdStatus"></span><input type="hidden" value="">
+										id="pwdStatus"></span><input type="hidden" value="">
 					</div>
 					<div class="form-group input-group">
 						비밀번호 확인<input type="password" id="member_pwd2" name="member_pwd2"><span
-							id="pwd2Status"></span><input type="hidden" value="">
+										id="pwd2Status"></span><input type="hidden" value="">
 					</div>
 					<button id="button" class="btn btn-info" type="button" value="수정하기">수정하기</button>
 				</form>
 			</c:if>
 		</main>
-	</div>
+					</main>
+				</div>
+				<!-- / contents -->
+
+			</div>
+		</div>
+	</section>
 
 	<jsp:include page="../footer.jsp"></jsp:include>
-</body>
-<script type="text/javascript">
+</body><script type="text/javascript">
 	var pwdExp = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/; // 비밀번호 정규식(영문자, 숫자를 포함한 8자이상 20자 이하)
 	$(function () {
 		// 비밀번호 입력중

@@ -29,4 +29,11 @@ public interface CouponDAO {
 
 	// 쿠폰 지급
 	int insertCouponPayLogs(List<CouponPayDTO> list) throws Exception;
+
+	// 쿠폰 지급 로그 리스트 가져오기
+	List<CouponDTO> selectCouponPayLogList(PagingInfoNew pi) throws Exception;
+
+	// 총 쿠폰 지급 로그 개수 가져오기
+	int getCouponPayLogCnt()throws Exception;
+	
 }
