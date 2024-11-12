@@ -74,29 +74,21 @@ public class MemberOrderController {
 				throw new IllegalArgumentException("취소번호와 주문번호는 필수 입니다.");
 			}
 
-			// cancelNo를 통해 refund 객체 조회
 			AdminPaymentVO refund = os.getPaymentModuleKeyByOrderId(cancelDto.getCancelNo());
 
 			if (refund.getPayment_method() == null || refund.getPayment_method() == "" || refund.getPaid_amount() <= 0
 					|| refund.getPayment_module_key() == null || refund.getPayment_module_key() == "") {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND); // refund가 없다면 404 반환
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 
-			// 필요한 값 출력 (디버깅 용도)
-			System.out.println("!%41414!%!" + cancelDto.getOrderNo());
-			System.out.println(refund.getCancel_reason());
-			System.out.println(refund.getPaid_amount());
-			System.out.println(refund.getPayment_module_key());
-			System.out.println(refund.getPayment_method());
-
-			return new ResponseEntity<>(refund, HttpStatus.OK); // 성공 시 200 반환
+			return new ResponseEntity<>(refund, HttpStatus.OK);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 400 Bad Request
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			// 예상치 못한 예외 처리
 			e.printStackTrace(); // 로그를 남기기 위해 스택 트레이스를 출력
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -109,13 +101,12 @@ public class MemberOrderController {
 		System.out.println(search.toString());
 		try {
 			returnMap = os.getSearchFilter(search, dto);
-			return ResponseEntity.ok(returnMap); // �꽦怨듭쟻�쑝濡� �뜲�씠�꽣瑜� 諛섑솚
+			return ResponseEntity.ok(returnMap);
 		} catch (Exception e) {
 			returnMap.put("fail", "fail");
-			System.err.println("Error occurred: " + e.getMessage());
-			// 濡쒓퉭 泥섎━
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnMap); // �뿉�윭 諛쒖깮 �떆 500 �긽�깭 肄붾뱶
-																							// 諛섑솚
+			System.err.println("Error: " + e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnMap);
 		}
 	}
 }
