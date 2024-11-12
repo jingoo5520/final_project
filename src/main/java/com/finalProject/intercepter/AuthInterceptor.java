@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.finalProject.model.LoginDTO;
 import com.finalProject.util.RememberPath;
 
 public class AuthInterceptor extends HandlerInterceptorAdapter {
@@ -42,6 +43,15 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 					ses.setAttribute("productInfos", request.getParameter("productInfos"));
 				}
 				// 페이지에 대한 권한 인증 작업이 필요하면 밑에 추가
+				if(uri.contains("/admin")) { // 어드민 페이지인경우
+					LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
+					String isAdmin = loginDTO.getIs_admin();
+					if(isAdmin.equals("0")) { // 해당 유저가 관리자가 아닌경우
+						System.out.println(isAdmin + " : 관리자가 아님");
+						response.sendRedirect("/"); // index로 이동
+						result = false; // 컨트롤러 동작을 하지않음.
+					}
+				}
 			}
 		}
 

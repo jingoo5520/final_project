@@ -56,13 +56,10 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/test/auth" />
-			<mapping path="/member/myPage/modiInfo" />
-			<mapping path="/member/myPage/modiPwd" />
-			<mapping path="/member/myPage/withdraw" />
-			<mapping path="/member/myPage/history" />
-			<mapping path="/member/wishList" />
 			
-			<mapping path="/order" />
+			<mapping path="/member/myPage/**" />
+			
+			<mapping path="/admin/**" />
 			
 			<mapping path="/serviceCenter/inquiries" />
 			<mapping path="/serviceCenter/writeInquiry" />

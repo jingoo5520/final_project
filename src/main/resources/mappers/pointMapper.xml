@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.pointMapper">
+	<!-- 쿼리문 -->
+
+	<!-- 포인트 지급 로그 -->
+	<insert id="insertPointPlus">
+		insert into point_earned (member_id, earned_point,
+		point_code, point_earned_date)
+		values (#{member_id}, (select
+		point_amount from point_infos where point_code
+		= #{point_code}),
+		#{point_code}, now())
+	</insert>
+
+	<!-- 포인트 사용 로그 -->
+	<insert id="insertPointminus">
+		insert into point_used (member_id, use_point)
+		values
+		(#{member_id}, #{use_point})
+	</insert>
+
+	<!-- 포인트 추가, 사용 -->
+	<update id="updatePoint">
+		UPDATE
+		members
+		JOIN (
+		SELECT
+		member_point
+		FROM
+		members
+		WHERE
+		member_id = #{member_id}
+		) AS subquery
+		ON
+		members.member_id =
+		#{member_id}
+		SET
+		members.member_point = subquery.member_point + #{point}
+	</update>
+
+</mapper>
