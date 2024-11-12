@@ -5,48 +5,58 @@
 <mapper namespace="com.finalProject.mappers.adminCancleMapper">
 	<select id="getAllCancle"
 		resultType="com.finalProject.model.admin.order.AdminCancleVO">
-		select * from cancels limit #{startRowIndex} ,
+		select * from cancels group by order_id limit
+		#{startRowIndex} ,
 		#{viewPostCntPerPage}
 	</select>
 	<select id="getCountAllCancle" resultType="int">
 		select count(*) from
-		cancels
+		(
+		SELECT order_id
+		FROM cancels
+		GROUP BY order_id
+		) as total_count
 	</select>
 	<select id="getCountSearchCancle" resultType="int">
-		select count(*) from cancels where 1=1
-		<if test="cancel_type != null and cancel_type.size() > 0">
-			and cancel_type in
-			<foreach item="type" collection="cancel_type" open="("
-				separator="," close=")">
-				#{type}
-			</foreach>
-		</if>
-		<if test="cancel_status != null and cancel_status.size() > 0">
-			and cancel_status in
-			<foreach item="status" collection="cancel_status" open="("
-				separator="," close=")">
-				#{status}
-			</foreach>
-		</if>
-		<if
-			test="cancel_apply_date_start != null and cancel_apply_date_start != ''">
-			AND cancel_apply_date &gt;= #{cancel_apply_date_start}
-		</if>
-		<if
-			test="cancel_apply_date_end != null and cancel_apply_date_end != ''">
-			AND cancel_apply_date &lt;= #{cancel_apply_date_end}
-		</if>
+		SELECT COUNT(DISTINCT order_id) from cancels
+		<where>
+			<if test="cancel_type != null and cancel_type.size() > 0">
+				and cancel_type in
+				<foreach item="type" collection="cancel_type" open="("
+					separator="," close=")">
+					#{type}
+				</foreach>
+			</if>
+			<if test="cancel_status != null and cancel_status.size() > 0">
+				and cancel_status in
+				<foreach item="status" collection="cancel_status" open="("
+					separator="," close=")">
+					#{status}
+				</foreach>
+			</if>
+			<if
+				test="cancel_apply_date_start != null and cancel_apply_date_start != ''">
+				AND cancel_apply_date &gt;= #{cancel_apply_date_start}
+			</if>
+			<if
+				test="cancel_apply_date_end != null and cancel_apply_date_end != ''">
+				AND cancel_apply_date &lt;= #{cancel_apply_date_end}
+			</if>
+		</where>
 	</select>
 
 	<select id="getTopCancle"
 		resultType="com.finalProject.model.admin.order.AdminCancleVO">
-		select * from cancels order by cancel_apply_date desc limit
+		select * from cancels where cancel_status = '취소 요청' group
+		by order_id order by cancel_apply_date desc limit
 		8
 	</select>
 
 	<select id="searchCancel"
 		resultType="com.finalProject.model.admin.order.AdminCancleVO">
-		select * from cancels where 1=1
+		select cancel_no,order_product_no ,order_id, cancel_apply_date,
+		cancel_complete_date,cancel_retract_date,cancel_type,cancel_status,cancel_reason
+		from cancels where 1=1
 		<if test="cancel_type != null and cancel_type.size() > 0">
 			and cancel_type in
 			<foreach item="type" collection="cancel_type" open="("
@@ -69,8 +79,11 @@
 			test="cancel_apply_date_end != null and cancel_apply_date_end != ''">
 			AND cancel_apply_date &lt;= #{cancel_apply_date_end}
 		</if>
+		group by order_id
 		order by cancel_apply_date desc
-		limit #{startRowIndex} ,
+
+		limit #{startRowIndex}
+		,
 		#{viewPostCntPerPage}
 	</select>
 
@@ -79,20 +92,35 @@
 		SELECT
 		o.payment_module_key AS payment_module_key,
 		c.cancel_reason AS cancel_reason,
-		op.paid_amount AS paid_amount,
-		p.payment_method AS payment_method
+		SUM(op.paid_amount) AS paid_amount,
+		c.cancel_type AS cancel_type,
+		p.payment_method AS payment_method,
+		p.payment_id AS payment_no
 		FROM
 		cancels c
 		JOIN
 		orders o ON c.order_id = o.order_id
 		JOIN
-		order_products op ON
-		c.order_product_no = op.orderproduct_no
+		order_products op ON c.order_product_no = op.orderproduct_no
 		JOIN
-		payments p ON c.order_id =
-		p.order_id
-		WHERE c.cancel_no = #{cancelNo};
+		payments p ON c.order_id = p.order_id
+		<if test="list != null and list.size() > 0">
+			WHERE c.order_product_no IN
+			<foreach item="orderProductNo" collection="list" open="("
+				separator="," close=")">
+				#{orderProductNo}
+			</foreach>
+		</if>
+	</select>
+	<select id="getListByOrderId"
+		resultType="com.finalProject.model.admin.order.AdminCancleVO">
+		select * from cancels where order_id = #{orderId} and
+		cancel_status = '취소 요청'
 	</select>
 
 
+	<update id="restractByCancelNo">
+		update cancels set cancel_status = '관리자 철회' ,
+		cancel_retract_date = NOW() where cancel_no = #{cancelNo}
+	</update>
 </mapper>

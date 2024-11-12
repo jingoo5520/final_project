@@ -48,9 +48,21 @@ public class OrdersDAOImpl implements OrdersDAO {
 	}
 
 	@Override
-	public AdminPaymentVO getPaymentModuleKeyByOrderId(int cancelNo) {
+	public AdminPaymentVO getPaymentModuleKeyByOrderId(List<Integer> list) {
 		// TODO Auto-generated method stub
-		return ses.selectOne(ns + "getPaymentModuleKeyByOrderId", cancelNo);
+		return ses.selectOne(ns + "getPaymentModuleKeyByOrderId", list);
+	}
+
+	@Override
+	public List<AdminCancleVO> getListByOrderId(String orderId) {
+
+		return ses.selectList(ns + "getListByOrderId", orderId);
+	}
+
+	@Override
+	public int RestractByCancelNo(String cancelNo) {
+
+		return ses.update(ns + "restractByCancelNo", cancelNo);
 	}
 
 }

@@ -14,4 +14,6 @@ public class AdminPaymentVO {
 	private int paid_amount;
 	private String cancel_reason;
 	private String payment_method;
+	private int payment_no;
+	private String cancel_type;
 }
