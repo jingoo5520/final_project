@@ -70,18 +70,26 @@ public class MemberOrderController {
 	public ResponseEntity<AdminPaymentVO> ChangeStatus(@RequestBody AdminGetCancel cancelDto) {
 
 		try {
-			if (cancelDto == null || cancelDto.getCancelNo() <= 0 || cancelDto.getOrderNo() <= 0) {
+			if (cancelDto == null || cancelDto.getList().size() <= 0) {
 				throw new IllegalArgumentException("취소번호와 주문번호는 필수 입니다.");
 			}
 
-			AdminPaymentVO refund = os.getPaymentModuleKeyByOrderId(cancelDto.getCancelNo());
+			// cancelNo를 통해 refund 객체 조회
+			AdminPaymentVO refund = os.getPaymentModuleKeyByOrderId(cancelDto);
 
 			if (refund.getPayment_method() == null || refund.getPayment_method() == "" || refund.getPaid_amount() <= 0
 					|| refund.getPayment_module_key() == null || refund.getPayment_module_key() == "") {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 
-			return new ResponseEntity<>(refund, HttpStatus.OK);
+			// 필요한 값 출력 (디버깅 용도)
+			System.out.println(refund.getCancel_reason());
+			System.out.println(refund.getPaid_amount());
+			System.out.println(refund.getPayment_module_key());
+			System.out.println(refund.getPayment_method());
+			System.out.println(refund.getCancel_type());
+
+			return new ResponseEntity<>(refund, HttpStatus.OK); // 성공 시 200 반환
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -109,4 +117,67 @@ public class MemberOrderController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnMap);
 		}
 	}
+
+//	@RequestMapping("modifyStatus")
+//	@ResponseBody
+//	public ResponseEntity<Object> ModifyCancelStatus(@RequestBody AdminSuccessCancelDTO adminSuccessCancelDTO) {
+//		System.out.println(adminSuccessCancelDTO.getAmount());
+//		System.out.println(adminSuccessCancelDTO.getCancelNo());
+//		System.out.println(adminSuccessCancelDTO.getCancelType());
+//		System.out.println(adminSuccessCancelDTO.getPaymentNo());
+//		try {
+//			os.modifyCancelStatus(adminSuccessCancelDTO);
+//		} catch (Exception e) {
+//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fail");
+//		}
+//
+//		return null;
+//
+//	}
+	@RequestMapping("showListByOrderId")
+	@ResponseBody
+	public ResponseEntity<Object> ShowListByOrderId(@RequestParam("orderId") String orderId) {
+		List<AdminCancleVO> list = new ArrayList<>();
+		Map<String, Object> map = new HashMap<String, Object>();
+		System.out.println(orderId);
+		try {
+			if (orderId != null && orderId != "") {
+				list = os.getListByOrderId(orderId);
+
+				map.put("orderIdList", list);
+			}
+		} catch (Exception e) {
+			System.out.println("Exception occurred: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fail");
+		}
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(map);
+
+	}
+
+	@RequestMapping("restractCancelNo")
+	@ResponseBody
+	public ResponseEntity<String> RestractCancelNo(@RequestParam("cancelNo") String cancelNo) {
+		try {
+
+			if (cancelNo == null || cancelNo.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid cancelNo");
+			}
+
+			int result = os.RestractByCancelNo(cancelNo);
+			System.out.println(result);
+
+			if (result >= 1) {
+				return ResponseEntity.ok("success");
+			} else {
+
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No matching cancelNo found");
+			}
+
+		} catch (Exception e) {
+
+			System.err.println("Error during restractCancelNo: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("restractFail");
+		}
+	}
+
 }

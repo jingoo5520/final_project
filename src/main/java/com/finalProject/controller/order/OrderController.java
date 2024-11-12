@@ -536,5 +536,4 @@ public class OrderController {
 	public String cancelAPItest1() {
 		return "/user/pages/order/cancelAPItest";
 	}
-
 }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.order.AdminCancleVO;
+import com.finalProject.model.admin.order.AdminGetCancel;
 import com.finalProject.model.admin.order.AdminPaymentVO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
 import com.finalProject.model.admin.product.PagingInfo;
@@ -105,9 +106,20 @@ public class OrdersServiceImpl implements OrdersService {
 	}
 
 	@Override
-	public AdminPaymentVO getPaymentModuleKeyByOrderId(int cancelNo) {
+	public AdminPaymentVO getPaymentModuleKeyByOrderId(AdminGetCancel cancelDto) {
+		List<Integer> list = cancelDto.getList();
+		return oDAO.getPaymentModuleKeyByOrderId(list);
+	}
 
-		return oDAO.getPaymentModuleKeyByOrderId(cancelNo);
+	@Override
+	public List<AdminCancleVO> getListByOrderId(String orderId) {
+
+		return oDAO.getListByOrderId(orderId);
+	}
+
+	@Override
+	public int RestractByCancelNo(String cancelNo) {
+		return oDAO.RestractByCancelNo(cancelNo);
 	}
 
 }

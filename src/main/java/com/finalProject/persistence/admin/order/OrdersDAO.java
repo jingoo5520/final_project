@@ -18,6 +18,10 @@ public interface OrdersDAO {
 
 	int getTotalPostCnt();
 
-	AdminPaymentVO getPaymentModuleKeyByOrderId(int cancelNo);
+	AdminPaymentVO getPaymentModuleKeyByOrderId(List<Integer> list);
+
+	List<AdminCancleVO> getListByOrderId(String orderId);
+
+	int RestractByCancelNo(String cancelNo);
 
 }
