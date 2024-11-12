@@ -228,16 +228,17 @@ public class MemberServiceImpl implements MemberService {
 		memberDAO.deleteDelivery(deliveryNo);
 	}
 
-	// 사용한 쿠폰 조회
-	@Override
-	public List<UsedCouponDTO> getUsedCouponList(String memberId) throws Exception {
-		return memberDAO.selectUsedCouponList(memberId);
-	}
-	
 	// 최근 3개월 쿠폰 조회
 	@Override
 	public List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception {
-		return memberDAO.selectRecentCouponList(memberId);
+		
+		List<RecentCouponDTO> couponList = memberDAO.selectRecentCouponList(memberId);
+		
+		for (RecentCouponDTO coupon : couponList) {
+			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
+			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
+		}
+		return couponList;
 	}
 
 }

@@ -19,9 +19,7 @@ public class RecentCouponDTO {
 	private int coupon_dc_amount;	// 할인 금액
 	private float coupon_dc_rate;	// 할인 비율
 	private String member;	// 회원 정보
-	private String pay_date;	// 쿠폰 등록 날짜
+	private String pay_date;	// 쿠폰 지급 날짜
 	private String expire_date;	// 쿠폰 만료 날짜
-	private String coupon_code;	// 쿠폰 코드
-	private int remaining_days;	// 남은 기한
 	private String use_date; // 사용 날짜
 }

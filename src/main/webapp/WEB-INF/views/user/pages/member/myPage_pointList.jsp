@@ -97,6 +97,10 @@
 				<!-- / sideBar -->
 				
 				<div class="col-lg-9 col-12">
+					<div>사용한 포인트 60000</div>
+					<div>보유 포인트 1000000</div>
+					<div>포인트 적립내역</div>
+					<div>이래서 저래서 포인트 적립됨</div>
 				</div>
 				
 			</div>

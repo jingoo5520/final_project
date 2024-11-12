@@ -306,24 +306,6 @@ public class MemberController {
 	}
 	
 	// 마이페이지 (사용가능한 쿠폰 조회)
-	@GetMapping("/myPage/getUsedCouponList")
-	@ResponseBody
-	public Map<String, Object> getUsedCouponList(HttpSession session, Model model) {
-		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
-		Map<String, Object> resultMap = new HashMap<>();
-		List<UsedCouponDTO> usedCouponList = null;
-		
-		try {
-			usedCouponList = memberService.getUsedCouponList(loginMember.getMember_id());
-			resultMap.put("usedCouponList", usedCouponList);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return resultMap;
-	}
-	
-	// 마이페이지 (사용한 쿠폰 조회)
 	@GetMapping("/myPage/getPaidCouponList")
 	@ResponseBody
 	public Map<String, Object> getPaidCouponList(HttpSession session, Model model) {

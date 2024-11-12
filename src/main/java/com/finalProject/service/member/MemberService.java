@@ -85,9 +85,6 @@ public interface MemberService {
 	// 배송지 삭제
 	void deleteDelivery(int deliveryNo) throws Exception;
 	
-	// 사용한 쿠폰 조회
-	List<UsedCouponDTO> getUsedCouponList(String memberId) throws Exception;
-	
 	// 최근 3개월 쿠폰 조회
 	List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception;
 	

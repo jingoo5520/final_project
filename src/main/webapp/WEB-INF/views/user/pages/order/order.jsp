@@ -337,7 +337,7 @@
 						remainingDaysText = `<span style="color: #FD5A67">\${item.remaining_days} 일</span>`;
 					}
 					
-					allCoupon = `<div class='couponCard card mb-20' id="\${item.coupon_no}_coupon">
+					allCoupon += `<div class='couponCard card mb-20' id="\${item.coupon_no}_coupon">
 									<div class='card-header'>전체 지급</div>
 									<div class='card-body'>
 										<h4>\${item.coupon_name}</h4>

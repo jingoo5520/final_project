@@ -255,6 +255,8 @@
 			   c.coupon_dc_amount, 
 			   c.coupon_dc_rate, 
 			   p.member, 
+			   p.pay_date, 
+			   p.expire_date, 
 			   u.use_date 
 			   from coupons c 
 			   inner join coupon_paid p 
