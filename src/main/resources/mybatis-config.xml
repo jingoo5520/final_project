@@ -16,13 +16,29 @@
 		<typeAlias type="com.finalProject.model.inquiry.InquiryDTO" alias="InquiryDTO" />
 		<typeAlias type="com.finalProject.model.inquiry.InquiryDetailDTO" alias="InquiryDetailDTO" />
 		<typeAlias type="com.finalProject.model.inquiry.InquiryImgDTO" alias="InquiryImgDTO" />
+		<typeAlias type="com.finalProject.model.inquiry.InquiryProductDTO" alias="InquiryProductDTO" />
 		<typeAlias type="com.finalProject.model.admin.inquiry.InquiryReplyDTO" alias="InquiryReplyDTO" />
 		
 		<typeAlias type="com.finalProject.model.admin.member.MemberManageDTO" alias="MemberManageDTO" />
 		<typeAlias type="com.finalProject.model.admin.coupon.CouponDTO" alias="CouponDTO" />
 		<typeAlias type="com.finalProject.model.admin.coupon.CouponPayDTO" alias="CouponPayDTO" />
+		<typeAlias type="com.finalProject.model.admin.coupon.CouponPayLogDTO" alias="CouponPayLogDTO" />
+		
+		<typeAlias type="com.finalProject.model.admin.review.AdminReviewDTO" alias="AdminReviewDTO" />
+		<typeAlias type="com.finalProject.model.admin.review.AdminReviewDetailDTO" alias="AdminReviewDetailDTO" />
+		<typeAlias type="com.finalProject.model.admin.review.ReviewImgDTO" alias="ReviewImgDTO" />
+		<typeAlias type="com.finalProject.model.admin.review.ReviewReplyDTO" alias="ReviewReplyDTO" />
+		
+		
 		
 		<typeAlias type="com.finalProject.model.home.HomeProductDTO" alias="HomeProductDTO" />
+		
+		<typeAlias type="com.finalProject.model.admin.homepage.EventDTO" alias="EventDTO" />
+		
+		<typeAlias type="com.finalProject.model.admin.homepage.BannerDTO" alias="BannerDTO" />
+		
+		<typeAlias type="com.finalProject.model.admin.GenderCountDTO" alias="GenderCountDTO" />
+		<typeAlias type="com.finalProject.model.admin.LevelCountDTO" alias="LevelCountDTO" />
 		
 	</typeAliases>
 </configuration>

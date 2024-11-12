@@ -60,6 +60,16 @@ public class CouponDAOImpl implements CouponDAO {
 		return ses.insert(ns + "insertCouponPayLogs", list);
 	}
 
+	@Override
+	public List<CouponDTO> selectCouponPayLogList(PagingInfoNew pi) throws Exception {
+		return ses.selectList(ns + "selectCouponPayLogList", pi);
+	}
+
+	@Override
+	public int getCouponPayLogCnt() throws Exception {
+		return ses.selectOne(ns + "selectCouponPayLogCnt");
+	}
+
 	
 
 	

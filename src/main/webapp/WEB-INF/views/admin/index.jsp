@@ -1,5 +1,7 @@
-
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -40,27 +42,301 @@
 <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
+<script>
+	let cardColor, headingColor, axisColor, shadeColor, borderColor;
 
+	cardColor = config.colors.white;
+	headingColor = config.colors.headingColor;
+	axisColor = config.colors.axisColor;
+	borderColor = config.colors.borderColor;
+
+	$(function() {
+		
+		$('#regDate_end').val(dateFormat(new Date()));
+		
+		
+		$.ajax({
+			url : '/admin/getStatisticData',
+			type : 'GET',
+			dataType : 'json',
+			success : function(data) {
+				console.log(data);
+
+				setData(data);
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+		
+	});
+
+	function setData(data) {
+		setNumberOfMembers(data.memberCnt, data.memberGrowthRate.toFixed(2));
+		setNumberOfMembersByGender(data.memberCnt, data.genderList);
+		setNumberOfMembersByLevel(data.memberCnt, data.levelList);
+	}
+	
+	// Number of Members
+	function setNumberOfMembers(memberCnt, memberGrowthRate){
+		$("#memberTotalCnt").text(memberCnt);
+		$("#memberGrowthRate").text(memberGrowthRate);
+		$("#memberRegCnt").text(memberCnt);
+	}
+	
+	// Number of members by gender
+	function setNumberOfMembersByGender(memberCnt, genderList){
+		drawNumberOfMembersGragh(memberCnt, genderList, "gender");
+		
+		let output = ``;
+		genderList.forEach(function(item){
+			let gender;
+			if(item.gender == 'M') {
+				gender = 'Male';
+			} else if(item.gender == 'F'){
+				gender = 'Female';
+			} else {
+				gender = 'None';
+			}
+			
+			output += `<li class="d-flex mb-4 pb-1">
+							<div class="avatar flex-shrink-0 me-3">
+							<span class="avatar-initial rounded bg-label-success">
+								<i class="bx bx-closet"></i>
+							</span>
+						</div>
+						<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+							<div class="me-2">
+								<h6 class="mb-0">\${gender}</h6>
+							</div>
+							<div class="user-progress">
+								<small class="fw-semibold">\${item.count}</small>
+							</div>
+						</div>
+					</li>`
+		});
+		
+		$("#genderList").html(output);
+	}
+	
+	// Number of members by level
+	function setNumberOfMembersByLevel(memberCnt, levelList){
+		drawNumberOfMembersGragh(memberCnt, levelList, "level");
+		
+		let output = ``;
+		levelList.forEach(function(item){
+			let level;
+			if(item.member_level == 1) {
+				level = 'Bronze';
+			} else if(item.member_level == 2){
+				level = 'Silver';
+			} else if(item.member_level == 3){
+				level = 'Gold';
+			} else {
+				level = 'Diamond';
+			}
+			
+			output += `<li class="d-flex mb-4 pb-1">
+							<div class="avatar flex-shrink-0 me-3">
+							<span class="avatar-initial rounded bg-label-success">
+								<i class="bx bx-closet"></i>
+							</span>
+						</div>
+						<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+							<div class="me-2">
+								<h6 class="mb-0">\${level}</h6>
+							</div>
+							<div class="user-progress">
+								<small class="fw-semibold">\${item.count}</small>
+							</div>
+						</div>
+					</li>`
+		});
+		
+		$("#levelList").html(output);
+	}
+	
+	// Number of members by gender 그래프 그리기
+	function drawNumberOfMembersGragh(memberCnt, list, type) {
+		let chart;
+		let labels = [];
+		let series = [];
+		
+		if(type == 'gender'){
+			chart = document.querySelector('#numberOfMembersByGenderChart');
+			
+			list.forEach(function(item){
+				labels.push(item.gender);	
+				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
+			});
+		} else if(type == 'level'){
+			chart = document.querySelector('#numberOfMembersByLevelChart');
+			
+			list.forEach(function(item){
+				labels.push(item.member_level);	
+				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
+			});
+		}
+		
+		
+		console.log(labels);
+		console.log(series);
+			
+		console.log(chart);
+		
+		const chartOrderStatistics = chart, orderChartConfig = {
+			chart : {
+				height : 165,
+				width : 130,
+				type : 'donut'
+			},
+			labels : labels,
+			series : series,
+			colors : [ config.colors.primary, config.colors.secondary,
+					config.colors.info, config.colors.success ],
+			stroke : {
+				width : 5,
+				colors : cardColor
+			},
+			dataLabels : {
+				enabled : false,
+				formatter : function(val, opt) {
+					return parseInt(val) + '%';
+				}
+			},
+			legend : {
+				show : false
+			},
+			grid : {
+				padding : {
+					top : 0,
+					bottom : 0,
+					right : 15
+				}
+			},
+			plotOptions : {
+				pie : {
+					donut : {
+						size : '75%',
+						labels : {
+							show : true,
+							value : {
+								fontSize : '1.5rem',
+								fontFamily : 'Public Sans',
+								color : headingColor,
+								offsetY : -15,
+								formatter : function(val) {
+									return parseInt(val) + '%';
+								}
+							},
+							name : {
+								offsetY : 20,
+								fontFamily : 'Public Sans'
+							},
+							total : {
+								show : true,
+								fontSize : '0.8125rem',
+								color : axisColor,
+								label : 'select',
+								formatter : function(w) {
+									return '0%';
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+		if (typeof chartOrderStatistics !== undefined
+				&& chartOrderStatistics !== null) {
+			const statisticsChart = new ApexCharts(chartOrderStatistics,
+					orderChartConfig);
+			statisticsChart.render();
+		}
+	}
+	
+	// 가입 회원 수 조회
+	function getMemberRegCnt(){
+		let regDate_start = $('#regDate_start').val();
+		let regDate_end = $('#regDate_end').val();
+		
+		if(regDate_start == ''){
+			regDate_start = "1900-01-01 00:00:00";
+		} else {
+			regDate_start += " 00:00:00";
+		}
+		
+		if(regDate_end == ''){
+			regDate_end = dateFormat(new Date());
+			regDate_end += " 23:59:59"; 
+		} else {
+			regDate_end += " 23:59:59";
+		}
+		
+		console.log(regDate_start);
+		console.log(regDate_end);
+		
+		$.ajax({
+			url : '/admin/getMemberRegCnt',
+			type : 'GET',
+			dataType : 'json',
+			data : {
+				"regDate_start" : regDate_start,
+				"regDate_end" : regDate_end 
+			},
+			success : function(data) {
+				console.log(data);
+				
+				$("#memberRegCnt").html(data);
+
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+	
+	// 타임스탬프 to date
+	function dateFormat(timestamp){
+		let date = new Date(timestamp);
+		
+		let year = date.getFullYear();
+		let month = String(date.getMonth() + 1).padStart(2, '0'); 
+		let day = String(date.getDate()).padStart(2, '0'); 
+
+	    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
+	    
+	    return date;
+	}
+	
+</script>
 </head>
+<style>
+
+	.card-body {
+		max-width: 100% !important; 
+	    overflow: hidden !important; 
+	}
+</style>
 
 
 <body>
 	<!-- Layout wrapper -->
 	<div class="layout-wrapper layout-content-navbar">
 		<div class="layout-container">
-			
-			
+
+
 			<!-- Menu -->
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
 				<jsp:param name="pageName" value="dashboard" />
-	
+
 			</jsp:include>
 
-		<!-- / Menu -->
+			<!-- / Menu -->
 
-        <!-- Layout container -->
+			<!-- Layout container -->
 
 			<div class="layout-page">
 				<!-- Navbar -->
@@ -78,15 +354,99 @@
 					<!-- Content -->
 
 					<div class="container-xxl flex-grow-1 container-p-y">
-
-
-
 						<!-- body  -->
-대시보드
+						<div class="col-lg-6 col-md-6 col-12 mb-4">
+							<div class="card">
+								<div class="card-body">
+									<div class="card-title d-flex align-items-start justify-content-between">
+										<div class="avatar flex-shrink-0">
+											<img src="/resources/assets/admin/img/icons/unicons/icon_members.png" alt="chart success" class="rounded">
+										</div>
 
-						
+										<!-- <div class="dropdown">
+											<button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+												<i class="bx bx-dots-vertical-rounded"></i>
+											</button>
+											<div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3" style="">
+												<a class="dropdown-item" href="javascript:void(0);">View More</a> <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+											</div>
+										</div> -->
+									</div>
+									<span class="fw-semibold d-block mb-1">Number of Members</span>
+									<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
+									<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
+
+									<span class="fw-semibold d-block mt-4">Register date range</span>
+									<div class="col align-items-center">
+										<div class="form-check-inline">
+											<input id="regDate_start" class="form-control regDate" type="date" value="" id="">
+										</div>
+										<div class="form-check-inline">
+											<span class="mx-2">-</span>
+										</div>
+										<div class="form-check-inline">
+											<input id="regDate_end" class="form-control regDate" type="date" value="" id="">
+										</div>
+										<button id="" type="button" class="btn btn-outline-primary" onclick="getMemberRegCnt()">확인</button>
+									</div>
+
+									<span class="fw-semibold d-block mt-2 mb-1">Number of Registered Members</span>
+									<h3 id="memberRegCnt" class="card-title mb-2"></h3>
+								</div>
+							</div>
+						</div>
+
+						<!-- Number of members by gender -->
+						<div class="col-md-6 col-lg-2 order-0 mb-4">
+							<div class="card">
+								<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+									<div class="card-title mb-0">
+										<h5 class="m-0 me-2">Number of members by gender</h5>
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="d-flex justify-content-center align-items-center mb-3">
+										<!-- <div class="d-flex flex-column align-items-center gap-1">
+											<h2 id="memberTotalCnt2" class="mb-2"></h2>
+											<span>Total Members</span>
+										</div> -->
+										<div id="numberOfMembersByGenderChart"></div>
+									</div>
+									<ul id="genderList" class="p-0 m-0">
+
+									</ul>
+								</div>
+							</div>
+						</div>
+						<!--/ Number of members by gender -->
+
+						<!-- Number of members by level -->
+						<div class="col-md-6 col-lg-2 order-0 mb-4">
+							<div class="card">
+								<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+									<div class="card-title mb-0">
+										<h5 class="m-0 me-2">Number of members by level</h5>
+									</div>
+								</div>
+								<div class="card-body">
+									<div class="d-flex justify-content-center align-items-center mb-3">
+										<!-- <div class="d-flex flex-column align-items-center gap-1">
+											<h2 id="memberTotalCnt2" class="mb-2"></h2>
+											<span>Total Members</span>
+										</div> -->
+										<div id="numberOfMembersByLevelChart"></div>
+									</div>
+									<ul id="levelList" class="p-0 m-0">
+
+									</ul>
+								</div>
+							</div>
+						</div>
+						<!--/ Number of members by level -->
 
 					</div>
+
+
 				</div>
 				<!-- / Content -->
 
@@ -117,30 +477,30 @@
 	<!-- Overlay -->
 	<div class="layout-overlay layout-menu-toggle"></div>
 	<!-- / Layout wrapper -->
-              
 
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-    <script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
-    <script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
-    <script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-    <script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <script src="/resources/assets/admin/vendor/js/menu.js"></script>
-    <!-- endbuild -->
+	<!-- Core JS -->
+	<!-- build:js assets/vendor/js/core.js -->
+	<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
+	<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
+	<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
+	<script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <!-- Vendors JS -->
-    <script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
+	<script src="/resources/assets/admin/vendor/js/menu.js"></script>
+	<!-- endbuild -->
 
-    <!-- Main JS -->
-    <script src="/resources/assets/admin/js/main.js"></script>
+	<!-- Vendors JS -->
+	<script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
 
-    <!-- Page JS -->
-    <script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
+	<!-- Main JS -->
+	<script src="/resources/assets/admin/js/main.js"></script>
 
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-  </body>
+	<!-- Page JS -->
+	<!-- <script src="/resources/assets/admin/js/dashboards-analytics.js"></script> -->
+
+	<!-- Place this tag in your head or just before your close body tag. -->
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
+</body>
 
 
 </html>

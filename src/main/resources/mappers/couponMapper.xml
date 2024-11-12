@@ -5,66 +5,97 @@
 <mapper namespace="com.finalProject.mappers.couponMapper">
 	<!-- 쿠폰 총 개수 가져오기 -->
 	<select id="selectCouponCnt" resultType="int">
-		select count(*) from coupons
+		select count(*) from
+		coupons
 	</select>
-	
+
 	<!-- 쿠폰 리스트 가져오기 -->
 	<select id="selectAllCoupon" resultType="CouponDTO">
 		select
-		coupon_no, coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate, coupon_use_days
+		coupon_no,
+		coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate,
+		coupon_use_days
 		from coupons
 	</select>
-	
+
 	<!-- 쿠폰 리스트 가져오기(with pagingInfo) -->
 	<select id="selectAllCouponWithPi" resultType="CouponDTO">
 		select
-		coupon_no, coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate, coupon_use_days
+		coupon_no,
+		coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate,
+		coupon_use_days
 		from coupons
 		order by coupon_no desc
-		limit #{startRowIndex}, #{viewDataCntPerPage}
+		limit
+		#{startRowIndex}, #{viewDataCntPerPage}
 	</select>
 
 	<!-- 쿠폰 가져오기 -->
 	<select id="selectCoupon" resultType="CouponDTO">
-		select 
-		coupon_no, coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate, coupon_use_days
+		select
+		coupon_no,
+		coupon_name, coupon_dc_type, coupon_dc_amount, coupon_dc_rate,
+		coupon_use_days
 		from coupons
 		where coupon_no = #{couponNo}
 	</select>
-	
+
 
 	<!-- 쿠폰 생성 -->
 	<insert id="insertCoupon">
 		insert into coupons(coupon_name, coupon_dc_type,
 		coupon_dc_amount, coupon_dc_rate, coupon_use_days)
 		values(#{coupon_name},
-		#{coupon_dc_type}, #{coupon_dc_amount}, #{coupon_dc_rate}, #{coupon_use_days})
+		#{coupon_dc_type}, #{coupon_dc_amount},
+		#{coupon_dc_rate}, #{coupon_use_days})
 	</insert>
 
 	<!-- 쿠폰 수정 -->
 	<update id="updateCoupon">
-		update coupons 
-		set coupon_name = #{coupon_name}, coupon_dc_type = #{coupon_dc_type}, coupon_dc_amount = #{coupon_dc_amount}, coupon_dc_rate = #{coupon_dc_rate}, coupon_use_days = #{coupon_use_days}
-		where coupon_no = #{coupon_no}
+		update coupons
+		set coupon_name = #{coupon_name},
+		coupon_dc_type = #{coupon_dc_type},
+		coupon_dc_amount =
+		#{coupon_dc_amount}, coupon_dc_rate =
+		#{coupon_dc_rate},
+		coupon_use_days = #{coupon_use_days}
+		where coupon_no
+		= #{coupon_no}
 	</update>
-	
+
 	<!-- 쿠폰 삭제 -->
 	<delete id="deleteCoupon">
 		delete from coupons where coupon_no = #{coupon_no};
 	</delete>
-	
+
 	<!-- 쿠폰 지급 -->
 	<insert id="insertCouponPayLogs">
 		insert into coupon_paid (coupon_no, coupon_code, member, expire_date)
-		values 
-		<foreach collection="list" index="index" item="couponPayDTO" separator=", ">
-		(
+		values
+		<foreach collection="list" index="index" item="couponPayDTO"
+			separator=", ">
+			(
 			#{couponPayDTO.coupon_no},
 			#{couponPayDTO.coupon_code},
 			#{couponPayDTO.member},
-			#{couponPayDTO.expire_date}	
-		)		
+			#{couponPayDTO.expire_date}
+			)
 		</foreach>
 	</insert>
+
+	<!-- 쿠폰 지급 로그 가져오기 -->
+	<select id="selectCouponPayLogList" resultType="CouponPayLogDTO">
+		select cp.coupon_paid_no, cp.coupon_no, cp.coupon_code, cp.member,cp.pay_date, cp.expire_date, c.coupon_name
+		from coupon_paid cp join coupons c on cp.coupon_no = c.coupon_no
+		order by coupon_paid_no desc
+		limit #{startRowIndex},
+		#{viewDataCntPerPage}
+	</select>
+	
+	<!-- 쿠폰 지급 로그 총 개수 가져오기 -->
+	<select id="selectCouponPayLogCnt" resultType="int">
+		select count(*) from
+		coupon_paid
+	</select>
 
 </mapper>
