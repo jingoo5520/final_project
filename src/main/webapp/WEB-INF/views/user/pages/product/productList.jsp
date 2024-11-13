@@ -113,9 +113,21 @@
 	text-overflow: ellipsis; /* 글자가 넘치는 경우 ... 표시 */
 	white-space: normal;
 }
+.stars {
+	display: flex;
+	justify-content: right;
+	align-items: center;
+}
+
+.stars i {
+	color: #ffa000;
+}
+
 </style>
 <body>
-	<jsp:include page="../header.jsp"></jsp:include>
+	<jsp:include page="../header.jsp">
+		<jsp:param name="categoryName" value="${products[0].category_name}" />
+	</jsp:include>
 	<!-- 찜목록 잘 받아오는지 확인 -->
 	<c:forEach var="item" items="${wishList}">
 		<div>${item}</div>
@@ -260,7 +272,7 @@
                                                 <div class="product-image" style="height:300px;">
                                                 
                                                     <a href="/product/jewelry/detail?productNo=${product.product_no}" >
-                                                        <img src="${product.image_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 100%; object-fit: cover;" />
+                                                        <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
                                                     </a>
 
 													<div class="button"
@@ -309,8 +321,24 @@
 
 												<div class="product-info">
 													<!-- Category 출력 부분 -->
-
-													<span class="category"> ${product.category_name } </span>
+													<div class="row scoreDiv">
+														<span class="category col-md-6 col-lg-6 col-12"> ${product.category_name } </span>
+						                                <c:if test="${not empty product.average_score and product.average_score != 0.0}">
+															<div class="starScore col-md-6 col-lg-6 col-12">
+																<ul class="stars">
+																	<c:forEach var="index" begin="1" end="5">
+																		<c:if test="${index <= product.average_score }">
+											                                <li><i class="lni lni-star-filled"></i></li>
+											                            </c:if>
+											                            <c:if test="${index > product.average_score }">
+											                            	<li><i class="lni lni-star"></i></li>
+											                            </c:if>
+									                                </c:forEach>
+								                                	<li><i>${product.average_score }</i></li>
+									                            </ul>
+															</div>
+						                                </c:if>
+													</div>
 
 													<h4 class="title">
 														<a
@@ -344,8 +372,7 @@
 																pattern="#,###" /> 원
 														</span>
 													</div>
-
-
+														
 												</div>
 											</div>
 											<!-- End Single Product -->

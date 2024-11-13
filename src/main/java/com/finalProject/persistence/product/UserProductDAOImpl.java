@@ -86,15 +86,13 @@ public class UserProductDAOImpl implements UserProductDAO {
 	@Override
 	public List<ReviewDetailDTO> selectReview(int productNo) throws Exception {
 	    List<ReviewDetailDTO> reviews = ses.selectList(ns + "selectReview", productNo);
-//	    System.out.println("DAO에서 조회된 리뷰: " + reviews);
 	    return reviews;
 	}
 
 	@Override
 	public List<String> selectReviewImg(int productNo) throws Exception {
-	    List<String> images = ses.selectList(ns + "selectReviewImg", productNo);
-//	    System.out.println("DAO에서 조회된 리뷰 이미지: " + images);
-	    return images;
+		System.out.println("pDao" + productNo);
+	    return ses.selectList(ns + "selectReviewImg", productNo);
 	}
 
 }

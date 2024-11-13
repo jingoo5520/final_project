@@ -40,7 +40,13 @@ public interface ReviewService {
 	boolean hasAdminReply(int reviewNo) throws Exception;
 
 	// 수정 데이터 전달
-	void modifyReview(int reviewNo, String reviewTitle, String reviewContent, int reviewScore, MultipartFile[] files,
-			List<String> existFiles, List<String> removedFiles, HttpServletRequest request) throws Exception;
+	void modifyReview(int reviewNo, String reviewTitle, String reviewContent, int reviewScore) throws Exception;
+
+	// 수정 이미지 데이터
+	void modifyReviewImg(int reviewNo, MultipartFile[] files, List<String> existFiles, List<String> removedFiles,
+			HttpServletRequest request) throws Exception;
+
+	// 기존에 이미지 리스트
+	List<String> getExistFileList(int reviewNo) throws Exception;
 
 }

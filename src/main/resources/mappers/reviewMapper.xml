@@ -129,6 +129,13 @@ where
         ri.review_no = #{review_no}
 </select>
 
+    <!-- 관리자 답글 여부 확인 쿼리 -->
+    <select id="checkAdminReply" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM reviews
+        WHERE review_ref = #{review_no} AND review_type = 'reply'
+    </select>
+
     <!-- 리뷰 업데이트 쿼리 -->
     <update id="updateReview" parameterType="ReviewDTO">
         UPDATE reviews
@@ -149,12 +156,14 @@ where
         INSERT INTO review_images (review_no, image_url)
         VALUES (#{review_no}, #{image_url})
     </insert>
+    
+<select id="selectExistFileList" parameterType="int" resultType="String">
+    SELECT image_url
+    FROM review_images
+    WHERE review_no = #{reviewNo}
+</select>
 
-    <!-- 관리자 답글 여부 확인 쿼리 -->
-    <select id="checkAdminReply" parameterType="int" resultType="int">
-        SELECT COUNT(*)
-        FROM reviews
-        WHERE review_ref = #{review_no} AND review_type = 'reply'
-    </select>
+
+
 
 </mapper>

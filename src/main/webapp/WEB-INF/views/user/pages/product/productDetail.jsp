@@ -182,7 +182,7 @@
 <body>
 
     <jsp:include page="../header.jsp"></jsp:include>
-<div>${reviewImg }</div>
+
     <!-- Preloader -->
     <div class="preloader">
         <div class="preloader-inner">
@@ -225,179 +225,172 @@
     <section class="item-details section">
         <div class="container">
             <div class="top-area">
-<div class="row align-items-center">
-    <div class="col-lg-6 col-md-12 col-12">
-        <div class="product-images">
-            <main id="gallery">
-                <div class="main-img">
-                    <c:forEach var="product" items="${products}">
-                        <c:if test="${product.image_type == 'M'}">
-                            <img src="${product.image_url}" id="current" alt="Main Image">
-                        </c:if>
-                    </c:forEach>
-                </div>
-                <div class="images">
-                    <!-- 서브 이미지를 표시 -->
-                    <c:forEach var="image" items="${products}">
-                        <img src="${image.image_url}" class="img" alt="Sub Image">
-                    </c:forEach>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <div class="col-lg-6 col-md-12 col-12">
-        <div class="product-info">
-            <!-- 첫 번째 product의 이름을 한 번만 표시 -->
-            <h2 class="title">${products[0].product_name}</h2>
-            
-            <!-- 카테고리 표시 -->
-            <p class="category">
-                <a href="/product/jewelry?category=${products[0].product_category}">
-                    <i class="lni lni-tag"></i> ${products[0].category_name}
-                </a>
-            </p>
-            
-									<!-- 가격 표시 -->
-									<h3 class="price" style="display: flex; flex-direction: column; gap: 5px;">
-									    <!-- 원래 가격 표시 (할인이 있는 경우만 표시) -->
-									    <c:if test="${products[0].product_dc_type == 'P' && products[0].product_price != products[0].calculatedPrice}">
-									        <span style="text-decoration: line-through; font-size: 0.9em; color: #999;">
-									            <fmt:formatNumber value="${products[0].product_price}" type="number" pattern="#,###"/>원
-									        </span>
-									    </c:if>
-									
-									    <!-- 할인율 및 할인 적용된 가격 표시 -->
-                                        <div style="display: flex; align-items: baseline; gap: 10px;">
-                                            <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
-                                                <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-                                                    <fmt:formatNumber value="${products[0].dc_rate * 100}" type="number" maxFractionDigits="0"/>%
-                                                </span>
-                                            </c:if>
-									
-									        <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;">
-									            <fmt:formatNumber value="${products[0].calculatedPrice}" type="number" pattern="#,###"/>원
-									        </span>
-									    </div>
-									</h3>
-
-
-						
-						            <div class="row">
-						                <div class="col-lg-4 col-md-4 col-12"></div>
-						            </div>
-									<div class="bottom-content">
-									    <div class="row align-items-center">
-									        <!-- 장바구니와 찜 버튼을 반반씩 배치 -->
-									        <div class="col-lg-6 col-md-6 col-6">
-									            <div class="button cart-button" >
-									                <button onclick="addCart(${products[0].product_no})" class="btn" style="width: 100%;">장바구니</button>
-									            </div>
-									        </div>
-									        <div class="col-lg-6 col-md-6 col-6">
-									            <div class="wish-button">
-									                <button class="btn" style="width: 100%;"><i class="lni lni-heart"></i> 찜</button>
-									            </div>
-									        </div>
-									    </div>
-									    <div class="row align-items-center mt-3">
-									        <!-- 주문 개수 선택 드롭다운 -->
-										<div class="col-lg-12 col-md-12 col-12">
-											<div class="count-input-div col-lg-2 col-md-1 col-12">
-												<button class="btn countDown" onclick="countDown(${products[0].product_no})">-</button>
-													<div class="count-div" id="${products[0].product_no}_quantity">1</div>
-														<button class="btn countUp"  onclick="countUp(${products[0].product_no})">+</button>
-													</div>
-											</div>	
-										</div>
-									    <div class="row align-items-center mt-3">
-									        <!-- 결제 버튼을 전체 너비로 배치 -->
-									        <div class="col-lg-12 col-md-12 col-12">
-									            <form action="/order" method="post" class="orderForm">
-										            <div class="wish-button">
-														<input type="hidden" class="productInfos" name="productInfos">
-										                <button class="btn" style="width: 100%;" onclick="orderProduct(${products[0].product_no});"><i class="lni lni-credit-cards"></i> 결제</button>
-										            </div>
-												</form>
-									        </div>
-									    </div>
-									</div>
-						        </div>
-						    </div>
-						</div>
-                    </div>
-                </div>
-                
-            <div class="container product-details-info"> <!-- Bootstrap의 container 클래스를 사용하여 중앙 정렬 -->
-    <div class="single-block">
-        <div class="row justify-content-center"> <!-- justify-content-center로 중앙 정렬 -->
-            <div class="col-lg-8 col-12"> <!-- col-lg-8로 넓이를 제한 -->
-                <div class="info-body custom-responsive-margin">
-                    <h4 class="text-center">상품설명</h4> <!-- 제목 가운데 정렬 -->
-                        <p class="text-center"> <!-- 텍스트 가운데 정렬 -->
-                            <img alt="상품설명" src="${product_content}">
-                        </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row justify-content-center"> <!-- justify-content-center로 중앙 정렬 -->
-        <div class="col-lg-12 col-12">
-            <div class="single-block">
-                <div class="reviews">
-                    <h4 class="title text-center">라뷰</h4>
-                    
-                    <!-- Check if reviews list is empty -->
-                    <c:if test="${empty reviews}">
-                        <p class="text-center">리뷰가 없습니다.</p>
-                    </c:if>
-                    
-                    <!-- Start Single Review -->
-                    <c:forEach var="review" items="${reviews}">
-                        <div class="single-review text-center">
-                            <img src="/resources/images/nobody.png">
-                            <div class="review-info">
-                                <h4>${review.review_title}
-                                    <span>${review.nickname}</span>
-                                </h4>
-                                <div>
-                                    작성일 : ${review.register_date}
-                                </div> 
-                                
-                                <ul class="stars">
-                                    <c:forEach begin="1" end="5" var="star">
-                                        <li>
-                                            <i class="${star <= review.review_score ? 'lni lni-star-filled' : 'lni lni-star'}"></i>
-                                        </li>
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="product-images">
+                            <main id="gallery">
+                                <div class="main-img">
+                                    <c:forEach var="product" items="${products}">
+                                        <c:if test="${product.image_type == 'M'}">
+                                            <img src="${product.image_url}" id="current" alt="Main Image">
+                                        </c:if>
                                     </c:forEach>
-                                </ul>
-                                
-                                <p>${review.review_content}</p>
-                                <c:forEach var="reviewImg" items="${reviewImgs}">
-                                    <div>
-                                        <img alt="${reviewImg}" src="${reviewImg}">
+                                </div>
+                                <div class="images">
+                                    <!-- 서브 이미지를 표시 -->
+                                    <c:forEach var="image" items="${products}">
+                                        <img src="${image.image_url}" class="img" alt="Sub Image">
+                                    </c:forEach>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="product-info">
+                            <!-- 첫 번째 product의 이름을 한 번만 표시 -->
+                            <h2 class="title">${products[0].product_name}</h2>
+
+                            <!-- 카테고리 표시 -->
+                            <p class="category">
+                                <a href="/product/jewelry?category=${products[0].product_category}">
+                                    <i class="lni lni-tag"></i> ${products[0].category_name}
+                                </a>
+                            </p>
+
+                            <!-- 가격 표시 -->
+                            <h3 class="price" style="display: flex; flex-direction: column; gap: 5px;">
+                                <!-- 원래 가격 표시 (할인이 있는 경우만 표시) -->
+                                <c:if test="${products[0].product_dc_type == 'P' && products[0].product_price != products[0].calculatedPrice}">
+                                    <span style="text-decoration: line-through; font-size: 0.9em; color: #999;">
+                                        <fmt:formatNumber value="${products[0].product_price}" type="number" pattern="#,###" />원
+                                    </span>
+                                </c:if>
+
+                                <!-- 할인율 및 할인 적용된 가격 표시 -->
+                                <div style="display: flex; align-items: baseline; gap: 10px;">
+                                    <c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
+                                        <span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+                                            <fmt:formatNumber value="${products[0].dc_rate * 100}" type="number" maxFractionDigits="0" />%
+                                        </span>
+                                    </c:if>
+
+                                    <span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;">
+                                        <fmt:formatNumber value="${products[0].calculatedPrice}" type="number" pattern="#,###" />원
+                                    </span>
+                                </div>
+                            </h3>
+
+
+
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-12"></div>
+                            </div>
+                            <div class="bottom-content">
+                                <div class="row align-items-center">
+                                    <!-- 장바구니와 찜 버튼을 반반씩 배치 -->
+                                    <div class="col-lg-6 col-md-6 col-6">
+                                        <div class="button cart-button">
+                                            <button onclick="addCart(${products[0].product_no})" class="btn" style="width: 100%;">장바구니</button>
+                                        </div>
                                     </div>
-                                </c:forEach>
+                                    <div class="col-lg-6 col-md-6 col-6">
+                                        <div class="wish-button">
+                                            <button class="btn" style="width: 100%;"><i class="lni lni-heart"></i> 찜</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center mt-3">
+                                    <!-- 주문 개수 선택 드롭다운 -->
+                                    <div class="col-lg-12 col-md-12 col-12">
+                                        <div class="count-input-div col-lg-2 col-md-1 col-12">
+                                            <button class="btn countDown" onclick="countDown(${products[0].product_no})">-</button>
+                                            <div class="count-div" id="${products[0].product_no}_quantity">1</div>
+                                            <button class="btn countUp" onclick="countUp(${products[0].product_no})">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row align-items-center mt-3">
+                                    <!-- 결제 버튼을 전체 너비로 배치 -->
+                                    <div class="col-lg-12 col-md-12 col-12">
+                                        <form action="/order" method="post" class="orderForm">
+                                            <div class="wish-button">
+                                                <input type="hidden" class="productInfos" name="productInfos">
+                                                <button class="btn" style="width: 100%;" onclick="orderProduct(${products[0].product_no});"><i class="lni lni-credit-cards"></i> 결제</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </c:forEach>
-                    <!-- End Single Review -->
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="container product-details-info">
+            <!-- Bootstrap의 container 클래스를 사용하여 중앙 정렬 -->
+            <div class="single-block">
+                <div class="row justify-content-center">
+                    <!-- justify-content-center로 중앙 정렬 -->
+                    <div class="col-lg-8 col-12">
+                        <!-- col-lg-8로 넓이를 제한 -->
+                        <div class="info-body custom-responsive-margin">
+                            <h4 class="text-center">상품설명</h4> <!-- 제목 가운데 정렬 -->
+                            <p class="text-center">
+                                <!-- 텍스트 가운데 정렬 -->
+                                <img alt="상품설명" src="${product_content}">
+                            </p>
                         </div>
                     </div>
-
-
                 </div>
             </div>
+                <div class="col-lg-12 col-12">
+                    <div class="single-block">
+                        <div class="reviews">
+                            <h4 class="title text-center">라뷰</h4>
+
+                            <!-- Check if reviews list is empty -->
+                            <c:if test="${empty reviews}">
+                                <p class="text-center">리뷰가 없습니다.</p>
+                            </c:if>
+
+                            <!-- Start Single Review -->
+                            <c:forEach var="review" items="${reviews}">
+                                <div class="single-review text-center">
+                                    <img src="/resources/images/nobody.png">
+                                    <div class="review-info">
+                                        <h4>${review.review_title}
+                                            <span>${review.nickname}</span>
+                                        </h4>
+                                        <div>
+                                            작성일 : <fmt:formatDate value="${review.register_date}" pattern="yyyy-MM-dd HH:mm:ss h시 m분 s초 (EEE) " />
+                                        </div>
+
+                                        <ul class="stars">
+                                            <c:forEach begin="1" end="5" var="star">
+                                                <li>
+                                                    <i class="${star <= review.review_score ? 'lni lni-star-filled' : 'lni lni-star'}"></i>
+                                                </li>
+                                            </c:forEach>
+                                        </ul>
+
+                                        <p>${review.review_content}</p>
+            <c:forEach var="image" items="${reviewImgs}">
+                <img src="${image}" class="img-fluid" alt="Review Image" style="padding: 5px;">
+            </c:forEach>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                            <!-- End Single Review -->
+                        </div>
+                    </div>
+                </div>
         </div>
-
-
     </section>
     <!-- End Item Details -->
 
-<jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
+    <jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
 
     <jsp:include page="../cart/cartModal.jsp"></jsp:include>
 

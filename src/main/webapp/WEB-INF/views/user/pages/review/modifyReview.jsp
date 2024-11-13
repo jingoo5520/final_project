@@ -21,9 +21,32 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        let fileList = [];
-        let existFileList = [];
+        let fileList = []; // 업로드할 새로운 파일 목록
+        let existFileList = []; // 기존에 이미 서버에 존재하는 파일 목록
+        let removedFileList = []; // 기존에 있는 파일 중 삭제하고자 하는 파일 목록
         
+        $(document).ready(function() {
+        	
+            const reviewNo = "${param.reviewNo}"; // 서버에서 reviewNo 값 제공
+
+            $.ajax({
+                url: '/review/getImgs', // 파일 리스트를 가져오는 API 엔드포인트
+                type: 'GET',
+                dataType: 'json',
+                data: { "reviewNo" : reviewNo }, // 필요한 파라미터 전달
+                success: function(data) {
+                    existFileList = data; // 서버에서 받아온 파일 리스트를 existFileList에 저장
+                    showFiles(); // 파일 리스트 화면에 표시
+                    showExistFileList();
+                    console.log("받아온 data : ", data);
+
+                },
+                error: function(error) {
+                    console.error("기존 파일 목록을 불러오는 중 오류 발생:", error);
+                }
+            });
+            
+        // 파일 첨부시 파일 목록에 추가
 		$("#fileInput").on("change", function(){
 			// 이미지 파일만 업로드 가능
 			const imageTypes = ["image/jpeg", "image/png"];
@@ -52,98 +75,7 @@
 			console.log(existFileList);
 			showFiles();
 		});
-		
-		// 첨부파일 제거
-		$(document).on("click", ".remove-item", function(){
-			let parentLi = $(this).parent();
-			
-			for(let i = 0; i < existFileList.length; i++){
-				if(existFileList[i].image_url == parentLi.text().trim()){
-					console.log(existFileList[i].image_url + "삭제완료");		
-					existFileList.splice(i, 1);
-					parentLi.remove();
-					break;
-				}
-			}
-			
-			for(let i = 0; i < fileList.length; i++){
-				if(fileList[i].name == parentLi.text().trim()){
-					console.log(fileList[i] + "삭제완료");		
-					fileList.splice(i, 1);
-					parentLi.remove();
-					break;
-				}
-			}
-			
-			console.log(fileList);
-			console.log(existFileList);
-			showFiles();
-		})
-		
-	// 첨부파일 리스트 보여주기
-	function showFiles(){
-		let listOutput = '';
-		
-		existFileList.forEach(function(file){
-			listOutput += `<li>\${file.image_url} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;	
-		});
-		
-		fileList.forEach(function(file){
-			listOutput += `<li>\${file.name} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;
-		});
-			
-		$(".fileList").html(listOutput);
-	}
-
-	// 수정 완료
-	function modifyReview(){
-		let reviewNo = "${param.reviewNo}";
-		let reviewTitle = $("#reviewTitle").val();
-		let reviewContent = $("#reviewContent").val();
-		let reviewScore = $("#reviewScore").val();
-		let formData = new FormData();
-		
-		console.log(reviewNo + reviewTitle + reviewContent + reviewScore);
-		formData.append('reviewNo', Number(reviewNo));
-		formData.append('reviewTitle', reviewTitle);
-		formData.append('reviewContent', reviewContent);
-		formData.append('reviewScore', reviewScore);
-		
-		
-		for (let i = 0; i < fileList.length; i++) {
-	        formData.append('files', fileList[i]);
-	    }
-		
-		for (let i = 0; i < existFileList.length; i++) {
-	        formData.append('existFiles', existFileList[i].image_url);
-	    }
-		
-		for(const x of formData) {
-			console.log(x);
-		};
-		
-		$.ajax({
-			url : '/review/modifyReview',
-			type : 'POST',
-			dataType: 'text',
-			processData: false,
-	        contentType: false, 
-			data : formData,
-			success : function(data) {
-				console.log(data);
-				location.href = "/review/reviewDetail?reviewNo=${param.reviewNo}";
-			},
-			error : function(error) {
-				alert("관리자가 답글을 단 게시글이거나 입력조건을 충족하지 못했을때 수정이 안됩니다.");
-				
-				console.log(error);
-
-			}
-		
-		})
-	}
-
-
+        
         $(document).ready(function() {
             // 별 클릭 시 별점 값 설정 및 스타일 변경
             $(".star").on("click", function() {
@@ -162,6 +94,116 @@
                 });
             });
         });
+	});
+		
+		// 추가되는 첨부파일 제거
+		$(document).on("click", ".remove-item", function(){
+			let parentLi = $(this).parent();
+			
+			for(let i = 0; i < fileList.length; i++){
+				if(fileList[i].name == parentLi.text().trim()){
+					console.log(fileList[i] + "삭제완료");		
+					fileList.splice(i, 1);
+					parentLi.remove();
+					break;
+				}
+			}
+			
+			console.log(fileList);
+			console.log(existFileList);
+			showFiles();
+		})
+		
+		// 기본 첨부 이미지파일 제거
+			$(document).on("click", ".remove-file", function(){
+			let parentLi = $(this).parent();
+			
+			for(let i = 0; i < existFileList.length; i++){
+				if(existFileList[i] == parentLi.text().trim()){
+					console.log(existFileList[i] + "삭제완료");	
+					removedFileList.push(existFileList[i]);
+					existFileList.splice(i, 1);
+					parentLi.remove();
+					break;
+				}
+			}
+			
+			console.log("ex: " + existFileList);
+			console.log("rm: " + removedFileList);
+			showExistFileList();
+		})
+		
+		
+	// 첨부파일 리스트 보여주기
+	function showFiles(){
+		let listOutput = '';
+		
+		fileList.forEach(function(file){
+			listOutput += `<li>\${file.name} <a class="remove-item" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;
+		});
+			
+		$(".fileList").html(listOutput);
+	}
+		
+	function showExistFileList() {
+		let listOutput = '';
+		
+		existFileList.forEach(function(file){
+			listOutput += `<li>\${file} <a class="remove-file" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;	
+		});
+		
+		$(".existFileList").html(listOutput);
+	}
+
+	// 수정 완료
+	function modifyReview(){
+		let reviewNo = "${param.reviewNo}";
+		let reviewTitle = $("#reviewTitle").val();
+		let reviewContent = $("#reviewContent").val();
+		let reviewScore = $("#reviewScore").val();
+		let formData = new FormData();
+		
+		formData.append('reviewNo', Number(reviewNo));
+		formData.append('reviewTitle', reviewTitle);
+		formData.append('reviewContent', reviewContent);
+		formData.append('reviewScore', reviewScore);
+		
+		
+		for (let i = 0; i < fileList.length; i++) {
+	        formData.append('files', fileList[i]);
+	    }
+		
+		for (let i = 0; i < existFileList.length; i++) {
+	        formData.append('existFiles', existFileList[i]);
+	    }
+		
+		for (let i = 0; i < removedFileList.length; i++) {
+			formData.append('removedFiles', removedFileList[i])
+		}
+		
+		for(const x of formData) {
+			console.log(x);
+		};
+		
+		$.ajax({
+			url : '/review/modifyReview',
+			type : 'POST',
+			dataType: 'text',
+			processData: false,
+	        contentType: false, 
+			data : formData,
+			success : function(data) {
+				console.log(data);
+				location.href = "/review/reviewDetail?reviewNo=${param.reviewNo}";
+				
+			},
+			error : function(error) {
+				alert("관리자가 답글을 단 게시글이거나 입력조건을 충족하지 못했습니다.");
+				console.log(error);
+			}
+		
+		})
+	}
     </script>
 </head>
 
@@ -180,7 +222,7 @@
         padding: 20px 0px !important;
     }
 
-    .remove-item {
+    .remove-item, .remove-file {
         color: #fff;
         background-color: #f44336;
         font-size: 8px;
@@ -284,6 +326,7 @@
 
 
                             <div class="row">
+								<form>
                                 <c:forEach var="review" items="${reviews}">
                                     <div class="col-12">
                                         <div class="single-form form-default">
@@ -341,20 +384,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="col-md-12">
-                                        <div class="single-form form-default">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6 col-sm-12" style="padding: 5px;">
-										            <c:forEach var="image" items="${reviewImages}">
-										                <img src="${image}" class="img-fluid" alt="Review Image" style="padding: 5px;">
-										            </c:forEach>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+
                                 </c:forEach>
-                                                                    <div class="col-md-6">
+                                     <div class="col-md-6">
                                         <div class="single-form form-default">
                                             <label>이미지 첨부</label>
                                             <div class="single-form form-default button" style="margin-top: 0px">
@@ -371,7 +403,16 @@
 
                                             </ul>
                                         </div>
+                                        
+                                        <div>
+                                            <label>기본 첨부 이미지</label>
+											<ul class="existFileList list mt-1">
+												
+                                            </ul>
+                                        </div>
                                     </div>
+                                    
+								</form>
                             </div>
 
                         </section>

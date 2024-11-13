@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -135,7 +136,8 @@ public class RController {
             model.addAttribute("product_no", product_no);
             model.addAttribute("product_name", product_name);
             model.addAttribute("image_url", image_url);
-            model.addAttribute("member_id", loginMember.getMember_id());
+            // model.addAttribute("member_id", loginMember.getMember_id());
+            model.addAttribute("member_id", "rhkrekgns1");
             
             return "/user/pages/review/writeReview"; // 리뷰 작성 페이지 반환
         } else {
@@ -196,6 +198,7 @@ public class RController {
     }
     
 
+    // 수정페이지 이동
 	@GetMapping("/modifyReview")
 	public String modifyReviewPage(@RequestParam(value = "reviewNo") int reviewNo, Model model, HttpServletRequest request) throws Exception {
 		
@@ -208,15 +211,36 @@ public class RController {
         // 리뷰 이미지 리스트 가져오기
 		List<String> reviewImages = service.getReviewImages(reviewNo);
 		
+
+		
     	if (loginMember != null) {
     		model.addAttribute("reviewImages", reviewImages);
     		model.addAttribute("reviews", reviewDetail); // 이미지 리스트를 JSP로 전달
+    		// model.addAttribute("existFileList", existFileList);
     	}
 
 		return "/user/pages/review/modifyReview";
 	}
     
-    
+	@GetMapping("/getImgs")
+	@ResponseBody
+	public ResponseEntity<List<String>> getImgs (@RequestParam (value = "reviewNo") int reviewNo){
+		List<String> existFileList = null;
+		
+		// 리뷰 이미지 리스트 가져오기
+		try {
+			existFileList = service.getExistFileList(reviewNo);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+		
+		return ResponseEntity.ok(existFileList);
+	}
+	
+	
+    // 수정 데이터
     @PostMapping("/modifyReview")
     public ResponseEntity<String> modifyReview(
     		@RequestParam("reviewNo") int reviewNo,@RequestParam("reviewTitle") String reviewTitle,
@@ -237,10 +261,18 @@ public class RController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("관리자 답글이 있는 리뷰는 수정할 수 없습니다.");
         }
 
-
+        System.out.println("files: " + files);
+	    System.out.println("existFiles: " + existFiles);
+	    System.out.println("removedFiles: " + removedFiles);
+        
+        
+        
         try {
             // 서비스에 데이터 전달
-        	service.modifyReview(reviewNo, reviewTitle, reviewContent, reviewScore, files, existFiles, removedFiles, request);
+        	service.modifyReview(reviewNo, reviewTitle, reviewContent, reviewScore);
+        	
+        	// 리뷰 이미지
+        	service.modifyReviewImg(reviewNo, files, existFiles, removedFiles, request);
             return ResponseEntity.ok("수정 성공");
         } catch (Exception e) {
             e.printStackTrace();

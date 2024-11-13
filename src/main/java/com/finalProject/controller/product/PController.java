@@ -183,22 +183,32 @@ public class PController {
 		return "/user/pages/product/productList"; // JSP 페이지로 반환
 	}
 
-	// 3. 상품의 세부 정보를 표시함
-	@GetMapping("/jewelry/detail")
-	public String showProductDetail(@RequestParam("productNo") int productId, Model model) throws Exception {
+    // 3. 상품의 세부 정보
+    @GetMapping("/jewelry/detail")
+    public String showProductDetail(
+            @RequestParam("productNo") int productNo,
+            Model model) throws Exception {
 
-		// 상품 상세 정보 조회
-		List<ProductDTO> products = service.getProductInfo(productId);
+        // 상품 상세 정보 조회
+        List<ProductDTO> products = service.getProductInfo(productNo);
+        // 세부 상품 정보 조회
+        ProductDTO product = service.getProductDetailById(productNo);
+        
+        // 상품 리뷰 조회
+        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
+        // 상품 리뷰 이미지 조회
+        List <String> reviewImgs = service.getReviewImgs(productNo);
+        
 
-		// 세부 상품 정보 조회
-		ProductDTO product = service.getProductDetailById(productId);
-
-		// Model에 데이터 추가
-		model.addAttribute("products", products);
-		model.addAttribute("product_content", product.getProduct_content());
-		model.addAttribute("calculatedPrice", product.getCalculatedPrice()); // 계산된 가격 추가
-		return "/user/pages/product/productDetail";
-	}
+        // Model에 데이터 추가
+        model.addAttribute("reviews", seeReview);
+        model.addAttribute("reviewImgs", reviewImgs);
+        
+        model.addAttribute("products", products);
+        model.addAttribute("product_content", product.getProduct_content());
+        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 계산된 가격 추가
+        return "/user/pages/product/productDetail";
+    }
 
 	// 4. 검색기능
 	@GetMapping("/jewelry/result")

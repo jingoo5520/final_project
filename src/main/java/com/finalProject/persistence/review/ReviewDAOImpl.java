@@ -105,4 +105,9 @@ public class ReviewDAOImpl implements ReviewDAO {
         return count != null && count > 0;
     }
 
+	@Override
+	public List<String> selectExistFileList(int reviewNo) throws Exception {
+		return ses.selectList(ns + "selectExistFileList", reviewNo);
+	}
+
 }

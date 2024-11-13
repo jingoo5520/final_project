@@ -34,17 +34,20 @@ public interface ReviewDAO {
 	// 리뷰 이미지
 	List<String> selectReviewImage(int reviewNo) throws Exception;
 
+	// 관리자 답글 판별
+	boolean checkAdminReply(int reviewNo) throws Exception;
+
 	// 리뷰 수정
 	void updateReview(ReviewDTO reviewDTO) throws Exception;
-
+	
 	// 리뷰 이미지 삭제
 	void deleteReviewImage(String imageUrl) throws Exception;
 
 	// 리뷰 이미지 추가
 	void modifyinsertReviewImage(ReviewDTO reviewImageDTO) throws Exception;
 
-	boolean checkAdminReply(int reviewNo) throws Exception;
-
+	// 원래 있던 파일 리스트
+	List<String> selectExistFileList(int reviewNo) throws Exception;
 
 
 

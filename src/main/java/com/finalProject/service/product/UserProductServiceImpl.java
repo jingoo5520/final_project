@@ -74,16 +74,12 @@ public class UserProductServiceImpl implements UserProductService {
 
 	@Override
 	public List<ReviewDetailDTO> getReviewDetail(int productNo) throws Exception {
-	    List<ReviewDetailDTO> reviews = pDao.selectReview(productNo);
-//	    System.out.println("서비스에서 조회된 리뷰 목록: " + reviews);
-	    return reviews;
+	    return pDao.selectReview(productNo);
 	}
 
 	@Override
 	public List<String> getReviewImgs(int productNo) throws Exception {
-	    List<String> images = pDao.selectReviewImg(productNo);
-//	    System.out.println("서비스에서 조회된 리뷰 이미지 목록: " + images);
-	    return images;
+	    return pDao.selectReviewImg(productNo);
 	}
 
 }
