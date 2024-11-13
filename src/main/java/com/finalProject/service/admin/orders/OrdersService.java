@@ -7,6 +7,7 @@ import com.finalProject.model.admin.order.AdminCancleVO;
 import com.finalProject.model.admin.order.AdminGetCancel;
 import com.finalProject.model.admin.order.AdminPaymentVO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
+import com.finalProject.model.admin.order.ModifyCancelStatusDTO;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
 
 public interface OrdersService {
@@ -20,5 +21,7 @@ public interface OrdersService {
 	List<AdminCancleVO> getListByOrderId(String orderId);
 
 	int RestractByCancelNo(String cancelNo);
+
+	boolean modifyCancelStatus(ModifyCancelStatusDTO modifyCancelStatusDTO);
 
 }

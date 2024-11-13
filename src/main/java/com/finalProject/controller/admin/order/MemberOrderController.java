@@ -20,6 +20,7 @@ import com.finalProject.model.admin.order.AdminCancleVO;
 import com.finalProject.model.admin.order.AdminGetCancel;
 import com.finalProject.model.admin.order.AdminPaymentVO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
+import com.finalProject.model.admin.order.ModifyCancelStatusDTO;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.service.admin.orders.OrdersService;
 
@@ -118,22 +119,25 @@ public class MemberOrderController {
 		}
 	}
 
-//	@RequestMapping("modifyStatus")
-//	@ResponseBody
-//	public ResponseEntity<Object> ModifyCancelStatus(@RequestBody AdminSuccessCancelDTO adminSuccessCancelDTO) {
-//		System.out.println(adminSuccessCancelDTO.getAmount());
-//		System.out.println(adminSuccessCancelDTO.getCancelNo());
-//		System.out.println(adminSuccessCancelDTO.getCancelType());
-//		System.out.println(adminSuccessCancelDTO.getPaymentNo());
-//		try {
-//			os.modifyCancelStatus(adminSuccessCancelDTO);
-//		} catch (Exception e) {
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fail");
-//		}
-//
-//		return null;
-//
-//	}
+	@RequestMapping("modifyStatus")
+	@ResponseBody
+	public ResponseEntity<Object> ModifyCancelStatus(@RequestBody ModifyCancelStatusDTO modifyCancelStatusDTO) {
+		boolean result = false;
+
+		System.out.println(modifyCancelStatusDTO.getAmount());
+		System.out.println(modifyCancelStatusDTO.getCancelList().toString());
+		System.out.println(modifyCancelStatusDTO.getCancelType());
+		System.out.println(modifyCancelStatusDTO.getPaymentNo());
+		try {
+			result = os.modifyCancelStatus(modifyCancelStatusDTO);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fail");
+		}
+
+		return null;
+
+	}
+
 	@RequestMapping("showListByOrderId")
 	@ResponseBody
 	public ResponseEntity<Object> ShowListByOrderId(@RequestParam("orderId") String orderId) {

@@ -292,12 +292,13 @@
 	
 	$(document).ready(function() { 
 			
-		    function modifyCancelStatus(amount, cancelNo, paymentNo, cancelType) {
+		    function modifyCancelStatus(amount, cancelList, paymentNo,cancelType,assigned_point) {
 		        let data = {
 		            amount: amount,
-		            cancelNo: cancelNo,
+		            cancelList: cancelList,
 		            paymentNo: paymentNo,
-		            cancelType: cancelType
+		            cancelType: cancelType,
+		            assigned_point : assigned_point
 		        };
 		        
 		        $.ajax({
@@ -307,7 +308,18 @@
 		            contentType: 'application/json',
 		            data: JSON.stringify(data),  // data 객체를 JSON 형식으로 문자열화하여 전송
 		            success: function(response) {
-		                console.log(response);  // 성공 시 서버 응답 출력
+		               $.ajax({
+		            	  url : '/admin/order/updateCancelDate',
+		            	  type : 'POST' ,
+		            	  dataType : "json" ,
+		            	  data: JSON.stringify(data),
+		            	  success : function(data) {
+		            		 console.log(data); 
+		            	  } ,
+		            	  error : function(xhr, status, error) {
+		            		  console.log(error);
+		            	  }
+		               });
 		            },
 		            error: function(error) {
 		                console.error(error);  // 에러 시 에러 출력
@@ -315,7 +327,7 @@
 		        });
 		    }
 
-		function tossCancelRequest(paymentKey, cancelReason, amount = null,cancelNo,paymentNo,cancelType) {
+		function tossCancelRequest(paymentKey, cancelReason, amount = null,cancelList,paymentNo,cancelType,assigned_point) {
 			let encodedSecretKey = null
 			let cancelResponse = null
 			
@@ -357,8 +369,8 @@
 				 success: function(response) {
 					 cancelResponse = response
 					 console.log(response);
-					console.log(cancelNo);
-					modifyCancelStatus(amount,cancelNo,paymentNo,cancelType);
+			
+					modifyCancelStatus(amount,cancelList,paymentNo,cancelType,assigned_point);
 				 },
 				 error: function(xhr, status, error) {
 				   console.error(`Error: , `);
@@ -368,7 +380,7 @@
 			return cancelResponse
 		}
 			
-			function kakaopayCancelRequest(paymentId, cancelReason, amount,cancelNo,paymentNo,cancelType) {
+			function kakaopayCancelRequest(paymentId, cancelReason, amount,cancelList,paymentNo,cancelType,assigned_point) {
 				let response = null
 				$.ajax({
 					async: false,
@@ -384,8 +396,8 @@
 					success: function(res) {
 						response = res.response
 						console.log(res);
-						console.log(cancelNo);
-						modifyCancelStatus(amount,cancelNo,paymentNo,cancelType);
+		
+						modifyCancelStatus(amount,cancelList,paymentNo,cancelType,assigned_point);
 					},
 					error: function(xhr, status, error) {
 						console.error(`Error: , `);
@@ -394,7 +406,7 @@
 				});
 				return JSON.parse(response)
 			}
-		    function naverpayCancelRequest(paymentId, cancelReason, amount,cancelNo,paymentNo,cancelType) {
+		    function naverpayCancelRequest(paymentId, cancelReason, amount,cancelList,paymentNo,cancelType,assigned_point) {
 				let response = null
 				$.ajax({
 					async: false,
@@ -410,8 +422,8 @@
 					success: function(res) {
 						response = res.response
 						console.log(res);
-						console.log(cancelNo);
-						modifyCancelStatus(amount,cancelNo,paymentNo,cancelType);
+			
+						modifyCancelStatus(amount,cancelList,paymentNo,cancelType,assigned_point);
 					},
 					error: function(xhr, status, error) {
 						console.error(`Error: , `);
@@ -505,13 +517,13 @@
 				                console.log(data);
 				                let canelReason = data.cancel_reason.replace(" ", "").trim();
 				                console.log(canelReason);
-				                /*  if(data.payment_method == 'T') {
-				                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount = null,cancelNo,data.payment_no,data.cancel_type);
+				                  if(data.payment_method == 'T') {
+				                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount = null,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 				                } else if (data.payment_method == 'K') {
-				                	kakaopayCancelRequest(data.payment_module_key, canelReason, data.paid_amount,cancelNo,data.payment_no,data.cancel_type);
+				                	kakaopayCancelRequest(data.payment_module_key, data.canelReason, data.paid_amount,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 				                } else if (data.payment_method == 'N') {
-				                	naverpayCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount,cancelNo,data.payment_no,data.cancel_type);
-				                }  */
+				                	naverpayCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
+				                }  
 				            },
 				            error: function(error) {
 				                console.error(error); // 에러 시 콘솔에 에러 출력
@@ -630,13 +642,13 @@
 		                console.log(data);
 		                let canelReason = data.cancel_reason.replace(" ", "").trim();
 		                console.log(canelReason);
-		            /*     if(data.payment_method == 'T') {
-		                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount = null,cancelList,data.payment_no,data.cancel_type);
+		                 if(data.payment_method == 'T') {
+		                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount = null,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 		                } else if (data.payment_method == 'K') {
-		                	kakaopayCancelRequest(data.payment_module_key, canelReason, data.paid_amount,cancelList,data.payment_no,data.cancel_type);
+		                	kakaopayCancelRequest(data.payment_module_key, canelReason, data.paid_amount,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 		                } else if (data.payment_method == 'N') {
-		                	naverpayCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount,cancelList,data.payment_no,data.cancel_type);
-		                }  */
+		                	naverpayCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
+		                }  
 		            },
 		            error: function(error) {
 		                console.error(error); // 에러 시 콘솔에 에러 출력
@@ -645,15 +657,6 @@
 		     });
     }); 
 		
-		/*  $(".changeStatus").on('click', function() {
-		        let cancelNo = $(this).val(); // 버튼의 value 속성에서 취소번호 가져오기
-		        let orderNo = $(this).parent().parent().find("#orderNo").text(); // 주문번호 가져오기
-		        console.log(cancelNo);
-		        console.log(orderNo);
-		        // 모달에 값 설정
-		        $("#modalOrderNo").text(orderNo); // 모달 제목에 주문번호 설정
-		        $("#modalCancelNo").text("취소번호 : " + cancelNo + "번을 "); // 모달 본문에 취소번호 설정
-		    }); */
 		
 		 $("#searchCancel").on('click', function() {
 			 let pageNo = 1;

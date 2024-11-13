@@ -56,12 +56,50 @@
 
 		if (discountType === 'P') {
 			$("#discountAmountContainer").css('display', 'block');
-			$("#discountAmountContainer").attr('readonly', false);
+			$("#discountAmountContainer").prop('readonly', false);
 		} else {
-			$("#discountAmountContainer").attr('readonly', true);
-			$("discountAmountContainer").val(0);
+			$("#discountAmountContainer").val(0);
+			/* $("#discountAmountContainer").val(0); */
+			$("#discountAmountContainer").prop('readonly', true);
 		}
 	}
+	$(function () {
+		$('form').on('submit', function (e) {
+            let isValid = true;
+
+            // 모든 경고 메시지 제거
+            $('.error-message').remove();
+
+            // 상품명 검사
+            if ($('#productName').val().trim() === '') {
+                $('#productName').after('<span class="error-message" style="color: red;">상품명을 입력해 주세요.</span>');
+                isValid = false;
+            }
+
+            // 가격 검사
+            if ($('#productPrice').val().trim() === '') {
+                $('#productPrice').after('<span class="error-message" style="color: red;">상품 가격을 입력해 주세요.</span>');
+                isValid = false;
+            }
+
+            // 카테고리 검사
+            if ($('#selectCategory').val().trim() === '') {
+                $('#selectCategory').parent().parent().append('<div><span class="error-message" style="color: red;">카테고리를 선택해 주세요.</span></div>');
+                isValid = false;
+            }
+
+            // 판매수량 검사
+            if ($('#productCount').val().trim() === '') {
+                $('#productCount').after('<span class="error-message" style="color: red;">판매 가능한 수량을 입력해 주세요.</span>');
+                isValid = false;
+            }
+
+            // 유효하지 않으면 폼 제출 방지
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+	})
 </script>
 </head>
 
@@ -117,13 +155,13 @@
 										<div class="row mb-3">
 											<label class="col-sm-2 col-form-label" for="basic-default-name">상품명</label>
 											<div class="col-sm-10">
-												<input type="text" class="form-control" id="basic-default-name" placeholder="상품명" name="product_name">
+												<input type="text" class="form-control" id="productName" placeholder="상품명" name="product_name">
 											</div>
 										</div>
 										<div class="row mb-3">
 											<label class="col-sm-2 col-form-label" for="basic-default-company"> 가격</label>
 											<div class="col-sm-10">
-												<input type="number" class="form-control" id="basic-default-company" placeholder="상품 가격" name="product_price">
+												<input type="number" class="form-control" id="productPrice" placeholder="상품 가격" name="product_price">
 											</div>
 										</div>
 										<div class="row mb-3">
@@ -147,7 +185,7 @@
 														</td>
 														<td>
 															<div class="form-check d-flex justify-content-center">
-																<input class="form-check-input dc_type" type="radio" id="defaultCheck3" name="product_dc_type" value="N" onclick="toggleDiscountInput()">
+																<input class="form-check-input dc_type" type="radio" id="defaultCheck3" name="product_dc_type" value="N" onclick="toggleDiscountInput()" checked="checked">
 															</div>
 														</td>
 													</tr>
@@ -175,7 +213,7 @@
 											<label class="col-sm-2 col-form-label" for="basic-default-email">할인금액</label>
 											<div class="col-sm-10">
 												<div class="input-group input-group-merge">
-													<input type="number" id="discountAmountContainer" class="form-control" placeholder="" name="product_dc_amount">
+													<input type="number" id="discountAmountContainer" class="form-control" placeholder="" name="product_dc_amount" readonly>
 												</div>
 
 											</div>
@@ -183,7 +221,7 @@
 										<div class="row mb-3">
 											<label class="col-sm-2 col-form-label" for="basic-default-phone">판매수량</label>
 											<div class="col-sm-10">
-												<input type="number" id="basic-default-phone" class="form-control phone-mask" placeholder="판매가능한 수량을 입력" aria-label="판매 가능한 수량을 입력" name="product_sell_count">
+												<input type="number" id="productCount" class="form-control phone-mask" placeholder="판매가능한 수량을 입력" aria-label="판매 가능한 수량을 입력" name="product_sell_count">
 											</div>
 										</div>
 										<div class="row mb-3">

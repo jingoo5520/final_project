@@ -91,8 +91,10 @@
 		resultType="com.finalProject.model.admin.order.AdminPaymentVO">
 		SELECT
 		o.payment_module_key AS payment_module_key,
-		c.cancel_reason AS cancel_reason,
+		c.cancel_reason AS
+		cancel_reason,
 		SUM(op.paid_amount) AS paid_amount,
+		SUM(op.assigned_point) AS assigned_point,
 		c.cancel_type AS cancel_type,
 		p.payment_method AS payment_method,
 		p.payment_id AS payment_no
@@ -101,9 +103,11 @@
 		JOIN
 		orders o ON c.order_id = o.order_id
 		JOIN
-		order_products op ON c.order_product_no = op.orderproduct_no
+		order_products op
+		ON c.order_product_no = op.orderproduct_no
 		JOIN
-		payments p ON c.order_id = p.order_id
+		payments p ON c.order_id
+		= p.order_id
 		<if test="list != null and list.size() > 0">
 			WHERE c.order_product_no IN
 			<foreach item="orderProductNo" collection="list" open="("
@@ -122,5 +126,42 @@
 	<update id="restractByCancelNo">
 		update cancels set cancel_status = '관리자 철회' ,
 		cancel_retract_date = NOW() where cancel_no = #{cancelNo}
+	</update>
+
+	<update id="updateCancelCompleteDate">
+		update cancels set cancel_complete_date = now() , cancel_status = '취소 완료'
+		where cancel_no In
+		<foreach item="cancel" collection="cancelList" open="("
+			separator="," close=")">
+			#{cancel}
+		</foreach>
+	</update>
+	<insert id="insertRefund"
+		parameterType="com.finalProject.model.admin.order.ModifyCancelStatusDTO">
+		INSERT INTO
+		refunds(payment_num,refund_type,refund_amount) VALUES
+		(#{paymentNo},#{cancelType},#{amount})
+	</insert>
+	<select id="getOrderIdByCancelNo" resultType="String">
+		select order_id from cancels where cancel_no in
+		<foreach item="cancel" collection="cancelList" open="("
+			separator="," close=")">
+			#{cancel}
+		</foreach>
+		group by order_id
+	</select>
+
+	<select id="getExpectPayAmount" resultType="com.finalProject.model.admin.order.AdminPayOrdererVO">
+		select
+		total_price_expected , orderer_id from orders where order_id =
+		#{orderId}
+	</select>
+	
+	<insert id="returnPoint">
+		insert into point_earned(member_id,earned_point,point_code) values(#{member_id},#{point},3)
+	</insert>
+	
+	<update id="returnMemberPoint">
+		update members set member_point = member_point + #{point} where member_id = #{member_id}
 	</update>
 </mapper>

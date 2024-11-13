@@ -1,5 +1,6 @@
 package com.finalProject.persistence.admin.order;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.order.AdminCancleVO;
+import com.finalProject.model.admin.order.AdminPayOrdererVO;
 import com.finalProject.model.admin.order.AdminPaymentVO;
+import com.finalProject.model.admin.order.ModifyCancelStatusDTO;
 
 @Repository
 public class OrdersDAOImpl implements OrdersDAO {
@@ -63,6 +66,47 @@ public class OrdersDAOImpl implements OrdersDAO {
 	public int RestractByCancelNo(String cancelNo) {
 
 		return ses.update(ns + "restractByCancelNo", cancelNo);
+	}
+
+	@Override
+	public int updateCancelCompleteDate(List<Integer> cancelList) {
+
+		return ses.update(ns + "updateCancelCompleteDate", cancelList);
+	}
+
+	@Override
+	public int insertRefund(ModifyCancelStatusDTO modifyCancelStatusDTO) {
+		// TODO Auto-generated method stub
+		return ses.update(ns + "insertRefund", modifyCancelStatusDTO);
+	}
+
+	@Override
+	public String getOrderIdByCancelNo(List<Integer> cancelList) {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getOrderIdByCancelNo", cancelList);
+	}
+
+	@Override
+	public AdminPayOrdererVO getExpectPayAmount(String orderId) {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getExpectPayAmount", orderId);
+	}
+
+	@Override
+	public int returnPoint(int assigned_point, String orderer_id) {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("point", assigned_point);
+		map.put("member_id", orderer_id);
+		return ses.insert(ns + "returnPoint", map);
+	}
+
+	@Override
+	public void returnMemberPoint(int assigned_point, String orderer_id) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("point", assigned_point);
+		map.put("member_id", orderer_id);
+		ses.update(ns + "returnMemberPoint", map);
 	}
 
 }

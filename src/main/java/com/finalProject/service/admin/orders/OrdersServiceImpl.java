@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finalProject.model.admin.order.AdminCancleVO;
 import com.finalProject.model.admin.order.AdminGetCancel;
+import com.finalProject.model.admin.order.AdminPayOrdererVO;
 import com.finalProject.model.admin.order.AdminPaymentVO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
+import com.finalProject.model.admin.order.ModifyCancelStatusDTO;
 import com.finalProject.model.admin.product.PagingInfo;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.persistence.admin.order.OrdersDAO;
@@ -120,6 +124,35 @@ public class OrdersServiceImpl implements OrdersService {
 	@Override
 	public int RestractByCancelNo(String cancelNo) {
 		return oDAO.RestractByCancelNo(cancelNo);
+	}
+
+	@Override
+	@Transactional(isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+	public boolean modifyCancelStatus(ModifyCancelStatusDTO modifyCancelStatusDTO) {
+		int cancelUpdateResult = 0;
+		String orderId = "";
+		List<Integer> cancelList = modifyCancelStatusDTO.getCancelList().stream().map(Integer::parseInt)
+				.collect(Collectors.toList());
+		cancelUpdateResult = oDAO.updateCancelCompleteDate(cancelList);
+
+		if (cancelUpdateResult > 1) {
+			oDAO.insertRefund(modifyCancelStatusDTO);
+		}
+
+		if (modifyCancelStatusDTO.getAssigned_point() != 0) {
+			orderId = oDAO.getOrderIdByCancelNo(cancelList);
+			AdminPayOrdererVO expectResult = oDAO.getExpectPayAmount(orderId);
+			if ((expectResult.getTotal_price_expected() - 2500) == modifyCancelStatusDTO.getAmount()) {
+				int result = oDAO.returnPoint(modifyCancelStatusDTO.getAssigned_point(), expectResult.getOrderer_id());
+				if (result >= 1) {
+					oDAO.returnMemberPoint(modifyCancelStatusDTO.getAssigned_point(), expectResult.getOrderer_id());
+				} else {
+					throw new RuntimeException("포인트 반환 실패");
+				}
+			}
+		}
+
+		return true;
 	}
 
 }
