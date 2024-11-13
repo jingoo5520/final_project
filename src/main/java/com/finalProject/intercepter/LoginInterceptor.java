@@ -94,7 +94,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				ses.setAttribute("loginMember", loginMember);
 				System.out.println(loginMember.getMember_name() + "님 로그인");
 				Object autologin = model.get("autologin");
-
 				if (autologin != null) { // 자동로그인에 체크한 경우
 					String code = UUID.randomUUID().toString();
 					Cookie cookie = new Cookie("al", code); // 쿠키객체 생성
@@ -103,7 +102,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					response.addCookie(cookie); // 만든 쿠키 저장
 					// db에 자동로그인 정보 update
 					memberService.setAutoLogin(loginMember.getMember_id(), code, AUTOLOGIN_DATE);
-
 				}
 				String rememberPath = ses.getAttribute("rememberPath") + "";
 				if (loginMember.getIs_admin().equals("1") || loginMember.getIs_admin().equals("9")) { // 관리자 아이디인 경우
@@ -111,8 +109,15 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					response.sendRedirect("/admin");
 				} else {
 					if (!rememberPath.equals("null")) { // rememberPath가 있다면
-						response.sendRedirect(rememberPath); // rememberPath로 보냄
 						System.out.println("rememberPath있음 : " + rememberPath);
+//						// rememberPath가 order일 경우 따로 처리
+//						// sendRedirect()는 GET 매핑인데, /order요청은 POST 요청이 다시 /order GET 요청으로 보내는 방식으로 작동한다.
+//						// 따라서 /order 단독으로 GET 요청을 할 일은 없다.
+//						if (rememberPath.equals("/order")) {
+//							request.getRequestDispatcher("/order").forward(request, response);
+//							return;
+//						}
+						response.sendRedirect(rememberPath); // rememberPath로 보냄
 					} else {
 						System.out.println("rememeberPath없음");
 						response.sendRedirect("/"); // 인덱스로 보냄

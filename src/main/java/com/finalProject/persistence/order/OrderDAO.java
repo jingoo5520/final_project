@@ -29,13 +29,15 @@ public interface OrderDAO {
 
 	int selectDeliveryCost(String orderId);
 	
-	Integer useCoupon(String orderId);
+	Integer useCoupon(String orderId, String couponCode);
 
 	boolean updateUserLevel(String orderId);
 
 	boolean updatePoint(String orderId);
 	
 	String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception;
+	
+	void deletePaidProductsFromCart(String memberId);
 	
 	boolean insertPaymentInfo(String orderId, Integer amount, String payModule, String method);
 
@@ -46,6 +48,8 @@ public interface OrderDAO {
 	int makeGuest(PaymentRequestDTO request, String orderId);
 
 	List<String> getOrderIdList(String memberId);
+	
+	List<String> getOrderIdList(String name, String phoneNumber, String email);
 
 	List<OrderProductDTO> getProductList(String orderId);
 
@@ -60,4 +64,5 @@ public interface OrderDAO {
 	List<ProductDiscountDTO> getDiscountInfoByProduct(String orderId, HttpSession session);
 
 	int updateRefundPriceByProduct(List<ProductDiscountCalculatedDTO> productDiscountCalculated);
+
 }

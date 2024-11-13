@@ -24,7 +24,7 @@
 	.btn {
 		width: 100%;
 	}
-
+	
 	.form-group input.text-input:focus {
 		border-color: #A8A691;
 	}
@@ -142,7 +142,8 @@
 </script>
 
 <script>
-	let orderInfo = null
+/* 	let orderInfo = null
+	
 	$(document).ready(function() {
 		orderInfo = loadOrderInfo()
 		showViewOrderPage(orderInfo)
@@ -454,7 +455,7 @@
 	
 	function cancelSubmit() {
 		showViewOrderPage(orderInfo)
-	}
+	} */
 </script>
 
 
@@ -488,53 +489,6 @@
 	transition: background-color 0.3s ease;
 }
 </style>
-
-<!--TODO : 디자인 단순 참고용, 끝나고 삭제하기-->
-<!-- <form class="card login-form" method="post">
-	<div class="card-body">
-		<div class="title">
-			<h3>Login Now</h3>
-			<p>You can login using your social media account or email address.</p>
-		</div>
-		<div class="social-login">
-			<div class="row">
-				<div class="col-lg-4 col-md-4 col-12"><a class="btn facebook-btn" href="javascript:void(0)"><i class="lni lni-facebook-filled"></i> Facebook
-						login</a></div>
-				<div class="col-lg-4 col-md-4 col-12"><a class="btn twitter-btn" href="javascript:void(0)"><i class="lni lni-twitter-original"></i> Twitter
-						login</a></div>
-				<div class="col-lg-4 col-md-4 col-12"><a class="btn google-btn" href="javascript:void(0)"><i class="lni lni-google"></i> Google login</a>
-				</div>
-			</div>
-		</div>
-		<div class="alt-option">
-			<span>Or</span>
-		</div>
-		<div class="form-group input-group">
-			<label for="reg-fn">Email</label>
-			<input class="form-control" type="email" id="reg-email" required="">
-		</div>
-		<div class="form-group input-group">
-			<label for="reg-fn">Password</label>
-			<input class="form-control" type="password" id="reg-pass" required="">
-		</div>
-		<div class="d-flex flex-wrap justify-content-between bottom-content">
-			<div class="form-check">
-				<input type="checkbox" class="form-check-input width-auto" id="exampleCheck1">
-				<label class="form-check-label">Remember me</label>
-			</div>
-			<a class="lost-pass" href="account-password-recovery.html">Forgot password?</a>
-		</div>
-		<div class="button">
-			<button class="btn" type="submit">Login</button>
-		</div>
-		<p class="outer-link">Don't have an account? <a href="register.html">Register here </a>
-		</p>
-	</div>
-</form> -->
-
-
-
-
 
 <body>
 	<!-- Preloader -->
@@ -576,23 +530,11 @@
 			<div class="row">
 				<!-- sideBar -->
 				<jsp:include page="/WEB-INF/views/user/pages/myPageSideBar.jsp">
-
 					<jsp:param name="pageName" value="viewOrder" />
-
 				</jsp:include>
 				<!-- / sideBar -->
 
-
 				<div class="col-lg-9 col-12" id="productsView">
-
-
-
-					<!-- <div id="writeInquiryBtnArea" class="button mt-2">
-						<button class="btn" onclick="location.href = '/serviceCenter/writeInquiry'">
-							문의 작성
-							<span class="dir-part"></span>
-						</button>
-					</div> -->
 				</div>
 				
 				<!--/ End Shopping Cart -->
@@ -614,82 +556,17 @@
 	<script src="/resources/assets/user/js/tiny-slider.js"></script>
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
-<!-- 	<script type="text/javascript">
-        //========= Hero Slider 
-        tns({
-            container: '.hero-slider',
-            slideBy: 'page',
-            autoplay: true,
-            autoplayButtonOutput: false,
-            mouseDrag: true,
-            gutter: 0,
-            items: 1,
-            nav: false,
-            controls: true,
-            controlsText: ['<i class="lni lni-chevron-left"></i>', '<i class="lni lni-chevron-right"></i>'],
-        });
-
-        //======== Brand Slider
-        tns({
-            container: '.brands-logo-carousel',
-            autoplay: true,
-            autoplayButtonOutput: false,
-            mouseDrag: true,
-            gutter: 15,
-            nav: false,
-            controls: false,
-            responsive: {
-                0: {
-                    items: 1,
-                },
-                540: {
-                    items: 3,
-                },
-                768: {
-                    items: 5,
-                },
-                992: {
-                    items: 6,
-                }
-            }
-        });
-
-    </script> -->
-<!-- 	<script>
-        const finaleDate = new Date("February 15, 2023 00:00:00").getTime();
-
-        const timer = () => {
-            const now = new Date().getTime();
-            let diff = finaleDate - now;
-            if (diff < 0) {
-                document.querySelector('.alert').style.display = 'block';
-               // index에서 topbar가 display none되지 않도록 처리
-               // document.querySelector('.container').style.display = 'none';
-            }
-
-            let days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            let hours = Math.floor(diff % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
-            let minutes = Math.floor(diff % (1000 * 60 * 60) / (1000 * 60));
-            let seconds = Math.floor(diff % (1000 * 60) / 1000);
-
-            days <= 99 ? days = `0${days}` : days;
-            days <= 9 ? days = `00${days}` : days;
-            hours <= 9 ? hours = `0${hours}` : hours;
-            minutes <= 9 ? minutes = `0${minutes}` : minutes;
-            seconds <= 9 ? seconds = `0${seconds}` : seconds;
-
-            document.querySelector('#days').textContent = days;
-            document.querySelector('#hours').textContent = hours;
-            document.querySelector('#minutes').textContent = minutes;
-            document.querySelector('#seconds').textContent = seconds;
-
-        }
-        timer();
-        setInterval(timer, 1000);
-        
-        // index에서 topbar가 display none되지 않도록 처리
-        $("#test").css("display", "block");
-    </script> -->
+	
+	<script src="/resources/assets/user/js/viewOrder.js"></script>
+	
+	<script>
+	var orderInfo = null
+	
+	$(document).ready(function() {
+		orderInfo = loadOrderInfo()
+		showViewOrderPage(orderInfo)
+	})
+	</script>
 </body>
 
 </html>

@@ -123,6 +123,12 @@
 									href="${pageContext.request.contextPath}/member/viewSignUp">회원가입
 									하기 </a>
 							</p>
+							
+							<!-- working... -->
+							<!-- TODO : 모델이든 세션이든 정보 받아서 비회원이 장바구니에서 결제하기 버튼 누르면  '비회원으로 결제하기' 링크 만들어야 함-->
+							<p class="outer-link"><a href="${pageContext.request.contextPath}/orderByNonMemberPage">
+								비회원으로 주문조회 하기
+							</a></p>
 						</div>
 					</form>
 				</div>

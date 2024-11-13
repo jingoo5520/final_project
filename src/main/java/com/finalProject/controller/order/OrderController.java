@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -166,6 +168,10 @@ public class OrderController {
 		Map<String, String> resultMap = new HashMap<>();
 			try {
 	        	boolean isMember = session.getAttribute("loginMember") == null ? false : true; // 로그인 여부로 회원, 비회원 여부 알아내기
+	        	if (isMember == true) {
+	        		 // 사용한 쿠폰 코드 세션에 저장, 결제시에 쿠폰 사용 내역 업데이트 시 사용한다
+	        		session.setAttribute("couponCodeUsed", paymentRequest.getCouponUse());
+	        	}
 	        	Map<String, Object> orderResult = orderService.makeOrder(paymentRequest, isMember, session);
 				session.setAttribute("orderId", (String) orderResult.get("orderId")); // 비회원은 orderId가 "non_member"이다.
 				String orderId = (String) session.getAttribute("orderId");
@@ -242,7 +248,9 @@ public class OrderController {
 			@RequestParam("paymentKey") String paymentKey,
 			@RequestParam("amount") int amount,
 			Model model,
-			HttpSession session
+			HttpSession session,
+			HttpServletRequest httpRequest,
+			HttpServletResponse httpRresponse
 			) {
 		// 예시 : http://localhost:8080/user/payment/success.html?orderId=MC4wODExNjkzNzY1NTg1&paymentKey=tviva20241016183611gDY62&amount=10
 		System.out.println("결제 인증 성공");
@@ -312,6 +320,15 @@ public class OrderController {
 		int responseCode = Integer.valueOf(result.get("httpResponseCode"));
 		System.out.println("토스서버의 결제승인응답 : " + result);
 		if (responseCode == HttpURLConnection.HTTP_OK) {
+			// 장바구니에서 주문한 상품 지우기(회원)
+			LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+			if (loginMember != null) {
+				String memberId = loginMember.getMember_id();
+				orderService.deletePaidProductsFromCart(memberId);
+				model.addAttribute("cookieDelete", "false");
+			} else { // 장바구니에서 주문한 상품 지우기(비회원)
+				model.addAttribute("cookieDelete", "delete"); // true로 하면 안된다... 왜지???
+			}
 			return "/user/pages/success"; // 결제 성공
 		} else {
 			return "/user/pages/order/orderFail"; // 결제 실패
@@ -323,7 +340,8 @@ public class OrderController {
 			@RequestParam("resultCode") String resultCode,
 			@RequestParam("paymentId") String paymentId,
 			@RequestParam(value = "resultMessage", required = false) String resultMessage, // resultCode가 Success이면 reaultMessage가 안옴
-			HttpSession session
+			HttpSession session,
+			Model model
 			) {
 		System.out.println("네이버페이 resultCode : " + resultCode);
 		if (!resultCode.equals("Success")) {
@@ -346,6 +364,16 @@ public class OrderController {
 					"NAVER_PAY", 
 					session
 				);
+			// 장바구니에서 주문한 상품 지우기(회원)
+			LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+			if (loginMember != null) {
+				String memberId = loginMember.getMember_id();
+				orderService.deletePaidProductsFromCart(memberId);
+				model.addAttribute("cookieDelete", "false");
+			} else { // 장바구니에서 주문한 상품 지우기(비회원)
+				model.addAttribute("cookieDelete", "delete"); // true로 하면 안된다... 왜지???
+			}
+			
 			return "/user/pages/success"; // 결제 성공
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -412,7 +440,8 @@ public class OrderController {
 	@PostMapping("/kakaopay_payRequest")
 	public ResponseEntity<Map<String, String>> payRequestForKakaopay(
 			@RequestBody Map<String, Object> requestData,
-			HttpSession session
+			HttpSession session,
+			Model model
 			) {
 		System.out.println("payRequestForKakaopay에서 requestData : " + requestData);
 		
@@ -434,6 +463,15 @@ public class OrderController {
 						"KAKAO_PAY", 
 						session
 					);
+				// 장바구니에서 주문한 상품 지우기(회원)
+				LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+				if (loginMember != null) {
+					String memberId = loginMember.getMember_id();
+					orderService.deletePaidProductsFromCart(memberId);
+					model.addAttribute("cookieDelete", "false");
+				} else { // 장바구니에서 주문한 상품 지우기(비회원)
+					model.addAttribute("cookieDelete", "delete"); // true로 하면 안된다... 왜지???
+				}
 				outputResponseMap.put("result", "success");
 				return new ResponseEntity<Map<String, String>>(outputResponseMap, HttpStatus.OK);
 			} catch (Exception e) {
@@ -514,6 +552,7 @@ public class OrderController {
 		
 	}
 	
+	
 	@GetMapping("/order/tossSecretKey")
 	public ResponseEntity<Map<String, String>> getTossSecretKey() {
 		// TODO : admin만 이 API에 접근할 수 있게 막아야 함
@@ -523,19 +562,6 @@ public class OrderController {
 		resultMap.put("encodedSecretKey", encodedSecretKey);
 		return ResponseEntity.ok(resultMap);
 	}
-	
-//	@GetMapping("/order/naverKeys")
-//	public ResponseEntity<Map<String, String>> getNaverKeys() {
-//		// TODO : admin만 이 API에 접근할 수 있게 막아야 함
-//		String clientId = "HN3GGCMDdTgGUfl0kFCo";
-//		String clientSecret = "ftZjkkRNMR";
-//		String chainId = "S2VnY2NSaHlhb3V";
-//		Map<String, String> resultMap = new HashMap<>();
-//		resultMap.put("clientId", clientId);
-//		resultMap.put("clientSecret", clientSecret);
-//		resultMap.put("chainId", chainId);
-//		return ResponseEntity.ok(resultMap);
-//	}
 	
 	@PostMapping("/order/NaverPayCancel")
 	public ResponseEntity<Map<String, String>> cancelNaverPay(
@@ -556,17 +582,34 @@ public class OrderController {
 	public ResponseEntity<Map<String, String>> cancelKaKaoPay(
 			@RequestBody Map<String, String> requestMap
 		) {
-	// TODO : admin만 이 API에 접근할 수 있게 막아야 함
-	String paymentId = requestMap.get("paymentId");
-	Integer cancelAmount = null;
-	if (requestMap.get("amount") != null) {
-		cancelAmount = Integer.valueOf(requestMap.get("amount"));
-	}
-	String cancelReason = requestMap.get("cancelReason");
-	Map<String, String> resultMap = orderService.requestApprovalKakaopayCancel(paymentId, cancelReason, cancelAmount);
-	return ResponseEntity.ok(resultMap);
+		// TODO : admin만 이 API에 접근할 수 있게 막아야 함
+		String paymentId = requestMap.get("paymentId");
+		Integer cancelAmount = null;
+		if (requestMap.get("amount") != null) {
+			cancelAmount = Integer.valueOf(requestMap.get("amount"));
+		}
+		String cancelReason = requestMap.get("cancelReason");
+		Map<String, String> resultMap = orderService.requestApprovalKakaopayCancel(paymentId, cancelReason, cancelAmount);
+		return ResponseEntity.ok(resultMap);
 	}
 	
+	@GetMapping("/orderByNonMemberPage")
+	public String orderByNonMemberPage() {
+		return "/user/pages/order/orderByNonMember";
+	}
+	
+	// working...
+	@GetMapping("/orderByNonMember")
+	@ResponseBody
+	public List<OrderProductsDTO> viewOrderByNonMember(
+			@RequestParam String name,
+			@RequestParam String phoneNumber,
+			@RequestParam String email,
+			HttpSession session
+		) {
+		session.setAttribute("goingToOrderByNonMember", "True");
+		return orderService.getOrderListOfNonMember(name, phoneNumber, email);
+	}
 	
 	@GetMapping("/cancelAPItest")
 	public String cancelAPItest1() {
