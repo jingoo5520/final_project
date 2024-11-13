@@ -178,13 +178,22 @@ public class PController {
 
 	// 3. 상품의 세부 정보를 표시함
 	@GetMapping("/jewelry/detail")
-	public String showProductDetail(@RequestParam("productNo") int productId, Model model) throws Exception {
+	public String showProductDetail(@RequestParam("productNo") int productId, Model model, HttpServletRequest request) throws Exception {
 
 		// 상품 상세 정보 조회
 		List<ProductDTO> products = service.getProductInfo(productId);
 
 		// 세부 상품 정보 조회
 		ProductDTO product = service.getProductDetailById(productId);
+
+		// 찜
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인정보 받기
+		if (loginDTO != null) { // 로그인 상태 확인
+			int wishList[] = memberService.getWishList(loginDTO.getMember_id()); // member_id로 찜목록 조회
+			model.addAttribute("wishList", wishList);
+			System.out.println("찜목록 조회");
+		}
 
 		// Model에 데이터 추가
 		model.addAttribute("products", products);

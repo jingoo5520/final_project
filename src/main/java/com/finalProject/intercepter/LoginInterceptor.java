@@ -1,10 +1,10 @@
 package com.finalProject.intercepter;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,14 +16,13 @@ import org.springframework.web.util.WebUtils;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.service.member.MemberService;
-import com.finalProject.util.RememberPath;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
-	private final int AUTOLOGIN_DATE = 7; // 자동 로그인 유효 기간
+	private final int AUTOLOGIN_DATE = 1; // 자동 로그인 유효 기간(일)
 
 	@Inject
 	private MemberService memberService;
@@ -33,6 +32,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 		System.out.println("Login preHandle 호출");
 		HttpSession ses = request.getSession();
+		System.out.println(ses.getAttribute("productInfos"));
 		boolean result = true;
 		LoginDTO loginDTO = null;
 		log.info("preHandle()");
@@ -109,15 +109,18 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					response.sendRedirect("/admin");
 				} else {
 					if (!rememberPath.equals("null")) { // rememberPath가 있다면
-						System.out.println("rememberPath있음 : " + rememberPath);
-//						// rememberPath가 order일 경우 따로 처리
-//						// sendRedirect()는 GET 매핑인데, /order요청은 POST 요청이 다시 /order GET 요청으로 보내는 방식으로 작동한다.
-//						// 따라서 /order 단독으로 GET 요청을 할 일은 없다.
-//						if (rememberPath.equals("/order")) {
-//							request.getRequestDispatcher("/order").forward(request, response);
-//							return;
-//						}
-						response.sendRedirect(rememberPath); // rememberPath로 보냄
+						if (rememberPath.contains("/order")) { // 주문 요청에서 왔다면
+							String productInfos = (String) ses.getAttribute("productInfos");
+							ses.removeAttribute("productInfos");
+							if (productInfos != null) {
+								request.setAttribute("productInfosAttribute", productInfos);
+								RequestDispatcher dispatcher = request.getRequestDispatcher("/order");
+								dispatcher.forward(request, response);
+							}
+						} else {
+							response.sendRedirect(rememberPath); // rememberPath로 보냄
+							System.out.println("rememberPath있음 : " + rememberPath);
+						}
 					} else {
 						System.out.println("rememeberPath없음");
 						response.sendRedirect("/"); // 인덱스로 보냄

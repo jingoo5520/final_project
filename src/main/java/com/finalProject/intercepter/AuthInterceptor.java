@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.finalProject.model.LoginDTO;
 import com.finalProject.util.RememberPath;
 
 public class AuthInterceptor extends HandlerInterceptorAdapter {
@@ -28,15 +29,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		if (ses.getAttribute("loginMember") == null) { // 로그인이 안된경우
 			System.out.println("로그인 안됨");
-			
-//			// uri가 order일 경우 따로 처리
-//			// sendRedirect()는 GET 매핑인데, /order요청은 POST 요청이 다시 /order GET 요청으로 보내는 방식으로 작동한다.
-//			// 따라서 /order 단독으로 GET 요청을 할 일은 없다.
-//			if (uri.equals("/order")) {
-//				request.getRequestDispatcher("/order").forward(request, response);
-//				result = false;
-//			}
-			
+			if(uri.contains("/order")) { // 주문 요청인 경우
+				System.out.println(request.getParameter("productInfos"));
+				ses.setAttribute("productInfos", request.getParameter("productInfos"));
+			}
 			response.sendRedirect("/member/viewLogin"); // 로그인 페이지로 이동
 			result = false;
 		} else { // 로그인이 되어있는 경우
@@ -49,7 +45,20 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 				System.out.println("로그인 되있음");
 				System.out.println("원래 있던 페이지 : " + uri);
 				result = true;
+				if(uri.contains("/order")) { // 주문 요청인 경우
+					System.out.println(request.getParameter("productInfos"));
+					ses.setAttribute("productInfos", request.getParameter("productInfos"));
+				}
 				// 페이지에 대한 권한 인증 작업이 필요하면 밑에 추가
+				if(uri.contains("/admin")) { // 어드민 페이지인경우
+					LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
+					String isAdmin = loginDTO.getIs_admin();
+					if(isAdmin.equals("0")) { // 해당 유저가 관리자가 아닌경우
+						System.out.println(isAdmin + " : 관리자가 아님");
+						response.sendRedirect("/"); // index로 이동
+						result = false; // 컨트롤러 동작을 하지않음.
+					}
+				}
 			}
 		}
 

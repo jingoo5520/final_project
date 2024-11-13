@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -289,12 +290,27 @@ public class KakaoUtil {
 			System.out.println("카카오 로그아웃 실패");
 		}
 	}
+	
+	// 응답을 읽어 문자열로 반환하는 메서드
+		private String readResponse(BufferedReader br) throws IOException {
+			String line;
+			StringBuilder responseSb = new StringBuilder();
+			while ((line = br.readLine()) != null) {
+				responseSb.append(line);
+			}
+			return responseSb.toString();
+		}
 
 	// kakao.properties파일 읽기
 	private void readProperties() throws FileNotFoundException, IOException {
 		Properties prop = new Properties();
 		// 해당 경로의 properties를 받음.
-		prop.load(new FileReader("D:\\my\\coding\\Flnal_2team\\final_project\\src\\main\\resources\\kakao.properties"));
+		// 클래스패스에서 properties 파일을 읽음 src/main/resources
+	    InputStream input = getClass().getClassLoader().getResourceAsStream("kakao.properties");
+	    if (input == null) {
+	        System.out.println("kakao.properties를 찾을수 없습니다.");
+	    }
+	    prop.load(input);
 		// 필요한 값 저장
 		this.key = prop.get("key") + "";
 		this.redirectUri = prop.get("redirectUri") + "";
