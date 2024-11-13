@@ -16,6 +16,15 @@
 <link rel="stylesheet"
 	href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+<style type="text/css">
+.kakao {
+	background-color: #FEE500;
+}
+
+.naver {
+	
+}
+</style>
 
 </head>
 
@@ -78,7 +87,7 @@
 									<div class="col-lg-6 col-md-4 col-12">
 										<a
 											href="${pageContext.request.contextPath}/member/kakao/login"><img
-											src="/resources/images/kakao_login_medium.png"></a>
+											src="/resources/images/kakao_login_large_narrow.png"></a>
 									</div>
 									<div class="col-lg-6 col-md-4 col-12">
 										<a
@@ -105,11 +114,14 @@
 										name="autologin_code" id="autologin_code"> <label
 										class="form-check-label">자동 로그인</label>
 								</div>
-								<a class="lost-pass"
-									href="${pageContext.request.contextPath}/member/find_id">아이디
-									찾기</a> <a class="lost-pass"
-									href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
-									찾기</a>
+								<div>
+									<a class="lost-pass"
+										href="${pageContext.request.contextPath}/member/find_id">아이디
+										찾기</a> /  <a class="lost-pass"
+										href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
+										찾기</a>
+								</div>
+
 							</div>
 							<div class="button">
 								<button class="btn" type="submit">로그인</button>

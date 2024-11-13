@@ -516,10 +516,6 @@ public class MemberController {
 			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
-		// 입력받은 우편번호+주소+상세주소
-		// 우편번호/주소/상세주소
-		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
-		System.out.println(memberDTO.toString());
 		try {
 			// update가 정상적으로 됬다면
 			if (memberService.updateMember(memberDTO)) {
