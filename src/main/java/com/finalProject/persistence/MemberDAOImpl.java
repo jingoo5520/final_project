@@ -13,6 +13,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.model.PaidCouponDTO;
 import com.finalProject.model.RecentCouponDTO;
@@ -277,6 +278,25 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public List<RecentCouponDTO> selectRecentCouponList(String memberId) throws Exception {
 		return ses.selectList(ns + "selectRecentCouponList", memberId);
+	}
+
+	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
+	@Override
+	public MemberPointDTO getMemberPoint(String memberId) throws Exception {
+		return ses.selectOne(ns + "selectMemberPoint", memberId);
+	}
+
+	// 회원의 포인트 내역의 총 개수 조회
+	@Override
+	public int getTotalPointList(String pointType, String memberId) throws Exception {
+		int totalPointListCnt = 0; 
+		if (pointType.equals("earned")) {
+			totalPointListCnt = ses.selectOne(ns + "selectCntOfEarnedPoint", memberId);
+		} else if (pointType.equals("used")) {
+			totalPointListCnt = ses.selectOne(ns + "selectCntOfUsedPoint", memberId);
+		}
+		
+		return totalPointListCnt;
 	}
 
 }

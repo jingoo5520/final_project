@@ -24,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,10 +37,10 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.PaidCouponDTO;
 import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.model.ResponseData;
-import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.util.KakaoUtil;
 import com.finalProject.util.NaverUtil;
@@ -305,10 +306,47 @@ public class MemberController {
 		return "/user/pages/member/myPage_couponList";
 	}
 	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@GetMapping("/myPage/getPointInfo")
+	@ResponseBody
+	public Map<String, Object> getPointInfo(HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		MemberPointDTO memberPointDTO = null;
+		try {
+			memberPointDTO = memberService.getMemberPoint(loginMember.getMember_id());
+			resultMap.put("memberPoint", memberPointDTO.getMember_point());
+			resultMap.put("usePoint", memberPointDTO.getUse_point());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getPointPagingInfo")
+	@ResponseBody
+	public Map<String, Object> getPointPagingInfo(@RequestBody String pointType, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		int totalPageCount = 0;
+		
+		try {
+			totalPageCount = memberService.getPointPagingInfo(pointType, loginMember.getMember_id());
+			resultMap.put("totalPageCount", totalPageCount);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
 	// 마이페이지 (사용가능한 쿠폰 조회)
 	@GetMapping("/myPage/getPaidCouponList")
 	@ResponseBody
-	public Map<String, Object> getPaidCouponList(HttpSession session, Model model) {
+	public Map<String, Object> getPaidCouponList(HttpSession session) {
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		Map<String, Object> resultMap = new HashMap<>();
 		List<PaidCouponDTO> paidCouponList = null;
@@ -329,7 +367,7 @@ public class MemberController {
 	// 마이페이지 (최근 3개월 쿠폰 조회)
 	@GetMapping("/myPage/getRecentCouponList")
 	@ResponseBody
-	public Map<String, Object> getRecentCouponList(HttpSession session, Model model) {
+	public Map<String, Object> getRecentCouponList(HttpSession session) {
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		Map<String, Object> resultMap = new HashMap<>();
 		List<RecentCouponDTO> recentCouponList = null;

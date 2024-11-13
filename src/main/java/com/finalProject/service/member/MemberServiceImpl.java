@@ -14,6 +14,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.model.PaidCouponDTO;
 import com.finalProject.model.RecentCouponDTO;
@@ -239,6 +240,24 @@ public class MemberServiceImpl implements MemberService {
 			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
 		}
 		return couponList;
+	}
+
+	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
+	@Override
+	public MemberPointDTO getMemberPoint(String memberId) throws Exception{
+		return memberDAO.getMemberPoint(memberId);
+	}
+	
+	// 회원의 포인트 내역의 총 페이지 개수 반환
+	@Override
+	public int getPointPagingInfo(String pointType, String memberId) throws Exception {
+		int pointListCnt = memberDAO.getTotalPointList(pointType, memberId);
+		
+		if(pointListCnt % 10 == 0) {
+			return pointListCnt / 10;
+		} else {
+			return (pointListCnt / 10) + 1; 
+		}
 	}
 
 }

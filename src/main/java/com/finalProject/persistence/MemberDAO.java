@@ -7,6 +7,7 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.model.PaidCouponDTO;
 import com.finalProject.model.RecentCouponDTO;
@@ -105,5 +106,11 @@ public interface MemberDAO {
 	
 	// 최근 3개월 쿠폰 조회
 	List<RecentCouponDTO> selectRecentCouponList(String memberId) throws Exception;
+
+	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
+	MemberPointDTO getMemberPoint(String memberId) throws Exception;
+
+	// 회원의 포인트 내역의 총 개수 조회
+	int getTotalPointList(String pointType, String memberId) throws Exception;
 	
 }
