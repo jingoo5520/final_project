@@ -6,7 +6,8 @@
 	<!-- 문의 총 개수 가져오기 -->
 	<select id="selectInquiryCnt" resultType="int">
 		select count(*) from
-		inquiries;
+		inquiries
+		where member_id = #{memberId}
 	</select>
 
 	<!-- 유저 뷰 문의 리스트 가져오기(with pagingInfo) -->
@@ -78,32 +79,39 @@
 		i.inquiry_status,
 		i.inquiry_type,
 		p.product_name
-		from inquiries i
+		from
+		inquiries i
 		left join products p on i.product_no = p.product_no
-		where i.inquiry_no = #{inquiry_no}
+		where
+		i.inquiry_no = #{inquiry_no}
 	</select>
 
 	<!-- 문의 이미지 가져오기 -->
 	<select id="selectInquiryImgList" resultType="InquiryImgDTO">
-		select inquiry_no, inquiry_image_no,
-		inquiry_image_uri, inquiry_image_name, inquiry_image_original_name
+		select inquiry_no,
+		inquiry_image_no,
+		inquiry_image_uri, inquiry_image_name,
+		inquiry_image_original_name
 		from inquiry_images
 		where
-		inquiry_no = #{inquiry_no}
+		inquiry_no =
+		#{inquiry_no}
 	</select>
-	
-	<!-- 문의 이미지 모두 삭제하기  -->
+
+	<!-- 문의 이미지 모두 삭제하기 -->
 	<delete id="deleteInquiryImages">
 		delete from inquiry_images
-		where inquiry_no = #{inquiry_no}
+		where inquiry_no =
+		#{inquiry_no}
 	</delete>
-	
-	<!-- 문의 이미지 일부 삭제하기  -->
+
+	<!-- 문의 이미지 일부 삭제하기 -->
 	<delete id="deleteInquiryImage">
 		delete from inquiry_images
-		where inquiry_image_no = #{inquiry_image_no}
+		where inquiry_image_no =
+		#{inquiry_image_no}
 	</delete>
-	
+
 	<!-- 문의 삭제하기 -->
 	<delete id="deleteInquiry">
 		delete from inquiries
@@ -115,14 +123,14 @@
 		update inquiries
 		set
 		<if test="product_no != 0">
-		product_no = #{product_no},
-		</if> 
-		inquiry_title = #{inquiry_title},  
+			product_no = #{product_no},
+		</if>
+		inquiry_title = #{inquiry_title},
 		inquiry_content = #{inquiry_content},
-		inquiry_type = #{inquiry_type}			
+		inquiry_type = #{inquiry_type}
 		where inquiry_no = #{inquiry_no}
 	</update>
-	
+
 	<!-- 문의 답글 가져오기 -->
 	<select id="selectInquiryReply" resultType="InquiryReplyDTO">
 		select
@@ -130,6 +138,17 @@
 		from inquiry_replies
 		where inquiry_no = #{inquiry_no}
 	</select>
+
+	<!-- 주문 상품 리스트 가져오기 -->
+	<select id="selectOrderedProducts"
+		resultType="InquiryProductDTO">
+		select p.product_no, p.product_name
+		from orders o join order_products op ON o.order_id = op.order_id
+		join products p on op.product_no = p.product_no
+		where o.orderer_id = #{memberId}
+		order by o.order_date desc;
+	</select>
+
 
 
 </mapper>

@@ -19,10 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,18 +50,22 @@ public class OrderController {
 	
 	static private Gson gson = new Gson();
 	
-	@GetMapping("/order")
-	public String showOrderPage(Model model) {
+	@PostMapping("/order")
+	public String orderPage(@RequestParam(value="productInfos", required=false, defaultValue="0") String productInfosParam,
+							@RequestAttribute(value="productInfosAttribute", required=false) String productInfosAttribute, Model model, HttpSession session) {
 		
-		if (!model.containsAttribute("orderProductList")) {
+		String productInfos = "";
+		System.out.println(productInfosParam);
+		System.out.println(productInfosAttribute);
+		
+		if (productInfosParam.equals("0") && productInfosAttribute != null) {
+			productInfos = productInfosAttribute;
+		} else if (productInfosAttribute == null && !productInfosParam.equals("0")) {
+			productInfos = productInfosParam;
+		} else {
 			return "/user/pages/warning";
 		}
 		
-	    return "/user/pages/order/order";
-	}
-	
-	@PostMapping("/order")
-	public String orderPage(@RequestParam String productInfos, RedirectAttributes redirectAttributes, HttpSession session) {
 		// 세션에서 login정보 가져오기
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		
@@ -88,7 +92,7 @@ public class OrderController {
 	        
 	    	// 바인딩한 productNo로 상품 정보 조회
 	 		// 상품이름, 상품가격, 상품이미지, 상품할인정보
-	        redirectAttributes.addFlashAttribute("orderProductList", orderProductList);
+	        model.addAttribute("orderProductList", orderProductList);
 	 		
 	 		if (loginMember != null) { // 로그인 했는지 안했는지 구분
 	 			System.out.println("order 로그인 상태, 회원 id : " + loginMember.getMember_id());
@@ -96,7 +100,7 @@ public class OrderController {
 	 			// 로그인 했을 경우 회원아이디로 주문자 정보 조회
 	 			OrderMemberDTO orderMember = orderService.getMemberInfo(memberId);
 	 			System.out.println(orderMember.toString());
-	 			redirectAttributes.addFlashAttribute("orderMember", orderMember);
+	 			model.addAttribute("orderMember", orderMember);
 	 		} else {
 	 			// TODO : 로그인하지 않았을 때 비회원의 ID를 알아야 함
 	 			System.out.println("order 로그인 하지 않음");
@@ -107,7 +111,7 @@ public class OrderController {
 	    }
         
         
- 		return "redirect:/order";
+ 		return "/user/pages/order/order";
     }
 
 	@PostMapping("/order/payMethod")

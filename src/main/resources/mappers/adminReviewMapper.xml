@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.adminReviewMapper">
+
+	<!-- 리뷰 총 개수 가져오기 -->
+	<select id="selectTotalReviewCnt" resultType="int">
+		select count(*) 
+		from reviews r join members m on r.member_id = m.member_id
+		where 1=1
+		<if test="product_no != null and product_no != '' and product_no != 0">
+			AND r.product_no = #{product_no}
+		</if>
+		
+		<if test="member_id != null and member_id != ''">
+			AND r.member_id LIKE CONCAT('%', #{member_id}, '%')
+		</if>
+
+		<if test="member_name != null and member_name != ''">
+			AND m.member_name LIKE CONCAT('%', #{member_name}, '%')
+		</if>
+		
+		and r.review_type = 'review'
+		
+		<![CDATA[
+		and r.register_date >= #{regDate_start}
+		and r.register_date <= #{regDate_end}
+		]]>
+	</select>
+
+	<!-- 리뷰 리스트 가져오기 -->
+	<select id="selectReviewList" resultType="AdminReviewDTO">
+		select r.review_no, r.member_id, r.review_title, r.register_date, r.product_no, r.review_show, m.member_name, r.has_reply
+		from reviews r join members m on r.member_id = m.member_id 
+		where 1=1
+		<if test="dto.product_no != null and dto.product_no != '' and dto.product_no != 0">
+			AND r.product_no = #{dto.product_no}
+		</if>
+		
+		<if test="dto.member_id != null and dto.member_id != ''">
+			AND r.member_id LIKE CONCAT('%', #{dto.member_id}, '%')
+		</if>
+
+		<if test="dto.member_name != null and dto.member_name != ''">
+			AND m.member_name LIKE CONCAT('%', #{dto.member_name}, '%')
+		</if>
+		
+		<![CDATA[
+		and r.register_date >= #{dto.regDate_start}
+		and r.register_date <= #{dto.regDate_end}
+		]]>
+		
+		and r.review_type = 'review'
+
+		order by r.register_date desc
+		limit #{pi.startRowIndex},
+		#{pi.viewDataCntPerPage}
+	</select>
+	
+	<!-- 리뷰 상세 가져오기 -->
+	<select id="selectReview" resultType="AdminReviewDetailDTO">
+		select r.review_no, r.product_no, p.product_name, r.member_id, r.review_title, r.review_content, r.register_date,
+		r.review_show, r.delete_reason
+		from reviews r join products p on r.product_no = p.product_no 
+		where r.review_no = #{reviewNo} and r.review_type = 'review'
+	</select>
+	
+	<!-- 리뷰 이미지 가져오기 -->
+	<select id="selectReviewImages" resultType="ReviewImgDTO">
+		select image_no, review_no, image_url
+		from review_images
+		where review_no = #{reviewNo}
+	</select>
+	
+	<!-- 리뷰 답글 가져오기 -->
+	<select id="selectReviewReply" resultType="ReviewReplyDTO">
+		select review_no, review_ref, review_title, review_content
+		from reviews
+		where review_ref = #{reviewNo}
+	</select>
+	
+	<!-- 리뷰 답글 작성 -->
+	<insert id="insertReviewReply">
+		insert into reviews 
+		(product_no, member_id, review_title, review_content, review_type, review_ref)
+		values
+		(#{product_no}, #{member_id}, #{review_title}, #{review_content}, 'reply', #{review_ref}) 
+	</insert>
+	
+	<!-- 리뷰 답글 수정 -->
+	<insert id="updateReviewReply">
+		update reviews
+		set
+		review_content =
+		#{review_content}
+		where review_no = #{review_no} 
+	</insert>
+	
+	<!-- 리뷰 삭제(상태 변경) -->
+	<update id="updateReview">
+		update reviews
+		set review_show = 'D',
+		delete_reason = #{reason}
+		where review_no
+		= #{reviewNo}
+	</update>
+	
+	<!-- 리뷰 답글 상태 수정 -->
+	<update id="updateReviewHasReply">
+		update reviews
+		set has_reply = 'Y'
+		where review_no = #{review_ref}
+	</update>
+	
+	
+	
+	
+</mapper>

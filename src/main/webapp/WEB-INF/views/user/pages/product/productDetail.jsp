@@ -1,25 +1,31 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML
+	Template.</title>
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" type="image/x-icon"
+	href="/resources/assets/user/images/favicon.svg" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+<!-- ========================= CSS here ========================= -->
+<link rel="stylesheet"
+	href="/resources/assets/user/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/LineIcons.3.0.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/glightbox.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 
@@ -41,6 +47,7 @@
         let productsInfo = [];
 
         let quantity = parseInt($("#" + productNo + "_quantity").text());
+
 
         productsInfo.push({
             productNo: parseInt(productNo),
@@ -72,17 +79,37 @@
                     // 모달을 보여주기
                     $('#myModal').modal('show');
 
-                    // 확인 버튼 클릭 시 장바구니 페이지로 이동
-                    $('#goCart').off('click').on('click', function() {
-                        location.href = "/cart";
-                    });
-
-                    $('#keepProduct').off('click').on('click', function() {
-                        location.reload();
-                    });
-                } else if (data.responseText == 401) {
-                    alert("잘못된 접근입니다.");
-                }
+	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
+	            $('#goCart').off('click').on('click', function() {
+	                location.href = "/cart";
+	            });
+	            
+	            $('#keepProduct').off('click').on('click', function() {
+	                location.reload();
+	            });
+	        } else if (data.responseText == 401) {
+	            alert("잘못된 접근입니다.");
+	        }
+	    }
+	});
+}
+    function toggleHeart(element, product_no) {
+        const icon = element.querySelector('i');
+        icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
+        
+     // AJAX 요청
+        $.ajax({
+            url: "/member/saveWish",
+            type: "GET",
+            data: {
+                product_no: product_no
+            },
+            dataType: "json",
+            success: function (data) {
+                console.log(data); // 서버 응답 확인
+            },
+            error: function () {
+                console.error("AJAX 요청 실패");
             }
         });
     }
@@ -177,23 +204,24 @@
         display: block;
         /* 기본 margin 간격 제거 */
     }
+
 </style>
 
 <body>
 
-    <jsp:include page="../header.jsp"></jsp:include>
+	<jsp:include page="../header.jsp">
+		<jsp:param name="categoryName" value="${products[0].category_name}" />
+	</jsp:include>
 
-    <!-- Preloader -->
-    <div class="preloader">
-        <div class="preloader-inner">
-            <div class="preloader-icon">
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </div>
-    <!-- /End Preloader -->
-
+	<!-- Preloader -->
+	<div class="preloader">
+		<div class="preloader-inner">
+			<div class="preloader-icon">
+				<span></span> <span></span>
+			</div>
+		</div>
+	</div>
+	<!-- /End Preloader -->
 
 
     <!-- Start Breadcrumbs -->
@@ -282,51 +310,96 @@
                             </h3>
 
 
-
-                            <div class="row">
-                                <div class="col-lg-4 col-md-4 col-12"></div>
-                            </div>
-                            <div class="bottom-content">
-                                <div class="row align-items-center">
-                                    <!-- 장바구니와 찜 버튼을 반반씩 배치 -->
-                                    <div class="col-lg-6 col-md-6 col-6">
-                                        <div class="button cart-button">
-                                            <button onclick="addCart(${products[0].product_no})" class="btn" style="width: 100%;">장바구니</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-6">
-                                        <div class="wish-button">
-                                            <button class="btn" style="width: 100%;"><i class="lni lni-heart"></i> 찜</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row align-items-center mt-3">
-                                    <!-- 주문 개수 선택 드롭다운 -->
-                                    <div class="col-lg-12 col-md-12 col-12">
-                                        <div class="count-input-div col-lg-2 col-md-1 col-12">
-                                            <button class="btn countDown" onclick="countDown(${products[0].product_no})">-</button>
-                                            <div class="count-div" id="${products[0].product_no}_quantity">1</div>
-                                            <button class="btn countUp" onclick="countUp(${products[0].product_no})">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row align-items-center mt-3">
-                                    <!-- 결제 버튼을 전체 너비로 배치 -->
-                                    <div class="col-lg-12 col-md-12 col-12">
-                                        <form action="/order" method="post" class="orderForm">
-                                            <div class="wish-button">
-                                                <input type="hidden" class="productInfos" name="productInfos">
-                                                <button class="btn" style="width: 100%;" onclick="orderProduct(${products[0].product_no});"><i class="lni lni-credit-cards"></i> 결제</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+							<div class="row">
+								<div class="col-lg-4 col-md-4 col-12"></div>
+							</div>
+							<div class="bottom-content">
+								<div class="row align-items-center">
+									<!-- 장바구니와 찜 버튼을 반반씩 배치 -->
+									<div class="col-lg-6 col-md-6 col-6">
+										<div class="button cart-button">
+											<button onclick="addCart(${products[0].product_no})"
+												class="btn" style="width: 100%;">장바구니</button>
+										</div>
+									</div>
+									<c:set var="result" value="false" />
+									<c:forEach var="wishItem" items="${wishList }">
+										<c:if test="${wishItem == products[0].product_no}">
+											<c:set var="result" value="true" />
+										</c:if>
+									</c:forEach>
+									<c:if test="${wishList != null }">
+										<c:if test="${result == 'true' }">
+											<!-- 찜목록에 있을 경우 하트 -->
+											<div class="col-lg-6 col-md-6 col-6">
+												<div class="wish-button">
+													<button
+														onclick="toggleHeart(this, ${products[0].product_no});"
+														class="btn" style="width: 100%;">
+														<i class="lni lni-heart-filled"></i> 찜
+													</button>
+												</div>
+											</div>
+										</c:if>
+										<c:if test="${result == 'false' }">
+											<!-- 찜목록에 없을 경우 빈하트 -->
+											<div class="col-lg-6 col-md-6 col-6">
+												<div class="wish-button">
+													<button
+														onclick="toggleHeart(this, ${products[0].product_no});"
+														class="btn" style="width: 100%;">
+														<i class="lni lni-heart"></i> 찜
+													</button>
+												</div>
+											</div>
+										</c:if>
+									</c:if>
+									<c:if test="${wishList == null }">
+										<div class="col-lg-6 col-md-6 col-6">
+											<div class="wish-button">
+												<button
+													onclick="location.href='${pageContext.request.contextPath}/member/viewLogin'"
+													class="btn" style="width: 100%;">
+													<i class="lni lni-heart"></i> 찜
+												</button>
+											</div>
+										</div>
+									</c:if>
+								</div>
+								<div class="row align-items-center mt-3">
+									<!-- 주문 개수 선택 드롭다운 -->
+									<div class="col-lg-12 col-md-12 col-12">
+										<div class="count-input-div col-lg-2 col-md-1 col-12">
+											<button class="btn countDown"
+												onclick="countDown(${products[0].product_no})">-</button>
+											<div class="count-div"
+												id="${products[0].product_no}_quantity">1</div>
+											<button class="btn countUp"
+												onclick="countUp(${products[0].product_no})">+</button>
+										</div>
+									</div>
+								</div>
+								<div class="row align-items-center mt-3">
+									<!-- 결제 버튼을 전체 너비로 배치 -->
+									<div class="col-lg-12 col-md-12 col-12">
+										<form action="/order" method="post" class="orderForm">
+											<div class="wish-button">
+												<input type="hidden" class="productInfos"
+													name="productInfos">
+												<button class="btn" style="width: 100%;"
+													onclick="orderProduct(${products[0].product_no});">
+													<i class="lni lni-credit-cards"></i> 결제
+												</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
         <div class="container product-details-info">
             <!-- Bootstrap의 container 클래스를 사용하여 중앙 정렬 -->
@@ -355,7 +428,6 @@
                                 <p class="text-center">리뷰가 없습니다.</p>
                             </c:if>
 
-                            <!-- Start Single Review -->
                             <c:forEach var="review" items="${reviews}">
                                 <div class="single-review text-center">
                                     <img src="/resources/images/nobody.png">
@@ -396,17 +468,16 @@
 
     <jsp:include page="../footer.jsp"></jsp:include>
 
-    <!-- ========================= scroll-top ========================= -->
-    <a href="#" class="scroll-top">
-        <i class="lni lni-chevron-up"></i>
-    </a>
+	<!-- ========================= scroll-top ========================= -->
+	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
+	</a>
 
-    <!-- ========================= JS here ========================= -->
-    <script src="/resources/assets/user/js/bootstrap.min.js"></script>
-    <script src="/resources/assets/user/js/tiny-slider.js"></script>
-    <script src="/resources/assets/user/js/glightbox.min.js"></script>
-    <script src="/resources/assets/user/js/main.js"></script>
-    <script type="text/javascript">
+	<!-- ========================= JS here ========================= -->
+	<script src="/resources/assets/user/js/bootstrap.min.js"></script>
+	<script src="/resources/assets/user/js/tiny-slider.js"></script>
+	<script src="/resources/assets/user/js/glightbox.min.js"></script>
+	<script src="/resources/assets/user/js/main.js"></script>
+	<script type="text/javascript">
         const current = document.getElementById("current");
         const opacity = 0.6;
         const imgs = document.querySelectorAll(".img");

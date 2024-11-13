@@ -18,6 +18,7 @@ import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.inquiry.InquiryDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
+import com.finalProject.model.inquiry.InquiryProductDTO;
 import com.finalProject.persistence.inquiry.InquiryDAO;
 import com.finalProject.util.FileProcess;
 
@@ -33,7 +34,7 @@ public class InquiryServiceImpl implements InquiryService {
 	@Override
 	public Map<String, Object> getInquiryList(PagingInfoNewDTO pagingInfoDTO, String memberId) throws Exception {
 
-		PagingInfoNew pi = makePagingInfo(pagingInfoDTO);
+		PagingInfoNew pi = makePagingInfo(pagingInfoDTO, memberId);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<InquiryDTO> list = iDao.selectInquiryList(pi, memberId);
@@ -44,11 +45,11 @@ public class InquiryServiceImpl implements InquiryService {
 		return result;
 	}
 
-	private PagingInfoNew makePagingInfo(PagingInfoNewDTO pagingInfoDTO) throws Exception {
+	private PagingInfoNew makePagingInfo(PagingInfoNewDTO pagingInfoDTO, String memberId) throws Exception {
 		PagingInfoNew pi = new PagingInfoNew(pagingInfoDTO);
 
 		// setter 호출
-		pi.setTotalDataCnt(iDao.getTotalInquiryCnt());
+		pi.setTotalDataCnt(iDao.getTotalInquiryCnt(memberId));
 
 		pi.setTotalPageCnt();
 		pi.setStartRowIndex();
@@ -189,6 +190,11 @@ public class InquiryServiceImpl implements InquiryService {
 		}
 
 		return result;
+	}
+
+	@Override
+	public List<InquiryProductDTO> getOrderdProducts(String memberId) throws Exception {
+		return iDao.selectOrderedProducts(memberId);
 	}
 
 }
