@@ -35,11 +35,11 @@
 	<!-- 회원가입 -->
 	<insert id="signUpMember">
 		insert into members(member_id, member_name,
-		member_pwd, phone_number, birthday, gender, email, address, nickname)
+		member_pwd, phone_number, birthday, gender, email, address, nickname, member_point)
 		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256),
 		#{phone_number},
 		#{birthday}, #{gender}, #{email}, #{address},
-		#{nickname})
+		#{nickname}, 5000)
 	</insert>
 
 	<!-- 자동 로그인 정보 저장 -->
