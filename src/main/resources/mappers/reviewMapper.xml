@@ -163,7 +163,24 @@ where
     WHERE review_no = #{reviewNo}
 </select>
 
+    <!-- 특정 리뷰 번호에 해당하는 이미지 URL 목록 조회 -->
+    <select id="getReviewImageUrlsByReviewNo" parameterType="int" resultType="String">
+        SELECT image_url 
+        FROM review_images 
+        WHERE review_no = #{review_no}
+    </select>
 
+    <!-- 특정 리뷰 번호에 해당하는 모든 리뷰 이미지 정보 삭제 -->
+    <delete id="deleteReviewImagesByReviewNo" parameterType="int">
+        DELETE FROM review_images 
+        WHERE review_no = #{review_no}
+    </delete>
+
+    <!-- 리뷰 삭제 -->
+    <delete id="deleteReview" parameterType="int">
+        DELETE FROM reviews 
+        WHERE review_no = #{review_no}
+    </delete>
 
 
 </mapper>

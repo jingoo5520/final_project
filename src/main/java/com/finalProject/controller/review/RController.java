@@ -136,8 +136,8 @@ public class RController {
             model.addAttribute("product_no", product_no);
             model.addAttribute("product_name", product_name);
             model.addAttribute("image_url", image_url);
-            // model.addAttribute("member_id", loginMember.getMember_id());
-            model.addAttribute("member_id", "rhkrekgns1");
+            model.addAttribute("member_id", loginMember.getMember_id());
+//            model.addAttribute("member_id", "rhkrekgns1");
             
             return "/user/pages/review/writeReview"; // 리뷰 작성 페이지 반환
         } else {
@@ -278,6 +278,26 @@ public class RController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수정 실패");
         }
+    }
+    
+    @PostMapping("/deleteReview")
+    public ResponseEntity<String> deleteReview(@RequestParam("reviewNo") int reviewNo, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+        
+        if (loginMember == null) {
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 후 이용해주세요");
+        }
+        
+        try {
+			service.deleteReview(reviewNo, request);
+			return ResponseEntity.ok("리뷰 삭제 완료");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 삭제 실패");
+		}
+    	
     }
 	
 	

@@ -110,4 +110,19 @@ public class ReviewDAOImpl implements ReviewDAO {
 		return ses.selectList(ns + "selectExistFileList", reviewNo);
 	}
 
+	@Override
+	public List<String> getReviewImageUrlsByReviewNo(int reviewNo) throws Exception {
+		return ses.selectList(ns + "getReviewImageUrlsByReviewNo", reviewNo);
+	}
+
+	@Override
+	public void deleteReviewImagesByReviewNo(int reviewNo) throws Exception {
+		ses.delete(ns + "deleteReviewImagesByReviewNo", reviewNo);
+	}
+
+	@Override
+	public void deleteReview(int reviewNo) throws Exception {
+		ses.delete(ns + "deleteReview", reviewNo);
+	}
+
 }

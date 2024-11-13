@@ -49,4 +49,7 @@ public interface ReviewService {
 	// 기존에 이미지 리스트
 	List<String> getExistFileList(int reviewNo) throws Exception;
 
+	// 리뷰 삭제
+	void deleteReview(int reviewNo, HttpServletRequest request)  throws Exception;
+
 }

@@ -185,6 +185,29 @@
                 });
             });
         });
+        
+        
+        function deleteReview() {
+            // 리뷰 번호를 data 속성에서 가져옴
+            const reviewNo = document.getElementById("deleteReviewBtn").getAttribute("data-review-no");
+
+            // 삭제 확인 메시지
+            if (confirm("정말 이 리뷰를 삭제하시겠습니까?")) {
+                $.ajax({
+                    url: '/review/deleteReview',  // 서버의 삭제 처리 URL
+                    type: 'POST',
+                    data: { reviewNo: reviewNo },  // 리뷰 번호를 서버로 전달
+                    success: function(response) {
+                        alert(response);  // 성공 메시지 알림
+                        location.href = '/review/writtenByReview';  // 리뷰 목록 페이지로 이동
+                    },
+                    error: function(error) {
+                        console.error("삭제 중 오류 발생:", error);
+                        alert("삭제 실패: 관리자에게 문의하세요.");
+                    }
+                });
+            }
+        }
     </script>
 </head>
 
@@ -391,7 +414,7 @@
                         <button id="modifyReviewBtn" class="btn" onclick="location.href='/review/modifyReview?reviewNo=${param.reviewNo}'">
                             수정
                         </button>
-                        <button id="deleteReviewBtn" class="btn" onclick="#">
+                        <button id="deleteReviewBtn" class="btn" data-review-no="${param.reviewNo }" onclick="deleteReview()" >
                             삭제
                         </button>
 

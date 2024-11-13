@@ -212,7 +212,38 @@ public class ReviewServiceImpl implements ReviewService {
 	public List<String> getExistFileList(int reviewNo) throws Exception {
 		return RDao.selectExistFileList(reviewNo);
 	}
+
+	@Override
+	@Transactional
+	public void deleteReview(int reviewNo, HttpServletRequest request) throws Exception {
+
+	    // 1. 데이터베이스에서 해당 리뷰의 이미지 파일 경로 조회
+	    List<String> imageUrls = RDao.getReviewImageUrlsByReviewNo(reviewNo);
+	    
+	    // 2. 서버 실제 파일 저장 경로 설정
+	    String url = "/resources/reviewImg"; // 서버 경로
+	    String realPath = request.getSession().getServletContext().getRealPath(url);
+
+	    // 3. 이미지 파일 삭제
+	    for (String imageUrl : imageUrls) {
+	        // 서버에서 파일 삭제
+	        String fullPath = realPath + File.separator + imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+	        File file = new File(fullPath);
+	        if (file.exists() && file.delete()) {
+	            System.out.println("파일 삭제 성공: " + fullPath);
+	        } else {
+	            System.out.println("파일 삭제 실패 또는 파일이 존재하지 않음: " + fullPath);
+	        }
+	    }
+
+	    // 4. 데이터베이스에서 이미지 정보 삭제
+	    RDao.deleteReviewImagesByReviewNo(reviewNo);
+
+	    // 5. 데이터베이스에서 리뷰 삭제
+	    RDao.deleteReview(reviewNo);
+	    
 	}
+}
 
 	
 

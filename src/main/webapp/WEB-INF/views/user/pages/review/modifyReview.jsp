@@ -144,16 +144,18 @@
 			
 		$(".fileList").html(listOutput);
 	}
-		
+
+
+	// 기존 파일 리스트 보여주기
 	function showExistFileList() {
 		let listOutput = '';
 		
 		existFileList.forEach(function(file){
 			listOutput += `<li>\${file} <a class="remove-file" href="javascript:void(0)"><i class="lni lni-close"></i></a></li>`;	
 		});
-		
 		$(".existFileList").html(listOutput);
 	}
+
 
 	// 수정 완료
 	function modifyReview(){
@@ -204,6 +206,8 @@
 		
 		})
 	}
+	
+	
     </script>
 </head>
 

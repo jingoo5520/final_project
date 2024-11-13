@@ -48,6 +48,15 @@ public interface ReviewDAO {
 
 	// 원래 있던 파일 리스트
 	List<String> selectExistFileList(int reviewNo) throws Exception;
+	
+    // 데이터베이스에서 해당 리뷰의 이미지 파일 경로 조회
+	List<String> getReviewImageUrlsByReviewNo(int reviewNo) throws Exception;
+	
+	//	데이터베이스에서 이미지 정보 삭제
+	void deleteReviewImagesByReviewNo(int reviewNo) throws Exception;
+	
+	//	데이터베이스에서 리뷰 삭제
+	void deleteReview(int reviewNo) throws Exception;
 
 
 
