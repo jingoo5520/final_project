@@ -44,13 +44,39 @@ public class AdminDAOImpl implements AdminDAO {
 	}
 
 	@Override
-	public int selectMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception {
+	public int selectMemberRegCnt(Timestamp time) throws Exception {
+		return ses.selectOne(ns + "selectMemberRegCnt", time);
+	}
+
+	@Override
+	public int getTotalSales() throws Exception {
+		return 1; 
+	}
+
+	@Override
+	public int selectWaitInquiryCnt() throws Exception {
+		return ses.selectOne(ns + "selectWaitInquiryCnt");
+	}
+
+	@Override
+	public int selectDaySaleCnt(Timestamp time) throws Exception {
+		
+		return ses.selectOne(ns + "selectDaySaleCnt", time);
+	}
+
+	@Override
+	public int selectDayRevenue(Timestamp time) throws Exception {
+		return ses.selectOne(ns + "selectDayRevenue", time);
+	}
+
+	@Override
+	public int selectRangedMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
 		
 		params.put("regDate_start", regDate_start);
 		params.put("regDate_end", regDate_end);
 		
-		return ses.selectOne(ns + "selectMemberRegCnt", params);
+		return ses.selectOne(ns + "selectRangedMemberRegCnt", params);
 	}
 
 }

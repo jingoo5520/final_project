@@ -69,13 +69,56 @@
 			}
 		});
 		
+		//
+		
+		
+		
+		//
+		
 	});
 
 	function setData(data) {
+		setOverView(data);
 		setNumberOfMembers(data.memberCnt, data.memberGrowthRate.toFixed(2));
 		setNumberOfMembersByGender(data.memberCnt, data.genderList);
 		setNumberOfMembersByLevel(data.memberCnt, data.levelList);
 	}
+	
+	// SetOverview
+	function setOverView(data){
+		
+		let regGrowthRate = data.regGrowthRate.toFixed(2);
+		let saleGrowthRate = data.saleGrowthRate.toFixed(2);
+		let revenueGrowthRate = data.revenueGrowthRate.toFixed(2);
+		
+		$("#todayRegMemberCnt").text(data.todayRegMemberCnt);
+		$("#daySaleCnt").text(data.daySaleCnt);
+		$("#dayRevenue").text(data.dayRevenue.toLocaleString());
+		$("#waitInquiryCnt").text(data.waitInquiryCnt);
+		
+		if(regGrowthRate >= 0){
+			$("#regGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${regGrowthRate}%</small>`);	
+		} else {
+			$("#regGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${regGrowthRate}%</small>`);
+		}
+		
+		if(saleGrowthRate >= 0){
+			$("#saleGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${saleGrowthRate}%</small>`);	
+		} else {
+			$("#saleGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${saleGrowthRate}%</small>`);
+		}
+		
+		if(revenueGrowthRate >= 0){
+			$("#revenueGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${revenueGrowthRate}%</small>`);	
+		} else {
+			$("#revenueGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${revenueGrowthRate}%</small>`);
+		}
+		
+		
+		
+	}
+	
+	
 	
 	// Number of Members
 	function setNumberOfMembers(memberCnt, memberGrowthRate){
@@ -89,21 +132,29 @@
 		drawNumberOfMembersGragh(memberCnt, genderList, "gender");
 		
 		let output = ``;
+		let icon = ``;
 		genderList.forEach(function(item){
 			let gender;
 			if(item.gender == 'M') {
 				gender = 'Male';
+				icon = `<span class="avatar-initial rounded bg-label-info">
+					<i class='bx bx-male-sign'></i>
+					</span>`;
 			} else if(item.gender == 'F'){
 				gender = 'Female';
+				icon = `<span class="avatar-initial rounded bg-label-danger">
+					<i class='bx bx-female-sign' ></i>
+				</span>`;
 			} else {
 				gender = 'None';
+				icon = `<span class="avatar-initial rounded bg-label-success">
+					<i class='bx bx-question-mark'></i>
+				</span>`;
 			}
 			
 			output += `<li class="d-flex mb-4 pb-1">
 							<div class="avatar flex-shrink-0 me-3">
-							<span class="avatar-initial rounded bg-label-success">
-								<i class="bx bx-closet"></i>
-							</span>
+							\${icon}
 						</div>
 						<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
 							<div class="me-2">
@@ -124,23 +175,26 @@
 		drawNumberOfMembersGragh(memberCnt, levelList, "level");
 		
 		let output = ``;
+		let imgSrc = ``;
 		levelList.forEach(function(item){
 			let level;
 			if(item.member_level == 1) {
 				level = 'Bronze';
+				imgSrc = 'bronze.png';
 			} else if(item.member_level == 2){
 				level = 'Silver';
+				imgSrc = 'silver.png';
 			} else if(item.member_level == 3){
 				level = 'Gold';
+				imgSrc = 'gold.png';
 			} else {
 				level = 'Diamond';
+				imgSrc = 'diamond.png';
 			}
 			
 			output += `<li class="d-flex mb-4 pb-1">
 							<div class="avatar flex-shrink-0 me-3">
-							<span class="avatar-initial rounded bg-label-success">
-								<i class="bx bx-closet"></i>
-							</span>
+								<img src="/resources/images/\${imgSrc}">
 						</div>
 						<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
 							<div class="me-2">
@@ -161,6 +215,7 @@
 		let chart;
 		let labels = [];
 		let series = [];
+		let colors = [];
 		
 		if(type == 'gender'){
 			chart = document.querySelector('#numberOfMembersByGenderChart');
@@ -168,7 +223,11 @@
 			list.forEach(function(item){
 				labels.push(item.gender);	
 				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
+				
 			});
+			
+			colors = [config.colors.info, config.colors.danger,
+				config.colors.success];
 		} else if(type == 'level'){
 			chart = document.querySelector('#numberOfMembersByLevelChart');
 			
@@ -176,6 +235,9 @@
 				labels.push(item.member_level);	
 				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
 			});
+			
+			colors = [config.colors.bronzeColor, config.colors.silverColor,
+				config.colors.goldColor, config.colors.diamondColor];
 		}
 		
 		
@@ -192,8 +254,7 @@
 			},
 			labels : labels,
 			series : series,
-			colors : [ config.colors.primary, config.colors.secondary,
-					config.colors.info, config.colors.success ],
+			colors : colors,
 			stroke : {
 				width : 5,
 				colors : cardColor
@@ -256,7 +317,7 @@
 	}
 	
 	// 가입 회원 수 조회
-	function getMemberRegCnt(){
+	function selectRangedMemberRegCnt(){
 		let regDate_start = $('#regDate_start').val();
 		let regDate_end = $('#regDate_end').val();
 		
@@ -277,7 +338,7 @@
 		console.log(regDate_end);
 		
 		$.ajax({
-			url : '/admin/getMemberRegCnt',
+			url : '/admin/selectRangedMemberRegCnt',
 			type : 'GET',
 			dataType : 'json',
 			data : {
@@ -312,11 +373,10 @@
 </script>
 </head>
 <style>
-
-	.card-body {
-		max-width: 100% !important; 
-	    overflow: hidden !important; 
-	}
+.card-body {
+	max-width: 100% !important;
+	overflow: hidden !important;
+}
 </style>
 
 
@@ -355,96 +415,185 @@
 
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
-						<div class="col-lg-6 col-md-6 col-12 mb-4">
-							<div class="card">
-								<div class="card-body">
-									<div class="card-title d-flex align-items-start justify-content-between">
-										<div class="avatar flex-shrink-0">
-											<img src="/resources/assets/admin/img/icons/unicons/icon_members.png" alt="chart success" class="rounded">
-										</div>
-
-										<!-- <div class="dropdown">
-											<button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-												<i class="bx bx-dots-vertical-rounded"></i>
-											</button>
-											<div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3" style="">
-												<a class="dropdown-item" href="javascript:void(0);">View More</a> <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+						<div class="row">
+							<div class="col-lg-3 col-md-12 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/member_icon.png" alt="chart success" class="rounded">
 											</div>
-										</div> -->
+										</div>
+										<span class="fw-semibold d-block mb-1">Register members today </span>
+										<h3 id="todayRegMemberCnt" class="card-title mb-2"></h3>
+										<div id="regGrowthRate"></div>
 									</div>
-									<span class="fw-semibold d-block mb-1">Number of Members</span>
-									<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
-									<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
-
-									<span class="fw-semibold d-block mt-4">Register date range</span>
-									<div class="col align-items-center">
-										<div class="form-check-inline">
-											<input id="regDate_start" class="form-control regDate" type="date" value="" id="">
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-12 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded">
+											</div>
 										</div>
-										<div class="form-check-inline">
-											<span class="mx-2">-</span>
-										</div>
-										<div class="form-check-inline">
-											<input id="regDate_end" class="form-control regDate" type="date" value="" id="">
-										</div>
-										<button id="" type="button" class="btn btn-outline-primary" onclick="getMemberRegCnt()">확인</button>
+										<span class="fw-semibold d-block mb-1">Sale count today</span>
+										<h3 id="daySaleCnt" class="card-title mb-2"></h3>
+										<div id="saleGrowthRate"></div>
 									</div>
-
-									<span class="fw-semibold d-block mt-2 mb-1">Number of Registered Members</span>
-									<h3 id="memberRegCnt" class="card-title mb-2"></h3>
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-12 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded">
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">Revenue today</span>
+										<h3 id="dayRevenue" class="card-title mb-2"></h3>
+										<div id="revenueGrowthRate"></div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-12 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/inquiry_icon.png" alt="chart success" class="rounded">
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">Wait Inquiries</span>
+										<h3 id="waitInquiryCnt" class="card-title mb-2"></h3>
+									</div>
 								</div>
 							</div>
 						</div>
 
-						<!-- Number of members by gender -->
-						<div class="col-md-6 col-lg-2 order-0 mb-4">
-							<div class="card">
-								<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
-									<div class="card-title mb-0">
-										<h5 class="m-0 me-2">Number of members by gender</h5>
+
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-12 mb-4">
+								<div class="card h-100">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/members_icon.png" alt="chart success" class="rounded">
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">Number of Members</span>
+										<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
+										<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
+
+										<span class="fw-semibold d-block mt-4">Register date range</span>
+										<div class="col align-items-center">
+											<div class="form-check-inline">
+												<input id="regDate_start" class="form-control regDate" type="date" value="" id="">
+											</div>
+											<div class="form-check-inline">
+												<span class="mx-2">-</span>
+											</div>
+											<div class="form-check-inline">
+												<input id="regDate_end" class="form-control regDate" type="date" value="" id="">
+											</div>
+											<button id="" type="button" class="btn btn-outline-primary" onclick="selectRangedMemberRegCnt()">확인</button>
+										</div>
+
+										<span class="fw-semibold d-block mt-2 mb-1">Number of Registered Members</span>
+										<h3 id="memberRegCnt" class="card-title mb-2"></h3>
 									</div>
 								</div>
-								<div class="card-body">
-									<div class="d-flex justify-content-center align-items-center mb-3">
-										<!-- <div class="d-flex flex-column align-items-center gap-1">
+							</div>
+
+							<!-- Number of members by gender -->
+							<div class="col-6 col-md-6 col-lg-3 order-0 mb-4">
+								<div class="card">
+									<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+										<div class="card-title mb-0">
+											<h5 class="m-0 me-2">Number of members by gender</h5>
+										</div>
+									</div>
+									<div class="card-body">
+										<div class="d-flex justify-content-center align-items-center mb-3">
+											<!-- <div class="d-flex flex-column align-items-center gap-1">
 											<h2 id="memberTotalCnt2" class="mb-2"></h2>
 											<span>Total Members</span>
 										</div> -->
-										<div id="numberOfMembersByGenderChart"></div>
-									</div>
-									<ul id="genderList" class="p-0 m-0">
+											<div id="numberOfMembersByGenderChart"></div>
+										</div>
+										<ul id="genderList" class="p-0 m-0">
 
-									</ul>
+										</ul>
+									</div>
 								</div>
 							</div>
-						</div>
-						<!--/ Number of members by gender -->
+							<!--/ Number of members by gender -->
 
-						<!-- Number of members by level -->
-						<div class="col-md-6 col-lg-2 order-0 mb-4">
-							<div class="card">
-								<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
-									<div class="card-title mb-0">
-										<h5 class="m-0 me-2">Number of members by level</h5>
+							<!-- Number of members by level -->
+							<div class="col-6 col-md-6 col-lg-3 order-0 mb-4">
+								<div class="card h-100">
+									<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+										<div class="card-title mb-0">
+											<h5 class="m-0 me-2">Number of members by level</h5>
+										</div>
 									</div>
-								</div>
-								<div class="card-body">
-									<div class="d-flex justify-content-center align-items-center mb-3">
-										<!-- <div class="d-flex flex-column align-items-center gap-1">
+									<div class="card-body">
+										<div class="d-flex justify-content-center align-items-center mb-3">
+											<!-- <div class="d-flex flex-column align-items-center gap-1">
 											<h2 id="memberTotalCnt2" class="mb-2"></h2>
 											<span>Total Members</span>
 										</div> -->
-										<div id="numberOfMembersByLevelChart"></div>
-									</div>
-									<ul id="levelList" class="p-0 m-0">
+											<div id="numberOfMembersByLevelChart"></div>
+										</div>
+										<ul id="levelList" class="p-0 m-0">
 
-									</ul>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<!--/ Number of members by level -->
+						</div>
+						<div class="row">
+							<div class="col-12 col-lg-6 order-2 order-md-3 order-lg-2 mb-4">
+								<div class="card">
+									<div class="row row-bordered g-0">
+										<div class="col-md-12">
+											<div class="card-body">
+												<div class="card-title d-flex align-items-start justify-content-between">
+													<div class="avatar flex-shrink-0">
+														<img src="/resources/assets/admin/img/icons/unicons/icon_members.png" alt="chart success" class="rounded">
+													</div>
+												</div>
+												<span class="fw-semibold d-block mb-1">Sales volume</span>
+												<h3 id="memberTotalCnt" class="card-title mb-2">250</h3>
+
+												<span class="fw-semibold d-block mt-4">Register date range</span>
+												<div class="col align-items-center">
+													<div class="form-check-inline">
+														<input id="regDate_start" class="form-control regDate" type="date" value="" id="">
+													</div>
+													<div class="form-check-inline">
+														<span class="mx-2">-</span>
+													</div>
+													<div class="form-check-inline">
+														<input id="regDate_end" class="form-control regDate" type="date" value="" id="">
+													</div>
+													<button id="" type="button" class="btn btn-outline-primary" onclick="getMemberRegCnt()">확인</button>
+												</div>
+											</div>
+											<!-- <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5> -->
+											<div id="totalRevenueChart" class="px-2"></div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
-						<!--/ Number of members by level -->
-
+						<!--/ body  -->
 					</div>
+
+
 
 
 				</div>
@@ -496,7 +645,7 @@
 	<script src="/resources/assets/admin/js/main.js"></script>
 
 	<!-- Page JS -->
-	<!-- <script src="/resources/assets/admin/js/dashboards-analytics.js"></script> -->
+	<script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
 
 	<!-- Place this tag in your head or just before your close body tag. -->
 	<script async defer src="https://buttons.github.io/buttons.js"></script>

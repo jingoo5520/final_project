@@ -46,16 +46,16 @@ public class AdminController {
 	}
 	
 	// 기간에 따른 가입자 수 가져오기
-	@GetMapping("/getMemberRegCnt")
+	@GetMapping("/selectRangedMemberRegCnt")
 	@ResponseBody
-	public int getMemberRegCnt(@RequestParam Timestamp regDate_start, @RequestParam Timestamp regDate_end) {
+	public int selectRangedMemberRegCnt(@RequestParam Timestamp regDate_start, @RequestParam Timestamp regDate_end) {
 		int data = 0;
 
 		System.out.println(regDate_start);
 		System.out.println(regDate_end);
 		
 		try {
-			data = aService.getMemberRegCnt(regDate_start, regDate_end);
+			data = aService.selectRangedMemberRegCnt(regDate_start, regDate_end);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

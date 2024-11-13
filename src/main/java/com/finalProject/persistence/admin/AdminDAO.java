@@ -21,6 +21,21 @@ public interface AdminDAO {
 	List<LevelCountDTO> selectMembersByLevel() throws Exception;
 
 	// 가입 회원 수 가져오기
-	int selectMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception;
+	int selectMemberRegCnt(Timestamp time) throws Exception;
+
+	// 총 매출 가져오기
+	int getTotalSales() throws Exception;
+
+	// 대기상태인 문의 수 가져오기
+	int selectWaitInquiryCnt() throws Exception;
+
+	// 특정 날 판매 량
+	int selectDaySaleCnt(Timestamp time) throws Exception;
+
+	// 특정 날 매출
+	int selectDayRevenue(Timestamp time) throws Exception;
+
+	// 기간에 따른 가입자 수 가져오기
+	int selectRangedMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception;
 
 }

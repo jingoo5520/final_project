@@ -8,8 +8,8 @@ public interface AdminService {
 	// 통계 데이터 가져오기
 	Map<String, Object> getStatisticData() throws Exception;
 
-	// 가입자 수 가져오기
-	int getMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception;
+	// 기간에 따른 가입자 수 가져오기
+	int selectRangedMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception;
 	
-	
+
 }
