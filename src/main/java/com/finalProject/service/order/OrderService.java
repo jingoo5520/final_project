@@ -53,5 +53,7 @@ public interface OrderService {
 
 	void cancelOrder(CancelOrderRequestDTO request) throws Exception;
 
+	void updateOrderStatusAuto();
+
 
 }

@@ -36,7 +36,15 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		boolean result = true;
 		LoginDTO loginDTO = null;
 		log.info("preHandle()");
-
+		
+		String uri = request.getRequestURI();
+		System.out.println("LoginInterceptor 안에서 uri : " + uri);
+		if (uri.contains("/order")) {
+			ses.setAttribute("sentByOrderRequest", "Yes");
+		} else {
+			ses.setAttribute("sentByOrderRequest", null);
+		}
+		
 		if (request.getSession().getAttribute("loginMember") != null) { // 로그인이 되어있을경우
 			System.out.println("로그인 된 상태로 로그인 인터셉터 동작 : 로그아웃 처리");
 			ses.removeAttribute("loginMember"); // 로그인 세션 삭제(로그아웃)
@@ -131,7 +139,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				response.sendRedirect("/member/viewLogin/?status=fail");
 			}
 		}
-
+		
 	}
 
 }

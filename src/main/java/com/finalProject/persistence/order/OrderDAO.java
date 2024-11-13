@@ -65,4 +65,6 @@ public interface OrderDAO {
 
 	int updateRefundPriceByProduct(List<ProductDiscountCalculatedDTO> productDiscountCalculated);
 
+	void updateOrderStatusAuto();
+
 }

@@ -2096,10 +2096,11 @@
 	  // orders 테이블에 insert가 이미 일어났으므로 orderId는 이미 서버에 저장되어 있음
 	  function sendAmountToServer(amount) {
 		  let response = null
+		  let sentByOrderRequest = null
 		  $.ajax({
 			  async : false,
 			  type : 'POST',
-			  url : "/payment/saveExpectedTotalPrice",
+			  url : "/order/session",
 			  data: amount, // amount 객체의 예시 : {currency : "KRW", value : 100}
 			  dataType: "json",
 			  contentType : 'application/x-www-form-urlencoded',

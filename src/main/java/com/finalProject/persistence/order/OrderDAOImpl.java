@@ -324,6 +324,10 @@ public class OrderDAOImpl implements OrderDAO {
 		params.put("depoistAccount", depoistAccount);
 		ses.update(ns + "updateAccountInfo", params);
 	}
-
+	
+	@Override
+	public void updateOrderStatusAuto() {
+		ses.update(ns + "updateOrderStatusAuto");
+	}
 
 }

@@ -52,10 +52,17 @@ public class OrderController {
 	
 	static private Gson gson = new Gson();
 	
+	@GetMapping("/order") // '비회원으로 주문하기' 버튼을 눌렀을 때만 쓰임 
+	public String orderPage(HttpSession session, Model model) { // 함수 오버로딩
+		System.out.println("/order GET 요청 들어감");
+		String productInfos = (String) session.getAttribute("productInfos");
+		addOrderInfoToModel(productInfos, session, model);
+		return "/user/pages/order/order";
+	}
+	
 	@PostMapping("/order")
 	public String orderPage(@RequestParam(value="productInfos", required=false, defaultValue="0") String productInfosParam,
 							@RequestAttribute(value="productInfosAttribute", required=false) String productInfosAttribute, Model model, HttpSession session) {
-		
 		String productInfos = "";
 		System.out.println(productInfosParam);
 		System.out.println(productInfosAttribute);
@@ -68,12 +75,15 @@ public class OrderController {
 			return "/user/pages/warning";
 		}
 		
+		addOrderInfoToModel(productInfos, session, model);
+ 		return "/user/pages/order/order";
+    }
+	
+	private void addOrderInfoToModel(String productInfos, HttpSession session, Model model) {
 		// 세션에서 login정보 가져오기
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
-		
 	    ObjectMapper objectMapper = new ObjectMapper();
 	    List<OrderRequestDTO> requestsInfo;
-
 	    try {
 	        requestsInfo = objectMapper.readValue(productInfos, new TypeReference<List<OrderRequestDTO>>() {});
 		
@@ -111,10 +121,7 @@ public class OrderController {
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
-        
-        
- 		return "/user/pages/order/order";
-    }
+	}
 
 	@PostMapping("/order/payMethod")
 	public ResponseEntity<String> setPayMethod(@RequestParam("method") String method, HttpSession session) {
@@ -602,7 +609,6 @@ public class OrderController {
 		return "/user/pages/order/orderByNonMember";
 	}
 	
-	// working...
 	@GetMapping("/orderByNonMember")
 	@ResponseBody
 	public List<OrderProductsDTO> viewOrderByNonMember(
@@ -611,8 +617,15 @@ public class OrderController {
 			@RequestParam String email,
 			HttpSession session
 		) {
-		session.setAttribute("goingToOrderByNonMember", "True");
 		return orderService.getOrderListOfNonMember(name, phoneNumber, email);
+	}
+	
+	@PostMapping("/order/session")
+	@ResponseBody
+	public void getSessionState(
+			HttpSession session,
+			HttpServletRequest request) {
+		session.setAttribute("requestByNonMember", request.getParameter("requestByNonMember"));
 	}
 	
 	@GetMapping("/cancelAPItest")
@@ -624,5 +637,4 @@ public class OrderController {
 	public String successPageTest() {
 		return "/user/pages/success";
 	}
-	
 }

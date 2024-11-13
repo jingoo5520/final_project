@@ -740,6 +740,10 @@ public class OrderServiceImpl implements OrderService {
 				);
 	}
 	
-	// working...
-	// public getCancelProcessStatus(String orderId, String )
+	@Override
+	public void updateOrderStatusAuto() {
+		orderDAO.updateOrderStatusAuto();
+	}
+	
+	
 }

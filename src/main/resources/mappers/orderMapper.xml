@@ -397,4 +397,12 @@
 		set deposit_name = #{depositName}, deposit_bank = #{depositBank}, deposit_account = #{depositAccount}
 		where order_id = #{orderId}
 	</update>
+	
+	<update id="updateOrderStatusAuto">
+		<![CDATA[
+		update orders
+		set order_status = 6
+		where order_status = 2 and order_date <= date_sub(current_timestamp(), interval 7 day);
+		]]>
+	</update>
 </mapper>
