@@ -12,4 +12,6 @@ import lombok.Setter;
 public class AdminPayOrdererVO {
 	private int total_price_expected;
 	private String orderer_id;
+	private int use_point;
+	private int coupon_no;
 }

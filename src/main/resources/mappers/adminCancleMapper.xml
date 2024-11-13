@@ -5,17 +5,12 @@
 <mapper namespace="com.finalProject.mappers.adminCancleMapper">
 	<select id="getAllCancle"
 		resultType="com.finalProject.model.admin.order.AdminCancleVO">
-		select * from cancels group by order_id limit
-		#{startRowIndex} ,
-		#{viewPostCntPerPage}
+		select * from cancels group by order_id 
+		limit #{startRowIndex} , #{viewPostCntPerPage}
+	
 	</select>
 	<select id="getCountAllCancle" resultType="int">
-		select count(*) from
-		(
-		SELECT order_id
-		FROM cancels
-		GROUP BY order_id
-		) as total_count
+		SELECT COUNT(DISTINCT order_id) FROM cancels;
 	</select>
 	<select id="getCountSearchCancle" resultType="int">
 		SELECT COUNT(DISTINCT order_id) from cancels
@@ -81,10 +76,7 @@
 		</if>
 		group by order_id
 		order by cancel_apply_date desc
-
-		limit #{startRowIndex}
-		,
-		#{viewPostCntPerPage}
+		limit #{startRowIndex},#{viewPostCntPerPage}
 	</select>
 
 	<select id="getPaymentModuleKeyByOrderId"
@@ -130,7 +122,7 @@
 
 	<update id="updateCancelCompleteDate">
 		update cancels set cancel_complete_date = now() , cancel_status = '취소 완료'
-		where cancel_no In
+		where cancel_no IN
 		<foreach item="cancel" collection="cancelList" open="("
 			separator="," close=")">
 			#{cancel}
@@ -139,8 +131,8 @@
 	<insert id="insertRefund"
 		parameterType="com.finalProject.model.admin.order.ModifyCancelStatusDTO">
 		INSERT INTO
-		refunds(payment_num,refund_type,refund_amount) VALUES
-		(#{paymentNo},#{cancelType},#{amount})
+		refunds(cancel_no,payment_num,refund_type,refund_amount) VALUES
+		(#{cancelNo},#{paymentNo},#{cancelType},#{amount})
 	</insert>
 	<select id="getOrderIdByCancelNo" resultType="String">
 		select order_id from cancels where cancel_no in
@@ -151,17 +143,56 @@
 		group by order_id
 	</select>
 
-	<select id="getExpectPayAmount" resultType="com.finalProject.model.admin.order.AdminPayOrdererVO">
+	<select id="getExpectPayAmount"
+		resultType="com.finalProject.model.admin.order.AdminPayOrdererVO">
 		select
-		total_price_expected , orderer_id from orders where order_id =
+		total_price_expected , orderer_id,use_point,coupon_no
+		from orders where order_id =
 		#{orderId}
 	</select>
-	
-	<insert id="returnPoint">
-		insert into point_earned(member_id,earned_point,point_code) values(#{member_id},#{point},3)
+
+	<insert id="refundPoint">
+		insert into
+		point_earned(member_id,earned_point,point_code)
+		values(#{member_id},#{point},3)
 	</insert>
-	
+
 	<update id="returnMemberPoint">
-		update members set member_point = member_point + #{point} where member_id = #{member_id}
+		update members set member_point = member_point +
+		#{point} where member_id = #{member_id}
 	</update>
+	<insert id="refundEarnedPoint">
+		insert into
+		point_earned(member_id,earned_point,point_code)
+		values(#{member_id},#{usePoint},3)
+	</insert>
+	<update id="refundMemberUsePoint">
+		update members set member_point = member_point +
+		#{usePoint} where member_id =#{member_id}
+	</update>
+	<delete id="deleteUseCoupon">
+		DELETE FROM coupon_used WHERE coupon_no =
+		#{coupon_no}
+	</delete>
+	<select id="memberLevelPoint" resultType="float">
+		SELECT distinct
+		l.level_point FROM orders o JOIN members m ON
+		o.orderer_id = m.member_id JOIN levels l ON m.member_level =
+		l.level_no WHERE o.order_id = #{orderId}
+	</select>
+	<insert id="restractPoint">
+		insert into
+		point_earned(member_id,earned_point,point_code)
+		values(#{memberId},#{stealPoint},5)
+	</insert>
+
+	<update id="restractPointMember">
+		update members set member_point = member_point - #{stealPoint} 
+		where member_id = #{memberId}
+	</update>
+	<select id="findMemberId" resultType="String">
+		SELECT m.member_id from members m JOIN orders o ON
+		o.orderer_id = m.member_id WHERE order_id =
+		#{orderId}
+	</select>
 </mapper>

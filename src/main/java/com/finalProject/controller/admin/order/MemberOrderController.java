@@ -44,6 +44,7 @@ public class MemberOrderController {
 			}
 
 			model.addAttribute("CancleList", map.get("CancleList"));
+			System.out.println(map.get("PagingInfo"));
 			System.out.println(map.get("CancleList"));
 			model.addAttribute("PagingInfo", map.get("PagingInfo"));
 			model.addAttribute("TopCancleList", map.get("TopCancleList"));
@@ -124,18 +125,20 @@ public class MemberOrderController {
 	public ResponseEntity<Object> ModifyCancelStatus(@RequestBody ModifyCancelStatusDTO modifyCancelStatusDTO) {
 		boolean result = false;
 
-		System.out.println(modifyCancelStatusDTO.getAmount());
-		System.out.println(modifyCancelStatusDTO.getCancelList().toString());
-		System.out.println(modifyCancelStatusDTO.getCancelType());
-		System.out.println(modifyCancelStatusDTO.getPaymentNo());
+		System.out.println("총 가격 " + modifyCancelStatusDTO.getAmount());
+		System.out.println("취소 번호" + modifyCancelStatusDTO.getCancelList().toString());
+		System.out.println("취소 타입 " + modifyCancelStatusDTO.getCancelType());
+		System.out.println("결제 번호 " + modifyCancelStatusDTO.getPaymentNo());
 		try {
 			result = os.modifyCancelStatus(modifyCancelStatusDTO);
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("fail");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response("fail"));
 		}
-
-		return null;
-
+		if (result) {
+			return ResponseEntity.status(HttpStatus.OK).body(new Response("결제 정보 변경 success"));
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response("fail"));
+		}
 	}
 
 	@RequestMapping("showListByOrderId")
@@ -160,28 +163,43 @@ public class MemberOrderController {
 
 	@RequestMapping("restractCancelNo")
 	@ResponseBody
-	public ResponseEntity<String> RestractCancelNo(@RequestParam("cancelNo") String cancelNo) {
+	public ResponseEntity<Response> RestractCancelNo(@RequestParam("cancelNo") String cancelNo) {
 		try {
 
 			if (cancelNo == null || cancelNo.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid cancelNo");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response("fail"));
 			}
 
 			int result = os.RestractByCancelNo(cancelNo);
 			System.out.println(result);
 
 			if (result >= 1) {
-				return ResponseEntity.ok("success");
+				return ResponseEntity.status(HttpStatus.OK).body(new Response("success"));
 			} else {
 
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No matching cancelNo found");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response("fail"));
 			}
 
 		} catch (Exception e) {
 
 			System.err.println("Error during restractCancelNo: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("restractFail");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response("fail"));
 		}
 	}
 
+	public class Response {
+		private String errorCode;
+
+		public Response(String errorCode) {
+			this.errorCode = errorCode;
+		}
+
+		public String getResponseCode() {
+			return errorCode;
+		}
+
+		public void setResponseCode(String errorCode) {
+			this.errorCode = errorCode;
+		}
+	}
 }

@@ -6,7 +6,6 @@ import java.util.Map;
 import com.finalProject.model.admin.order.AdminCancleVO;
 import com.finalProject.model.admin.order.AdminPayOrdererVO;
 import com.finalProject.model.admin.order.AdminPaymentVO;
-import com.finalProject.model.admin.order.ModifyCancelStatusDTO;
 
 public interface OrdersDAO {
 
@@ -28,14 +27,28 @@ public interface OrdersDAO {
 
 	int updateCancelCompleteDate(List<Integer> cancelList);
 
-	int insertRefund(ModifyCancelStatusDTO modifyCancelStatusDTO);
+	int insertRefund(Map<String, Object> map);
 
 	String getOrderIdByCancelNo(List<Integer> cancelList);
 
 	AdminPayOrdererVO getExpectPayAmount(String orderId);
 
-	int returnPoint(int assigned_point, String orderer_id);
+	int refundPoint(int assigned_point, String orderer_id);
 
 	void returnMemberPoint(int assigned_point, String orderer_id);
+
+	int refundEarnedPoint(int use_point, String orderer_id);
+
+	void deleteUseCoupon(int coupon_no);
+
+	void refundMemberUsePoint(int use_point, String orderer_id);
+
+	float memberLevelPoint(String orderId);
+
+	int restractPoint(String orderId, int stealPoint);
+
+	void restractPointMember(String orderId, int stealPoint);
+
+	String findMemberId(String orderId);
 
 }

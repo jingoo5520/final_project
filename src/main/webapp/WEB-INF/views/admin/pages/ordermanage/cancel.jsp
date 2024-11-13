@@ -46,6 +46,7 @@
 <html>
 <head>
 <script>
+let data;
 	function showCancelList(pageNo) {
 		console.log(pageNo);
 		let pagingSize =10;
@@ -93,12 +94,12 @@
 		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" disabled/>`; // 블랙 멤버는 체크박스를 비활성화
 		                }
 */
-					
+					let isDisabled = (cancel.cancel_status === '취소 완료' || cancel.cancel_status === '취소 철회') ? 'disabled' : '';
 		            const formattedDate = new Date(cancel.cancel_apply_date).toISOString().slice(0, 10);
 		            /* <input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="'+member.member_id+'"' + 
 	                    (checkedMemberIdList.includes(member.member_id) ? "checked" : "") + '/> */
 		            output += '<tr>' +
-		                '<td>'+checkBoxHtml+ '</td>' +
+		                
 		                '<td>' + cancel.cancel_no + '</td>' +
 		                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
 		                '<td>' + cancel.order_product_no + '</td>' +
@@ -108,7 +109,7 @@
 		                '<td>' + cancel.cancel_type + '</td>' +
 		                '<td>' + cancel.cancel_status + '</td>' +			          
 		                '<td><div class="mt-3">' +
-		                '<button type="button" class="btn rounded-pill btn-outline-primary" value="' + cancel.order_product_no + '" data-bs-toggle="modal" data-bs-target="#modifyCancel">환불</button>' +
+		                '<button type="button" class="btn rounded-pill btn-outline-primary" value="' + cancel.order_product_no + '" data-bs-toggle="modal" data-bs-target="#modifyCancel"'+isDisabled+'>환불</button>' +
 		                '</div></td></tr>';
 		        });
 
@@ -308,18 +309,7 @@
 		            contentType: 'application/json',
 		            data: JSON.stringify(data),  // data 객체를 JSON 형식으로 문자열화하여 전송
 		            success: function(response) {
-		               $.ajax({
-		            	  url : '/admin/order/updateCancelDate',
-		            	  type : 'POST' ,
-		            	  dataType : "json" ,
-		            	  data: JSON.stringify(data),
-		            	  success : function(data) {
-		            		 console.log(data); 
-		            	  } ,
-		            	  error : function(xhr, status, error) {
-		            		  console.log(error);
-		            	  }
-		               });
+		               console.log(data);
 		            },
 		            error: function(error) {
 		                console.error(error);  // 에러 시 에러 출력
@@ -687,19 +677,12 @@
 				    
 
 			        $.each(data.CancelList, function(index, cancel) {
-			        	 let checkBoxHtml = '';
-			          /*       if (member.member_status != 'black') {
-			                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" \${checkedMemberIdList.includes(member.member_id) ? "checked" : ""}/>`;
-			                } else {
-			                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" disabled/>`; // 블랙 멤버는 체크박스를 비활성화
-			                }
- */
-						
+			        	
+ 						let isDisabled = (cancel.cancel_status === '취소 완료' || cancel.cancel_status === '취소 철회') ? 'disabled' : '';
 			            const formattedDate = new Date(cancel.cancel_apply_date).toISOString().slice(0, 10);
-			            /* <input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="'+member.member_id+'"' + 
-		                    (checkedMemberIdList.includes(member.member_id) ? "checked" : "") + '/> */
+			            
 			            output += '<tr>' +
-			                '<td>'+checkBoxHtml+ '</td>' +
+			             
 			                '<td>' + cancel.cancel_no + '</td>' +
 			                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
 			                '<td>' + cancel.order_product_no + '</td>' +
@@ -710,7 +693,7 @@
 			                '<td>' + cancel.cancel_status + '</td>' +
 			                '<td>' + cancel.cancel_reason + '</td>' +
 			                '<td><div class="mt-3">' +
-			                '<button type="button" class="btn rounded-pill btn-outline-primary" value="' + cancel.order_id + '" data-bs-toggle="modal" data-bs-target="#modifyCancel">환불</button>' +
+			                '<button type="button" class="btn rounded-pill btn-outline-primary" value="' + cancel.order_id + '" data-bs-toggle="modal" data-bs-target="#modifyCancel"'+ isDisabled +'>환불</button>' +
 			                '</div></td></tr>';
 			        });
 
@@ -857,10 +840,13 @@
 													<div class="col-sm-10 d-flex align-items-center">
 
 														<div class="form-check-inline">
-															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소 요청" id="cancel_status_wait" checked="checked" /> <label class="form-check-label" for="product_p"> 대기 </label>
+															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소 요청" id="cancel_status_wait" checked="checked" /> <label class="form-check-label" for="product_p"> 취소 요청 </label>
 														</div>
 														<div class="form-check-inline">
-															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소 완료" id="cancel_status_comple" checked="checked" /> <label class="form-check-label" for="product_c"> 완료 </label>
+															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소 완료" id="cancel_status_comple" checked="checked" /> <label class="form-check-label" for="product_c"> 취소 완료 </label>
+														</div>
+														<div class="form-check-inline">
+															<input name="cancel_status" class="form-check-input" type="checkbox" value="취소 철회" id="cancel_status_comple" checked="checked" /> <label class="form-check-label" for="product_c"> 취소 철회 </label>
 														</div>
 													</div>
 												</div>
@@ -893,7 +879,7 @@
 										<table class="table">
 											<thead class="table-light">
 												<tr>
-													<th>선택</th>
+
 													<th>취소 번호</th>
 													<th>주문 번호</th>
 													<th>주문 아이디 번호</th>
@@ -909,7 +895,7 @@
 											<tbody id="cancelTableBody" class="table-border-bottom-0">
 												<c:forEach var="cancle" items="${CancleList}">
 													<tr>
-														<td><input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="${member.member_id}" <c:if test="\${fn:contains(checkedMemberIdList , member.member_id)}">checked</c:if> /></td>
+
 														<td>${cancle.cancel_no }</td>
 														<td>${cancle.order_product_no}</td>
 														<td id="cancelOrderId">${cancle.order_id }</td>
@@ -920,7 +906,7 @@
 														<td>${cancle.cancel_status}</td>
 														<td>${cancle.cancel_reason}</td>
 														<td><div class="mt-3">
-																<button type="button" class="btn rounded-pill btn-outline-primary " value="${cancle.order_id }" data-bs-toggle="modal" data-bs-target="#modifyCancel">환불</button>
+																<button type="button" class="btn rounded-pill btn-outline-primary " value="${cancle.order_id }" data-bs-toggle="modal" data-bs-target="#modifyCancel" ${cancle.cancel_status == '취소 완료' || cancle.cancel_status == '취소 철회' ? 'disabled' : ''}>환불</button>
 															</div></td>
 														<td>
 													</tr>
