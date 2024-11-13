@@ -10,6 +10,7 @@ import com.finalProject.model.MemberDTO;
 import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
 import com.finalProject.model.RecentCouponDTO;
 
 public interface MemberDAO {
@@ -112,5 +113,11 @@ public interface MemberDAO {
 
 	// 회원의 포인트 내역의 총 개수 조회
 	int getTotalPointList(String pointType, String memberId) throws Exception;
+
+	// 회원의 포인트 적립내역 조회
+	List<PointDTO> selectEarnedPointList(String memberId, int pageNo) throws Exception;
+
+	// 회원의 포인트 사용내역 조회
+	List<PointDTO> selectUsedPointList(String memberId, int pageNo) throws Exception;
 	
 }

@@ -16,6 +16,7 @@ import com.finalProject.model.MemberDTO;
 import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
 import com.finalProject.model.RecentCouponDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -297,6 +298,25 @@ public class MemberDAOImpl implements MemberDAO {
 		}
 		
 		return totalPointListCnt;
+	}
+
+	// 회원의 포인트 적립내역 조회
+	@Override
+	public List<PointDTO> selectEarnedPointList(String memberId, int pageNo) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		param.put("memberId", memberId);
+		param.put("offset", (pageNo - 1) * 10);
+		return ses.selectList(ns + "selectEarnedPointListByPageNo", param);
+	}
+
+	// 회원의 포인트 사용내역 조회
+	@Override
+	public List<PointDTO> selectUsedPointList(String memberId, int pageNo) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		
+		param.put("memberId", memberId);
+		param.put("offset", (pageNo - 1) * 10);
+		return ses.selectList(ns + "selectUsedPointListByPageNo", param);
 	}
 
 }

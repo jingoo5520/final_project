@@ -25,7 +25,18 @@
 	$(document).ready(function() {
 		getPointInfo();
 		getPagingInfo("earned");
+		getearnedPointList(1);
 	});
+	
+	function setEarnedPointList() {
+		getPagingInfo("earned");
+		getearnedPointList(1);
+	}
+	
+	function setUsedPointList() {
+		getPagingInfo("used");
+		getusedPointList(1);
+	}
 
 	function getPointInfo() {
 		
@@ -56,36 +67,109 @@
 	}
 	
 	function getPagingInfo(pointType) {
-		if (pointType == "earned") {
-			
-			$.ajax({
-				async: false,
-				type: 'POST',
-				contentType: 'text/plain',
-				data: pointType, 
-				url: '/member/myPage/getPointPagingInfo',
-				dataType: 'json',
-		        success : function(response) {
-		        	makePaging(response.totalPageCount);
-		        },
-		        error : function(response) {
-		        }
-			});
-		}
+		$.ajax({
+			async: false,
+			type: 'POST',
+			contentType: 'text/plain',
+			data: pointType, 
+			url: '/member/myPage/getPointPagingInfo',
+			dataType: 'json',
+	        success : function(response) {
+	        	makePaging(pointType, response.totalPageCount);
+	        },
+	        error : function(response) {
+	        }
+		});
 	}
 	
-	function makePaging(totalPage) {
+	function makePaging(pointType, totalPage) {
 		console.log(totalPage);
 		let output = "";
-		
-		for (let i = 0; i < totalPage; i++) {
-			if (i == 0) {
-				output += `<div class="pages active">\${i + 1}</div>`;
+		for (let i = 1; i < totalPage + 1; i++) {
+			if (i == 1) {
+				output += `<div id="\${pointType}_page_\${i}" class="pages active" onclick="get\${pointType}PointList(\${i})">\${i}</div>`;
 			} else {
-				output += `<div class="pages">\${i + 1}</div>`;
+				output += `<div id="\${pointType}_page_\${i}" class="pages" onclick="get\${pointType}PointList(\${i})">\${i}</div>`;
 			}
 		}
-		$("#earnedPagination").html(output);
+		$("#" + pointType + "Pagination").html(output);
+	}
+	
+	function getearnedPointList(pageNo) {
+		let pages = $(".pages");
+		
+		pages.each(function(index, page) {
+			$(page).removeClass('active');
+			
+			if ($(page).attr("id") == "earned_page_" + pageNo) {
+				$(page).addClass('active');
+			}
+		});
+		
+		$.ajax({
+			async: false,
+			type: 'POST',
+			data: { pageNo: pageNo },
+			url: '/member/myPage/getEarnedPointList',
+			dataType: 'json',
+	        success : function(response) {
+	        	makeEarnedPointList(response.earnedPointList);
+	        },
+	        error : function(response) {
+	        }
+		});
+	}
+	
+	function getusedPointList(pageNo) {
+		let pages = $(".pages");
+		
+		pages.each(function(index, page) {
+			$(page).removeClass('active');
+			
+			if ($(page).attr("id") == "used_page_" + pageNo) {
+				$(page).addClass('active');
+			}
+		});
+		
+		$.ajax({
+			async: false,
+			type: 'POST',
+			data: { pageNo: pageNo }, 
+			url: '/member/myPage/getUsedPointList',
+			dataType: 'json',
+	        success : function(response) {
+	        	makeUsedPointList(response.usedPointList);
+	        },
+	        error : function(response) {
+	        }
+		});
+	}
+	
+	function makeEarnedPointList(pointList) {
+		let output = "";
+		
+		for (let i = 0; i < pointList.length ; i++) {
+			output += `<li class="list-group-item earnedPointInfo">
+					   		<div class="earnedPoint">+\${pointList[i].point}</div>
+					   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
+							<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
+					   </li>`;
+		}
+		
+		$(".earnedPointUl").html(output);
+	}
+	
+	function makeUsedPointList(pointList) {
+		let output = "";
+		
+		for (let i = 0; i < pointList.length ; i ++) {
+			output += `<li class="list-group-item usedPointInfo">
+					   		<div class="usedPoint">+\${pointList[i].point}</div>
+							<div class="usedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
+				   </li>`;
+		}
+		
+		$(".usedPointUl").html(output);
 	}
 
 </script>
@@ -100,11 +184,10 @@
 		margin-left: 50px;
 	}
 
-	.pointHeader {
+	.pointFooter {
 		font-size : 18px;
-		height:50px;
 		padding: 14px;
-		margin:12px;
+		margin: 12px;
 	}
 	
 	#usePoint h3 {
@@ -167,23 +250,6 @@
 		background-color: #FFFFFF !important;
 	}
 	
-	.sortButton .sortBtn {
-		padding: 0;
-		height: 30px;
-		line-height: 30px;
-		cursor: pointer;
-		display:flex;
-		justify-content: center;
-		border: 1px solid #e6e6e6;
-		border-radius: 4px;
-	}
-	
-	.sortButton {
-		display: flex;
-		justify-content: right;
-		margin: 20px 20px !important;
-	}
-	
 	.pagination {
 		display: flex !important;
 		flex-direction: row !important;
@@ -205,20 +271,55 @@
 		border-radius: 4px;
 	}
 	
-	.pages.active,
-	.sortButton .sortBtn.active {
+	.pages.active {
 		background-color: #A8A691;
 		color: #FFFFFF;
 	}
 	
-	.pointInfo {
+	.earnedPointInfo {
+		display: flex !important;
+		flex-direction: row !important;
+		justify-content: center !important;
+		margin: 0 20px;
+	}
+	
+	.usedPointInfo {
 		display: flex !important;
 		flex-direction: row !important;
 		justify-content: space-between !important;
 		margin: 0 20px;
 	}
 	
-	.earnedReason, .earnedPoint, .eranedDate {
+	.pointInfo {
+		display: flex !important;
+		flex-direction: row !important;
+		justify-content: center !important;
+		margin: 0 20px;
+	}
+	
+	.earnedPoint, .earnedReason, .earnedDate, .usedPoint, .usedDate {
+		padding: 0 10px;
+	}
+	
+	.earnedPoint {
+		color: #0DCAF0;
+	}
+	
+	.usedPoint {
+		color: #FD5A67;
+	}
+	
+	.earnedDate, .usedDate {
+		color: #222222;
+	}
+	
+	.earnedPoint, .earnedDate {
+		width: 100px;
+	}
+	
+	.earnedReason {
+		flex-grow: 1;
+		text-align: center;
 	}
 	
 	.pointInfoHead {
@@ -231,11 +332,21 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		border-bottom: 1px solid #e6e6e6;
 	}
 	
-	.sortButton {
-		margin: 10px 0;
+	.earnedHead div:nth-of-type(2) {
+		margin-left: 20px;
 	}
+	
+	.earnedHead div:nth-of-type(3) {
+		margin-right: 20px;
+	}
+	
+	.usedHead div:nth-of-type(2){
+		margin-right: 20px;
+	}
+	
 	
 </style>
 
@@ -289,154 +400,47 @@
 					<div class="pointList">
 						<nav>
 							<div class="nav nav-tabs" id="nav-tab" role="tablist">
-								<button class="nav-link active" id="earnedPointList-tab" data-bs-toggle="tab" data-bs-target="#earnedPointList" type="button" role="tab" aria-controls="earnedPointList" aria-selected="true" onclick="getEarnedPointList()">적립포인트 내역</button>
-								<button class="nav-link" id="usedPointList-tab" data-bs-toggle="tab" data-bs-target="#usedPointList" type="button" role="tab" aria-controls="usedPointList" aria-selected="false" onclick="getUsedPointList()">사용포인트 내역</button>
+								<button class="nav-link active" id="earnedPointList-tab" data-bs-toggle="tab" data-bs-target="#earnedPointList" type="button" role="tab" aria-controls="earnedPointList" aria-selected="true" onclick="setEarnedPointList()">적립포인트 내역</button>
+								<button class="nav-link" id="usedPointList-tab" data-bs-toggle="tab" data-bs-target="#usedPointList" type="button" role="tab" aria-controls="usedPointList" aria-selected="false" onclick="setUsedPointList()">사용포인트 내역</button>
 							</div>
 						</nav>
 						<div class="tab-content" id="nav-tabContent">
 							<div class="tab-pane fade show active" id="earnedPointList" role="tabpanel" aria-labelledby="earnedPointList-tab" tabindex="0">
-								<div class="pointInfoHead">
-									<div>포인트 (지급사유)</div>
+								<div class="pointInfoHead earnedHead">
+									<div>포인트</div>
+									<div>지급사유</div>
 									<div>지급날짜</div>
-								</div>
-								<div class="row sortButton">
-									<div class="sortBtn active col-lg-1 col-md-1 col-12">최신순</div>
-									<div class="sortBtn col-lg-1 col-md-1 col-12">적립일순</div>
 								</div>
 								<div class="earnedPointList-body">
 									<div class="pointInfoBody">
-										<ul class="list-group list-group-flush">
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="earnedPoint">+29,349P (상품구매)</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
+										<ul class="list-group list-group-flush earnedPointUl">
 										</ul>
 									</div>
 								</div>
 								<div class="earnedPointList-footer">
-									<div class="pagination" id="earnedPagination">
-										<div class="pages active">1</div>
-										<div class="pages">2</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-									</div>
+									<div class="pagination" id="earnedPagination"></div>
 								</div>
 							</div>
 							<div class="tab-pane fade" id="usedPointList" role="tabpanel" aria-labelledby="usedPointList-tab" tabindex="0">
-								<div class="pointInfoHead">
+								<div class="pointInfoHead usedHead">
 									<div>포인트</div>
 									<div>사용날짜</div>
 								</div>
-								<div class="row sortButton">
-									<div class="sortBtn active col-lg-1 col-md-1 col-12">최신순</div>
-									<div class="sortBtn col-lg-1 col-md-1 col-12">사용일순</div>
-								</div>
 								<div class="usedPointList-body">
 									<div class="pointInfoBody">
-										<ul class="list-group list-group-flush">
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="eranedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
-											<li class="list-group-item pointInfo">
-												<div class="usedPoint">-29,349P</div>
-												<div class="usedDate">2024-11-13</div>
-											</li>
+										<ul class="list-group list-group-flush usedPointUl">
 										</ul>
 									</div>
 								</div>
 								<div class="usedPointList-footer">
-									<div class="pagination">
-										<div class="pages active">1</div>
-										<div class="pages">2</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-										<div class="pages">3</div>
-									</div>
+									<div class="pagination" id="usedPagination"></div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row pointHeader">
-						<div id="memberPoint" class="col-lg-6 col-md-6 col-12">보유 포인트 1000000</div>
-						<div id="usePoint" class="col-lg-6 col-md-6 col-12">사용한 포인트 60000</div>
+						<div class="row pointFooter">
+							<div id="memberPoint" class="col-lg-6 col-md-6 col-12">보유 포인트 1000000</div>
+							<div id="usePoint" class="col-lg-6 col-md-6 col-12">사용한 포인트 60000</div>
+						</div>
 					</div>
 				</div>
 				

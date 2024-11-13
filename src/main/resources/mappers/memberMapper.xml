@@ -278,5 +278,20 @@
 	<select id="selectCntOfUsedPoint" resultType="Integer">
 		select count(*) from point_used where member_id = #{memberId} and use_point != 0
 	</select>
+	
+	<select id="selectEarnedPointListByPageNo" resultType="com.finalProject.model.PointDTO">
+		select e.earned_point as point, e.point_earned_date as pointRecordDate, i.point_reason as pointPaidReason 
+		from point_earned e 
+		join point_infos i on e.point_code = i.point_code 
+		where member_id = #{memberId} 
+		order by e.point_earned_date DESC limit 10 offset #{offset}
+	</select>
+	
+	<select id="selectUsedPointListByPageNo" resultType="com.finalProject.model.PointDTO">
+		select use_point as point, point_used_date as pointRecordDate 
+		from point_used 
+		where member_id = #{memberId} and use_point != 0 
+		order by point_used_date DESC limit 10 offset #{offset}
+	</select>
 
 </mapper>

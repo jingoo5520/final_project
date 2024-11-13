@@ -17,6 +17,7 @@ import com.finalProject.model.MemberDTO;
 import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.UsedCouponDTO;
 import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
 import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.persistence.MemberDAO;
 
@@ -258,6 +259,18 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 			return (pointListCnt / 10) + 1; 
 		}
+	}
+
+	// 회원의 포인트 적립내역 조회
+	@Override
+	public List<PointDTO> getEarnedPointList(String memberId, int pageNo) throws Exception {
+		return memberDAO.selectEarnedPointList(memberId, pageNo);
+	}
+
+	// 회원의 포인트 사용내역 조회
+	@Override
+	public List<PointDTO> getUsedPointList(String memberId, int pageNo) throws Exception {
+		return memberDAO.selectUsedPointList(memberId, pageNo);
 	}
 
 }

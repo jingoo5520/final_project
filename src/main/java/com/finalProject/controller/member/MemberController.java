@@ -39,6 +39,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
 import com.finalProject.model.MemberPointDTO;
 import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
 import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.model.ResponseData;
 import com.finalProject.service.member.MemberService;
@@ -342,6 +343,44 @@ public class MemberController {
 		
 		return resultMap;
 	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getEarnedPointList")
+	@ResponseBody
+	public Map<String, Object> getEarnedPointList(@RequestParam int pageNo, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PointDTO> earnedPointList = null;
+		
+		try {
+			earnedPointList = memberService.getEarnedPointList(loginMember.getMember_id(), pageNo);
+			resultMap.put("earnedPointList", earnedPointList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getUsedPointList")
+	@ResponseBody
+	public Map<String, Object> getUsedPointList(@RequestParam int pageNo, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PointDTO> usedPointList = null;
+		
+		try {
+			usedPointList = memberService.getUsedPointList(loginMember.getMember_id(), pageNo);
+			resultMap.put("usedPointList", usedPointList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
 	
 	// 마이페이지 (사용가능한 쿠폰 조회)
 	@GetMapping("/myPage/getPaidCouponList")
