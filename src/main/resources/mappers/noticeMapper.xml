@@ -134,6 +134,12 @@
 	    values (#{noticeType}, #{noticeTitle}, #{noticeContent}, #{adminId}, NOW(), #{eventStartDate}, #{eventEndDate})
 	</insert>
 	
+	<!-- 배너 경로 업데이트 쿼리 -->
+	<update id="updateBannerPath2">
+        update notices set banner_image = #{bannerImage}
+        where notice_no = #{noticeNo}
+	</update>
+	
     <!-- 썸네일 경로 업데이트 쿼리 -->
     <update id="updateThumbnailPath">
         update notices set thumbnail_image = #{thumbnailImage}

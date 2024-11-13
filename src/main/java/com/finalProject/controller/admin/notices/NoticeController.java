@@ -476,7 +476,10 @@ public class NoticeController {
     
     // 이벤트 수정
     @PostMapping("/updateEvent")
-    public String updateEvent(@ModelAttribute NoticeDTO noticeDTO, RedirectAttributes redirectAttributes) {
+    public String updateEvent(@ModelAttribute NoticeDTO noticeDTO,
+				            @RequestParam(value = "banner_image", required = false) MultipartFile bannerImage,
+				            @RequestParam(value = "thumbnail2", required = false) MultipartFile thumbnailImage,
+				    		RedirectAttributes redirectAttributes) {
         log.info("수정할 공지사항 번호: " + noticeDTO.getNotice_no());
         System.out.println("Received event update request: " + noticeDTO);
 
@@ -502,27 +505,29 @@ public class NoticeController {
         if (noticeDTO.getNotice_type() == null) {
             noticeDTO.setNotice_type(NoticeTypeStatus.NoticeType.E); // 기본값 설정
         }
-
         try {
-            // 썸네일 변경 시 기존 썸네일 파일 삭제
-            if (noticeDTO.getThumbnail_image() != null && !noticeDTO.getThumbnail_image().isEmpty()) {
+            // 썸네일 이미지 변경 시 처리
+            if (thumbnailImage != null && !thumbnailImage.isEmpty()) {
                 // 기존 썸네일 삭제
                 if (existingEvent.getThumbnail_image() != null && !existingEvent.getThumbnail_image().isEmpty()) {
                     fileService.deleteFile(existingEvent.getThumbnail_image());
                 }
+                // 새로운 썸네일 경로 설정
+                String newThumbnailPath = fileService.uploadFile(thumbnailImage, "thumbnail_");
+                noticeDTO.setThumbnail_image(newThumbnailPath);  // 새로운 썸네일 경로 설정
             } else {
                 // 썸네일이 변경되지 않은 경우 기존 썸네일 유지
                 noticeDTO.setThumbnail_image(existingEvent.getThumbnail_image());
             }
 
-            // 배너 변경 시 기존 배너 파일 삭제
-            if (noticeDTO.getBanner_image() != null && !noticeDTO.getBanner_image().isEmpty()) {
+            // 배너 이미지 변경 시 처리
+            if (bannerImage != null && !bannerImage.isEmpty()) {
                 // 기존 배너 삭제
                 if (existingEvent.getBanner_image() != null && !existingEvent.getBanner_image().isEmpty()) {
                     fileService.deleteFile(existingEvent.getBanner_image());
                 }
-                // 배너 파일 경로 업데이트
-                String newBannerPath = fileService.uploadFile(noticeDTO.getBanner_image(), "banner_");
+                // 새로운 배너 경로 설정
+                String newBannerPath = fileService.uploadFile(bannerImage, "banner_");
                 noticeDTO.setBanner_image(newBannerPath);
             } else {
                 // 배너가 변경되지 않은 경우 기존 배너 유지
@@ -673,6 +678,55 @@ public class NoticeController {
                                  .body(Collections.singletonMap("message", "배너 삭제 실패"));
         }
     }
+    
+ // 배너 교체
+    @PostMapping("/updateBanner/{noticeNo}")
+    @ResponseBody
+    public ResponseEntity<?> updateBanner(@PathVariable int noticeNo, @RequestParam("banner") MultipartFile file, HttpServletRequest request) {
+        String newBannerPath = "";
+        try {
+            // 파일을 저장할 디렉토리 경로 (썸네일과 동일한 경로 사용)
+            String uploadDir = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
+            
+            // 배너 파일 경로 설정 (썸네일과 동일한 경로에 저장)
+            newBannerPath = uploadDir + "banner_" + noticeNo + "_" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            
+            // 파일을 해당 경로에 저장
+            File destinationFile = new File(newBannerPath);
+            file.transferTo(destinationFile);
+            
+            // 파일이 정상적으로 저장되지 않은 경우 예외 처리
+            if (!destinationFile.exists()) {
+                logger.error("File not saved: " + newBannerPath);
+                throw new Exception("File not saved.");
+            }
+            
+            // 'newBannerPath'의 절대 경로에서 '/resources/' 이후의 경로만 추출하여 상대 경로로 변환
+            String relativePath = newBannerPath.replace(request.getSession().getServletContext().getRealPath("/"), "");
+
+            // 경로 구분자 처리 (Windows에서 발생할 수 있는 '\'를 '/'로 변환)
+            relativePath = relativePath.replace("\\", "/");
+            
+            // 상대 경로 앞에 '/resources'가 추가되지 않으면 추가
+            if (!relativePath.startsWith("/")) {
+                relativePath = "/" + relativePath;
+            }
+            
+            // 상대 경로 확인
+            System.out.println("relativePath : " + relativePath);
+            
+            // 서비스 계층을 통해 배너 경로 업데이트
+            noticeService.updateBannerPath(noticeNo, relativePath);
+            logger.info("Banner updated successfully for noticeNo: " + noticeNo);
+
+            return ResponseEntity.ok(Collections.singletonMap("success", true));
+        } catch (Exception e) {
+            logger.error("Error updating banner: " + e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("success", false));
+        }
+    }
+
 
     // 썸네일 교체
     @PostMapping("/updateThumbnail/{noticeNo}")

@@ -203,6 +203,15 @@ public class NoticeDAOImpl implements NoticeDAO {
 	}
 
 	@Override
+	public void updateBannerPath(int noticeNo, String bannerImage) throws Exception {
+		Map<String, Object> params = new HashMap<>();
+		params.put("noticeNo", noticeNo);
+        params.put("bannerImage", bannerImage);
+        int result = ses.update(ns + "updateBannerPath2", params);
+        System.out.println("result : " + result);
+	}
+
+	@Override
 	public void updateThumbnailPath(int noticeNo, String thumbnailImage) throws Exception {
 		Map<String, Object> params = new HashMap<>();
 		params.put("noticeNo", noticeNo);
@@ -234,6 +243,7 @@ public class NoticeDAOImpl implements NoticeDAO {
 	        return false;
 	    }
 	}
+
 
 
 //	@Override

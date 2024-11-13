@@ -65,6 +65,9 @@ public interface NoticeService {
 	// 작성 페이지 썸네일 이미지 저장
 	void saveEvent(NoticeDTO event) throws Exception;
 
+	// 수정 페이지 배너 이미지 수정
+	void updateBannerPath(int noticeNo, String newBannerPath) throws Exception;
+
 	// 수정 페이지 썸네일 이미지 수정
 	void updateThumbnailPath(int noticeNo, String newThumbnailPath) throws Exception;
 
@@ -76,6 +79,7 @@ public interface NoticeService {
 
 	// url
 	boolean updateNoticeUrl(NoticeVO notice) throws Exception;
+
 
 	// 페이지네이션
 //	public int getTotalNoticeCount() throws Exception;

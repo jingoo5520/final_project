@@ -163,7 +163,7 @@
             <div class="card-body">
               <h5>현재 썸네일</h5>
               <img id="currentThumbnail" src="${event.thumbnail_image}" alt="현재 썸네일" style="width: 100%; height: auto;" />
-              <input type="file" id="thumbnailInput" name="thumbnail" accept="image/*" style="display: none;" data-current-image="${event.thumbnail_image}"/>
+              <input type="file" id="thumbnailInput" name="thumbnail_image" accept="image/*" style="display: none;" data-current-image="${event.thumbnail_image}"/>
 			  
 			<div class="mb-3">
 				<label for="banner_image" class="form-label">배너 이미지 업로드</label>
@@ -171,7 +171,7 @@
 			</div>
 			<div class="mb-3">
 				<label for="thumbnail_image" class="form-label">썸네일 이미지 업로드</label>
-				<input type="file" class="form-control" id="thumbnailInput2" name="thumbnail2" accept="image/*">
+				<input type="file" class="form-control" id="thumbnailInput2" name="thumbnail_image" accept="image/*">
 			</div>
             </div>
 <!--           <form action="/updateThumbnail" method="post" enctype="multipart/form-data"> -->
@@ -398,14 +398,16 @@
             // 이벤트 시작일 및 종료일 입력값 가져오기
             let eventStartDate = $('input[name="event_start_date"]').val();
             let eventEndDate = $('input[name="event_end_date"]').val();
-            let thumbnailImage = $('input[name="thumbnail"]').val(); // 썸네일 이미지 입력값
-            let bannerImage = $('input[name="banner"]').val(); // 썸네일 이미지 입력값
+            
+            // 썸네일 + 배너
+            let thumbnailImage = $('input[name="thumbnail_image"]')[0].files[0]; // 썸네일 이미지
+            let bannerImage = $('input[name="banner_image"]')[0].files[0]; // 배너 이미지
             
             console.log("Event Title:", noticeTitle); // 확인
             console.log("Admin ID:", adminId); // 확인
             console.log("Event Content:", noticeContent); // 확인
-            console.log("Event Start Date:", event_start_date); // 확인
-            console.log("Event End Date:", event_end_date); // 확인
+            console.log("Event Start Date:", eventStartDate); // 확인
+            console.log("Event End Date:", eventEndDate); // 확인
             console.log("Thumbnail Image:", thumbnailImage); // 확인
             console.log("Banner Image:", bannerImage); // 확인
 
@@ -458,7 +460,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 body: formData
             })
             .then(response => {
-                if (!response.ok) throw new Error('응답 오류');
+                if (!response.ok) {
+                    throw new Error('서버 응답 오류');
+                }
                 return response.json();
             })
             .then(data => {
@@ -477,6 +481,54 @@ document.addEventListener("DOMContentLoaded", function() {
     } else {
         console.error("Element not found: thumbnailInput2");
     }
+});
+
+// 배너 교체 버튼 클릭 시 파일 선택 대화상자 열기
+document.addEventListener("DOMContentLoaded", function() {
+    const bannerInput = document.getElementById("banner_image");
+    const noticeNo = document.getElementById("notice_no").value;
+
+    // 배너 파일 선택 시 이벤트 처리
+    bannerInput.addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            alert("파일을 선택하지 않았습니다.");
+            return;
+        }
+        console.log("배너 파일 선택됨:", file.name);
+
+        const formData = new FormData();
+        formData.append("banner", file);
+
+        if (!noticeNo) {
+            console.error("noticeNo가 설정되지 않았습니다.");
+            alert("공지 번호를 찾을 수 없습니다.");
+            return;
+        }
+
+        // 배너 이미지 업로드 요청
+        fetch('/admin/notices/updateBanner/' + noticeNo, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert("배너 교체 완료");
+            } else {
+                alert("배너 교체 실패: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("오류 발생: " + error.message);
+        });
+    });
 });
 
 

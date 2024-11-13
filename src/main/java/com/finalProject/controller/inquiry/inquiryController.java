@@ -1,7 +1,5 @@
 package com.finalProject.controller.inquiry;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +27,7 @@ import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.inquiry.InquiryDetailDTO;
 import com.finalProject.model.inquiry.InquiryImgDTO;
 import com.finalProject.model.inquiry.InquiryProductDTO;
+import com.finalProject.service.admin.notices.UserNoticeService;
 import com.finalProject.service.inquiry.InquiryService;
 import com.finalProject.util.FileProcess;
 

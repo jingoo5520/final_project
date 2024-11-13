@@ -96,76 +96,82 @@
 						</div>
 						<!-- End Cart List Title -->
 						
-                <div id="noticeList" class="row">
-                    <c:choose>
-                        <c:when test="${not empty notices}">
-                            <c:forEach var="notice" items="${notices}">
-                                <div class="col-lg-12 col-md-12 col-12 mb-4">
-                                    <div class="card border-primary">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-lg-2 col-md-2 col-12">
-                                                    <p class="card-text">${notice.notice_no}</p>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-12">
-                                                    <h5 class="card-title">
-                                                        <a href="userViewNoticeDetail/${notice.notice_no}">${notice.notice_title}</a>
-                                                    </h5>
-                                                </div>
-                                                <div class="col-lg-2 col-md-2 col-12">
-                                                    <p class="card-text">${notice.admin_id}</p>
-                                                </div>
-                                                <div class="col-lg-2 col-md-2 col-12">
-                                                    <p class="card-text">${notice.reg_date}</p>
+<div id="noticeList" class="row">
+                            <c:choose>
+                                <c:when test="${not empty notices}">
+                                    <c:forEach var="notice" items="${notices}">
+                                        <div class="col-lg-12 col-md-12 col-12 mb-4">
+                                            <div class="card border-primary">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-lg-2 col-md-2 col-12">
+                                                            <p class="card-text">${notice.notice_no}</p>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-12">
+                                                            <h5 class="card-title">
+                                                                <a href="userViewNoticeDetail/${notice.notice_no}">${notice.notice_title}</a>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-12">
+                                                            <p class="card-text">${notice.admin_id}</p>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-12">
+                                                            <p class="card-text">${notice.reg_date}</p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="col-lg-12 col-md-12 col-12">
+                                        <div class="alert alert-warning" role="alert">
+                                            등록된 공지사항이 없습니다.
+                                        </div>
                                     </div>
-                                </div>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="col-lg-12 col-md-12 col-12">
-                                <div class="alert alert-warning" role="alert">
-                                    등록된 공지사항이 없습니다.
-                                </div>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+
+                        <!-- 페이지네이션 -->
+                        <div class="pagination center">
+                            <ul class="pagination-list d-flex justify-content-center">
+                                <c:choose>
+                                    <c:when test="${inquiryData.pi.pageNo == 1}">
+                                        <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
+                                    </c:otherwise>
+                                </c:choose>
+
+                                <c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
+                                    <c:choose>
+                                        <c:when test="${inquiryData.pi.pageNo == i}">
+                                            <li class="active"><a href="javascript:void(0)">${i}</a></li>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <li><a href="javascript:void(0)" onclick="showInquiryList(${i})">${i}</a></li>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+
+                                <c:choose>
+                                    <c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
+                                        <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
+                                    </c:otherwise>
+                                </c:choose>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                    
-<div class="pagination center">
-    <ul class="pagination-list d-flex justify-content-center">
-        <c:choose>
-            <c:when test="${inquiryData.pi.pageNo == 1}">
-                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
-            </c:when>
-            <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
-            </c:otherwise>
-        </c:choose>
-
-        <c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
-            <c:choose>
-                <c:when test="${inquiryData.pi.pageNo == i}">
-                    <li class="active"><a href="javascript:void(0)">${i}</a></li>
-                </c:when>
-                <c:otherwise>
-                    <li><a href="javascript:void(0)" onclick="showInquiryList(${i})">${i}</a></li>
-                </c:otherwise>
-            </c:choose>
-        </c:forEach>
-
-        <c:choose>
-            <c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
-                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
-            </c:when>
-            <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
-            </c:otherwise>
-        </c:choose>
-    </ul>
-</div>
+            </div>
+        </div>
+    </section>
 
 
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>

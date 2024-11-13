@@ -30,9 +30,16 @@ public class FileService {
             uploadDir.mkdirs();
         }
         
+        // 파일 이름에 접두사 추가하여 새 파일 이름 생성
     	String fileName = filePrefix + "_" + file.getOriginalFilename(); // 파일 이름에 접두사 추가
-        Path uploadPath = Paths.get(BASE_UPLOAD_DIR + fileName);
+        
+    	// 파일 경로 
+    	Path uploadPath = Paths.get(BASE_UPLOAD_DIR + fileName);
+    	
+    	// 파일을 해당 경로에 저장
         Files.copy(file.getInputStream(), uploadPath);
+        
+        // 업로드된 파일 이름 반환
         return fileName;
     }
 
@@ -52,9 +59,13 @@ public class FileService {
     }
     
     public String uploadFile(String filePath, String filePrefix) throws IOException {
-        Path uploadPath = Paths.get(filePath + filePrefix);
+        
+    	//파일 경로 설정
+    	Path uploadPath = Paths.get(filePath + filePrefix);
+    	
+    	// 파일을 지정된 경로에 저장
         Files.copy(new File(filePath).toPath(), uploadPath); 
-        return filePrefix; // 또는 업로드된 파일의 이름 반환
+        return filePrefix; // 업로드된 파일 이름 반환
     }
     
 }

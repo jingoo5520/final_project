@@ -54,7 +54,7 @@
                 </c:when>
                 <c:otherwise>
                 <a href="userViewEventDetail/${event.notice_no}">
-                  <img class="card-img-top" src="${pageContext.request.contextPath}/no_image.jpg" alt="기본 이미지">
+                  <img class="card-img-top" src="${pageContext.request.contextPath}/resources/images/noP_image.png" alt="기본 이미지">
                 </a>
                 </c:otherwise>
               </c:choose>
@@ -70,32 +70,39 @@
     </c:choose>
   </div>
 </div>
+                        <!-- 페이지네이션 -->
+                        <div class="pagination center">
+                            <ul class="pagination-list d-flex justify-content-center">
+                                <c:choose>
+                                    <c:when test="${inquiryData.pi.pageNo == 1}">
+                                        <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
+                                    </c:otherwise>
+                                </c:choose>
 
-            
-		<!-- 페이지네이션 -->
-		<p>현재 페이지: ${currentPage != null ? currentPage : 'N/A'} / 총 페이지: ${totalPages != null ? totalPages : 'N/A'}</p>
-		<div class="pagination">
-		    <c:if test="${currentPage > 1}">
-		        <a href="?page=${currentPage - 1}">이전</a>
-		    </c:if>
-		    
-		    <c:if test="${totalPages > 0}">
-		        <c:forEach var="i" begin="1" end="${totalPages}">
-		            <c:choose>
-		                <c:when test="${i == currentPage}">
-		                    <span>${i}</span> <!-- 현재 페이지는 그냥 숫자 표시 -->
-		                </c:when>
-		                <c:otherwise>
-		                    <a href="?page=${i}">${i}</a>
-		                </c:otherwise>
-		            </c:choose>
-		        </c:forEach>
-		    </c:if>
-		
-		    <c:if test="${currentPage < totalPages}">
-		        <a href="?page=${currentPage + 1}">다음</a>
-		    </c:if>
-		</div>
+                                <c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
+                                    <c:choose>
+                                        <c:when test="${inquiryData.pi.pageNo == i}">
+                                            <li class="active"><a href="javascript:void(0)">${i}</a></li>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <li><a href="javascript:void(0)" onclick="showInquiryList(${i})">${i}</a></li>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+
+                                <c:choose>
+                                    <c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
+                                        <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
+                                    </c:otherwise>
+                                </c:choose>
+                            </ul>
+                        </div>
                 </div>
               </div>
 		 </div>

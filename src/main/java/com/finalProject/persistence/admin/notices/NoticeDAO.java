@@ -65,6 +65,9 @@ public interface NoticeDAO {
 	// 썸네일 이미지 저장
 	void saveEvent(NoticeDTO event) throws Exception;
 
+	// 배너 이미지 수정
+	void updateBannerPath(int noticeNo, String bannerImage) throws Exception;
+
 	// 썸네일 이미지 수정
 	void updateThumbnailPath(int noticeNo, String thumbnailImage) throws Exception;
 
@@ -76,6 +79,7 @@ public interface NoticeDAO {
 
 	// url
 	boolean updateNoticeUrl(NoticeVO notice) throws Exception;
+
 
 
 	
