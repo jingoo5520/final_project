@@ -82,8 +82,9 @@ public class MemberController {
 	private PointService pService;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
-	public String viewLogin() {
+	public String viewLogin(HttpServletRequest request) {
 		System.out.println("로그인 페이지로 이동");
+		HttpSession ses = request.getSession();
 		return "/user/pages/member/login";
 	}
 
@@ -244,6 +245,7 @@ public class MemberController {
 	@RequestMapping(value = "/logout")
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession ses = request.getSession();
+		ses.removeAttribute("blackReason");
 		ses.removeAttribute("loginMember");
 		ses.removeAttribute("rememberPath");
 		ses.removeAttribute("auth");
@@ -710,6 +712,7 @@ public class MemberController {
 		try {
 			// 회원 탈퇴 성공시
 			if (memberService.withDrawMember(member_id)) {
+				ses.removeAttribute("blackReason");
 				json = new ResponseData("success", "탈퇴 완료");
 				Cookie cookie = new Cookie("al", ""); // 쿠키객체 생성
 				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)
