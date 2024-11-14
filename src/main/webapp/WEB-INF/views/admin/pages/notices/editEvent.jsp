@@ -188,8 +188,8 @@
          
             <button type="submit" class="btn rounded-pill btn-outline-warning">수정하기</button>
             <a href="/admin/notices/event" class="btn rounded-pill btn-outline-secondary">취소</a>
-          </div>
           </form>
+          </div>
         </div>
       </div>
     </div>
@@ -428,7 +428,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const thumbnailInput2 = document.getElementById("thumbnailInput2");
     const currentThumbnail = document.getElementById("currentThumbnail");
     const noticeNo = document.getElementById("notice_no").value;
-    alert(noticeNo);
+//     alert(noticeNo);
 
     // 현재 썸네일 이미지 설정
     if (thumbnailInput) {
