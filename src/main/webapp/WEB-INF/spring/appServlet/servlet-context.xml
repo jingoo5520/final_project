@@ -59,11 +59,11 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/test/auth" />
-			
+
 			<mapping path="/member/myPage/**" />
-			
+
 			<mapping path="/admin/**" />
-			
+
 			<mapping path="/serviceCenter/inquiries" />
 			<mapping path="/serviceCenter/writeInquiry" />
 			<mapping path="/order" />

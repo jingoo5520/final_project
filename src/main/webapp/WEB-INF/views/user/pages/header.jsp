@@ -27,6 +27,11 @@
 .user-login a:hover {
 	color: #fff !important;
 }
+
+.levelImg {
+	width: 30px;
+	border-radius: 10px;
+}
 </style>
 </head>
 <body>
@@ -60,7 +65,26 @@
 							<!-- 로그인 됬을 때 -->
 							<c:if test="${not empty sessionScope.loginMember }">
 								<div class="user">
-									<i class="lni lni-user"></i>
+									<c:if test="${sessionScope.loginMember.member_level == 1}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/bronze.PNG"></a>
+									</c:if>
+									<c:if test="${sessionScope.loginMember.member_level == 2}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/silver.PNG"></a>
+									</c:if>
+									<c:if test="${sessionScope.loginMember.member_level == 3}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/gold.PNG"></a>
+									</c:if>
+									<c:if test="${sessionScope.loginMember.member_level == 4}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/dia.PNG"></a>
+									</c:if>
 									${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">

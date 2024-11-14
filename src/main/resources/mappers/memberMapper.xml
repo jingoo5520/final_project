@@ -35,8 +35,10 @@
 	<!-- 회원가입 -->
 	<insert id="signUpMember">
 		insert into members(member_id, member_name,
-		member_pwd, phone_number, birthday, gender, email, address, nickname, member_point)
-		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256),
+		member_pwd, phone_number, birthday, gender, email, address, nickname,
+		member_point)
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd},
+		256),
 		#{phone_number},
 		#{birthday}, #{gender}, #{email}, #{address},
 		#{nickname}, 5000)
@@ -70,9 +72,8 @@
 		update members
 		set nickname = #{nickname}, gender =
 		#{gender}, phone_number = #{phone_number}
-		, address = #{address}, email
-		= #{email}
-		where member_id = #{member_id}
+		where member_id =
+		#{member_id}
 	</update>
 
 	<!-- 마이 페이지 비밀번호 변경 -->
@@ -227,9 +228,11 @@
 
 	<update id="updateDeliveryInfo">
 		update delivery_addrs set
-		delivery_name = #{delivery_name},
+		delivery_name =
+		#{delivery_name},
 		delivery_address = #{delivery_address},
-		is_main = #{is_main}
+		is_main =
+		#{is_main}
 		where delivery_no = #{delivery_no}
 	</update>
 
@@ -237,5 +240,36 @@
 		delete from delivery_addrs where delivery_no =
 		#{deliveryNo}
 	</delete>
+
+	<!-- 회원 수 받기(스케쥴러) -->
+	<select id="getMemberTotalCount" resultType="int">
+		select
+		count(member_id) from members
+	</select>
+
+	<!-- 회원 아이디 받기(스케쥴러) -->
+	<select id="getMemberId" resultType="string">
+		select member_id from
+		members LIMIT 1 OFFSET #{i}
+	</select>
+
+	<!-- 회원의 3달간 결제금액 받기(스케쥴러) -->
+	<select id="getTotalPriceByMemberId" resultType="int">
+		SELECT
+		IFNULL(SUM(p.total_price), 0) AS totalPrice
+		FROM payments p
+		INNER JOIN
+		orders o ON o.order_id = p.order_id
+		WHERE o.orderer_id = #{member_id}
+		AND p.pay_date > DATE_SUB(NOW(), INTERVAL 3 MONTH)
+	</select>
+
+	<!-- 회원 등급 업데이트 -->
+	<update id="updateMemberLevel">
+		update members SET member_level = (select level_no
+		from levels l where (level_min*10000) &lt;= #{totalPrice} and
+		(level_max*10000)
+		&gt; #{totalPrice}) where member_id = #{member_id}
+	</update>
 
 </mapper>
