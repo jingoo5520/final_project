@@ -14,7 +14,7 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-public class ProductPagingInfoDTO {
+public class adminPagingInfoDTO {
 	private int pageNo;
 	private int pagingSize;
 }

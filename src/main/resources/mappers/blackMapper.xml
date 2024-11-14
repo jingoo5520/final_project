@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.blackMapper">
+
+	<select id="countMember" resultType="int">
+		select count(*) from members
+		where member_status = 'active'
+	</select>
+
+	<select id="getAllMember"
+		resultType="com.finalProject.model.admin.black.BlackMemberVO">
+		select member_id,
+		member_name, phone_number, birthday,
+		gender, member_level,
+		reg_date ,member_status
+		from members
+		where
+		member_status =
+		'active'
+		order by reg_date desc
+		limit #{startRowIndex},
+		#{viewPostCntPerPage}
+	</select>
+	<select id="getSearchAllMember" resultType="int">
+		select count(*)
+		from members where 1=1
+		<if test="isBlack == 'No' ">
+			and member_status = 'active'
+
+		</if>
+		<if test="gender_list != null and gender_list.size() > 0">
+			and (
+			<foreach item="gender" collection="gender_list"
+				separator="or">
+				gender = #{gender}
+			</foreach>
+			)
+		</if>
+		<if test="level_list != null and level_list.size() > 0">
+			and (
+			<foreach item="level" collection="level_list" separator="or">
+				member_level = #{level}
+			</foreach>
+			)
+		</if>
+		<if test="member_id != null and member_id != ''">
+			and member_id LIKE CONCAT('%', #{member_id}, '%')
+		</if>
+		<if test="member_name != null and member_name != ''">
+			and member_name LIKE CONCAT('%', #{member_name}, '%')
+		</if>
+		<if test="birthday_start != null and birthday_start != ''">
+			and
+			reg_date &gt; #{birthday_start}
+		</if>
+		<if test="birthday_end != null and birthday_end != ''">
+			and reg_date &lt; #{birthday_end}
+		</if>
+		<if test="reg_date_start != null and reg_date_start != ''">
+			and reg_date &lt; #{reg_date_start}
+		</if>
+		<if test="reg_date_end != null and reg_date_end != ''">
+			and reg_date &gt; #{reg_date_end}
+		</if>
+	</select>
+	<select id="getSearchMember"
+		resultType="com.finalProject.model.admin.black.BlackMemberVO">
+		select member_id,
+		member_name, phone_number, birthday,
+		gender,
+		member_status,
+		member_level,
+		reg_date
+		from members where 1=1
+		<if test="isBlack == 'No' ">
+			and member_status = 'active'
+		</if>
+		<if test="gender_list != null and gender_list.size() > 0">
+			and (
+			<foreach item="gender" collection="gender_list"
+				separator="or">
+				gender = #{gender}
+			</foreach>
+			)
+		</if>
+		<if test="level_list != null and level_list.size() > 0">
+			and (
+			<foreach item="level" collection="level_list" separator="or">
+				member_level = #{level}
+			</foreach>
+			)
+		</if>
+		<if test="member_id != null and member_id != ''">
+			and member_id LIKE CONCAT('%', #{member_id}, '%')
+		</if>
+		<if test="member_name != null and member_name != ''">
+			and member_name LIKE CONCAT('%', #{member_name}, '%')
+		</if>
+		<if test="birthday_start != null and birthday_start != ''">
+			and
+			reg_date &gt; #{birthday_start}
+		</if>
+		<if test="birthday_end != null and birthday_end != ''">
+			and reg_date &lt; #{birthday_end}
+		</if>
+		<if test="reg_date_start != null and reg_date_start != ''">
+			and reg_date &lt; #{reg_date_start}
+		</if>
+		<if test="reg_date_end != null and reg_date_end != ''">
+			and reg_date &gt; #{reg_date_end}
+		</if>
+		order by member_status asc ,reg_date desc
+		limit #{startRowIndex},
+		#{viewPostCntPerPage}
+	</select>
+	<update id="blackMember">
+		update members set member_status = 'black' where member_id In
+		<foreach item="member" collection="MemberIdList" open="("
+			separator="," close=")">
+			#{member}
+		</foreach>
+	</update>
+	<insert id="insertBlack"
+		parameterType="com.finalProject.model.admin.black.BlackInsertDTO">
+		<foreach item="member" collection="memberIdList" separator=";">
+			insert into blacks(member_id,black_reason,admin_id)
+			values(#{member},#{blackReason},#{loginMember})
+		</foreach>
+	</insert>
+</mapper>
