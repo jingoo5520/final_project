@@ -172,10 +172,20 @@ public class OrderServiceImpl implements OrderService {
 		if (isMember == true) {
 			// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
 			String couponCode = (String) session.getAttribute("couponCodeUsed");
+			System.out.println("###############makePayment##############");
+			System.out.println("orderId : " + orderId);
+			System.out.println("couponCode : " + couponCode);
+			
+			if (couponCode == null) {
+				couponCode = "";
+			}
 			// 쿠폰 사용
-			if (orderDAO.useCoupon(orderId, couponCode) != 1) {
-				throw new DataAccessException("쿠폰 사용 실패") {};
+			if (!("".equals(couponCode))) {
+				if (orderDAO.useCoupon(orderId, couponCode) != 1) {
+					throw new DataAccessException("쿠폰 사용 실패") {};
+				};
 			};
+
 			// 포인트 적립
 			if (orderDAO.updatePoint(orderId) != true) {
 				throw new DataAccessException("포인트 적립 실패") {
@@ -551,7 +561,7 @@ public class OrderServiceImpl implements OrderService {
 			connection.setRequestMethod("POST");
 			// Add any headers you want to send with the request
 			// TODO : 내 카카오페이 개발자 시크릿 키이므로 별도의 파일에 보관 요망
-			connection.setRequestProperty("Authorization", "SECRET_KEY DEV13F237E02B1F92076F010653B0F0AFFB6B814");
+			connection.setRequestProperty("Authorization", "SECRET_+KEY DEV13F237E02B1F92076F010653B0F0AFFB6B814");
 			connection.setRequestProperty("Content-Type", "application/json");
 			// OutputStream으로 POST 데이터를 넘겨주겠다는 옵션.
 			connection.setDoOutput(true);
