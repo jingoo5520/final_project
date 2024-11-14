@@ -36,7 +36,15 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		boolean result = true;
 		LoginDTO loginDTO = null;
 		log.info("preHandle()");
-
+		
+		String uri = request.getRequestURI();
+		System.out.println("LoginInterceptor 안에서 uri : " + uri);
+		if (uri.contains("/order")) {
+			ses.setAttribute("sentByOrderRequest", "Yes");
+		} else {
+			ses.setAttribute("sentByOrderRequest", null);
+		}
+		
 		if (request.getSession().getAttribute("loginMember") != null) { // 로그인이 되어있을경우
 			System.out.println("로그인 된 상태로 로그인 인터셉터 동작 : 로그아웃 처리");
 			ses.removeAttribute("loginMember"); // 로그인 세션 삭제(로그아웃)
@@ -94,7 +102,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				ses.setAttribute("loginMember", loginMember);
 				System.out.println(loginMember.getMember_name() + "님 로그인");
 				Object autologin = model.get("autologin");
-
 				if (autologin != null) { // 자동로그인에 체크한 경우
 					String code = UUID.randomUUID().toString();
 					Cookie cookie = new Cookie("al", code); // 쿠키객체 생성
@@ -103,7 +110,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					response.addCookie(cookie); // 만든 쿠키 저장
 					// db에 자동로그인 정보 update
 					memberService.setAutoLogin(loginMember.getMember_id(), code, AUTOLOGIN_DATE);
-
 				}
 				String rememberPath = ses.getAttribute("rememberPath") + "";
 				if (loginMember.getIs_admin().equals("1") || loginMember.getIs_admin().equals("9")) { // 관리자 아이디인 경우
@@ -133,7 +139,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				response.sendRedirect("/member/viewLogin/?status=fail");
 			}
 		}
-
+		
 	}
 
 }

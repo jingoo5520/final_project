@@ -59,6 +59,23 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String homePage(Model model, HttpServletResponse response, HttpServletRequest request) {
+
+		try {
+			int count = memberService.getMemberCount(); // 회원 수 저장
+			System.out.println("회원 수 : " + count);
+			// 회원 수 만큼 반복
+			for (int i = 0; i < count; i++) {
+				String member_id = memberService.getMemberId(i); // 회원 아이디 받기
+				int totalPrice = memberService.getTotalPriceByMemberId(member_id); // 회원의 3달간 결제금액 조회
+				int result = memberService.updateMemberLevel(member_id, totalPrice); // 회원 등급 업데이트
+				System.out.println("회원 아이디 : " + member_id + ", 사용금액 : " + totalPrice + ", update결과 : " + result);
+
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		HttpSession ses = request.getSession();
 		ses.removeAttribute("rememberPath");
 		LoginDTO loginMember = (LoginDTO) ses.getAttribute("loginMember");
@@ -85,34 +102,32 @@ public class HomeController {
 		Map<String, Object> data = new HashMap<String, Object>();
 		List<BannerDTO> mainBannerList = new ArrayList<BannerDTO>();
 		List<BannerDTO> subBannerList = new ArrayList<BannerDTO>();
-		
-		
+
 		try {
 			data = hService.getHomeData();
-			
+
 			List<BannerDTO> bannerList = (List<BannerDTO>) data.get("bannerList");
-			
+
 			System.out.println(bannerList);
-			
-			for(BannerDTO banner : bannerList) {
+
+			for (BannerDTO banner : bannerList) {
 				if (banner.getBanner_type().equals("M")) {
-			        mainBannerList.add(banner);
-			    } else {
-			        subBannerList.add(banner);
-			    }
+					mainBannerList.add(banner);
+				} else {
+					subBannerList.add(banner);
+				}
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		System.out.println(data);
-		
-		
+
 		model.addAttribute("newProducts", data.get("newProducts"));
 		model.addAttribute("mainBannerList", mainBannerList);
 		model.addAttribute("subBannerList", subBannerList);
-		
+
 		return "/user/index";
 	}
 

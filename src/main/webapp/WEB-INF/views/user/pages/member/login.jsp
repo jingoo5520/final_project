@@ -16,7 +16,17 @@
 <link rel="stylesheet"
 	href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+<style type="text/css">
+.kakao {
+	background-color: #FEE500;
+}
 
+.naver {
+	
+}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -29,7 +39,7 @@
     <![endif]-->
 
 	<!-- Preloader -->
-	<div class="preloader">
+ 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
 				<span></span> <span></span>
@@ -78,7 +88,7 @@
 									<div class="col-lg-6 col-md-4 col-12">
 										<a
 											href="${pageContext.request.contextPath}/member/kakao/login"><img
-											src="/resources/images/kakao_login_medium.png"></a>
+											src="/resources/images/kakao_login_large_narrow.png"></a>
 									</div>
 									<div class="col-lg-6 col-md-4 col-12">
 										<a
@@ -105,11 +115,14 @@
 										name="autologin_code" id="autologin_code"> <label
 										class="form-check-label">자동 로그인</label>
 								</div>
-								<a class="lost-pass"
-									href="${pageContext.request.contextPath}/member/find_id">아이디
-									찾기</a> <a class="lost-pass"
-									href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
-									찾기</a>
+								<div>
+									<a class="lost-pass"
+										href="${pageContext.request.contextPath}/member/find_id">아이디
+										찾기</a> /  <a class="lost-pass"
+										href="${pageContext.request.contextPath}/member/find_pwd">비밀번호
+										찾기</a>
+								</div>
+
 							</div>
 							<div class="button">
 								<button class="btn" type="submit">로그인</button>
@@ -119,6 +132,26 @@
 									href="${pageContext.request.contextPath}/member/viewSignUp">회원가입
 									하기 </a>
 							</p>
+							
+							<span id="nonMemberFunction"></span>
+							<!-- working... -->
+							<!-- TODO : 모델이든 세션이든 정보 받아서 비회원이 장바구니에서 결제하기 버튼 누르면  '비회원으로 결제하기' 링크 만들어야 함-->
+<%-- 							<c:if test="${sessionScope.sentByOrderRequest eq null}">
+								<p class="outer-link"><a href="${pageContext.request.contextPath}/orderByNonMemberPage">
+									비회원으로 주문조회 하기
+								</a></p>
+							</c:if>
+							
+							<c:if test="${true}">
+								<p class="outer-link"><a href="${pageContext.request.contextPath}/orderByNonMemberPage">
+									비회원으로 주문조회 하기
+								</a></p>
+							</c:if> --%>
+<%-- 						<c:if test="${not empty sentByOrderRequest}">
+								<p class="outer-link"><a onclick="goToOrderPageOfNonMember()">
+									비회원으로 주문결제 하기
+								</a></p>
+							</c:if> --%>
 						</div>
 					</form>
 				</div>
@@ -138,6 +171,57 @@
 	<script src="/resources/assets/user/js/tiny-slider.js"></script>
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
+	<script>
+		window.addEventListener('load', function() {
+			let sentByOrderRequest = null
+			$.ajax({
+				async: false,
+				type: "GET",
+				url: "/order/sessionState",
+				dataType: "json",
+				success : function(res) {
+					sentByOrderRequest = res.sentByOrderRequest
+				},
+				error : function(request, status, error) {
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+				}
+			})
+			console.log("sentByOrderRequest : " + sentByOrderRequest)
+			const params = new URLSearchParams(window.location.search);
+			console.log(params)
+			console.log(params.get('goToOrder'))
+			if (params.get('goToOrder') == "True") {
+				let tags = `<p class="outer-link">
+					<a onclick="goToOrderPageOfNonMember()">비회원으로 주문결제 하기
+				</a></p>`
+				$("#nonMemberFunction").after(tags)
+			} else {
+				let tags = `<p class="outer-link">
+					<a href="${pageContext.request.contextPath}/orderByNonMemberPage">비회원으로 주문조회 하기
+				</a></p>`
+				$("#nonMemberFunction").after(tags)
+			}
+		})
+	
+		function goToOrderPageOfNonMember() {
+			  $.ajax({
+				  async : false,
+				  type : 'POST',
+				  url : "/order/session",
+				  data: {
+					  requestByNonMember: "True"
+				  },
+				  dataType: "json",
+				  success : function(res) {
+					  console.log(res)
+				  },
+			      error : function(request, status, error) {
+					  console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
+				  }
+			  })
+			location.href = "${pageContext.request.contextPath}/order" // GET 요청
+		}
+	</script>
 </body>
 
 </html>

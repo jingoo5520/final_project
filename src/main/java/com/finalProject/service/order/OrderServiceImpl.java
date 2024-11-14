@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.dao.DataAccessException;
@@ -164,8 +166,9 @@ public class OrderServiceImpl implements OrderService {
 		
 		if (isMember == true) {
 			// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
+			String couponCode = (String) session.getAttribute("couponCodeUsed");
 			// 쿠폰 사용
-			if (orderDAO.useCoupon(orderId) != 1) {
+			if (orderDAO.useCoupon(orderId, couponCode) != 1) {
 				throw new DataAccessException("쿠폰 사용 실패") {};
 			};
 			// 포인트 적립
@@ -178,6 +181,7 @@ public class OrderServiceImpl implements OrderService {
 			};
 		}
 		
+		// 결제 내역 삽입
 		if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
 			throw new DataAccessException("결제 정보 생성 실패") {}; 
 		}
@@ -187,6 +191,12 @@ public class OrderServiceImpl implements OrderService {
 		// TODO : 장바구니에서 결제한 물품 삭제
 	}
 	
+	// 카트에서 결제한 상품 지우기(회원)
+	@Override
+	public void deletePaidProductsFromCart(String memberId) {
+		orderDAO.deletePaidProductsFromCart(memberId);
+	}
+		
 	@Override
 	@Transactional(rollbackFor={Exception.class})
 	public void setPaymentModuleKey(String orderId, String key) throws Exception {
@@ -682,6 +692,37 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return result;
 	}
+	
+	@Override
+	public List<OrderProductsDTO> getOrderListOfNonMember(String name, String phoneNumber, String email) {
+		List<OrderProductsDTO> result = new ArrayList<>();
+		List<String> orders = orderDAO.getOrderIdList(name, phoneNumber, email);
+		System.out.println("비회원 " + name + "님 의 order id 리스트 : " + orders);
+		for (String orderId : orders) {
+			OrderProductsDTO order = new OrderProductsDTO();
+			order.setOrderId(orderId);
+			Map<String, Object> orderInfo = orderDAO.getOrderInfo(orderId);
+			// System.out.println("orderInfo.order_id : " + (String) orderInfo.get("order_id"));
+			// System.out.println("orderInfo : " + orderInfo);
+			// System.out.println("orderInfo.order_status : " + (String) orderInfo.get("order_status"));
+			Timestamp time = (Timestamp) orderInfo.get("order_date");
+			order.setOrderDate( time.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) );
+			Map<String, String> dict = new HashMap<>();
+			dict.put("1", "결제대기");
+			dict.put("2", "결제완료");
+			dict.put("3", "상품준비중");
+			dict.put("4", "배송준비중");
+			dict.put("5", "배송중");
+			dict.put("6", "배송완료");
+			order.setOrderStatus(dict.get((String) orderInfo.get("order_status")));
+			List<OrderProductDTO> products = orderDAO.getProductList(orderId);
+			System.out.println("products : " + products);
+			order.setProducts(products);
+			System.out.println("order : " + order);
+			result.add(order);
+		}
+		return result;
+	}
 
 	@Override
 	@Transactional(rollbackFor={Exception.class})
@@ -699,6 +740,10 @@ public class OrderServiceImpl implements OrderService {
 				);
 	}
 	
-	// working...
-	// public getCancelProcessStatus(String orderId, String )
+	@Override
+	public void updateOrderStatusAuto() {
+		orderDAO.updateOrderStatusAuto();
+	}
+	
+	
 }
