@@ -38,7 +38,7 @@ public class PController {
 			@RequestParam(value = "category", required = false) Integer category,
 			@RequestParam(value = "page", defaultValue = "1") int page, // 페이지 기본 값 설정
 			@RequestParam(value = "pageSize", defaultValue = "6") int pageSize, // 한 페이지에서 보여줄 상품 개수
-			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model) throws Exception {
+			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model) throws Exception  {
 
 		List<ProductDTO> products = service.getProductsByPage(page, pageSize); // 전체 상품 조회
 
