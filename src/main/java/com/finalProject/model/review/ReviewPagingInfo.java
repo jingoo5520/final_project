@@ -7,32 +7,32 @@ import lombok.ToString;
 @ToString
 public class ReviewPagingInfo {
 
-    private int currentPage; // ÇöÀç ÆäÀÌÁö ¹øÈ£
-    private int pageSize; // ÇÑ ÆäÀÌÁö´ç º¸¿©ÁÙ °Ô½Ã¹° ¼ö
+    private int currentPage; // í˜„ì¬ í˜ì´ì§€ ë²ˆí˜¸
+    private int pageSize; // í•œ í˜ì´ì§€ë‹¹ ë³´ì—¬ì¤„ ê²Œì‹œë¬¼ ìˆ˜
     
-    private int totalPostCount; // ÀüÃ¼ °Ô½Ã¹° ¼ö
-    private int totalPages; // ÀüÃ¼ ÆäÀÌÁö ¼ö
-    private int startRowIndex; // ½ÃÀÛ ÀÎµ¦½º (DB Á¶È¸¸¦ À§ÇÑ ½ÃÀÛ À§Ä¡)
+    private int totalPostCount; // ì „ì²´ ê²Œì‹œë¬¼ ìˆ˜
+    private int totalPages; // ì „ì²´ í˜ì´ì§€ ìˆ˜
+    private int startRowIndex; // ì‹œì‘ ì¸ë±ìŠ¤ (DB ì¡°íšŒë¥¼ ìœ„í•œ ì‹œì‘ ìœ„ì¹˜)
     
-    private int pageBlockSize = 10; // ÇÑ ÆäÀÌÁö ºí·Ï¿¡ º¸¿©ÁÙ ÆäÀÌÁö ¼ö (¿¹: 10ÆäÀÌÁö¾¿)
-    private int currentBlock; // ÇöÀç ÆäÀÌÁö°¡ ¼ÓÇÑ ºí·Ï ¹øÈ£
-    private int startPage; // ÇöÀç ºí·ÏÀÇ ½ÃÀÛ ÆäÀÌÁö ¹øÈ£
-    private int endPage; // ÇöÀç ºí·ÏÀÇ ³¡ ÆäÀÌÁö ¹øÈ£
+    private int pageBlockSize = 10; // í•œ í˜ì´ì§€ ë¸”ë¡ì— ë³´ì—¬ì¤„ í˜ì´ì§€ ìˆ˜ (ì˜ˆ: 3í˜ì´ì§€ì”©)
+    private int currentBlock; // í˜„ì¬ í˜ì´ì§€ê°€ ì†í•œ ë¸”ë¡ ë²ˆí˜¸
+    private int startPage; // í˜„ì¬ ë¸”ë¡ì˜ ì‹œì‘ í˜ì´ì§€ ë²ˆí˜¸
+    private int endPage; // í˜„ì¬ ë¸”ë¡ì˜ ë í˜ì´ì§€ ë²ˆí˜¸
     
     public ReviewPagingInfo(ReviewPagingInfoDTO dto, int totalPostCount) {
-        this.currentPage = dto.getPageNo() > 0 ? dto.getPageNo() : 1; // ±âº»°ª: 1
-        this.pageSize = dto.getPageSize() > 0 ? dto.getPageSize() : 10; // ±âº»°ª: 10
+        this.currentPage = dto.getPageNo() > 0 ? dto.getPageNo() : 1; // ê¸°ë³¸ê°’: 1
+        this.pageSize = dto.getPageSize() > 0 ? dto.getPageSize() : 10; // ê¸°ë³¸ê°’: 10
         this.totalPostCount = totalPostCount;
         
-        // ÀüÃ¼ ÆäÀÌÁö ¼ö °è»ê
+        // ì „ì²´ í˜ì´ì§€ ìˆ˜ ê³„ì‚°
         setTotalPages();
-        // ½ÃÀÛ ÀÎµ¦½º °è»ê
+        // ì‹œì‘ ì¸ë±ìŠ¤ ê³„ì‚°
         setStartRowIndex();
-        // ÇöÀç ÆäÀÌÁö°¡ ¼ÓÇÑ ºí·Ï ¹øÈ£ °è»ê
+        // í˜„ì¬ í˜ì´ì§€ê°€ ì†í•œ ë¸”ë¡ ë²ˆí˜¸ ê³„ì‚°
         setCurrentBlock();
-        // ÇöÀç ºí·ÏÀÇ ½ÃÀÛ ÆäÀÌÁö ¹øÈ£ °è»ê
+        // í˜„ì¬ ë¸”ë¡ì˜ ì‹œì‘ í˜ì´ì§€ ë²ˆí˜¸ ê³„ì‚°
         setStartPage();
-        // ÇöÀç ºí·ÏÀÇ ³¡ ÆäÀÌÁö ¹øÈ£ °è»ê
+        // í˜„ì¬ ë¸”ë¡ì˜ ë í˜ì´ì§€ ë²ˆí˜¸ ê³„ì‚°
         setEndPage();
     }
     
@@ -59,12 +59,12 @@ public class ReviewPagingInfo {
         this.endPage = Math.min(this.startPage + pageBlockSize - 1, this.totalPages);
     }
     
-    // ÇöÀç ºí·ÏÀÇ ÀÌÀü ºí·ÏÀÌ ÀÖ´ÂÁö ¿©ºÎ ¹İÈ¯
+    // í˜„ì¬ ë¸”ë¡ì˜ ì´ì „ ë¸”ë¡ì´ ìˆëŠ”ì§€ ì—¬ë¶€ ë°˜í™˜
     public boolean hasPrevBlock() {
         return this.currentBlock > 1;
     }
 
-    // ÇöÀç ºí·ÏÀÇ ´ÙÀ½ ºí·ÏÀÌ ÀÖ´ÂÁö ¿©ºÎ ¹İÈ¯
+    // í˜„ì¬ ë¸”ë¡ì˜ ë‹¤ìŒ ë¸”ë¡ì´ ìˆëŠ”ì§€ ì—¬ë¶€ ë°˜í™˜
     public boolean hasNextBlock() {
         return this.endPage < this.totalPages;
     }

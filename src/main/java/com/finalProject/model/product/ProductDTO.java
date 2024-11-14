@@ -39,16 +39,16 @@ public class ProductDTO {
     
     private float average_score;
 
-    // ���� ������ ��ȯ�ϴ� �޼��� ����
+    // 할인 적용된 가격을 반환하는 메서드
     public int getCalculatedPrice() {
         if ("P".equalsIgnoreCase(product_dc_type)) {
-            // �ۼ�Ʈ ������ ���: ������ŭ ���ε� �ݾ� ���
+            // 할인 타입이 P일 때: 할인율만큼 줄어든 금액 반환
         	return (int) (product_price * (1 - dc_rate));
         } else if ("N".equalsIgnoreCase(product_dc_type) || product_dc_type == null) {
-            // ���� Ÿ���� 'N'�̰ų� null�� ��� ���� ���� ��ȯ
+            // 할인 타입이 'N'이거나 null인 경우 원가 반환
             return product_price;
         }
-        return product_price; // �⺻������ ���� ���� ��ȯ
+        return product_price; // 기본적으로 원가 반환
     }
 
 	public void setCalculatedPrice(int calculatedPrice) {

@@ -1,145 +1,273 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
+
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>ELOLIA</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- ========================= CSS here ========================= -->
-<link rel="stylesheet"
-	href="/resources/assets/user/css/bootstrap.min.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/LineIcons.3.0.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/glightbox.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 
 <script type="text/javascript">
-function countUp(productNo) {
-    let quantity = parseInt($("#" + productNo + "_quantity").text());
-    $("#" + productNo + "_quantity").text(quantity + 1);
-}
-
-function countDown(productNo) {
-    let quantity = parseInt($("#" + productNo + "_quantity").text());
-    
-    if (quantity <= 1) {
-    } else {
-        $("#" + productNo + "_quantity").text(quantity - 1);
-    }
-}
-
-function orderProduct(productNo) {
-	let productsInfo = [];
-
-	let quantity = parseInt($("#" + productNo + "_quantity").text());
+$(document).ready(function() {
 	
-	productsInfo.push({ productNo: parseInt(productNo), quantity: quantity });
+    loadReviews(1); // 첫 페이지 로드
+
     
-    $('.productInfos').val(JSON.stringify(productsInfo));
+});
 
-    $('.orderForm').submit();
-}
 
-function addCart(productNo) {
-	let quantity = parseInt($("#" + productNo + "_quantity").text());
+
+
+function loadReviews(page) {
+	let productNo = $("#productNo").val(); // productNo 값을 가져옵니다
+	let productno = ${param.productNo};
 	
-	$.ajax({
-	    url: '/addCartItem',
-	    type: 'POST',
-	    data: {
-	    	productNo : productNo,
-	    	quantity : quantity
-	    	},
-	    dataType: 'json',
-	    success: function(data) {
-	    	if (data.status == 200) {
-	            $('#myModal').modal('show');
-				
-	            // 헤더의 장바구니 수량 최신화
-	            cartCountUpdate();
-	            
-	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-	            $('#goCart').off('click').on('click', function() {
-	               location.href = "/cart";
-	            });
-	            
-	            $('#keepProduct').off('click').on('click', function() {
-	            	$('#myModal').modal('hide');
-	            });
-	        }
-	    },
-	    error: function() {
-	    },
-	    complete: function(data) {
-	    	if (data.status == 200) {
-	            $('#myModal').modal('show');
-				
-	            // 헤더의 장바구니 수량 최신화
-	            cartCountUpdate();
-	            
-	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-	            $('#goCart').off('click').on('click', function() {
-	               location.href = "/cart";
-	            });
-	            
-	            $('#keepProduct').off('click').on('click', function() {
-	            	$('#myModal').modal('hide');
-	            });
-	        }
-	    }
-	});
-}
-
-function cartCountUpdate() {
-	$.ajax({
-		url: '/cartCountUpdate',
-		type: 'POST',
-		dataType: 'json',
-		success: function(data) {
-			if (data !== undefined) {
-				$('.cart-items .total-items').text(data);
-		    }
-		},
-		error: function() {
-		},
-		complete: function(data) {
-		}
-	});
-}
-
-function toggleHeart(element, product_no) {
-    const icon = element.querySelector('i');
-    icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
+//     console.log("Product No:", productNo);
+    console.log("productno:", productno);
+    console.log("Current Page:", page);
     
- // AJAX 요청
     $.ajax({
-        url: "/member/saveWish",
-        type: "GET",
+        url: '/product/review/load',
+        type: 'GET',
         data: {
-            product_no: product_no
+            productNo: productNo ,
+            page: page,
+            size: 1 // 한 페이지에 보여줄 리뷰 수
         },
-        dataType: "json",
-        success: function (data) {
-            console.log(data); // 서버 응답 확인
+        dataType : "json",
+        success: function(response) {
+//         	console.log(response);
+        	const totalPages = response.pagingInfo.totalPages;
+            let reviewHtml = "";
+//             console.log(response);
+         	// 리뷰 데이터를 화면에 출력
+            showReview(response.seeReview, response.reviewImgs);
+//          	console.log(response);
+//          	console.log(response.seeReview);
+
+            
+            // 페이지네이션 업데이트
+            showPaging(page, totalPages);
+            
+            console.log(page,  totalPages);
         },
-        error: function () {
-            console.error("AJAX 요청 실패");
+        error: function(xhr, status, error) {
+            console.error('리뷰 로드 실패:', error);
+
         }
     });
 }
+
+function showReview(reviews, reviewImgs) {
+    let reviewHtml = "";
+    for (let i = 0; i < reviews.length; i++) {
+    	
+    console.log(reviews);
+    console.log(reviewImgs);
+    }
+    if (reviews.length === 0) {
+        reviewHtml = `<p class="text-center">리뷰가 없습니다.</p>`;
+    } else {
+        // for 루프를 사용하여 리뷰 HTML 생성
+        for (let i = 0; i < reviews.length; i++) {
+            let review = reviews[i];
+            let reviewDate = new Date(review.register_date);
+            let formattedDate = `\${reviewDate.getFullYear()}-\${reviewDate.getMonth() + 1}-\${reviewDate.getDate()} \${reviewDate.getHours()}시 \${reviewDate.getMinutes()}분 \${reviewDate.getSeconds()}초`;
+
+            reviewHtml += `
+                <div class="single-review row col-lg-12 col-12" style="padding: 20px !important">
+                    <div class="col-lg-1 col-12">
+                        <img src="/resources/images/nobody.png">
+                    </div>
+                    <div class="review-info col-lg-11 col-12">
+                        <div>
+            `;
+
+            // 리뷰 이미지가 있는 경우에만 추가
+            if (reviewImgs != null) {
+                reviewHtml += `
+                    <img src="\${reviewImgs[i]}" alt="Review Image" style="padding: 5px; height: 150px; width: 150px !important;">
+                `;
+            }
+
+            reviewHtml += `
+                        </div>
+                        <h4 class="mt-4">\${review.review_title}
+                            <span>\${review.nickname}</span>
+                        </h4>
+                        <div>작성일 : \${formattedDate}</div>
+                        <ul class="stars">
+            `;
+
+            // 별점 표시
+            for (let j = 1; j <= 5; j++) {
+                if (j <= review.review_score) {
+                    reviewHtml += `<li><i class="lni lni-star-filled"></i></li>`;
+                } else {
+                    reviewHtml += `<li><i class="lni lni-star"></i></li>`;
+                }
+            }
+
+            reviewHtml += `
+                        </ul>
+                        <p>\${review.review_content}</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+//     console.log(reviewHtml);
+    // 리뷰 리스트를 HTML에 업데이트
+    $(".reviews").html(reviewHtml);
+}
+
+
+
+function showPaging(currentPage, totalPages) {
+    let $paging = $("#paging"); // 페이지네이션 리스트의 <ul> 요소를 가져옴
+    $paging.empty(); // 기존의 페이지네이션 항목들을 모두 제거하여 초기화
+    
+    // 이전 페이지 버튼 추가
+    if (currentPage > 1) {
+        $paging.append(`<li><a href="javascript:void(0)" onclick="loadReviews(\${currentPage - 1})">< 이전</a></li>`);
+    } else {
+        $paging.append(`<li class="disabled">< 이전</li>`);
+    }
+
+    // 현재 페이지 기준으로 앞뒤로 보여줄 페이지 범위 설정
+    const pageRange = 2; // 현재 페이지 기준으로 양옆으로 몇 개의 페이지를 보여줄지 설정
+    const startPage = Math.max(1, currentPage - pageRange);
+    const endPage = Math.min(totalPages, currentPage + pageRange);
+
+    // 페이지 번호 버튼 추가
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            $paging.append(`<li class="active">\${i}</li>`); // 현재 페이지 강조
+        } else {
+            $paging.append(`<li><a href="javascript:void(0)" onclick="loadReviews(\${i})">\${i}</a></li>`);
+        }
+    }
+
+    // 다음 페이지 버튼 추가
+    if (currentPage < totalPages) {
+        $paging.append(`<li><a href="javascript:void(0)" onclick="loadReviews(\${currentPage + 1})">다음 ></a></li>`);
+    } else {
+        $paging.append(`<li class="disabled"><a href="javascript:void(0)" onclick="loadReviews(\${currentPage + 1})">다음 ></a></li>`);
+    }
+}
+
+    function countUp(productNo) {
+        let quantity = parseInt($("#" + productNo + "_quantity").text());
+        $("#" + productNo + "_quantity").text(quantity + 1);
+    }
+
+    function countDown(productNo) {
+        let quantity = parseInt($("#" + productNo + "_quantity").text());
+
+        if (quantity <= 1) {} else {
+            $("#" + productNo + "_quantity").text(quantity - 1);
+        }
+    }
+
+    function orderProduct(productNo) {
+        let productsInfo = [];
+
+        let quantity = parseInt($("#" + productNo + "_quantity").text());
+
+
+        productsInfo.push({
+            productNo: parseInt(productNo),
+            quantity: quantity
+        });
+
+        $('.productInfos').val(JSON.stringify(productsInfo));
+
+        $('.orderForm').submit();
+    }
+
+    function addCart(productNo) {
+        let quantity = parseInt($("#" + productNo + "_quantity").text());
+
+        $.ajax({
+            url: '/addCartItem',
+            type: 'POST',
+            data: {
+                productNo: productNo,
+                quantity: quantity
+            },
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+            },
+            error: function() {},
+            complete: function(data) {
+                if (data.status == 200) {
+                    // 모달을 보여주기
+                    $('#myModal').modal('show');
+
+                    // 확인 버튼 클릭 시 장바구니 페이지로 이동
+                    $('#goCart').off('click').on('click', function() {
+                        location.href = "/cart";
+                    });
+
+                    $('#keepProduct').off('click').on('click', function() {
+                        location.reload();
+                    });
+                } else if (data.responseText == 401) {
+                    alert("잘못된 접근입니다.");
+                }
+            }
+        });
+    }
+
+    function toggleHeart(element, product_no) {
+        const icon = element.querySelector('i');
+        icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
+
+        // AJAX 요청
+        $.ajax({
+            url: "/member/saveWish",
+            type: "GET",
+            data: {
+                product_no: product_no
+            },
+            dataType: "json",
+            success: function(data) {
+                console.log(data); // 서버 응답 확인
+            },
+            error: function() {
+                console.error("AJAX 요청 실패");
+            }
+        });
+    }
+    function getProductNo() {
+        // 여기에서 productNo 값을 제대로 가져오고 있는지 확인하세요
+        const productNo = $("#productNo").val(); // 또는 다른 방법으로 productNo 값을 가져옴
+
+        if (!productNo) {
+            console.error("productNo 값을 찾을 수 없습니다.");
+            return null;
+        }
+        return productNo;
+    }
+
 </script>
 <style>
 #gallery {
@@ -149,28 +277,39 @@ function toggleHeart(element, product_no) {
 }
 
 .main-img img {
-	width: 500px; /* 메인 이미지의 너비 */
-	height: 500px; /* 비율을 유지하며 높이 자동 조정 */
-	object-fit: cover; /* 이미지가 지정된 크기에 맞게 조정 */
+	width: 500px;
+	/* 메인 이미지의 너비 */
+	height: 500px;
+	/* 비율을 유지하며 높이 자동 조정 */
+	object-fit: cover;
+	/* 이미지가 지정된 크기에 맞게 조정 */
 }
 
 .images {
 	display: flex;
 	justify-content: center;
-	gap: 10px; /* 이미지 간의 간격 조절 */
-	margin-top: 15px; /* 메인 이미지와 서브 이미지 사이의 간격 */
+	gap: 10px;
+	/* 이미지 간의 간격 조절 */
+	margin-top: 15px;
+	/* 메인 이미지와 서브 이미지 사이의 간격 */
 }
 
 .images img {
-	width: 100px; /* 서브 이미지의 너비 */
-	height: 100px; /* 서브 이미지의 높이 */
-	object-fit: cover; /* 이미지가 지정된 크기에 맞게 조정 */
-	cursor: pointer; /* 이미지에 마우스를 올리면 포인터 커서로 변경 */
-	transition: transform 0.3s; /* 서브 이미지에 호버 애니메이션 추가 */
+	width: 100px;
+	/* 서브 이미지의 너비 */
+	height: 100px;
+	/* 서브 이미지의 높이 */
+	object-fit: cover;
+	/* 이미지가 지정된 크기에 맞게 조정 */
+	cursor: pointer;
+	/* 이미지에 마우스를 올리면 포인터 커서로 변경 */
+	transition: transform 0.3s;
+	/* 서브 이미지에 호버 애니메이션 추가 */
 }
 
 .images img:hover {
-	transform: scale(1.2); /* 서브 이미지에 호버 시 확대 효과 */
+	transform: scale(1.2);
+	/* 서브 이미지에 호버 시 확대 효과 */
 }
 
 .count-input-div {
@@ -208,6 +347,23 @@ function toggleHeart(element, product_no) {
 	padding: 0;
 	margin: 0;
 }
+
+.full-width-image {
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+	/* 이미지 비율을 유지하며 꽉 채움 */
+	margin: 0;
+	/* 이미지 여백 제거 */
+	padding: 0;
+	display: block;
+	/* 기본 margin 간격 제거 */
+}
+
+.single-review img {
+	position: inherit !important;
+	border-radius: 25% !important;
+}
 </style>
 
 <body>
@@ -226,7 +382,7 @@ function toggleHeart(element, product_no) {
 	</div>
 	<!-- /End Preloader -->
 
-
+<input type="hidden" id="productNo" value="${param.productNo }">
 
 	<!-- Start Breadcrumbs -->
 	<div class="breadcrumbs">
@@ -242,8 +398,8 @@ function toggleHeart(element, product_no) {
 						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
 						<li><a href="/product/jewelry/all">JEWELRY</a></li>
 						<li><c:if test="${not empty products}">
-					                ${products[0].category_name}
-					            </c:if></li>
+                                ${products[0].category_name}
+                            </c:if></li>
 					</ul>
 				</div>
 			</div>
@@ -255,25 +411,34 @@ function toggleHeart(element, product_no) {
 	<section class="item-details section">
 		<div class="container">
 			<div class="top-area">
-
 				<div class="row align-items-center">
 					<div class="col-lg-6 col-md-12 col-12">
 						<div class="product-images">
 							<main id="gallery">
+
+
 								<div class="main-img">
+									<!-- 메인 이미지를 찾는 반복문 -->
 									<c:forEach var="product" items="${products}">
 										<c:if test="${product.image_type == 'M'}">
-											<img src="${product.image_url}" id="current" alt="Main Image">
+											<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" id="current" alt="Main Image">
+											<c:set var="hasMainImage" value="true" />
 										</c:if>
 									</c:forEach>
 								</div>
+
 								<div class="images">
-									<!-- 서브 이미지를 표시 -->
+									<!-- 서브 이미지를 찾는 반복문 -->
 									<c:forEach var="image" items="${products}">
-										<img src="${image.image_url}" class="img" alt="Sub Image">
+										<%--             <c:if test="${image.image_type == 'S'}"> --%>
+										<img src="${image.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" class="img" alt="Sub Image">
+										<c:set var="hasSubImage" value="true" />
+										<%--             </c:if> --%>
 									</c:forEach>
 								</div>
+
 							</main>
+
 						</div>
 					</div>
 
@@ -284,44 +449,29 @@ function toggleHeart(element, product_no) {
 
 							<!-- 카테고리 표시 -->
 							<p class="category">
-								<a
-									href="/product/jewelry?category=${products[0].product_category}">
-									<i class="lni lni-tag"></i> ${products[0].category_name}
+								<a href="/product/jewelry?category=${products[0].product_category}"> <i class="lni lni-tag"></i> ${products[0].category_name}
 								</a>
 							</p>
 
 							<!-- 가격 표시 -->
-							<h3 class="price"
-								style="display: flex; flex-direction: column; gap: 5px;">
+							<h3 class="price" style="display: flex; flex-direction: column; gap: 5px;">
 								<!-- 원래 가격 표시 (할인이 있는 경우만 표시) -->
-								<c:if
-									test="${products[0].product_dc_type == 'P' && products[0].product_price != products[0].calculatedPrice}">
-									<span
-										style="text-decoration: line-through; font-size: 0.9em; color: #999;">
-										<fmt:formatNumber value="${products[0].product_price}"
-											type="number" pattern="#,###" />원
+								<c:if test="${products[0].product_dc_type == 'P' && products[0].product_price != products[0].calculatedPrice}">
+									<span style="text-decoration: line-through; font-size: 0.9em; color: #999;"> <fmt:formatNumber value="${products[0].product_price}" type="number" pattern="#,###" />원
 									</span>
 								</c:if>
 
 								<!-- 할인율 및 할인 적용된 가격 표시 -->
 								<div style="display: flex; align-items: baseline; gap: 10px;">
-									<c:if
-										test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
-										<span
-											style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-											<fmt:formatNumber value="${products[0].dc_rate * 100}"
-												type="number" maxFractionDigits="0" />%
+									<c:if test="${products[0].product_dc_type == 'P' && products[0].dc_rate > 0}">
+										<span style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;"> <fmt:formatNumber value="${products[0].dc_rate * 100}" type="number" maxFractionDigits="0" />%
 										</span>
 									</c:if>
 
-									<span
-										style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;">
-										<fmt:formatNumber value="${products[0].calculatedPrice}"
-											type="number" pattern="#,###" />원
+									<span style="font-size: 1.4em; font-weight: bold; color: #000; text-decoration: none;"> <fmt:formatNumber value="${products[0].calculatedPrice}" type="number" pattern="#,###" />원
 									</span>
 								</div>
 							</h3>
-
 
 
 							<div class="row">
@@ -332,8 +482,7 @@ function toggleHeart(element, product_no) {
 									<!-- 장바구니와 찜 버튼을 반반씩 배치 -->
 									<div class="col-lg-6 col-md-6 col-6">
 										<div class="button cart-button">
-											<button onclick="addCart(${products[0].product_no})"
-												class="btn" style="width: 100%;">장바구니</button>
+											<button onclick="addCart(${products[0].product_no})" class="btn" style="width: 100%;">장바구니</button>
 										</div>
 									</div>
 									<c:set var="result" value="false" />
@@ -347,9 +496,7 @@ function toggleHeart(element, product_no) {
 											<!-- 찜목록에 있을 경우 하트 -->
 											<div class="col-lg-6 col-md-6 col-6">
 												<div class="wish-button">
-													<button
-														onclick="toggleHeart(this, ${products[0].product_no});"
-														class="btn" style="width: 100%;">
+													<button onclick="toggleHeart(this, ${products[0].product_no});" class="btn" style="width: 100%;">
 														<i class="lni lni-heart-filled"></i> 찜
 													</button>
 												</div>
@@ -359,9 +506,7 @@ function toggleHeart(element, product_no) {
 											<!-- 찜목록에 없을 경우 빈하트 -->
 											<div class="col-lg-6 col-md-6 col-6">
 												<div class="wish-button">
-													<button
-														onclick="toggleHeart(this, ${products[0].product_no});"
-														class="btn" style="width: 100%;">
+													<button onclick="toggleHeart(this, ${products[0].product_no});" class="btn" style="width: 100%;">
 														<i class="lni lni-heart"></i> 찜
 													</button>
 												</div>
@@ -371,9 +516,7 @@ function toggleHeart(element, product_no) {
 									<c:if test="${wishList == null }">
 										<div class="col-lg-6 col-md-6 col-6">
 											<div class="wish-button">
-												<button
-													onclick="location.href='${pageContext.request.contextPath}/member/viewLogin'"
-													class="btn" style="width: 100%;">
+												<button onclick="location.href='${pageContext.request.contextPath}/member/viewLogin'" class="btn" style="width: 100%;">
 													<i class="lni lni-heart"></i> 찜
 												</button>
 											</div>
@@ -384,12 +527,9 @@ function toggleHeart(element, product_no) {
 									<!-- 주문 개수 선택 드롭다운 -->
 									<div class="col-lg-12 col-md-12 col-12">
 										<div class="count-input-div col-lg-2 col-md-1 col-12">
-											<button class="btn countDown"
-												onclick="countDown(${products[0].product_no})">-</button>
-											<div class="count-div"
-												id="${products[0].product_no}_quantity">1</div>
-											<button class="btn countUp"
-												onclick="countUp(${products[0].product_no})">+</button>
+											<button class="btn countDown" onclick="countDown(${products[0].product_no})">-</button>
+											<div class="count-div" id="${products[0].product_no}_quantity">1</div>
+											<button class="btn countUp" onclick="countUp(${products[0].product_no})">+</button>
 										</div>
 									</div>
 								</div>
@@ -398,10 +538,8 @@ function toggleHeart(element, product_no) {
 									<div class="col-lg-12 col-md-12 col-12">
 										<form action="/order" method="post" class="orderForm">
 											<div class="wish-button">
-												<input type="hidden" class="productInfos"
-													name="productInfos">
-												<button class="btn" style="width: 100%;"
-													onclick="orderProduct(${products[0].product_no});">
+												<input type="hidden" class="productInfos" name="productInfos">
+												<button class="btn" style="width: 100%;" onclick="orderProduct(${products[0].product_no});">
 													<i class="lni lni-credit-cards"></i> 결제
 												</button>
 											</div>
@@ -427,54 +565,34 @@ function toggleHeart(element, product_no) {
 							<!-- 제목 가운데 정렬 -->
 							<p class="text-center">
 								<!-- 텍스트 가운데 정렬 -->
-								<img alt="상품설명" src="${product_content}">
+								<img alt="상품설명" src="${product_content}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" />
 							</p>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row justify-content-center">
-				<!-- justify-content-center로 중앙 정렬 -->
-				<div class="col-lg-12 col-12">
-					<!-- col-lg-6으로 넓이를 제한 -->
-					<div class="single-block">
-						<div class="reviews">
-							<h4 class="title text-center">너무 고마워서 돌아가버리실거같은 고객님들의 생생정보통
-								리뷰</h4>
-							<!-- 제목 가운데 정렬 -->
-							<!-- Start Single Review -->
-							<div class="single-review text-center">
-								<!-- 리뷰 중앙 정렬 -->
-								<img src="https://via.placeholder.com/150x150" alt="#">
-								<div class="review-info">
-									<h4>
-										여긴 title 이 들어가겠지 <span>곽다훈</span>
-									</h4>
-									<ul class="stars">
-										<li><i class="lni lni-star-filled"></i></li>
-										<li><i class="lni lni-star-filled"></i></li>
-										<li><i class="lni lni-star-filled"></i></li>
-										<li><i class="lni lni-star-filled"></i></li>
-										<li><i class="lni lni-star-filled"></i></li>
-									</ul>
-									<p>여긴 내용이 들어갈거고</p>
-								</div>
-							</div>
-							<!-- End Single Review -->
+			<div class="col-lg-12 col-12">
+				<div class="single-block">
+					<div class="reviews">
 
-
-							<!-- End Single Review -->
-
-						</div>
 					</div>
+
+					<!-- 					페이지 네이션 -->
+					<div class="pagination center">
+						<ul class="pagination-list" id="paging">
+
+						</ul>
+					</div>
+
 				</div>
 			</div>
 		</div>
 	</section>
 	<!-- End Item Details -->
 
-
 	<jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
+
+	<jsp:include page="../cart/cartModal.jsp"></jsp:include>
 
 	<jsp:include page="../footer.jsp"></jsp:include>
 

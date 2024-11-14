@@ -30,13 +30,14 @@
     limit #{limit} offset #{offset}
 </select>
 
+	
 	<select id="selectProductCount" resultType="int">
-		select count(*)
-		from products
-		where product_delete = 'N'
-		<if test="category != null">
-			and category = #{category}
-		</if>
+	        select count(*) 
+		    from products 
+		    where product_delete = 'N'
+		    <if test="category != null">
+		        and category = #{category}
+		    </if>
 	</select>
 	
 <!-- 카테고리별 상품 조회 쿼리문: 정렬 기준 추가 -->
@@ -81,69 +82,43 @@
     limit #{limit} offset #{offset}
 </select>
 
-
-	<!-- 카테고리별 상품 조회 쿼리문: 정렬 기준 추가 -->
-	<select id="selectProductsByCategoryAndPage" parameterType="map"
-		resultType="ProductDTO">
-		select p.product_no, p.product_name, p.product_price,
-		p.product_category, p.dc_rate, p.product_dc_type,
-		p.product_sell_count,
-		max(pi.image_main_url) as image_main_url,
-		c.category_name
-		from products p
-		left join product_images pi on
-		p.product_no = pi.product_no
-		join categories c on p.product_category =
-		c.category_no
-		where p.product_delete = 'N'
-		<if test="category != null">
-			and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
-		</if>
-		group by p.product_no, p.product_name, p.product_price,
-		p.product_category, c.category_name
-		<!-- 정렬 기준 추가 -->
-		<choose>
-			<when test="sortOrder == 'new'">
-				order by p.product_reg_date desc  <!-- 신상품순 -->
-			</when>
-			<when test="sortOrder == 'popular'">
-				order by p.product_sell_count desc  <!-- 인기상품순 (판매 수 기준) -->
-			</when>
-			<when test="sortOrder == 'lowPrice'">
-				order by
-				CASE
-				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1
-				- p.dc_rate ))
-				ELSE p.product_price
-				END asc  <!-- 낮은가격순 -->
-			</when>
-			<when test="sortOrder == 'highPrice'">
-				order by
-				CASE
-				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1
-				- p.dc_rate))
-				ELSE p.product_price
-				END desc  <!-- 높은가격순 -->
-			</when>
-			<otherwise>
-				order by p.product_reg_date desc  <!-- 기본: 신상품순 -->
-			</otherwise>
-		</choose>
-		limit #{limit} offset #{offset}
+<!-- 전체 상품 개수 조회 쿼리문 -->
+	<select id="selectProductCountByCategory" parameterType="int" resultType="int">
+	    select count(*) 
+	    from products p
+	    where p.product_delete = 'N'
+	    <if test="category != null">
+	        and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
+	    </if>
 	</select>
 	
-
-
-
-	<select id="getProductById" parameterType="int"
-		resultType="ProductDTO">
-		select p.*,c.*,pi.* from products p
-		left join categories c
-		on p.product_category = c.category_no
-		left join product_images pi on
-		p.product_no = pi.product_no
-		where p.product_no = #{productId}
+	
+	<select id="getProductById" parameterType="int" resultType="ProductDTO">
+	    select p.*, c.*, pi.image_url, pi.image_type from products p
+	    left join categories c on p.product_category = c.category_no
+	    left join product_images pi on p.product_no = pi.product_no
+	    where p.product_no = #{product_no}
 	</select>
+	
+	<select id="selectProductDetailById" parameterType="int" resultType="ProductDTO">
+    SELECT p.*, c.category_name 
+    FROM products p
+    LEFT JOIN categories c ON p.product_category = c.category_no
+    WHERE p.product_no = #{product_no}
+</select>
+   
+
+
+<select id="countSearchResults" parameterType="map" resultType="int">
+    SELECT 
+        COUNT(*) 
+    FROM 
+        products p
+    WHERE 
+        p.product_delete = 'N'
+        AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search}, '%'))
+        AND (#{category} IS NULL OR p.product_category = #{category})
+</select>
 
 <select id="searchProducts" parameterType="map" resultType="ProductDTO">
     SELECT 
@@ -205,7 +180,48 @@
         #{limit} OFFSET #{offset}
 </select>
 
+<select id="selectReview" parameterType="int" resultType="ReviewDetailDTO">
+SELECT  
+    r.review_no,
+    r.member_id,
+    r.review_title,
+    r.review_content,
+    r.register_date,
+    r.review_like_count,
+    r.review_ref,
+    r.review_score,
+    m.nickname
+FROM 
+    reviews r
+JOIN 
+    members m ON r.member_id = m.member_id
+WHERE 
+    r.product_no = #{product_no}
+    AND r.review_show = 'S'
+    AND (r.review_ref IS NULL OR 
+         (r.review_ref IS NOT NULL AND 
+          (SELECT review_show FROM reviews WHERE review_no = r.review_ref) = 'S'))
+ORDER BY 
+    CASE WHEN r.review_ref IS NULL THEN r.review_no ELSE r.review_ref END DESC,  
+    r.review_ref IS NOT NULL,                                                    
+    r.register_date ASC;
+</select>
 
+<select id="selectReviewImg" parameterType="int" resultType="string">
+    select 
+        ri.image_url
+    from 
+        review_images ri
+    join 
+        reviews r on r.review_no = ri.review_no
+    where 
+        r.product_no = #{product_no}
+        and r.review_show = 'S'
+</select>
+
+<select id="countReview" resultType="int">
+	SELECT COUNT(*) FROM reviews WHERE product_no = #{productNo}
+</select>
 
 
 
