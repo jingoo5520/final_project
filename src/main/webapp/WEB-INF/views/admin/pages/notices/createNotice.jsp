@@ -145,7 +145,6 @@
                         <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요" required></div>
                       </div>
                       <input type="hidden" name="noticeContent" id="noticeContentInput" required/>
-                      
 				<!-- 공지 등록 버튼 -->
 		      	<div class="text-end mt-3">
 					<button type="submit" class="btn rounded-pill btn-outline-primary">공지 등록</button>
@@ -257,6 +256,7 @@
         	width: '100%',
         	height: 800,
             lang: 'ko-KR',
+            placeholder: '내용을 입력하세요.',
             toolbar: [
 //                 ['fontsize', ['fontsize']],
                 ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
@@ -313,7 +313,7 @@
                 contentType: false,
                 processData: false,
                 success: function(fileName) {
-                    let imageUrl = '/post/summernoteImages/' + fileName;
+                    let imageUrl = '/resources/eventImages/' + fileName;
                     $('#summernote').summernote('insertImage', imageUrl);
                     console.log('업로드 성공:', fileName);
                 },
@@ -351,9 +351,9 @@
 
         // 폼 제출 시 내용 가져오기 및 검증
         $('form').on('submit', function(e) {
-            var noticeTitle = $('input[name="noticeTitle"]').val();
-            var adminId = $('input[name="adminId"]').val();
-            var noticeContent = $('#summernote').summernote('code');
+        	let noticeTitle = $('input[name="noticeTitle"]').val();
+        	let adminId = $('input[name="adminId"]').val();
+        	let noticeContent = $('#summernote').summernote('code');
 
             console.log("Notice Title:", noticeTitle);
             console.log("Admin ID:", adminId);

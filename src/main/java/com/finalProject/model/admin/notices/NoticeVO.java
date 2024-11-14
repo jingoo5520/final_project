@@ -24,5 +24,9 @@ public class NoticeVO {
 	private String adminId;
 	private String noticeContent;
 	private LocalDateTime regDate;
-	private LocalDateTime noticeEndDate;
+	private LocalDateTime eventStartDate;
+	private LocalDateTime eventEndDate;
+    private String bannerImage;
+    private String thumbnailImage;
+    private String url;
 }
