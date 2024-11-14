@@ -33,6 +33,7 @@
 			let totalPoints = 0;
 			let totalProductDcPrice = 0;
 			let totalEarnedPoint = 0;
+			let memberLevelPoint = "${orderMember.level_point}";
 			
 			$(".productPrice").each(function() {
 				let productPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
@@ -49,20 +50,16 @@
 				totalProductDcPrice += productDcPriceText;
 			});
 			
-			$(".earnedPoint").each(function() {
-				let earnedPointText = parseInt($.trim($(this).text().replace(" P", "").replace(/,/g, "")));
-				totalEarnedPoint += earnedPointText;
-			});
 			
 			
 			$("#totalProductCount").text(totalCount + " 개");
 			$("#totalProductPrice").text(totalPrices.toLocaleString('ko-KR') + " 원");
-			
-			$("#totalEarnedPoints").text(totalEarnedPoint.toLocaleString('ko-KR') + " 원");
 			$("#totalDCPrices").text(totalProductDcPrice.toLocaleString('ko-KR') + " 원");
 			$("#totalOriginalPrices").text(totalOriginalPrices.toLocaleString('ko-KR') + " 원");
 			$(".totalProductCount").text(totalCount + " 개");
 			$(".totalPrice").text((totalPrices + 2500).toLocaleString('ko-KR') + " 원");
+			
+			setTotalEarnedPoint();
 			
 			// 쿠폰 리스트 호출
 			if ("${orderMember}" !== "") {
@@ -236,6 +233,18 @@
 			
 		})
 		
+		function setTotalEarnedPoint() {
+			let memberLevelPoint = "${orderMember.level_point}";
+			
+			if (memberLevelPoint != "") {
+				let totalPrice = (parseInt($.trim($(".totalPrice").eq(0).text().replace(" 원", "").replace(/,/g, ""))))
+				totalEarnedPoint = parseFloat((memberLevelPoint) * (totalPrice - 2500));
+				console.log(totalEarnedPoint);
+			}
+			
+			$("#totalEarnedPoints").text(totalEarnedPoint.toLocaleString('ko-KR') + " P");
+		}
+		
 		function showDeliveryList() {
 			document.getElementById('getMemeberAddress').checked = false;
 		    document.getElementById('saveDeliveryCheck').checked = false;
@@ -267,6 +276,9 @@
 			$("#totalDCPrices").text((totalProductDcPrice + usePoint).toLocaleString('ko-KR') + " 원");
 			
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice + usePoint) + 2500).toLocaleString('ko-KR') + " 원");
+			
+			setTotalEarnedPoint();
+			
 			$('input[name="point"]').prop("readonly", true);
 			$("#allPointsUse").prop('disabled', true);
 			$('input[name="point"]').css('background-color', '#E6E6E6');
@@ -287,6 +299,8 @@
 			
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice - setPoint) + 2500).toLocaleString('ko-KR') + " 원");
 		
+			setTotalEarnedPoint();
+			
 			$('input[name="point"]').val(usePoint - setPoint);
 		}
 		
@@ -303,6 +317,9 @@
 			$("#totalDCPrices").text((totalProductDcPrice - usePoint).toLocaleString('ko-KR') + " 원");
 			
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice) + usePoint + 2500).toLocaleString('ko-KR') + " 원");
+			
+			setTotalEarnedPoint();
+			
 			$('input[name="point"]').prop("readonly", false);
 			$('input[name="point"]').css('background-color', '#FFFFFF');
 			
@@ -491,6 +508,8 @@
 			$("#totalDCPrices").text((totalProductDcPrice + couponDcPrice).toLocaleString('ko-KR') + " 원");
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice + couponDcPrice) + 2500).toLocaleString('ko-KR') + " 원");
 			
+			setTotalEarnedPoint();
+			
 			let totalPrice = parseInt($.trim($(".totalPrice").text().replace(" 원", "").replace(/,/g, "")));
             let usePoint = parseInt($("#pointDC").text().replace(/,/g, ''), 10);
 			
@@ -504,6 +523,8 @@
 			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
 			$("#totalDCPrices").text((totalProductDcPrice - couponDcPrice).toLocaleString('ko-KR') + " 원");
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice) + couponDcPrice + 2500).toLocaleString('ko-KR') + " 원");
+			
+			setTotalEarnedPoint();
 		}
 		
 		function handleDeliveryOptionChange() {
@@ -1040,13 +1061,10 @@
 										<div class="col-lg-5 col-md-5 col-12">
 											<p>상품 / 수량 정보</p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 											<p>할인 금액</p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
-											<p>적립예정포인트</p>
-										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 											<p>결제금액</p>
 										</div>
 									</div>
@@ -1067,29 +1085,12 @@
 												<span>수량: <span class="product_quantity" id="${orderProduct.product_no }_quantity">${orderProduct.quantity }</span> 개</span>
 											</p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 											<p><span class="dcPrice">
 												<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity * orderProduct.dc_rate }" type="number" pattern="#,###" /> 원
 											</span></p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
-										
-									<c:choose>
-									
-										<c:when test="${not empty orderMember }">
-											<p><span class="earnedPoint">
-												<fmt:formatNumber value="${Math.floor(orderProduct.product_price * orderProduct.quantity * orderMember.level_point / 10) * 10}" type="number" pattern="#,###" /> P
-											</span></p>
-										</c:when>
-										
-										<c:otherwise>
-												<p><span class="earnedPoint">0 P</span></p>
-										</c:otherwise>
-										
-									</c:choose>
-									
-										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 										
 									<c:choose>
 									
