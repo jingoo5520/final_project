@@ -17,7 +17,10 @@ public class CookieCartDTO {
 	private int product_no;
 	private String product_name;
 	private int product_price;
-	private String image_url;
 	private String product_dc_type;
 	private float dc_rate;
+	private String category_name;
+	
+	@Builder.Default
+	private String image_url = null;
 }

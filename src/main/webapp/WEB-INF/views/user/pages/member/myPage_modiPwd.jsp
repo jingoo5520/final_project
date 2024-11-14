@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>마이페이지</title>
+<title>ELOLIA</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link
@@ -14,12 +14,12 @@
 	rel="stylesheet">
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 <style>
 </style>
 </head>
 <body>
-
-	<body>
+<body>
 
 	<!-- header -->
 	<jsp:include page="../header.jsp"></jsp:include>
@@ -30,14 +30,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">MyPage</h1>
+						<h1 class="page-title">비밀번호수정</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i>
-								Home</a></li>
-						<li><a href="javascript:void(0)">MyPage</a></li>
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li>비밀번호수정</li>
 					</ul>
 				</div>
 			</div>
@@ -53,36 +53,55 @@
 				</jsp:include>
 				<!-- / sideBar -->
 				<!-- contents -->
-				<div class="col-lg-9 col-12" id="modiInfoView">
-					<main class="right-pane">
+				<div class="col-lg-9 col-12">
+					<!-- Shopping Cart -->
+					<div class="cart-list-head" style="border: none">
+						<div class="cart-list-title">
+							<div class="register-form">
 
-						<h1>비밀번호 변경</h1>
-						<c:if test="${empty sessionScope.auth}">
-				<form class="row" action="/member/auth" method="post">
-					<div class="auth">
-						<div class="input-group">
-							<span class="input-group-text">비밀번호</span> <input type="password"
-											class="form-control" id="pwd" name="pwd">
+								<c:if test="${empty sessionScope.auth}">
+									<form class="row" action="/member/auth" method="post">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<h2 class="text-center" style="margin-bottom: 20px">비밀번호
+													인증</h2>
+												<input type="password" class="form-control" id="pwd"
+													name="pwd">
+												<div class="button">
+													<button class="btn" type="submit">확인</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								</c:if>
+								<c:if test="${not empty sessionScope.auth}">
+									<form class="row" id="form">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="reg-id">비밀번호</label> <input class="form-control"
+													type="password" id="member_pwd" name="member_pwd"
+													style="margin-bottom: 10px"><span></span><input
+													class="form-control" type="hidden" value="">
+											</div>
+										</div>
+
+										<div class="col-sm-12" style="margin-top: 20px">
+											<div class="form-group">
+												<label for="reg-id">비밀번호 확인</label> <input
+													class="form-control" type="password" id="member_pwd2"
+													name="member_pwd2" style="margin-bottom: 10px"><span></span><input
+													class="form-control" type="hidden" value="">
+											</div>
+										</div>
+										<div class="button" id="button">
+											<button class="btn" type="submit">변경하기</button>
+										</div>
+									</form>
+								</c:if>
+
+							</div>
 						</div>
-						<button class="btn" type="submit">확인</button>
 					</div>
-				</form>
-			</c:if>
-			<c:if test="${not empty sessionScope.auth}">
-				<form id="form">
-					<div class="form-group input-group">
-						비밀번호 변경<input type="password" id="member_pwd" name="member_pwd"><span
-										id="pwdStatus"></span><input type="hidden" value="">
-					</div>
-					<div class="form-group input-group">
-						비밀번호 확인<input type="password" id="member_pwd2" name="member_pwd2"><span
-										id="pwd2Status"></span><input type="hidden" value="">
-					</div>
-					<button id="button" class="btn btn-info" type="button" value="수정하기">수정하기</button>
-				</form>
-			</c:if>
-		</main>
-					</main>
 				</div>
 				<!-- / contents -->
 
@@ -91,7 +110,8 @@
 	</section>
 
 	<jsp:include page="../footer.jsp"></jsp:include>
-</body><script type="text/javascript">
+</body>
+<script type="text/javascript">
 	var pwdExp = /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/; // 비밀번호 정규식(영문자, 숫자를 포함한 8자이상 20자 이하)
 	$(function () {
 		// 비밀번호 입력중

@@ -7,24 +7,20 @@
 <html class="no-js" lang="zxx">
 
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>카테고리</title>
-<meta name="description" content="" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/white-logo.svg" />
-
-<!-- ========================= CSS here ========================= -->
-<link rel="stylesheet"
-	href="/resources/assets/user/css/bootstrap.min.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/LineIcons.3.0.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/glightbox.min.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/main.css" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>ELOLIA</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	
+    <!-- ========================= CSS here ========================= -->
+    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 <script type="text/javascript">
@@ -72,38 +68,54 @@
     }
     
 	function addCart(productNo) {
-		
-		console.log(productNo);
-		
 		$.ajax({
-		    url: '/addCartItem',
-		    type: 'POST',
-		    data: {
-		    	productNo : productNo
-		    	},
-		    dataType: 'json',
-		    success: function(data) {
-		        console.log(data);
-		    },
-		    error: function() {
-		    },
-		    complete: function(data) {
-		    	if (data.status == 200) {
-		            // 모달을 보여주기
-		            $('#myModal').modal('show');
+			url: '/addCartItem',
+			type: 'POST',
+			data: {
+				productNo : productNo
+			},
+			dataType: 'json',
+			success: function(data) {
+			},
+			error: function() {
+			},
+			complete: function(data) {
+				if (data.status == 200) {
+					$('#myModal').modal('show');
+					
+					// 헤더의 장바구니 수량 최신화
+					cartCountUpdate();
+					
+					// 확인 버튼 클릭 시 장바구니 페이지로 이동
+					$('#goCart').off('click').on('click', function() {
+						location.href = "/cart";
+					});
+					
+					$('#keepProduct').off('click').on('click', function() {
+						$('#myModal').modal('hide');
+					});
+				}
+			}
+		});
+	}
 	
-		            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-		            $('#goCart').off('click').on('click', function() {
-		                location.href = "/cart";
-		            });
-		            
-		            $('#keepProduct').off('click').on('click', function() {
-		                location.reload();
-		            });
-		        } else if (data.responseText == 401) {
-		            alert("잘못된 접근입니다.");
-		        }
-		    }
+	function cartCountUpdate() {
+		$.ajax({
+			url: '/cartCountUpdate',
+			type: 'POST',
+			dataType: 'json',
+			success: function(data) {
+				console.log(data);
+				if (data !== undefined) {
+					$('.cart-items .total-items').text(data);
+				}
+			},
+			error: function(data) {
+				console.error("장바구니 개수 업데이트 실패");
+				console.log(data);
+			},
+			complete: function(data) {
+			}
 		});
 	}
 	
@@ -117,13 +129,25 @@
 	text-overflow: ellipsis; /* 글자가 넘치는 경우 ... 표시 */
 	white-space: normal;
 }
+.stars {
+	display: flex;
+	justify-content: right;
+	align-items: center;
+}
+
+.stars i {
+	color: #ffa000;
+}
+
 </style>
 <body>
-	<jsp:include page="../header.jsp"></jsp:include>
+	<jsp:include page="../header.jsp">
+		<jsp:param name="categoryName" value="${products[0].category_name}" />
+	</jsp:include>
 	<!-- 찜목록 잘 받아오는지 확인 -->
-	<c:forEach var="item" items="${wishList}">
+	<%-- <c:forEach var="item" items="${wishList}">
 		<div>${item}</div>
-	</c:forEach>
+	</c:forEach> --%>
 
 
 	<!-- Preloader -->
@@ -243,36 +267,29 @@
 								<c:otherwise>
                                     ${totalProductCount}
                                 </c:otherwise>
-							</c:choose>
-						</div>
-						<div class="tab-content" id="nav-tabContent">
-							<div class="tab-pane fade active show" id="nav-grid"
-								role="tabpanel" aria-labelledby="nav-grid-tab">
-								<div class="row">
-									<div class="col-12">
-										<c:if test="${noResult}">
-											<div
-												style="background-color: #f0f0f0; text-align: center; color: #333; padding: 15px; border-radius: 5px;">
-												<span>검색 결과가... 앙 없어띠 다시 한 번 검색해봐 ~ </span><br /> <img
-													src="/resources/images/noResult.jpeg" alt="No Results"
-													style="margin-top: 15px; width: auto; height: auto; max-width: 100%;" />
-											</div>
-										</c:if>
-									</div>
-									<c:forEach var="product" items="${products}">
-										<div class="col-lg-4 col-md-6 col-12">
-											<!-- Start Single Product -->
-											<!--                                         개수 -->
-											<div class="single-product">
-												<div class="product-image" style="height: 300px;">
-
-													<a
-														href="/product/jewelry/detail?productNo=${product.product_no}">
-														<img
-														src="${empty product.image_main_url ? '/resources/images/noP_image.png' : product.image_main_url}"
-														alt="${product.product_name}"
-														style="height: 100%; object-fit: cover;">
-													</a>
+                            </c:choose>
+                        </div>
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <c:if test="${noResult}">
+                                            <div style="background-color: #f0f0f0; text-align: center; color: #333; padding: 15px; border-radius: 5px;">
+                                                <span>검색 결과가... 앙 없어띠 다시 한 번 검색해봐 ~ </span><br />
+                                                <img src="/resources/images/noResult.jpeg" alt="No Results" style="margin-top: 15px; width: auto; height: auto; max-width: 100%;" />
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <c:forEach var="product" items="${products}">
+                                        <div class="col-lg-4 col-md-6 col-12">
+                                            <!-- Start Single Product -->
+                                            <!--                                         개수 -->
+                                            <div class="single-product">
+                                                <div class="product-image" style="height:300px;">
+                                                
+                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}" >
+                                                        <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
+                                                    </a>
 
 													<div class="button"
 														style="position: absolute; bottom: 10px; left: 90px;">
@@ -320,8 +337,24 @@
 
 												<div class="product-info">
 													<!-- Category 출력 부분 -->
-
-													<span class="category"> ${product.category_name } </span>
+													<div class="row scoreDiv">
+														<span class="category col-md-6 col-lg-6 col-12"> ${product.category_name } </span>
+						                                <c:if test="${not empty product.average_score and product.average_score != 0.0}">
+															<div class="starScore col-md-6 col-lg-6 col-12">
+																<ul class="stars">
+																	<c:forEach var="index" begin="1" end="5">
+																		<c:if test="${index <= product.average_score }">
+											                                <li><i class="lni lni-star-filled"></i></li>
+											                            </c:if>
+											                            <c:if test="${index > product.average_score }">
+											                            	<li><i class="lni lni-star"></i></li>
+											                            </c:if>
+									                                </c:forEach>
+								                                	<li><i>${product.average_score }</i></li>
+									                            </ul>
+															</div>
+						                                </c:if>
+													</div>
 
 													<h4 class="title">
 														<a
@@ -355,8 +388,7 @@
 																pattern="#,###" /> 원
 														</span>
 													</div>
-
-
+														
 												</div>
 											</div>
 											<!-- End Single Product -->
@@ -440,8 +472,10 @@
 	</section>
 	<!-- End Product Grids -->
 
-	<jsp:include page="../footer.jsp"></jsp:include>
-
+    <jsp:include page="../footer.jsp"></jsp:include>
+    
+    <jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
+    
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
 	</a>

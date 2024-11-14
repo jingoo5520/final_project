@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.cart.CartDTO;
@@ -127,7 +126,7 @@ public class CartController {
 						for (String cartItem : cookieCartItems) {
 							int productNoOfCookie = Integer.parseInt(cartItem.split(":")[0]);
 							int quantityOfCookie = Integer.parseInt(cartItem.split(":")[1]);
-							
+							System.out.println("productNoOfCookie" + productNoOfCookie);
 							CookieCartDTO cookieCartDTO = cService.getProductInfoOfCookieCart(productNoOfCookie);
 							
 							CookieCartVO cookieCartVO = new CookieCartVO().builder()
@@ -138,20 +137,17 @@ public class CartController {
 									.product_count(quantityOfCookie)
 									.product_dc_type(cookieCartDTO.getProduct_dc_type())
 									.dc_rate(cookieCartDTO.getDc_rate())
+									.category_name(cookieCartDTO.getCategory_name())
 									.build();
 							
 							cookieCartList.add(cookieCartVO);
 							
 							System.out.println(cookieCartVO.toString());
 						}
-						
 					}
 				}
 			}
-		
-		
 		}
-		
 		model.addAttribute("cookieCartItems", cookieCartList);
 		model.addAttribute("cartItems", cartList);
 		
@@ -210,10 +206,8 @@ public class CartController {
 					}
 				} 
 			}
-			
 			return result = new ResponseEntity<String>(HttpStatus.OK);
 		}
-		
 	}
 	
 	@PostMapping("/removeCartItem")
@@ -385,10 +379,9 @@ public class CartController {
 		
 	}
 	
-	@GetMapping("/cartCountUpdate")
-	public void showCartItemCount(Model model, HttpSession session, HttpServletRequest request) {
+	@PostMapping("/cartCountUpdate")
+	public ResponseEntity<Integer> showCartItemCount(HttpSession session, HttpServletRequest request) {
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
-		
 		Cookie[] cookies = request.getCookies();
 		
 		int cartNo = 0;
@@ -396,7 +389,6 @@ public class CartController {
 		
 		if (loginMember != null) {
 			String memberId = loginMember.getMember_id();
-			
 			cartNo = cService.getCartNo(memberId);
 			
 			if (cartNo != 0) {
@@ -429,9 +421,6 @@ public class CartController {
 								}
 							}
 						}
-						
-						
-						
 						cartItemCount += cookieCartItems.length - matchedProductCount;
 					}
 				}
@@ -450,8 +439,8 @@ public class CartController {
 				}
 			}
 		}
-		
-		model.addAttribute("cartItemCount", cartItemCount);
+		ResponseEntity<Integer> response = new ResponseEntity<Integer>(cartItemCount, HttpStatus.OK);
+		return response;
 	}
 
 

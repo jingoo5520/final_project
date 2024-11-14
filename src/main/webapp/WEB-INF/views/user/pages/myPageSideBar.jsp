@@ -6,10 +6,10 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>Header</title>
+<title>MyPageSideBar</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -50,20 +50,22 @@ h5 {
 					<h3>마이페이지</h3>
 					<ul class="list">
 						<li><h5>쇼핑 내역</h5></li>
-						<li><a href="/member/myPage/viewOrder" class="<%="viewOrder".equals(request.getParameter("pageName")) ? "active" : ""%>">주문/배송 조회</a></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">취소/교환 내역</a></li>
+						<li><a href="/member/myPage/viewOrder" class="<%="viewOrder".equals(request.getParameter("pageName")) ? "active" : ""%>">주문 / 배송 조회</a></li>
+						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">취소 / 교환 내역</a></li>
+						<li><a href="/member/myPage/manageDelivery" class="<%="manageDelivery".equals(request.getParameter("pageName")) ? "active" : ""%>">배송지 관리</a></li>
 					</ul>
 					<hr>
 					<ul class="list">
 						<li><h5>내 활동</h5></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">내 문의 </a></li>
+						<li><a href="/serviceCenter/inquiries" class="<%="inquiries".equals(request.getParameter("pageName")) ? "active" : ""%>">내 문의 </a></li>
 						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">내 리뷰 </a></li>
+						<li><a href="${pageContext.request.contextPath}/member/myPage/wishList" class="<%="wishList".equals(request.getParameter("pageName")) ? "active" : ""%>">내 관심상품 </a></li>
 					</ul>
 					<hr>
 					<ul class="list">
 						<li><h5>내 혜택</h5></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">포인트 내역 </a></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">쿠폰 내역 </a></li>
+						<li><a href="/member/myPage/pointList" class="<%="pointList".equals(request.getParameter("pageName")) ? "active" : ""%>">포인트 내역 </a></li>
+						<li><a href="/member/myPage/couponList" class="<%="couponList".equals(request.getParameter("pageName")) ? "active" : ""%>">쿠폰 내역 </a></li>
 					</ul>
 					<hr>
 					<ul class="list">

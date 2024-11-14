@@ -1,10 +1,10 @@
 package com.finalProject.intercepter;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,14 +16,13 @@ import org.springframework.web.util.WebUtils;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.service.member.MemberService;
-import com.finalProject.util.RememberPath;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
-	private final int AUTOLOGIN_DATE = 7; // 자동 로그인 유효 기간
+	private final int AUTOLOGIN_DATE = 1; // 자동 로그인 유효 기간(일)
 
 	@Inject
 	private MemberService memberService;
@@ -33,10 +32,19 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 		System.out.println("Login preHandle 호출");
 		HttpSession ses = request.getSession();
+		System.out.println(ses.getAttribute("productInfos"));
 		boolean result = true;
 		LoginDTO loginDTO = null;
 		log.info("preHandle()");
-
+		
+		String uri = request.getRequestURI();
+		System.out.println("LoginInterceptor 안에서 uri : " + uri);
+		if (uri.contains("/order")) {
+			ses.setAttribute("sentByOrderRequest", "Yes");
+		} else {
+			ses.setAttribute("sentByOrderRequest", null);
+		}
+		
 		if (request.getSession().getAttribute("loginMember") != null) { // 로그인이 되어있을경우
 			System.out.println("로그인 된 상태로 로그인 인터셉터 동작 : 로그아웃 처리");
 			ses.removeAttribute("loginMember"); // 로그인 세션 삭제(로그아웃)
@@ -94,7 +102,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				ses.setAttribute("loginMember", loginMember);
 				System.out.println(loginMember.getMember_name() + "님 로그인");
 				Object autologin = model.get("autologin");
-
 				if (autologin != null) { // 자동로그인에 체크한 경우
 					String code = UUID.randomUUID().toString();
 					Cookie cookie = new Cookie("al", code); // 쿠키객체 생성
@@ -103,7 +110,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					response.addCookie(cookie); // 만든 쿠키 저장
 					// db에 자동로그인 정보 update
 					memberService.setAutoLogin(loginMember.getMember_id(), code, AUTOLOGIN_DATE);
-
 				}
 				String rememberPath = ses.getAttribute("rememberPath") + "";
 				if (loginMember.getIs_admin().equals("1") || loginMember.getIs_admin().equals("9")) { // 관리자 아이디인 경우
@@ -111,8 +117,18 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 					response.sendRedirect("/admin");
 				} else {
 					if (!rememberPath.equals("null")) { // rememberPath가 있다면
-						response.sendRedirect(rememberPath); // rememberPath로 보냄
-						System.out.println("rememberPath있음 : " + rememberPath);
+						if (rememberPath.contains("/order")) { // 주문 요청에서 왔다면
+							String productInfos = (String) ses.getAttribute("productInfos");
+							ses.removeAttribute("productInfos");
+							if (productInfos != null) {
+								request.setAttribute("productInfosAttribute", productInfos);
+								RequestDispatcher dispatcher = request.getRequestDispatcher("/order");
+								dispatcher.forward(request, response);
+							}
+						} else {
+							response.sendRedirect(rememberPath); // rememberPath로 보냄
+							System.out.println("rememberPath있음 : " + rememberPath);
+						}
 					} else {
 						System.out.println("rememeberPath없음");
 						response.sendRedirect("/"); // 인덱스로 보냄
@@ -123,7 +139,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				response.sendRedirect("/member/viewLogin/?status=fail");
 			}
 		}
-
+		
 	}
 
 }

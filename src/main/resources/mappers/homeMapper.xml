@@ -18,5 +18,13 @@
 		order by product_reg_date desc
 		limit #{count}
 	</select>
+	
+	<!-- 배너 리스트 가져오기 -->
+	<select id="selectBannerList" resultType="BannerDTO">
+		select b.banner_no,
+		b.notice_no, b.banner_type, n.banner_image, n.thumbnail_image, n.url, n.notice_title
+		from banners b join notices n on b.notice_no = n.notice_no
+		where n.notice_type = 'E'
+	</select>
 
 </mapper>

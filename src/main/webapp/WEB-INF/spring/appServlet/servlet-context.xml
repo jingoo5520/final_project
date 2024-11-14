@@ -4,11 +4,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
+	>
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
@@ -49,6 +50,7 @@
 			<mapping path="/member/viewLogin" />
 			<mapping path="/member/login" />
 			<mapping path="/member/kakao/signUp" /> <!-- 카카오 간편가입후 바로 로그인 -->
+			<mapping path="/member/naver/signUp" /> <!-- 네이버 간편가입후 바로 로그인 -->
 			<beans:ref bean="loginInterceptor" />
 		</interceptor>
 	</interceptors>
@@ -57,16 +59,22 @@
 	<interceptors>
 		<interceptor>
 			<mapping path="/test/auth" />
-			<mapping path="/member/myPage/modiInfo" />
-			<mapping path="/member/myPage/modiPwd" />
-			<mapping path="/member/myPage/withdraw" />
-			<mapping path="/member/myPage/history" />
+
+			<mapping path="/member/myPage/**" />
+
+			<mapping path="/admin/**" />
 
 			<mapping path="/serviceCenter/inquiries" />
 			<mapping path="/serviceCenter/writeInquiry" />
+			<mapping path="/order" />
 			<beans:ref bean="authInterceptor" />
 		</interceptor>
 	</interceptors>
+	
+	<!-- 	task 를 @ 애너테이션 기반으로 자동 검색 -->
+	<task:annotation-driven />
+	<!-- 스케쥴러 클래스 정의  -->
+   	<beans:bean id="jobScheduler" class="com.finalProject.util.scheduler.ScheduledTasks"></beans:bean>
 
 	<context:component-scan
 		base-package="com.finalProject.controller" />

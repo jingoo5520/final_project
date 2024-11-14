@@ -9,6 +9,7 @@ import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductCancelRequestDTO;
 import com.finalProject.model.order.ProductDiscountCalculatedDTO;
 import com.finalProject.model.order.ProductDiscountDTO;
 
@@ -28,13 +29,15 @@ public interface OrderDAO {
 
 	int selectDeliveryCost(String orderId);
 	
-	Integer useCoupon(String orderId);
+	Integer useCoupon(String orderId, String couponCode);
 
 	boolean updateUserLevel(String orderId);
 
 	boolean updatePoint(String orderId);
 	
 	String makeOrder(PaymentRequestDTO request, boolean isMember) throws Exception;
+	
+	void deletePaidProductsFromCart(String memberId);
 	
 	boolean insertPaymentInfo(String orderId, Integer amount, String payModule, String method);
 
@@ -45,6 +48,8 @@ public interface OrderDAO {
 	int makeGuest(PaymentRequestDTO request, String orderId);
 
 	List<String> getOrderIdList(String memberId);
+	
+	List<String> getOrderIdList(String name, String phoneNumber, String email);
 
 	List<OrderProductDTO> getProductList(String orderId);
 
@@ -52,11 +57,14 @@ public interface OrderDAO {
 
 	void updateOrderStatus(String payMethod, String orderId) throws Exception;
 
-	int makeCancel(String orderId, List<Integer> orderproductNoList, String cancelType, String cancelReason);
+	int makeCancel(String orderId, List<ProductCancelRequestDTO> list, String cancelType, String cancelReason);
 	
 	void updateAccountInfo(String orderId, String depositName, String depositBank, String depoistAccount);
 	
 	List<ProductDiscountDTO> getDiscountInfoByProduct(String orderId, HttpSession session);
 
 	int updateRefundPriceByProduct(List<ProductDiscountCalculatedDTO> productDiscountCalculated);
+
+	void updateOrderStatusAuto();
+
 }

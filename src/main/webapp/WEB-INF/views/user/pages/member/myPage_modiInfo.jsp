@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>마이페이지</title>
+<title>ELOLIA</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link
@@ -16,6 +16,7 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script
 	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 <style>
 </style>
 </head>
@@ -26,19 +27,20 @@
 	<jsp:include page="../header.jsp"></jsp:include>
 	<!-- / header -->
 	<!-- Start Breadcrumbs -->
+
 	<div class="breadcrumbs">
 		<div class="container">
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">MyPage</h1>
+						<h1 class="page-title">내정보수정</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i>
-								Home</a></li>
-						<li><a href="javascript:void(0)">MyPage</a></li>
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li>내정보수정</li>
 					</ul>
 				</div>
 			</div>
@@ -54,69 +56,76 @@
 				</jsp:include>
 				<!-- / sideBar -->
 				<!-- contents -->
-				<div class="col-lg-9 col-12" id="modiInfoView">
-					<main class="right-pane">
+				<div class="col-lg-9 col-12">
+					<!-- Shopping Cart -->
+					<div class="cart-list-head" style="border: none">
+						<div class="cart-list-title">
+							<div class="register-form">
 
-						<h1>회원 정보 수정</h1>
-						<c:if test="${empty sessionScope.auth}">
-							<form class="row" action="/member/auth" method="post">
-								<div class="auth">
-									<div class="input-group">
-										<span class="input-group-text">비밀번호</span> <input
-											type="password" class="form-control" id="pwd" name="pwd">
-									</div>
-									<button class="btn" type="submit">확인</button>
-								</div>
-							</form>
-						</c:if>
-						<c:if test="${not empty sessionScope.auth}">
-							<form id="form">
-								<div class="form-group input-group">
-									별명<input type="text" id="nickname" name="nickname">
-								</div>
-								<div id="gender" class="area">
-									성별<span id="genderStatus"></span><input type="hidden" value="">
-								</div>
-								<div class="form-check">
-									<input type="radio" class="form-check-input" id="M"
-										name="gender" value="M"> <label
-										class="form-check-label" for="M">남자</label>
-								</div>
-								<div class="form-check">
-									<input type="radio" class="form-check-input" id="F"
-										name="gender" value="F"> <label
-										class="form-check-label" for="F">여자</label>
-								</div>
-								<div class="form-check">
-									<input type="radio" class="form-check-input" id="N"
-										name="gender" value="N"> <label
-										class="form-check-label" for="N">미선택</label>
-								</div>
-								<div class="form-group input-group">
-									휴대폰<input type="text" id="phone_number" name="phone_number"><span
-										id="phoneStatus"></span><input type="hidden" value="">
-								</div>
-								<div class="form-group input-group">
-									우편번호<input type="text" id="zipCode" name="zipCode" readonly
-										onclick="selectAddress();">
-								</div>
-								<div class="form-group input-group">
-									주소<input type="text" id="address" name="address" readonly
-										onclick="selectAddress();">
-								</div>
-								<div class="form-group input-group">
-									상세주소<input type="text" id="address2" name="address2">
-								</div>
-								<div class="form-group input-group">
-									이메일<input type="text" id="email" name="email"><span
-										id="emailStatus"></span><input type="hidden" value="">
-								</div>
-								<button id="button" class="btn btn-info" type="button"
-									value="수정하기">수정하기</button>
-							</form>
-						</c:if>
-					</main>
+								<c:if test="${empty sessionScope.auth}">
+									<form class="row" action="/member/auth" method="post">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<h2 class="text-center" style="margin-bottom: 20px">비밀번호
+													인증</h2>
+												<input type="password" class="form-control" id="pwd"
+													name="pwd">
+												<div class="button">
+													<button class="btn" type="submit">확인</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								</c:if>
+								<c:if test="${not empty sessionScope.auth}">
+									<form class="row" id="form">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="reg-id">별명</label> <input class="form-control"
+													type="text" id="nickname" name="nickname"
+													style="margin-bottom: 10px">
+											</div>
+										</div>
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="reg-id">*휴대폰 번호</label> <input
+													class="form-control" type="text" id="phone_number"
+													name="phone_number" style="margin-bottom: 10px"><span></span><input
+													class="form-control" type="hidden" value="">
+											</div>
+										</div>
+										<div class="col-sm-12" style="margin-top: 20px">
+											<div id="gender" class="area">
+												성별<span id="genderStatus"></span><input class="form-control"
+													type="hidden" value="">
+											</div>
+											<div class="form-check">
+												<input type="radio" class="form-check-input" id="M"
+													name="gender" value="M"> <label
+													class="form-check-label" for="M">남자</label>
+											</div>
+											<div class="form-check">
+												<input type="radio" class="form-check-input" id="F"
+													name="gender" value="F"> <label
+													class="form-check-label" for="F">여자</label>
+											</div>
+											<div class="form-check">
+												<input type="radio" class="form-check-input" id="N"
+													name="gender" value="N"> <label
+													class="form-check-label" for="N">미선택</label>
+											</div>
+										</div>
+										<div class="button" id="button">
+											<button class="btn" type="submit">수정하기</button>
+										</div>
+									</form>
+								</c:if>
+
+							</div>
+						</div>
+					</div>
 				</div>
+
 				<!-- / contents -->
 
 			</div>
@@ -150,33 +159,12 @@ let tmpEmail = "tmpEmail";
 	$(function() {
 		getMemberData();
 		
-		// 이메일 입력중
-		$("#email").keyup(function() {
-			checkEmail();
-	    });
 		// 휴대폰번호 입력중
 		$("#phone_number").keyup(function() {
 			checkPhone();
 	    });
 		
-		function checkEmail() {
-			let tmp = $("#email").val();
-	       	if(tmp == tmpEmail) {
-	       		isMsg("email", "변경사항 없음", "blue", true);
-	       	} else {
-	       		if (isCheck("email", tmp, emailExp, "이메일 형식이 아닙니다.", "red")) {
-		            dbCheck("email", tmp).then(isAvailable => {
-		                if (isAvailable) {
-		                    isMsg("email", "사용가능한 이메일 입니다.", "blue", true);
-		                } else {
-		                    isMsg("email", "이미 사용중인 이메일 입니다.", "red", false);
-		                }
-		            }).catch(error => {
-		                isMsg("email", error, "red", false);
-		            });
-		        }
-	       	}
-		}
+
 		function checkPhone() {
 			let tmp = $("#phone_number").val();
 	        if(tmp == tmpPhone) {
@@ -251,7 +239,6 @@ let tmpEmail = "tmpEmail";
 		
 		// 1초뒤 동작
 		setTimeout(function () {
-			checkEmail();
 			checkPhone();
 		},1000);
 		
@@ -263,10 +250,10 @@ let tmpEmail = "tmpEmail";
 		tmpEmail = data.email; // 전역변수에 저장
 		$("#nickname").val(data.nickname);
 		$("#phone_number").val(data.phone_number);
-		$("#zipCode").val(data.zipCode);
-		$("#address").val(data.address);
-		$("#address2").val(data.address2);
-		$("#email").val(data.email);
+		//$("#zipCode").val(data.zipCode);
+		//$("#address").val(data.address);
+		//$("#address2").val(data.address2);
+		//$("#email").val(data.email);
 		let gender = data.gender;
 		switch (gender) {
 		case "M":
@@ -287,15 +274,8 @@ let tmpEmail = "tmpEmail";
     e.preventDefault(); // 기본 제출 동작 방지
     let result = true;
     let text = ""; // modal의 text영역에 들어갈 내용
-    let emailCheck = $("#email").next().next().val();
     let phoneCheck = $("#phone_number").next().next().val();
-    console.log(emailCheck);
     console.log(phoneCheck);
-    
-    if (emailCheck != "true") {
-        result = false;
-        text += "<div>이메일</div>";
-    }
     
     if (phoneCheck != "true") {
         result = false;
@@ -329,18 +309,5 @@ let tmpEmail = "tmpEmail";
 
     }
 });
-	// daum 주소 api
-	// 주소칸에서 onclick으로 호출
-	function selectAddress() {
-	    new daum.Postcode({
-	        oncomplete: function(data) {
-	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
-	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
-	            console.log(data);
-	            $("#zipCode").val(data.zonecode);
-	            $("#address").val(data.address);
-	        }
-	    }).open();
-	}
 </script>
 </html>

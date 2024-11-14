@@ -10,7 +10,7 @@
 <title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -27,16 +27,24 @@ let fileList = [];
 
 	$(function(){
 		
+		getOrderedProducts();
 		setData();
 		
+		$('#inquiryTitle').on('input', function() {
+			checkFormCompletion();
+		});
+
+		$('#inquiryContent').on('input', function() {
+			checkFormCompletion();
+		});
+		
 		$("#fileInput").on("change", function(){
-			// 이미지 파일만 업로드 가능
-			const imageTypes = ["image/jpeg", "image/png"];
+			const maxSize = 10 * 1024 * 1024;
 			
 			// 중복 이름 거르기
 			$.each(this.files, function(index, file){
-				if (!imageTypes.includes(file.type)) {
-		            console.log("이미지 파일이 아닙니다", file.name);
+				if (!file.type.startsWith("image/") || file.size > maxSize) {
+		            console.log("이미지 파일이 아니거나, 파일 용량이 10MB를 초과합니다.", file.name);
 		            console.log(file.type);
 		            return; 
 		        }
@@ -82,18 +90,56 @@ let fileList = [];
 			
 			console.log(fileList);
 			console.log(existFileList);
+			$("#fileInput").val("");
 			showFiles();
 		})
 		
+		
 		// 문의 타입이 상품인 경우 주문 상품 리스트 가져와야함
-		$("#inquiryType").on("change", function(){
+		$("#selectInquiryType select").on("change", function(){
 			if($(this).val() == "상품"){
-				$(".orderList").show();
+				$("#orderList").show();
 			} else {
-				$(".orderList").hide();
+				$("#selectInquiryProduct select").val("");
+				$("#orderList").hide();
 			}
+			
+			checkFormCompletion();
+		});
+		
+		$("#selectInquiryProduct select").on("change", function(){
+			checkFormCompletion();
+			console.log($(this).val());
 		});
 	});
+	
+	// 주문 상품 리스트 가져오기
+	function getOrderedProducts(){
+		
+		$.ajax({
+			url : '/serviceCenter/getOrderedProducts',
+			type : 'GET',
+			dataType: 'json',
+			success : function(data) {
+				console.log(data);
+				
+				let output = '';
+				output += `<option value="" disabled selected>상품선택</option>`;
+				
+				data.forEach(function(orderProduct){
+					output += `<option value="\${orderProduct.product_no}">\${orderProduct.product_name}</option>`
+				})
+				
+				$("#orderListSelect").html(output);
+				$("#selectInquiryProduct select").val(${inquiryDetail.product_no});
+				
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		
+		});
+	}
 
 	// 첨부파일 리스트 보여주기
 	function showFiles(){
@@ -115,9 +161,11 @@ let fileList = [];
 		$("#inquiryType").val("${inquiryDetail.inquiry_type}").attr("selected", "selected");
 		
 		if("${inquiryDetail.inquiry_type}" != '상품'){
-			$(".orderList").hide();	
-		}
-	    
+			$("#orderList").hide();	
+		} else {
+			
+		} 
+		
 	    ${inquiryImgList}.forEach(function(inquiryImg){
 	    	existFileList.push(inquiryImg);
 	    })
@@ -134,6 +182,10 @@ let fileList = [];
 		let productNo = null;
 		
 		let formData = new FormData();
+		
+		if($("#selectInquiryType select").val() == "상품"){
+			productNo = $("#selectInquiryProduct select").val();
+		}
 		
 		console.log("inquiryNo: " + inquiryNo);
 		console.log("inquiryNo: " + typeof inquiryNo);
@@ -174,11 +226,55 @@ let fileList = [];
 		});
 	}
 	
+	// 모든 폼에 입력값이 있는지 체크
+	function checkFormCompletion() {
+		let inquiryTitleCheck = inquiryTitleValid();
+		let inquiryContentCheck = inquiryContentValid();
+		let inquiryProductCheck = inquiryProductValid();
+
+		if (inquiryTitleCheck && inquiryContentCheck && inquiryProductCheck) {
+			$("#modifyInquiryBtn").prop('disabled', false);
+		} else {
+			$("#modifyInquiryBtn").prop('disabled', true);
+		}
+	}
+	
+	// 문의 제목 검사
+	function inquiryTitleValid() {
+		let valid = false;
+
+		if ($('#inquiryTitle').val().length > 0) {
+			valid = true;
+		}
+		return valid;
+	}
+	
+	// 문의 내용 검사
+	function inquiryContentValid() {
+		let valid = false;
+
+		if ($('#inquiryContent').val().length > 0) {
+			valid = true;
+		}
+		return valid;
+	}
+	
+	// 상품 선택 검사
+	function inquiryProductValid(){
+		let valid = false;
+
+		if ($('#selectInquiryType select').val() != "상품" || $('#selectInquiryProduct select').val() != null) {
+			valid = true;
+		}
+		
+		return valid;
+	}
+	
 </script>
 </head>
 
 <style>
-#writeInquiryBtnArea {
+#modifyInquiryBtnArea {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
@@ -274,7 +370,6 @@ let fileList = [];
 				<!-- / sideBar -->
 				
 				
-				
 				<div class="col-lg-9 col-12">
 					<!-- Shopping Cart -->
 					<div class="checkout-steps-form-style-1">
@@ -296,7 +391,7 @@ let fileList = [];
 									<div class="col-md-12">
 										<div class="single-form form-default">
 											<label>문의 타입</label>
-											<div class="select-items">
+											<div id="selectInquiryType" class="select-items">
 												<select id="inquiryType" class="form-control">
 													<option value="상품">상품</option>
 													<option value="주문">주문</option>
@@ -308,15 +403,11 @@ let fileList = [];
 									</div>
 
 									<!-- 주문 상품 -->
-									<div id="" class="col-md-12">
-										<div class="single-form form-default orderList">
-											<label>주문 상품(type = "상품")</label>
-											<div class="select-items">
-												<select class="form-control">
-													<option value="0">1</option>
-													<option value="0">2</option>
-													<option value="0">3</option>
-													<option value="0">4</option>
+									<div class="col-md-12">
+										<div id="orderList" class="single-form form-default">
+											<label>주문 상품</label>
+											<div id="selectInquiryProduct" class="select-items">
+												<select id="orderListSelect" class="form-control">
 												</select>
 											</div>
 										</div>
@@ -358,12 +449,12 @@ let fileList = [];
 					</div>
 					<!--/ End Shopping Cart -->
 
-					<div id="writeInquiryBtnArea" class="button mt-2">
+					<div id="modifyInquiryBtnArea" class="button mt-2">
 						<button class="btn" onclick="location.href='/serviceCenter/inquiryDetail?inquiryNo=${inquiryDetail.inquiry_no}'">
 							수정 취소
 							<span class="dir-part"></span>
 						</button>
-						<button class="btn" onclick="updateInquiry()">
+						<button id="modifyInquiryBtn" class="btn" onclick="updateInquiry()">
 							수정 완료
 							<span class="dir-part"></span>
 						</button>

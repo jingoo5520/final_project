@@ -7,7 +7,10 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.MemberPointDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
+import com.finalProject.model.RecentCouponDTO;
 
 public interface MemberService {
 
@@ -69,6 +72,48 @@ public interface MemberService {
 	List<DeliveryDTO> getDeliveryList(String memberId) throws Exception;
 	
 	// 쿠폰 목록 조회
-	List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception;
+	List<PaidCouponDTO> getCouponList(String memberId, String currentTime) throws Exception;
+
+	// naver_id로 회원 조회(네이버 로그인)
+	LoginDTO selectMemberByNaverId(String naver_id)throws Exception;
+
+	// 네이버 간편가입
+	int signUpNaver(MemberDTO memberDTO)throws Exception;
+	
+	// 배송지 수정
+	void modifyDelivery(DeliveryDTO deliveryDTO) throws Exception;
+	
+	// 배송지 삭제
+	void deleteDelivery(int deliveryNo) throws Exception;
+
+	// 회원 수 받기(스케쥴러)
+	int getMemberCount()throws Exception;
+
+	// 회원 아이디 받기(스케쥴러)
+	String getMemberId(int i)throws Exception;
+
+	// 회원의 3달간 결제금액 받기(스케쥴러)
+	int getTotalPriceByMemberId(String member_id)throws Exception;
+
+	// 회원 등급 업데이트(스케쥴러)
+	int updateMemberLevel(String member_id, int totalPrice)throws Exception;
+
+	// 회원 더미 데이터 insert
+	void tumpMemberData(MemberDTO mDTO)throws Exception;
+	
+	// 최근 3개월 쿠폰 조회
+	List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception;
+	
+	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
+	MemberPointDTO getMemberPoint(String member_id) throws Exception;
+	
+	// 회원의 포인트 내역의 총 페이지 개수 반환
+	int getPointPagingInfo(String pointType, String memberId) throws Exception;
+
+	// 회원의 포인트 적립내역 조회
+	List<PointDTO> getEarnedPointList(String memberId, int pageNo) throws Exception;
+	
+	// 회원의 포인트 사용내역 조회
+	List<PointDTO> getUsedPointList(String memberId, int pageNo) throws Exception;
 	
 }

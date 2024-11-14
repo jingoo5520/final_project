@@ -10,7 +10,7 @@
 <title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -64,9 +64,22 @@
 		align-items: center;
 	}
 	
+	.infoContentHead {
+		font-size: 20px !important;
+		font-weight: bold !important;
+		color: black !important;
+		margin-bottom: 10px;
+		text-align: center !important;
+	}
+	
 	.infoImg {
     	margin-bottom: 20px;
     	text-align: center;
+	}
+	
+	.infoImg img {
+		width: 64px;
+		height: 64px;
 	}
 	
 	.warningInfoHead {
@@ -86,16 +99,6 @@
 </head>
 
 <body>
-	<!-- Preloader -->
-	<div class="preloader">
-		<div class="preloader-inner">
-			<div class="preloader-icon">
-				<span></span> <span></span>
-			</div>
-		</div>
-	</div>
-	<!-- /End Preloader -->
-
 	<div class="topHeader">
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/">
 			<img src="/resources/assets/user/images/logo/logo.svg" alt="Logo" />
@@ -109,18 +112,12 @@
 				<img alt="성공" src="/resources/assets/user/images/info/success.png">
 			</div>
 			<div class="infoBody">
-				<p class="InfoContentHead">
+				<p class="infoContentHead">
 					<!-- 콘텐츠 태그 삽입 -->
-					<span> 페이지 오류 안내. <br>
-					 이용에 불편을 드려 죄송합니다. 
-					</span>
+					<span>주문이 완료되었습니다!</span>
 				</p>
-				<p class="InfoContent">
+				<p class="infoContent">
 					<!-- 콘텐츠 태그 삽입 -->
-					 이용하시려는 웹 페이지의 주소가 잘못 입력되었거나,<br>
-					 일시적인 오류 혹은 변경으로 요청하신 페이지를 찾을 수 없습니다.<br>
-					 입력하신 주소가 정확한지 다시 한번 확인해 주시기 바랍니다.<br>
-					 감사합니다.
 				</p>
 			</div>
 		</div>
@@ -129,12 +126,6 @@
 				<a class="btn goMain" href="/">메인으로</a>
 			</div>
 		</div>
-		<div class="repositBtn">
-			<div class="button">
-				<a class="btn goMain" href="/">취소</a>
-			</div>
-		</div>
-		
 	</section>
 	<!-- End Shipping Info -->
 
@@ -150,6 +141,13 @@
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
 
+	<script>
+		window.onload = function() {
+			if ('${cookieDelete}' == 'delete') {
+				document.cookie = `cartItem=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+			}
+		}
+	</script>
 </body>
 
 </html>

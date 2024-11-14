@@ -28,7 +28,7 @@ window.onload = function() {
 			    if (window.opener) {
 			    	window.opener.releaseInputBlock()
 			        // TODO : 실제 결제완료 페이지로 이동시키기
-			       	window.opener.location.href = window.location.origin + "/pages/order/temp_01"
+			       	window.opener.location.href = window.location.origin + "/pages/order/success"
 			    }
 				window.close();
 			} else {

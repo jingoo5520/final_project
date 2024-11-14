@@ -19,6 +19,7 @@ import com.finalProject.model.order.OrderMemberDTO;
 import com.finalProject.model.order.OrderProductDTO;
 import com.finalProject.model.order.OrderRequestDTO;
 import com.finalProject.model.order.PaymentRequestDTO;
+import com.finalProject.model.order.ProductCancelRequestDTO;
 import com.finalProject.model.order.ProductDiscountCalculatedDTO;
 import com.finalProject.model.order.ProductDiscountDTO;
 
@@ -46,6 +47,7 @@ public class OrderDAOImpl implements OrderDAO {
 
 	@Override
 	public void deleteOrder(String orderId) {
+		ses.delete(ns + "deleteProductsOfOrder", orderId);
 		ses.delete(ns + "deleteOrder", orderId);
 	}
 	
@@ -117,6 +119,11 @@ public class OrderDAOImpl implements OrderDAO {
 			// return null;
 		}
 		return ses.selectOne(ns + "selectUncompletedOrderId", request.getOrdererId());
+	}
+	
+	@Override
+	public void deletePaidProductsFromCart(String memberId) {
+		ses.delete(ns + "deletePaidProductsFromCart", memberId);
 	}
 	
 	@Override
@@ -200,12 +207,10 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 	
 	@Override
-	public Integer useCoupon(String orderId) {
-		Integer couponNo = ses.selectOne(ns + "selectCouponNoOfOrder", orderId);
-		if (couponNo == null) {return 1;} // 쿠폰 사용 안함
+	public Integer useCoupon(String orderId, String couponCode) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("orderId", orderId);
-		params.put("couponNo", couponNo);
+		params.put("couponCode", couponCode);
 		return ses.insert(ns + "insertToCouponUsed", params);
 	}
 	
@@ -224,6 +229,10 @@ public class OrderDAOImpl implements OrderDAO {
 		if (ses.update(ns + "addUserPoint", params) != 1) {
 			return false;
 		};
+		// 포인트 적립 이력 내역 작성
+		if (ses.insert(ns + "writePointEarnedLogByPurchase", params) != 1) {
+			return false;
+		}
 		return true;
 	}
 	
@@ -276,6 +285,15 @@ public class OrderDAOImpl implements OrderDAO {
 	public List<String> getOrderIdList(String memberId) {
 		return ses.selectList(ns + "selectOrderId", memberId);
 	}
+	
+	@Override
+	public List<String> getOrderIdList(String name, String phoneNumber, String email) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("name", name);
+		params.put("phoneNumber", phoneNumber);
+		params.put("email", email);
+		return ses.selectList(ns + "selectOrderIdByNonMember", params);
+	}
 
 	@Override
 	public Map<String, Object> getOrderInfo(String orderId) {
@@ -288,10 +306,10 @@ public class OrderDAOImpl implements OrderDAO {
 	}
 
 	@Override
-	public int makeCancel(String orderId, List<Integer> productNoList, String cancelType, String cancelReason) {
+	public int makeCancel(String orderId, List<ProductCancelRequestDTO> productRequestList, String cancelType, String cancelReason) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("orderId", orderId);
-		params.put("productNoList", productNoList);
+		params.put("productRequestList", productRequestList);
 		params.put("cancelType", cancelType);
 		params.put("cancelReason", cancelReason);
 		return ses.insert(ns + "insertCancel", params);
@@ -306,6 +324,10 @@ public class OrderDAOImpl implements OrderDAO {
 		params.put("depoistAccount", depoistAccount);
 		ses.update(ns + "updateAccountInfo", params);
 	}
-
+	
+	@Override
+	public void updateOrderStatusAuto() {
+		ses.update(ns + "updateOrderStatusAuto");
+	}
 
 }

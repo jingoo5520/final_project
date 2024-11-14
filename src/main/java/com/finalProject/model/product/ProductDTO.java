@@ -32,21 +32,23 @@ public class ProductDTO {
     private int product_cost;
     private String product_delete;
     private String product_show;
-    private String image_main_url;
-    private String image_sub_url;
+    private String image_url;
+    private String image_type;
     
     private String category_name;
+    
+    private float average_score;
 
-    // °è»êµÈ °¡°ÝÀ» ¹ÝÈ¯ÇÏ´Â ¸Þ¼­µå ¼öÁ¤
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï´ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public int getCalculatedPrice() {
         if ("P".equalsIgnoreCase(product_dc_type)) {
-            // ÆÛ¼¾Æ® ÇÒÀÎÀÇ °æ¿ì: ºñÀ²¸¸Å­ ÇÒÀÎµÈ ±Ý¾× °è»ê
+            // ï¿½Û¼ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½Îµï¿½ ï¿½Ý¾ï¿½ ï¿½ï¿½ï¿½
         	return (int) (product_price * (1 - dc_rate));
         } else if ("N".equalsIgnoreCase(product_dc_type) || product_dc_type == null) {
-            // ÇÒÀÎ Å¸ÀÔÀÌ 'N'ÀÌ°Å³ª nullÀÎ °æ¿ì ¿ø·¡ °¡°Ý ¹ÝÈ¯
+            // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ 'N'ï¿½Ì°Å³ï¿½ nullï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
             return product_price;
         }
-        return product_price; // ±âº»ÀûÀ¸·Î ¿ø·¡ °¡°Ý ¹ÝÈ¯
+        return product_price; // ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     }
 
 	public void setCalculatedPrice(int calculatedPrice) {

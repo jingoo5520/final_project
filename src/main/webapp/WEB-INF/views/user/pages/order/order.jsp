@@ -8,10 +8,10 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>주문 결제</title>
+    <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -194,7 +194,7 @@
 			    }
 
 			    if (Number(inputVal) > totalPrice) {
-			        alert('포인트는 총 상품 금액을 초과할 수 없습니다.');
+			        showOrderModal('포인트는 총 상품 금액을 초과할 수 없습니다.');
 			        inputVal = Math.floor(totalPrice / 100) * 100;
 			    }
 			    
@@ -295,8 +295,7 @@
 			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			
 			let usePoint = Number($('input[name="point"]').val());
-			$("#pointDC").text(usePoint.toLocaleString('ko-KR'));
-			$("#usePoint").val(0);
+			$("#pointDC").text("0");
 			$('input[name="point"]').val(0);
 			$("#allPointsUse").prop('disabled', false);
 			$("#allPointsUse").prop('checked', false);
@@ -318,48 +317,71 @@
 		function makeCouponListWithData(json) {
 			let output = "";
 			let allCoupon = "";
+			let couponDCText = "";
+			let couponApplyBtnText = "";
+			let remainingDaysText = "";
 			$.each(json.couponList, function (index, item) {
 								
 				if (item.member == "All") {
-					allCoupon = "<div class='couponCard card mt-30 mb-30' id=" + "'"+ item.coupon_no + "_coupon'>";
-					allCoupon += "<div class='card-header'>전체 지급 쿠폰</div><div class='card-body'>";
-					allCoupon += "<h3>" + item.coupon_name + "</h3>";
-					
 					if (item.coupon_dc_type == "R") {
-						allCoupon += "<h4>" + item.coupon_dc_rate + " % 할인</h4>";
+						couponDCText = `\${item.coupon_dc_rate * 100} %`;
+						couponApplyBtnText = `<div class='btn' onclick="applyCouponByRate('\${item.coupon_code}', '\${item.coupon_no}', '\${item.coupon_name}', '\${item.coupon_dc_rate}');">등록</div>`;
 					} else if (item.coupon_dc_type == "A"){
-						allCoupon += "<h4>" + item.coupon_dc_amount + " 원 할인</h4>";
+						couponDCText = `\${item.coupon_dc_amount} 원`;
+						couponApplyBtnText = `<div class='btn' onclick="applyCouponByAmount('\${item.coupon_code}', '\${item.coupon_no}', '\${item.coupon_name}', '\${item.coupon_dc_amount}');">등록</div>`;
+					}
+					if (item.remaining_days > 14) {
+						remainingDaysText = `<span style="color: #0DCAF0">\${item.remaining_days} 일</span>`;
+					} else if (item.remaining_days <= 14) {
+						remainingDaysText = `<span style="color: #FD5A67">\${item.remaining_days} 일</span>`;
 					}
 					
-					allCoupon += "<div><p>지급 날짜 : " + item.pay_date + "</p>";
-					allCoupon += "<p>남은 기한 : " + item.remaining_days + "일</p>";
-					allCoupon += "</div></div><div class='card-footer'>";
-					allCoupon += "<div class='button'>";
-					if (item.coupon_dc_type == "R") {
-						allCoupon += `<div class='btn' onclick="applyCouponByRate('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_rate + `');">등록</div></div></div></div>`;
-					} else if (item.coupon_dc_type == "A"){
-						allCoupon += `<div class='btn' onclick="applyCouponByAmount('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_amount + `');">등록</div></div></div></div>`;
-					}
+					allCoupon += `<div class='couponCard card mb-20' id="\${item.coupon_no}_coupon">
+									<div class='card-header'>전체 지급</div>
+									<div class='card-body'>
+										<h4>\${item.coupon_name}</h4>
+										<div class="couponInfo mt-30">
+											<p>남은 기한 : \${remainingDaysText}</p>
+											<p>지급 날짜 : \${item.pay_date}</p>
+										</div>
+									</div>
+									<div class='card-footer'>
+										<div class='button'>
+											<h3>\${couponDCText}</h3>
+											\${couponApplyBtnText}
+										</div>
+									</div>
+								</div>`;
 				} else {
-					output += "<div class='couponCard card mt-30 mb-30' id=" + "'"+ item.coupon_no + "_coupon'>";
-					output += "<div class='card-header'>특별 지급 쿠폰</div><div class='card-body'>";
-					output += "<h3>" + item.coupon_name + "</h3>";
-					
 					if (item.coupon_dc_type == "R") {
-						output += "<h4>" + (item.coupon_dc_rate * 100) + " % 할인</h4>";
+						couponDCText = `\${item.coupon_dc_rate * 100} %`;
+						couponApplyBtnText = `<div class='btn' onclick="applyCouponByRate('\${item.coupon_code}', '\${item.coupon_no}', '\${item.coupon_name}', '\${item.coupon_dc_rate}');">등록</div>`;
 					} else if (item.coupon_dc_type == "A"){
-						output += "<h4>" + item.coupon_dc_amount + " 원 할인</h4>";
+						couponDCText = `\${item.coupon_dc_amount} 원`;
+						couponApplyBtnText = `<div class='btn' onclick="applyCouponByAmount('\${item.coupon_code}', '\${item.coupon_no}', '\${item.coupon_name}', '\${item.coupon_dc_amount}');">등록</div>`;
+					}
+					if (item.remaining_days > 14) {
+						remainingDaysText = `<span style="color: #0DCAF0">\${item.remaining_days} 일</span>`;
+					} else if (item.remaining_days <= 14) {
+						remainingDaysText = `<span style="color: #FD5A67">\${item.remaining_days} 일</span>`;
 					}
 					
-					output += "<div><p>지급 날짜 : " + item.pay_date + "</p>";
-					output += "<p>남은 기한 : " + item.remaining_days + "일</p>";
-					output += "</div></div><div class='card-footer'>";
-					output += "<div class='button'>";
-					if (item.coupon_dc_type == "R") {
-						output += `<div class='btn' onclick="applyCouponByRate('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_rate + `');">등록</div></div></div></div>`;
-					} else if (item.coupon_dc_type == "A"){
-						output += `<div class='btn' onclick="applyCouponByAmount('` + item.coupon_code + `', '` + item.coupon_no + `', '` + item.coupon_name + `', '` + item.coupon_dc_amount + `');">등록</div></div></div></div>`;
-					}
+					output += `<div class='couponCard card mb-20' id="\${item.coupon_no}_coupon">
+								<div class='card-header'>특별 지급</div>
+								<div class='card-body'>
+									<h4>\${item.coupon_name}</h4>
+									<div class="couponInfo mt-30">
+										<p>남은 기한 : \${remainingDaysText}</p>
+										<p>지급 날짜 : \${item.pay_date}</p>
+									</div>
+								</div>
+								<div class='card-footer'>
+									<div class='button'>
+										<h3>\${couponDCText}</h3>
+										\${couponApplyBtnText}
+									</div>
+								</div>
+							</div>`;
 				}
 				
 				
@@ -373,21 +395,22 @@
 			let originalPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			let couponDcPrice = originalPrice * parseFloat(dcRate);
 			
-			let output = `<div class='btn' onclick="resetCouponByRate('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcRate + `');">취소</div>`;
+			let output = `<h3>\${dcRate * 100} %</h3>
+						<div class='btn' onclick="resetCouponByRate('\${couponCode}', '\${couponNo}', '\${couponName}', '\${dcRate}');">취소</div>`;
 			
 			applyCouponDc(couponDcPrice);
 			applyCouponInfo(couponCode, couponName);
+			console.log($("#" + couponNo + "_coupon .button").html());
 			$("#" + couponNo + "_coupon .button").html(output);
 			
 			$('.couponCard').each(function() {
 			    var $couponCard = $(this);
-			    var id = $couponCard.attr('id'); // 현재 카드의 id 속성 가져오기
+			    var id = $couponCard.attr('id');
 
 			    if (id == couponNo + '_coupon') {
-			        // id가 'abcd'인 경우
+			    	$couponCard.css('border', '2px solid #a8a691');
 			        $couponCard.find('.button .btn').css('pointer-events', 'auto');
 			    } else {
-			        // id가 'abcd'가 아닌 경우
 			    	$couponCard.find('.button .btn').css('display', 'none');
 			    }
 			});
@@ -395,7 +418,8 @@
 		
 		function applyCouponByAmount(couponCode, couponNo, couponName, dcAmount) {
 			let couponDcPrice = parseInt(dcAmount);
-			let output = `<div class='btn' onclick="resetCouponByAmount('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcAmount + `');">취소</div>`;
+			let output = `<h3>\${dcAmount} 원</h3>
+						<div class='btn' onclick="resetCouponByAmount('\${couponCode}', '\${couponNo}', '\${couponName}', '\${dcAmount}');">취소</div>`;
 			
 			applyCouponDc(couponDcPrice);
 			applyCouponInfo(couponCode, couponName);
@@ -404,13 +428,12 @@
 			
 			$('.couponCard').each(function() {
 			    var $couponCard = $(this);
-			    var id = $couponCard.attr('id'); // 현재 카드의 id 속성 가져오기
+			    var id = $couponCard.attr('id');
 
 			    if (id == couponNo + '_coupon') {
-			        // id가 'abcd'인 경우
+			    	$couponCard.css('border', '2px solid #a8a691');
 			        $couponCard.find('.button .btn').css('pointer-events', 'auto');
 			    } else {
-			        // id가 'abcd'가 아닌 경우
 			        $couponCard.find('.button .btn').css('display', 'none');
 			    }
 			});
@@ -419,7 +442,8 @@
 		function resetCouponByRate(couponCode, couponNo, couponName, dcRate) {
 			let originalPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			let couponDcPrice = originalPrice * parseFloat(dcRate);
-			let output = `<div class='btn' onclick="applyCouponByRate('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcRate + `');">등록</div>`;
+			let output = `<h3>\${dcRate * 100} %</h3>
+						<div class='btn' onclick="applyCouponByRate('\${couponCode}', '\${couponNo}', '\${couponName}', '\${dcRate}');">등록</div>`;
 			
 			resetCouponDc(parseInt(couponDcPrice));
 			resetCouponInfo(couponCode, couponName);
@@ -427,13 +451,15 @@
 			
 			$('.couponCard').each(function() {
 			    var $couponCard = $(this);
+			    $couponCard.css('border', '1px solid rgba(0, 0, 0, .125)');
 			    $couponCard.find('.button .btn').show();
 			});
 		}
 		
 		function resetCouponByAmount(couponCode, couponNo, couponName, dcAmount) {
 			let couponDcPrice = parseInt(dcAmount);
-			let output = `<div class='btn' onclick="applyCouponByAmount('` + couponCode + `', '` + couponNo + `', '` + couponName + `', '` + dcAmount + `');">등록</div>`;
+			let output = `<h3>\${dcAmount} 원</h3>
+						<div class='btn' onclick="applyCouponByAmount('\${couponCode}', '\${couponNo}', '\${couponName}', '\${dcAmount}');">등록</div>`;
 			
 			resetCouponDc(parseInt(couponDcPrice));
 			resetCouponInfo(couponCode, couponName);
@@ -441,6 +467,7 @@
 			
 			$('.couponCard').each(function() {
 			    var $couponCard = $(this);
+			    $couponCard.css('border', '1px solid rgba(0, 0, 0, .125)');
 			    $couponCard.find('.button .btn').show();
 			});
 		}
@@ -587,23 +614,33 @@
 				let address = item.delivery_address.split("/")[1];
 				let detailAddress = item.delivery_address.split("/")[2];
 				
-				
 				if (item.is_main == "M") {
-					mainDelivery = "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "_delivery'>";
-					mainDelivery += "<div class='card-header'>기본배송지</div><div class='card-body'>";
-					mainDelivery += "<h3>" + item.delivery_name + "</h3>";
-					mainDelivery += "<div>" + item.delivery_address + "</div></div><div class='card-footer'>";
-					mainDelivery += "<div class='button'>";
-					mainDelivery += `<div class='btn' onclick="applyAddress('` + item.delivery_address + `', '` + item.delivery_name + `');">등록</div></div></div></div>`;
+					mainDelivery = `<div class='card delveryCard mb-20' id='\${item.delivery_no_delivery}'>
+										<div class='card-header'><p class="cardDeliveryName">\${item.delivery_name} <span class="badge bg-danger mainHeadSpan">기본배송지</span></p></div>
+										<div class='card-body'>
+											<h5 class="mb-10">\${item.delivery_address.split("/")[1]}</h5>
+											<h5>\${item.delivery_address.split("/")[2]} [\${item.delivery_address.split("/")[0]}]</h5>
+										</div>
+										<div class='card-footer'>
+											<div class='button'>
+												<div class='btn' onclick="applyAddress('\${item.delivery_address}', '\${item.delivery_name}')">등록</div>
+											</div>
+										</div>
+									</div>`;
 				} else {
-					output += "<div class='card mt-30 mb-30' id=" + "'"+ item.delivery_no + "_delivery'>";
-					output += "<div class='card-header'>배송지</div><div class='card-body'>";
-					output += "<h3>" + item.delivery_name + "</h3>";
-					output += "<div>" + item.delivery_address + "</div></div><div class='card-footer'>";
-					output += "<div class='button'>";
-					output += `<div class='btn' onclick="applyAddress('` + item.delivery_address + `', '` + item.delivery_name + `');">등록</div></div></div></div>`;
+					output += `<div class='card mb-30 delveryCard' id='\${item.delivery_no_delivery}'>
+									<div class='card-header'><p class="cardDeliveryName">\${item.delivery_name} <span class="badge bg-danger headSpan">배송지</span></p></div>
+									<div class='card-body'>
+										<h5 class="mb-10">\${item.delivery_address.split("/")[1]}</h5>
+										<h5>\${item.delivery_address.split("/")[2]} [\${item.delivery_address.split("/")[0]}]</h5>
+									</div>
+									<div class='card-footer'>
+										<div class='button'>
+											<div class='btn' onclick="applyAddress('\${item.delivery_address}', '\${item.delivery_name}')">등록</div>
+										</div>
+									</div>
+							   </div>`;
 				}
-				
 				
 			});
 			console.log(output);
@@ -672,6 +709,8 @@
 		    $("#savedDeliveryName").val(mainDeliveryName);
 		    $("#deliveryAddressHidden").val(mainDeliveryAddress);
 		    $("#deliveryName").val(mainDeliveryName);
+		    
+		    showOrderModal("기본 배송지가 입력되었습니다.");
 		}
 		
 		function useCouponCode() {
@@ -841,9 +880,96 @@
 		    width: 100%;
 		}
 		
-		.modal-body {
-		    max-height: 490px; /* 원하는 높이로 설정 */
-		    overflow-y: auto; /* 세로 스크롤바 추가 */
+		#deliveryModal .modal-body, #couponModal .modal-body{
+		    max-height: 490px;
+		    overflow-y: auto;
+		}
+		
+		.delveryCard .card-header,
+		.couponCard .card-header,
+		.delveryCard .card-footer,
+		.couponCard .card-footer {
+			border: none;
+			background-color: #FFFFFF;
+		}
+		
+		.cardDeliveryName {
+			text-align: center;
+			display: flex;
+			align-items: center;
+			font-size: 16px;
+			font-weight: bold;
+			color: #FFFFFF;
+		}
+		
+		.cardDeliveryName span{
+			margin-left: 10px;
+			text-align: center;
+			display: flex;
+			align-items: center;
+		}
+		
+		.delveryCard .card-header .mainHeadSpan {
+			background-color: #FD5A67 !important;
+			width: 75px;
+		}
+		
+		.delveryCard .card-header .headSpan {
+			background-color: #0DCAF0 !important;
+			width: 52px;
+		}
+		
+		.delveryCard .card-header span {
+			text-align: center;
+			display: flex;
+			align-items: center;
+			margin-left: 10px;
+		}
+		
+		.delveryCard .card-header {
+			background-color: #a8a691;
+			border-bottom: 1px solid #d8d7d6;
+		}
+		
+		.delveryCard .card-footer .button {
+			height: 25px;
+			display: flex;
+			justify-content: right;
+		}
+		
+		.delveryCard .card-footer .btn {
+			height: 25px !important;
+			display: flex;
+			align-items: center
+		}
+		
+		.couponCard .card-footer .button {
+			height: 38px;
+			display: flex;
+			justify-content: space-between;
+		}
+		
+		.couponCard .card-footer .btn {
+			height: 30px !important;
+			display: flex;
+			align-items: center
+		}
+		
+		.couponCard .cart-body {
+			padding: 0 16px !important;
+		}
+		
+		.couponCard .couponInfo {
+			display: flex;
+			justify-content: space-between;
+		}
+		
+		.couponCard .card-body {
+			padding: 0 16px;
+		}
+		
+		.couponCard .card-footer {
+			padding: 5px 16px 8px 16px;
 		}
 		
     </style>
@@ -874,9 +1000,9 @@
                 </div>
                 <div class="col-lg-6 col-md-6 col-12">
                     <ul class="breadcrumb-nav">
-                        <li><a href="../"><i class="lni lni-home"></i> Home</a></li>
-                        <li><a href="../">Shop</a></li>
-                        <li>checkout</li>
+                        <li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+                        <li><a href="/product/jewelry/all">Shop</a></li>
+                        <li>주문 / 결제</li>
                     </ul>
                 </div>
             </div>
@@ -929,13 +1055,13 @@
 								
 									<div class="row align-items-center product-list">
 										<div class="col-lg-1 col-md-1 col-12">
-											<a href="/product/productDetail?productNo=${orderProduct.product_no }">
-												<img class="productImage" src="${orderProduct.image_url }" alt="productImage">
+											<a href="/product/jewelry/detail?productNo=${orderProduct.product_no }">
+												<img class="productImage" src="${empty orderProduct.image_url ? '/resources/images/noP_image.png' : orderProduct.image_url}" alt="productImage">
 											</a>
 										</div>
 										<div class="col-lg-5 col-md-5 col-12">
 											<h6 class="product-name">
-												<a href="/product/productDetail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
+												<a href="/product/jewelry/detail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
 											</h6>
 											<p>
 												<span>수량: <span class="product_quantity" id="${orderProduct.product_no }_quantity">${orderProduct.quantity }</span> 개</span>
@@ -1117,11 +1243,11 @@
 										            <div class="form-input form addressForm">
 										                <h5 class="ordererHeader">주소</h5>
 										                <div class="addressSearchArea">
-										                    <input class="postNumber" type="text" id="postcodeNew" placeholder="우편번호">
+										                    <input class="postNumber" type="text" id="postcodeNew" placeholder="우편번호" readonly>
 										                    <input class="searchPost" type="button" onclick="sample6_execDaumPostcode('New')" value="검색"><br>
 										                </div>
-										                <input type="text" id="addressNew" placeholder="주소"><br>
-										                <input type="text" id="detailAddressNew" placeholder="상세주소">
+										                <input type="text" id="addressNew" placeholder="주소" readonly><br>
+										                <input type="text" id="detailAddressNew" placeholder="상세주소" readonly>
 										            </div>
 										            <div class="form-check">
 										                <div id="saveDeliveryDiv">
@@ -1595,6 +1721,7 @@
 	
 	<jsp:include page="deliveryModal.jsp"></jsp:include>
 	<jsp:include page="couponModal.jsp"></jsp:include>
+	<jsp:include page="orderModal.jsp"></jsp:include>
 	
     <jsp:include page="../footer.jsp"></jsp:include>
     
@@ -1677,7 +1804,27 @@
   
   <!-- 결제 이벤트 핸들러(toss, 네이버페이, 카카오페이) -->
   <script>
-  	  // 기본 결제 수단은 카드로 설정
+	  function validateEmail(email) {
+	 	 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		 return emailPattern.test(email);
+	  }
+	  
+	  function validateData(data) {
+	 	 if (data == null || data == undefined || data == "") {
+	 		 return false;
+	 	 }
+		 return true;
+	  }
+	  
+	  function showOrderModal(message) {
+		  $("#orderModal").modal("show");
+			$("#orderModal .modal-text").text(message);
+			
+			setTimeout(function() {
+			$('#orderModal').modal('hide');
+			}, 750);
+ 	  }
+	  
 	  let selectedPaymentMethod = 'CARD';
 
 	  function selectPaymentMethod(method) {
@@ -1700,30 +1847,62 @@
 	            console.log(productsInfo);
 		    }
 
-            const paymentType = document.querySelector("#payment_type").value;
-            // const totalPrice = parseInt(document.querySelector(".totalPrice").textContent.replace(/\D/g, "")) // 예) "453,000원" -> 453000
             const saveDeliveryType = document.querySelector("#saveDeliveryType").value;
             const deliveryName = document.querySelector("#deliveryName").value;
             const pointDCText = document.querySelector("#pointDC").textContent;
             const pointDC = parseInt(pointDCText.replace(/,/g, ''), 10);
             const couponUse = document.querySelector("#couponUse").value;
-            const deliveryAddress = document.querySelector("#deliveryAddressHidden").value + document.querySelector("#detailAddressNew").value;
             const deliveryRequest = document.querySelector("input[name='deliveryRequest']").value;
-            // const deliveryCost = parseInt(document.querySelector("#deliveryCost").textContent.replace(/\D/g, "")) // 예) "2500 원" -> 2500
             const ordererId = document.querySelector("input[name='ordererId']").value;
+            
+            const paymentType = document.querySelector("#payment_type").value;
+            const deliveryAddress = document.querySelector("#deliveryAddressHidden").value + document.querySelector("#detailAddressNew").value;
             const ordererName = document.querySelector("input[name='ordererName']").value;
             const phoneNumber = document.querySelector("input[name='phoneNumber']").value;
             const email = document.querySelector("input[name='email']").value;
-
+            
+ 			if (!validateData(ordererName)) {
+ 				showOrderModal("성함을 입력해주세요.");
+            	return;       	
+            }
+            
+			if (!validateData(phoneNumber)) {
+				showOrderModal("핸드폰 번호를 입력해주세요.");
+            	return;
+			}
+			
+			if (!validateData(email)) {
+				showOrderModal("이메일을 입력해주세요.");
+            	return;
+            }
+            
+            if (!validateEmail(email)) {
+            	showOrderModal("유효하지 않은 이메일입니다.");
+            	return;
+            }
+            
+            if (!validateData(deliveryAddress)) {
+            	showOrderModal("주소를 입력해주세요.");
+            	return;
+            }
+            
+            if (!validateData(deliveryAddress.split("/")[2])) {
+            	showOrderModal("상세주소를 입력해주세요.");
+            	return;
+            }
+            
+            if (!validateData(paymentType)) {
+            	showOrderModal("결제 수단을 선택해주세요.");
+            	return;
+            }
+            
             const paymentData = {
                 productsInfo,
-                // totalPrice,
                 paymentType,
                 saveDeliveryType,
                 deliveryName,
                 deliveryAddress,
                 deliveryRequest,
-                // deliveryCost,
                 ordererId,
                 ordererName,
                 phoneNumber,
@@ -1756,6 +1935,7 @@
 					isOrderMade = false;
                 }
             });
+			
             if (isOrderMade == false) {return} // 주문 테이블 생성이 제대로 안되었을 때 함수 종료
             
 			// @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
@@ -1888,22 +2068,6 @@
 			}
         }
 	  
-/* 	  function tryPayment() {
-		  // TODO : 총 결제금액을 view에서 얻어오기, 여기서는 100원으로 임의로 설정
-		  amount.value = 200
-		  let response = sendAmountToServer(amount)
-		  if (response == null) {
-			  return;
-		  } else if (response.result == "fail") {
-			  // TODO : 잚못된 요청입니다 페이지 날리기
-			  alert("잘못된 요청입니다")
-			  return;
-		  }
-		  // TODO : 뷰에서 상품목록 조립해서 이름 만들기
-		  let orderName = "어쩌고저쩌고"
-		  // requestPayment(response.orderId, orderName, amount)
-	  } */
-
 	  // TODO : orders 테이블에 행을 삽입하는 시점에서 orderId가 서버의 session에 저장되어 있어야 함.
 	  // 일단 여기서는 테스트를 위해 입력폼으로 orderId를 전송, **테스트가 끝나면 컨트롤러의 메소드를 삭제해야 함!!**
 	  function sendOrderIdForTest() {
@@ -1931,10 +2095,11 @@
 	  // orders 테이블에 insert가 이미 일어났으므로 orderId는 이미 서버에 저장되어 있음
 	  function sendAmountToServer(amount) {
 		  let response = null
+		  let sentByOrderRequest = null
 		  $.ajax({
 			  async : false,
 			  type : 'POST',
-			  url : "/payment/saveExpectedTotalPrice",
+			  url : "/order/session",
 			  data: amount, // amount 객체의 예시 : {currency : "KRW", value : 100}
 			  dataType: "json",
 			  contentType : 'application/x-www-form-urlencoded',
@@ -1950,108 +2115,6 @@
 		  return response
 	  }
 	  
-	  
-/*	  // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
-	  // @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment
-	  async function requestPayment(orderId = null, orderName, amount) {            
-		  switch (selectedPaymentMethod) {
-		  case "CARD":
-			  await payment.requestPayment({
-				  method: "CARD", // 카드 및 간편결제
-				  amount: amount,
-				  orderId: orderId,
-				  orderName: orderName,
-				  successUrl: window.location.origin + "/payment/success.html?method=CARD", // 결제 요청이 성공하면 리다이렉트되는 URL
-				  failUrl: window.location.origin + "/fail.html", // 결제 요청이 실패하면 리다이렉트되는 URL
-				  card: {
-					  useEscrow: false,
-					  flowMode: "DEFAULT",
-					  useCardPoint: false,
-					  useAppCardOnly: false,
-				  },
-			  });
-		  case "TRANSFER":
-			  await payment.requestPayment({
-				  method: "TRANSFER", // 계좌이체 결제
-				  amount: amount,
-				  orderId: orderId,
-				  orderName: orderName,
-				  successUrl: window.location.origin + "/payment/success.html",
-				  failUrl: window.location.origin + "/fail.html",
-				  transfer: {
-					  cashReceipt: {
-					  type: "소득공제",
-					  },
-					  useEscrow: false,
-				  },
-			  });
-		  case "VIRTUAL_ACCOUNT":
-			  await payment.requestPayment({
-				  method: "VIRTUAL_ACCOUNT", // 가상계좌 결제
-				  amount: amount,
-				  orderId: orderId,
-				  orderName: orderName,
-				  successUrl: window.location.origin + "/payment/success.html",
-				  failUrl: window.location.origin + "/fail.html",
-				  virtualAccount: {
-					  cashReceipt: {
-					  type: "소득공제",
-					  },
-					  useEscrow: false,
-					  validHours: 24,
-				  },
-			  });
-		  }
-
-		  // 네이버페이
-		  // 레퍼런스 : https://developers.pay.naver.com/docs/v2/api#etc-etc_pay_reserve
-		  if (selectedPaymentMethod == "NAVER_PAY") {
-			  console.log("네이버 페이 선택")
-			  oPay.open({
-				  "merchantPayKey": "202410179U6ds9",
-				  "productName": orderName,
-				  "productCount": "0",
-				  "totalPayAmount": "" + amount.value,
-				  "taxScopeAmount": "" + amount.value,
-				  "taxExScopeAmount": "0",
-				  "returnUrl": window.location.origin + "/approveNaverPay"
-			  });
-		  }
-		  
-		  // TODO : 카카오페이
-		  // 레퍼런스 : https://developers.kakaopay.com/docs/payment/online/single-payment#payment-ready-sample-request
-		  if (selectedPaymentMethod == "KAKAO_PAY") {
-			  console.log("카카오 페이 선택")
-			  // NOTE : http 요청으로 카카오페이 서버에 직접 보내면 유저가 브라우저의 개발자 도구를 통해 cid, partner_order_id 같은 중요한 정보를 직접 확인 가능
-			  // 그러므로 여기서는 POST 요청으로 서버의 컨트롤러에게 대신 요청을 보내도록 함.
-			  // TODO : 보낼 겍체에 필요한 정보 별도로 채워넣기 (주문번호, 가격)
-			  let item = {
-				  amount: amount.value
-			  }
-			  
-			  // NOTE : ajax 요청은 컨트롤러로부터 응답을 받아도 페이지를 이동시켜주지 않는다. 그래서 success 메서드를 붙어야 함 
-			  $.ajax({
-				type : 'POST',
-				url : "/kakaoPay/ready",
-				data: item,
-				dataType: "json",
-				contentType : 'application/x-www-form-urlencoded',
-				// NOTE : cotentType을 application/json으로 지정하고 스프링 서버에서 @Requestbody + DTO 객체로 받아올 수도 있지만 DTO 만들기 싫어서 이렇게 함
-				success : function(response) {
-					// console.log("response : " + response)
-					// NOTE : 성공하면 페이지 이동해서 그 페이지에서 자바스크립트를 호출하여 카카오페이 결제 팝업을 바꾸는 방식에서
-					// 페이지 이동하지 않고 그냥 주문 페이지에서 팝업 띄우는 방식으로 변경하였다.
-					console.log("카카오페이 결제 팝업 호출")
-					console.log("response : " + JSON.stringify(response))
-					showKakaopayPaymentWindow(response.paymentURL)
-				},
-				error : function(request, status, error) {
-					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);       
-				  }
-			  })
-		  }
-	  }*/
-
 	  function generateRandomString() {
 		  return window.btoa(Math.random()).slice(0, 20);
 	  }

@@ -2,7 +2,10 @@ package com.finalProject.controller.member;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -19,19 +22,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finalProject.model.DeliveryDTO;
+import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
-import com.finalProject.model.ResponseData;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.MemberPointDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
+import com.finalProject.model.RecentCouponDTO;
+import com.finalProject.model.ResponseData;
+import com.finalProject.model.product.ProductDTO;
+import com.finalProject.persistence.PointDAO;
 import com.finalProject.service.member.MemberService;
+import com.finalProject.service.point.PointService;
+import com.finalProject.service.product.UserProductService;
 import com.finalProject.util.KakaoUtil;
+import com.finalProject.util.NaverUtil;
 import com.finalProject.util.ReceiveMailPOP3;
 import com.finalProject.util.RememberPath;
 import com.finalProject.util.SendMailUtil;
@@ -54,6 +71,15 @@ public class MemberController {
 
 	@Inject
 	private KakaoUtil kakao;
+
+	@Inject
+	private NaverUtil naver;
+	
+	@Inject
+	private UserProductService service;
+	
+	@Inject
+	private PointService pService;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
 	public String viewLogin() {
@@ -170,6 +196,7 @@ public class MemberController {
 
 		try {
 			if (memberService.signUp(memberDTO) == 1) {
+				pService.insertPointPlus(memberDTO.getMember_id(), 2);	
 				System.out.println("insert성공");
 				// 기본 주소 체크 여부 확인
 				if (basicAddress != null) {
@@ -215,14 +242,20 @@ public class MemberController {
 
 	// 로그아웃
 	@RequestMapping(value = "/logout")
-	public String logout(HttpServletRequest request) {
+	public String logout(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession ses = request.getSession();
 		ses.removeAttribute("loginMember");
 		ses.removeAttribute("rememberPath");
 		ses.removeAttribute("auth");
 		System.out.println("로그아웃");
 		if (ses.getAttribute("accessToken") != null) {
-			kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
+//			kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
+		}
+		Cookie cookie = WebUtils.getCookie(request, "al"); // 자동로그인 쿠키를 저장
+		if (cookie != null) {
+			cookie.setMaxAge(0); // 유효기간 0초
+			cookie.setPath("/"); // 쿠키의 Path를 "/"로 설정
+			response.addCookie(cookie); // 쿠키 덮어씌우기(쿠키삭제처리)
 		}
 		return "redirect:/";
 	}
@@ -266,7 +299,290 @@ public class MemberController {
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_history";
 	}
-
+	
+	// 마이페이지 (포인트 내역)
+	@RequestMapping(value = "/myPage/pointList")
+	public String myPage_pointList(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_pointList";
+	}
+	
+	// 마이페이지 (쿠폰 내역)
+	@RequestMapping(value = "/myPage/couponList")
+	public String myPage_couponList(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_couponList";
+	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@GetMapping("/myPage/getPointInfo")
+	@ResponseBody
+	public Map<String, Object> getPointInfo(HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		MemberPointDTO memberPointDTO = null;
+		try {
+			memberPointDTO = memberService.getMemberPoint(loginMember.getMember_id());
+			resultMap.put("memberPoint", memberPointDTO.getMember_point());
+			resultMap.put("usePoint", memberPointDTO.getUse_point());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getPointPagingInfo")
+	@ResponseBody
+	public Map<String, Object> getPointPagingInfo(@RequestBody String pointType, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		int totalPageCount = 0;
+		
+		try {
+			totalPageCount = memberService.getPointPagingInfo(pointType, loginMember.getMember_id());
+			resultMap.put("totalPageCount", totalPageCount);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getEarnedPointList")
+	@ResponseBody
+	public Map<String, Object> getEarnedPointList(@RequestParam int pageNo, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PointDTO> earnedPointList = null;
+		
+		try {
+			earnedPointList = memberService.getEarnedPointList(loginMember.getMember_id(), pageNo);
+			resultMap.put("earnedPointList", earnedPointList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getUsedPointList")
+	@ResponseBody
+	public Map<String, Object> getUsedPointList(@RequestParam int pageNo, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PointDTO> usedPointList = null;
+		
+		try {
+			usedPointList = memberService.getUsedPointList(loginMember.getMember_id(), pageNo);
+			resultMap.put("usedPointList", usedPointList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	
+	// 마이페이지 (사용가능한 쿠폰 조회)
+	@GetMapping("/myPage/getPaidCouponList")
+	@ResponseBody
+	public Map<String, Object> getPaidCouponList(HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PaidCouponDTO> paidCouponList = null;
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String currentTime = now.format(formatter);
+		
+		try {
+			paidCouponList = memberService.getCouponList(loginMember.getMember_id(), currentTime);
+			resultMap.put("paidCouponList", paidCouponList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (최근 3개월 쿠폰 조회)
+	@GetMapping("/myPage/getRecentCouponList")
+	@ResponseBody
+	public Map<String, Object> getRecentCouponList(HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<RecentCouponDTO> recentCouponList = null;
+		
+		try {
+			recentCouponList = memberService.getRecentCouponList(loginMember.getMember_id());
+			resultMap.put("recentCouponList", recentCouponList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (배송지 관리)
+	@RequestMapping(value = "/myPage/manageDelivery")
+	public String myPage_manageAddresses(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_manageDelivery";
+	}
+	
+	// 마이페이지 (배송지 추가)
+	@RequestMapping(value = "/myPage/addDeliveryPage")
+	public String myPage_addDelivery(HttpServletRequest request, HttpSession session, Model model) {
+		System.out.println("배송지 추가 페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		model.addAttribute("memberInfo", loginMember);
+		return "/user/pages/member/myPage_addDelivery";
+	}
+	
+	// 마이페이지 (배송지 수정)
+	@RequestMapping(value = "/mypage/modifyDelivery")
+	public String myPage_modifyDelivery(@RequestParam("deliveryNo") int deliveryNo, @RequestParam("isMain") String isMain, HttpServletRequest request, HttpSession session, Model model) {
+		System.out.println("배송지 추가 페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		model.addAttribute("memberInfo", loginMember);
+		model.addAttribute("deliveryNo", deliveryNo);
+		model.addAttribute("isMain", isMain);
+		return "/user/pages/member/myPage_modifyDelivery";
+	}
+	
+	// 마이페이지 (배송지 정보 조회)
+	@GetMapping("/myPage/getDeliveryInfo")
+	@ResponseBody
+	public Map<String, Object> getDeliveryInfo(@RequestParam(value="deliveryNo", required=false, defaultValue="0") int deliveryNo, HttpSession session) {
+		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
+		List<DeliveryDTO> deliveryList = null;
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		try {
+			deliveryList = memberService.getDeliveryList(loginDTO.getMember_id());
+			for (DeliveryDTO deliveryDTO : deliveryList) {
+				if (deliveryNo != 0) {
+					if (deliveryDTO.getDelivery_no() == deliveryNo) {
+						resultMap.put("deliveryInfo", deliveryDTO);
+					}
+				}
+			}
+			
+			if (deliveryNo == 0) {
+				resultMap.put("deliveryList", deliveryList);
+			}
+			
+			resultMap.put("memberInfo", loginDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (배송지 추가)
+	@PostMapping("/myPage/saveDelivery")
+	public String saveDelivery(
+			@ModelAttribute DeliveryVO deliveryInfo, 
+			@RequestParam("deliveryType") String deliveryType,
+			RedirectAttributes redirectAttributes) {
+		
+		if (deliveryType.contains("saveDelivery")) {
+			// 배송지 저장
+			try {
+				memberService.saveDelivery(deliveryInfo);
+				redirectAttributes.addFlashAttribute("successMessage", "배송지가 추가되었습니다");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		} 
+	
+		if (deliveryType.contains("saveAddress")) {
+			// 회원 정보 주소 수정
+			try {
+				if (memberService.updateAddress(deliveryInfo)) {
+					redirectAttributes.addFlashAttribute("successMessage", "회원 주소로 수정되었습니다");
+				} else {
+					return "/user/pages/warning";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
+	
+	// 마이페이지 (배송지 수정)
+	@PostMapping("/myPage/modifyDelivery")
+	public String modifyDelivery(
+			@ModelAttribute DeliveryVO deliveryInfo, 
+			@RequestParam("deliveryType") String deliveryType,
+			@RequestParam("deliveryNo") int deliveryNo,
+			RedirectAttributes redirectAttributes) {
+		
+		DeliveryDTO deliveryDTO = DeliveryDTO.builder()
+											 .delivery_no(deliveryNo)
+											 .delivery_name(deliveryInfo.getDeliveryName())
+											 .delivery_address(deliveryInfo.getDeliveryAddress())
+											 .member_id(deliveryInfo.getMemberId())
+											 .is_main(deliveryInfo.getIsMain())
+											 .build();
+		
+		if (deliveryType.contains("modifyDelivery")) {
+			// 배송지 수정
+			try {
+				memberService.modifyDelivery(deliveryDTO);
+				redirectAttributes.addFlashAttribute("successMessage", "배송지가 수정되었습니다");
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		}
+	
+		if (deliveryType.contains("saveAddress")) {
+			// 회원 정보 주소 수정
+			try {
+				if (memberService.updateAddress(deliveryInfo)) {
+					redirectAttributes.addFlashAttribute("successMessage", "회원 주소로 수정되었습니다");
+				} else {
+					return "/user/pages/warning";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "/user/pages/warning";
+			}
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
+	
+	// 마이페이지 (배송지 삭제)
+	@PostMapping("/myPage/deleteDelivery")
+	public String deleteDelivery(@RequestParam("deliveryNo") int deliveryNo, RedirectAttributes redirectAttributes) {
+		try {
+			memberService.deleteDelivery(deliveryNo);
+			redirectAttributes.addFlashAttribute("successMessage", "배송지가 삭제되었습니다");
+		} catch (Exception e) {
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("successMessage", "배송지가 삭제에 실패했습니다");
+		}
+		
+		return "redirect:/member/myPage/manageDelivery";
+	}
+	
 	// 마이페이지 인증(정보 수정시 비밀번호를 확인함.)
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
 	public String auth(HttpServletRequest request, @RequestParam("pwd") String member_pwd) {
@@ -336,10 +652,6 @@ public class MemberController {
 			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
-		// 입력받은 우편번호+주소+상세주소
-		// 우편번호/주소/상세주소
-		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
-		System.out.println(memberDTO.toString());
 		try {
 			// update가 정상적으로 됬다면
 			if (memberService.updateMember(memberDTO)) {
@@ -404,7 +716,7 @@ public class MemberController {
 				cookie.setPath("/"); // 모든 경로에서 사용 가능
 				response.addCookie(cookie); // 쿠키 저장(삭제)
 				if (ses.getAttribute("accessToken") != null) {
-					kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
+//					kakao.kakaoLogout((String) ses.getAttribute("accessToken"), request);
 				}
 			} else {
 				json = new ResponseData("fail", "탈퇴 실패");
@@ -668,6 +980,145 @@ public class MemberController {
 		}
 
 		return "/user/index";
+	}
+
+	// 네이버 로그인(인가코드 api)
+	@GetMapping("/naver/login")
+	public String naver(HttpServletResponse response) {
+		try {
+			naver.getCode(response);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "/user/index";
+	}
+
+	// 네이버 로그인(토큰 api)
+	@RequestMapping(value = "/naver")
+	public String kakaoLogin(HttpServletResponse response, Model model, HttpServletRequest request,
+			@RequestParam(value = "code", defaultValue = "false") String code,
+			@RequestParam(value = "state", defaultValue = "false") String state) throws Exception {
+		String result = "/user/index";
+		HttpSession ses = request.getSession();
+		String accessToken = naver.getAccessToken(code); // 인가코드로 토큰을 받아오기
+		MemberDTO userInfo = naver.getUserInfo(accessToken); // 토큰으로 유저정보 받아오기
+		ses.setAttribute("accessToken", accessToken); // 세션에 토큰 저장
+		System.out.println(userInfo);
+		// 받아온 id로 members 테이블 조회(naver_id)
+		LoginDTO loginMember = memberService.selectMemberByNaverId(userInfo.getNaver_id());
+		// naver_id가 일치하는 계정정보를 찾았다면 해당 데이터로 로그인
+		if (loginMember != null) {
+			ses.setAttribute("loginMember", loginMember);
+			System.out.println("로그인 정보 : " + loginMember);
+		} else {
+			model.addAttribute("userInfo", userInfo);
+			result = "/user/pages/member/signUpNaver";
+		}
+
+		return result;
+	}
+
+	// 네이버 회원가입(간편가입)
+	@PostMapping(value = "/naver/signUp")
+	public String naverSignUp(MemberDTO memberDTO, Model model,
+			@RequestParam(value = "basicAddress", required = false) String basicAddress,
+			@RequestParam(value = "addressName", required = false) String addressName) {
+		System.out.println(memberDTO);
+		// 우편번호/주소/상세주소
+		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
+		try {
+			if (memberService.signUpNaver(memberDTO) == 1) {
+				System.out.println("네이버 간편가입 완료");
+				LoginDTO loginDTO = new LoginDTO();
+				loginDTO.setMember_id(memberDTO.getMember_id());
+				loginDTO.setMember_pwd(memberDTO.getMember_pwd());
+				LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에
+				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장 // 조회한다.
+				if (basicAddress != null) { // 기본주소 설정
+					try {
+						memberService.saveAdddress(memberDTO, addressName);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				System.out.println("잘못된 접근(가입에 필요한 데이터 부족");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "/user/index";
+	}
+	
+	// 찜목록 보기
+	@RequestMapping(value= "/myPage/wishList")
+	public String showProductList(HttpServletRequest request,
+			@RequestParam(value = "category", required = false) Integer category,
+			@RequestParam(value = "page", defaultValue = "1") int page, // 페이지 기본 값 설정
+			@RequestParam(value = "pageSize", defaultValue = "10000") int pageSize, // 한 페이지에서 보여줄 상품 개수
+			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model) throws Exception {
+
+		List<ProductDTO> products = service.getProductsByPage(page, pageSize); // 전체 상품 조회
+
+		// 전체 상품 개수 계산
+		int totalProducts = service.getProductCount();
+		int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+		// 한 번에 보여줄 페이지 블록 설정 (예: 10페이지씩)
+		int pageBlockSize = 10;
+		int currentBlock = (int) Math.ceil((double) page / pageBlockSize);
+		int startPage = (currentBlock - 1) * pageBlockSize + 1;
+		int endPage = Math.min(startPage + pageBlockSize - 1, totalPages);
+		int totalProductCount = service.getProductCount();
+
+		// 찜
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인정보 받기
+		if (loginDTO != null) { // 로그인 상태 확인
+			int wishList[] = memberService.getWishList(loginDTO.getMember_id()); // member_id로 찜목록 조회
+			model.addAttribute("wishList", wishList);
+			System.out.println("찜목록 조회");
+		}
+		
+
+		// Model에 데이터 추가
+		model.addAttribute("totalProductCount", totalProductCount);
+		model.addAttribute("products", products);
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", totalPages);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+		model.addAttribute("hasPrevBlock", currentBlock > 1);
+		model.addAttribute("hasNextBlock", endPage < totalPages);
+		model.addAttribute("pageSize", pageSize);
+		model.addAttribute("sortOrder", sortOrder); // 정렬 기준 추가
+		model.addAttribute("category", category); // 카테고리 추가
+		model.addAttribute("totalProducts", totalProducts);
+		System.out.println("all : " + totalProducts);
+
+		// 각 카테고리별 상품 개수 조회
+		int necklaceCount = service.getProductCountByCategory(196);
+		int earringCount = service.getProductCountByCategory(195);
+		int piercingCount = service.getProductCountByCategory(203);
+		int bangleCount = service.getProductCountByCategory(197);
+		int ankletCount = service.getProductCountByCategory(201);
+		int ringCount = service.getProductCountByCategory(198);
+		int couplingCount = service.getProductCountByCategory(200);
+		int pendantCount = service.getProductCountByCategory(202);
+		int otherCount = service.getProductCountByCategory(204);
+		// 각 카테고리별 상품 개수 추가
+		model.addAttribute("necklaceCount", necklaceCount);
+		model.addAttribute("earringCount", earringCount);
+		model.addAttribute("piercingCount", piercingCount);
+		model.addAttribute("bangleCount", bangleCount);
+		model.addAttribute("ankletCount", ankletCount);
+		model.addAttribute("ringCount", ringCount);
+		model.addAttribute("couplingCount", couplingCount);
+		model.addAttribute("pendantCount", pendantCount);
+		model.addAttribute("otherCount", otherCount);
+
+		return "/user/pages/member/myPage_wishList"; // jsp 페이지로 반환
 	}
 
 }

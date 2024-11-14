@@ -65,9 +65,6 @@ public class CartControllerAdvice {
 								}
 							}
 						}
-						
-						
-						
 						cartItemCount += cookieCartItems.length - matchedProductCount;
 					}
 				}

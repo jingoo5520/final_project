@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>회원가입</title>
+<title>ELOLIA</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link
@@ -26,6 +26,7 @@
 <link rel="stylesheet"
 	href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 </head>
 <style>
@@ -90,14 +91,13 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">Registration</h1>
+						<h1 class="page-title">회원가입</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i>
-								Home</a></li>
-						<li>Registration</li>
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li>회원가입</li>
 					</ul>
 				</div>
 			</div>
@@ -112,7 +112,7 @@
 				<div class="col-lg-6 offset-lg-3 col-md-10 offset-md-1 col-12">
 					<div class="register-form">
 						<div class="title">
-							<h3>ELOLIA회원가입</h3>
+							<h3>ELOLIA 회원가입</h3>
 							<p></p>
 						</div>
 						<form class="row" action="/member/signUp" method="post">
@@ -294,6 +294,8 @@
 			<p id="modalText">내용</p>
 		</div>
 	</div>
+	
+	<jsp:include page="memberModal.jsp"></jsp:include>
 
 	<!-- End Account Register Area -->
 

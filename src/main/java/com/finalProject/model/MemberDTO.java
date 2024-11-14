@@ -25,4 +25,5 @@ public class MemberDTO {
 	private String address2; //상세주소
 	private String email;
 	private String phone_number;
+	private String naver_id; // 네이버 회원 구분용
 }
