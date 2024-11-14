@@ -8,10 +8,10 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>주문 결제</title>
+    <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
     <!-- ========================= CSS here ========================= -->
     <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -295,8 +295,7 @@
 			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			
 			let usePoint = Number($('input[name="point"]').val());
-			$("#pointDC").text(usePoint.toLocaleString('ko-KR'));
-			$("#usePoint").val(0);
+			$("#pointDC").text("0");
 			$('input[name="point"]').val(0);
 			$("#allPointsUse").prop('disabled', false);
 			$("#allPointsUse").prop('checked', false);
@@ -337,7 +336,7 @@
 						remainingDaysText = `<span style="color: #FD5A67">\${item.remaining_days} 일</span>`;
 					}
 					
-					allCoupon = `<div class='couponCard card mb-20' id="\${item.coupon_no}_coupon">
+					allCoupon += `<div class='couponCard card mb-20' id="\${item.coupon_no}_coupon">
 									<div class='card-header'>전체 지급</div>
 									<div class='card-body'>
 										<h4>\${item.coupon_name}</h4>
@@ -1056,13 +1055,13 @@
 								
 									<div class="row align-items-center product-list">
 										<div class="col-lg-1 col-md-1 col-12">
-											<a href="/product/productDetail?productNo=${orderProduct.product_no }">
-												<img class="productImage" src="${orderProduct.image_url }" alt="productImage">
+											<a href="/product/jewelry/detail?productNo=${orderProduct.product_no }">
+												<img class="productImage" src="${empty orderProduct.image_url ? '/resources/images/noP_image.png' : orderProduct.image_url}" alt="productImage">
 											</a>
 										</div>
 										<div class="col-lg-5 col-md-5 col-12">
 											<h6 class="product-name">
-												<a href="/product/productDetail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
+												<a href="/product/jewelry/detail?productNo=${orderProduct.product_no }">${orderProduct.product_name }</a>
 											</h6>
 											<p>
 												<span>수량: <span class="product_quantity" id="${orderProduct.product_no }_quantity">${orderProduct.quantity }</span> 개</span>
@@ -1597,7 +1596,7 @@
 										</div>
 									</div>
 						
-									<input type="hidden" name="payment_type" id="payment_type">
+									<input type="hidden" name="payment_type" id="payment_type" value="CARD">
 								</section>
 							</li>
 						</ul>
@@ -1826,7 +1825,7 @@
 			}, 750);
  	  }
 	  
-	  let selectedPaymentMethod = null;
+	  let selectedPaymentMethod = 'CARD';
 
 	  function selectPaymentMethod(method) {
 		selectedPaymentMethod = method;

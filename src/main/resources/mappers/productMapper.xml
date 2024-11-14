@@ -14,10 +14,12 @@
            p.product_dc_type, 
            p.product_sell_count,
            max(pi.image_url) as image_url, 
-           c.category_name
+           c.category_name, 
+           avg(r.review_score) as average_score 
     from products p
     left join product_images pi on p.product_no = pi.product_no
-    join categories c on p.product_category = c.category_no
+    join categories c on p.product_category = c.category_no 
+    left join reviews r on p.product_no = r.product_no 
     where p.product_delete = 'N'
     group by p.product_no, 
              p.product_name, 
@@ -28,23 +30,23 @@
     limit #{limit} offset #{offset}
 </select>
 
-	
 	<select id="selectProductCount" resultType="int">
-	        select count(*) 
-		    from products 
-		    where product_delete = 'N'
-		    <if test="category != null">
-		        and category = #{category}
-		    </if>
+		select count(*)
+		from products
+		where product_delete = 'N'
+		<if test="category != null">
+			and category = #{category}
+		</if>
 	</select>
 	
 <!-- 카테고리별 상품 조회 쿼리문: 정렬 기준 추가 -->
 <select id="selectProductsByCategoryAndPage" parameterType="map" resultType="ProductDTO">
     select p.product_no, p.product_name, p.product_price, p.product_category, p.dc_rate, p.product_dc_type, p.product_sell_count,
-	           max(pi.image_url) as image_url, c.category_name
+	           max(pi.image_url) as image_url, c.category_name, avg(r.review_score) as average_score 
     from products p
     left join product_images pi on p.product_no = pi.product_no
     join categories c on p.product_category = c.category_no
+    left join reviews r on p.product_no = r.product_no 
     where p.product_delete = 'N'
     <if test="category != null">
         and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
@@ -79,43 +81,69 @@
     limit #{limit} offset #{offset}
 </select>
 
-<!-- 전체 상품 개수 조회 쿼리문 -->
-	<select id="selectProductCountByCategory" parameterType="int" resultType="int">
-	    select count(*) 
-	    from products p
-	    where p.product_delete = 'N'
-	    <if test="category != null">
-	        and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
-	    </if>
+
+	<!-- 카테고리별 상품 조회 쿼리문: 정렬 기준 추가 -->
+	<select id="selectProductsByCategoryAndPage" parameterType="map"
+		resultType="ProductDTO">
+		select p.product_no, p.product_name, p.product_price,
+		p.product_category, p.dc_rate, p.product_dc_type,
+		p.product_sell_count,
+		max(pi.image_main_url) as image_main_url,
+		c.category_name
+		from products p
+		left join product_images pi on
+		p.product_no = pi.product_no
+		join categories c on p.product_category =
+		c.category_no
+		where p.product_delete = 'N'
+		<if test="category != null">
+			and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
+		</if>
+		group by p.product_no, p.product_name, p.product_price,
+		p.product_category, c.category_name
+		<!-- 정렬 기준 추가 -->
+		<choose>
+			<when test="sortOrder == 'new'">
+				order by p.product_reg_date desc  <!-- 신상품순 -->
+			</when>
+			<when test="sortOrder == 'popular'">
+				order by p.product_sell_count desc  <!-- 인기상품순 (판매 수 기준) -->
+			</when>
+			<when test="sortOrder == 'lowPrice'">
+				order by
+				CASE
+				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1
+				- p.dc_rate ))
+				ELSE p.product_price
+				END asc  <!-- 낮은가격순 -->
+			</when>
+			<when test="sortOrder == 'highPrice'">
+				order by
+				CASE
+				WHEN p.product_dc_type = 'P' THEN (p.product_price * (1
+				- p.dc_rate))
+				ELSE p.product_price
+				END desc  <!-- 높은가격순 -->
+			</when>
+			<otherwise>
+				order by p.product_reg_date desc  <!-- 기본: 신상품순 -->
+			</otherwise>
+		</choose>
+		limit #{limit} offset #{offset}
 	</select>
 	
-	
-	<select id="getProductById" parameterType="int" resultType="ProductDTO">
-	    select p.*, c.*, pi.image_url as image_main_url, pi.image_type as image_sub_url from products p
-	    left join categories c on p.product_category = c.category_no
-	    left join product_images pi on p.product_no = pi.product_no
-	    where p.product_no = #{productId}
+
+
+
+	<select id="getProductById" parameterType="int"
+		resultType="ProductDTO">
+		select p.*,c.*,pi.* from products p
+		left join categories c
+		on p.product_category = c.category_no
+		left join product_images pi on
+		p.product_no = pi.product_no
+		where p.product_no = #{productId}
 	</select>
-	
-	<select id="selectProductDetailById" parameterType="int" resultType="ProductDTO">
-    SELECT p.*, c.category_name 
-    FROM products p
-    LEFT JOIN categories c ON p.product_category = c.category_no
-    WHERE p.product_no = #{productId}
-</select>
-   
-
-
-<select id="countSearchResults" parameterType="map" resultType="int">
-    SELECT 
-        COUNT(*) 
-    FROM 
-        products p
-    WHERE 
-        p.product_delete = 'N'
-        AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search}, '%'))
-        AND (#{category} IS NULL OR p.product_category = #{category})
-</select>
 
 <select id="searchProducts" parameterType="map" resultType="ProductDTO">
     SELECT 
@@ -127,13 +155,15 @@
         p.product_dc_type, 
         p.product_sell_count,
         COALESCE(MAX(pi.image_url), '/resources/images/noP_image.png') AS image_url, 
-        c.category_name
+        c.category_name, 
+        avg(r.review_score) as average_score 
     FROM 
         products p
     LEFT JOIN 
         product_images pi ON p.product_no = pi.product_no
     JOIN 
-        categories c ON p.product_category = c.category_no
+        categories c ON p.product_category = c.category_no 
+    LEFT JOIN reviews r ON p.product_no = r.product_no 
     WHERE 
         p.product_delete = 'N'
         AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search}, '%'))
@@ -191,32 +221,37 @@
 	<insert id="saveProduct"
 		parameterType="com.finalProject.model.admin.product.ProductDTO"
 		useGeneratedKeys="true" keyProperty="product_no">
-		INSERT INTO Product (product_name,
+		INSERT INTO products
+		(product_name,
 		product_price,
-		product_content, product_dc_type, product_dc_amount,
-		product_sell_count)
-		VALUES (#{product_name}, #{product_price},
-		#{product_content},
-		#{product_dc_type}, #{product_dc_amount},
-		#{product_sell_count});
+		product_content,
+		product_category,product_dc_type, dc_rate,
+		product_sell_count,product_stock_count,product_show)
+		VALUES
+		(#{product_name}, #{product_price},
+		#{product_content}, #{category_no},
+		#{product_dc_type}, #{dc_rate},
+		#{product_sell_count},#{product_stock_count},#{product_show});
 	</insert>
 
 	<insert id="saveMainImage" parameterType="map">
-		INSERT INTO Image
+		INSERT INTO
+		product_images
 		(product_no, image_url,image_type)
 		VALUES (#{product_no},
 		#{mainImage},'M')
 	</insert>
 
 	<insert id="saveSubImage" parameterType="map">
-		INSERT INTO Image (product_no, image_url, image_type)
+		INSERT INTO product_images (product_no, image_url, image_type)
 		VALUES
 		<foreach collection="subImage" item="sub_Image" separator=",">
 			(#{product_no}, #{sub_Image},'S')
 		</foreach>
 	</insert>
 
-	<resultMap type="com.finalProject.model.admin.product.ProductVO"
+	<resultMap
+		type="com.finalProject.model.admin.product.ProductVO"
 		id="productResultMap">
 		<id column="product_no" property="product_no" javaType="int" />
 		<result column="product_name" property="product_name"
@@ -227,45 +262,48 @@
 			javaType="String" />
 		<result column="product_dc_type" property="product_dc_type"
 			javaType="String" />
-		<result column="product_dc_amount" property="product_dc_amount"
-			javaType="int" />
+		<result column="dc_rate" property="dc_rate" javaType="int" />
 		<result column="product_sell_count"
 			property="product_sell_count" javaType="int" />
 
 		<collection column="product_no" property="list"
-			ofType="com.finalProject.model.admin.product.ProductImg" javaType="java.util.List"
-			select="getAllImg" />
+			ofType="com.finalProject.model.admin.product.ProductImg"
+			javaType="java.util.List" select="getAllImg" />
 	</resultMap>
 
 	<select id="getAllBoard" resultMap="productResultMap">
 		SELECT product_no,
 		product_name, product_price, product_content, product_dc_type,
-		product_dc_amount,
+		dc_rate,
 		product_sell_count
-		FROM product
+		FROM products
 		limit #{startRowIndex}
 		,#{viewPostCntPerPage}
 	</select>
 
 	<select id="getAllImg"
 		resultType="com.finalProject.model.admin.product.ProductImg">
-		SELECT image_url, image_type FROM image WHERE product_no =
+		SELECT image_url, image_type FROM product_images WHERE
+		product_no =
 		#{product_no}
 	</select>
 
 	<update id="updateProduct">
-		update product set product_name = #{product_name} ,
-		product_price = #{product_price},
-		product_content = #{product_content}
-		, product_dc_type = #{product_dc_type}, product_dc_amount =
-		#{product_dc_amount}, product_sell_count = #{product_sell_count} where
-		product_no =#{product_no};
+		update products set product_name = #{product_name} ,
+		product_price = #{product_price}
+		, product_dc_type =
+		#{product_dc_type}, dc_rate =
+		#{dc_rate},
+		product_sell_count =
+		#{product_sell_count} where
+		product_no
+		=#{product_no};
 	</update>
 
 	<select id="getSearchProduct" resultMap="productSearchResultMap">
 		SELECT product_no, product_name, product_price, product_content,
-		product_dc_type, product_dc_amount, product_sell_count
-		FROM product
+		product_dc_type, dc_rate, product_sell_count
+		FROM products
 		WHERE 1=1
 		<if test="product_name != null and product_name != ''">
 			AND product_name LIKE #{product_name}
@@ -291,16 +329,17 @@
 				order by product_price
 			</when>
 			<when test="searchType == 'sortAmountLow'">
-				order by product_dc_amount
+				order by dc_rate
 			</when>
 			<when test="searchType == 'sortAmountHigh'">
-				order by product_dc_amount desc
+				order by dc_rate desc
 			</when>
 		</choose>
 		limit #{startRowIndex} ,#{viewPostCntPerPage}
 	</select>
 
-	<resultMap type="com.finalProject.model.admin.product.ProductVO"
+	<resultMap
+		type="com.finalProject.model.admin.product.ProductVO"
 		id="productSearchResultMap">
 		<id column="product_no" property="product_no" javaType="int" />
 		<result column="product_name" property="product_name"
@@ -311,23 +350,22 @@
 			javaType="String" />
 		<result column="product_dc_type" property="product_dc_type"
 			javaType="String" />
-		<result column="product_dc_amount" property="product_dc_amount"
-			javaType="int" />
+		<result column="dc_rate" property="dc_rate" javaType="float" />
 		<result column="product_sell_count"
 			property="product_sell_count" javaType="int" />
 
 		<collection column="product_no" property="list"
-			ofType="com.finalProject.model.admin.product.ProductImg" javaType="java.util.List"
-			select="getAllImg" />
+			ofType="com.finalProject.model.admin.product.ProductImg"
+			javaType="java.util.List" select="getAllImg" />
 	</resultMap>
 
 	<select id="getCountAllProduct" resultType="int">
 		select count(*) from
-		product
+		products
 	</select>
 
 	<select id="getSearchAllProduct" resultType="int">
-		select count(*) from product
+		select count(*) from products
 		where 1=1
 		<if test="product_name != null and product_name != ''">
 			AND product_name LIKE #{product_name}
@@ -353,16 +391,16 @@
 				order by product_price
 			</when>
 			<when test="searchType == 'sortAmountLow'">
-				order by product_dc_amount
+				order by dc_rate
 			</when>
 			<when test="searchType == 'sortAmountHigh'">
-				order by product_dc_amount desc
+				order by dc_rate desc
 			</when>
 		</choose>
 	</select>
 
 	<delete id="deleteProductImg">
-		delete from image where product_no = #{product_no}
+		delete from product_images where product_no = #{product_no}
 		<if test="product_main_image !=null and product_main_image != ''">
 			and image_url = #{product_main_image}
 		</if>
@@ -373,8 +411,22 @@
 			</foreach>
 		</if>
 	</delete>
-	
+
 	<delete id="deleteProduct">
-		delete from product where product_no = #{productId}
+		delete from products where product_no = #{productId}
 	</delete>
+
+	<select id="getCategories"
+		resultType="com.finalProject.model.admin.product.adminCategories">
+		select * from categories
+	</select>
+	<update id="updateContent">
+		update products set product_content = #{content}
+		where
+		product_no = #{product_no}
+	</update>
+
+	<update id="deleteContentImg" parameterType="int">
+        UPDATE products SET product_content = NULL WHERE product_no = #{product_no}
+    </update>
 </mapper>

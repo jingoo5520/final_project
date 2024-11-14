@@ -2,6 +2,8 @@ package com.finalProject.controller.member;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,10 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
+import com.finalProject.model.MemberPointDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
+import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.model.ResponseData;
 import com.finalProject.model.product.ProductDTO;
 import com.finalProject.persistence.PointDAO;
@@ -294,6 +300,136 @@ public class MemberController {
 		return "/user/pages/member/myPage_history";
 	}
 	
+	// 마이페이지 (포인트 내역)
+	@RequestMapping(value = "/myPage/pointList")
+	public String myPage_pointList(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_pointList";
+	}
+	
+	// 마이페이지 (쿠폰 내역)
+	@RequestMapping(value = "/myPage/couponList")
+	public String myPage_couponList(HttpServletRequest request) {
+		System.out.println("마이페이지로 이동");
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_couponList";
+	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@GetMapping("/myPage/getPointInfo")
+	@ResponseBody
+	public Map<String, Object> getPointInfo(HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		MemberPointDTO memberPointDTO = null;
+		try {
+			memberPointDTO = memberService.getMemberPoint(loginMember.getMember_id());
+			resultMap.put("memberPoint", memberPointDTO.getMember_point());
+			resultMap.put("usePoint", memberPointDTO.getUse_point());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getPointPagingInfo")
+	@ResponseBody
+	public Map<String, Object> getPointPagingInfo(@RequestBody String pointType, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		int totalPageCount = 0;
+		
+		try {
+			totalPageCount = memberService.getPointPagingInfo(pointType, loginMember.getMember_id());
+			resultMap.put("totalPageCount", totalPageCount);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getEarnedPointList")
+	@ResponseBody
+	public Map<String, Object> getEarnedPointList(@RequestParam int pageNo, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PointDTO> earnedPointList = null;
+		
+		try {
+			earnedPointList = memberService.getEarnedPointList(loginMember.getMember_id(), pageNo);
+			resultMap.put("earnedPointList", earnedPointList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	
+	// 마이페이지 (회원의 포인트 양 조회)
+	@PostMapping("/myPage/getUsedPointList")
+	@ResponseBody
+	public Map<String, Object> getUsedPointList(@RequestParam int pageNo, HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PointDTO> usedPointList = null;
+		
+		try {
+			usedPointList = memberService.getUsedPointList(loginMember.getMember_id(), pageNo);
+			resultMap.put("usedPointList", usedPointList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	
+	// 마이페이지 (사용가능한 쿠폰 조회)
+	@GetMapping("/myPage/getPaidCouponList")
+	@ResponseBody
+	public Map<String, Object> getPaidCouponList(HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PaidCouponDTO> paidCouponList = null;
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+		String currentTime = now.format(formatter);
+		
+		try {
+			paidCouponList = memberService.getCouponList(loginMember.getMember_id(), currentTime);
+			resultMap.put("paidCouponList", paidCouponList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
+	// 마이페이지 (최근 3개월 쿠폰 조회)
+	@GetMapping("/myPage/getRecentCouponList")
+	@ResponseBody
+	public Map<String, Object> getRecentCouponList(HttpSession session) {
+		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
+		Map<String, Object> resultMap = new HashMap<>();
+		List<RecentCouponDTO> recentCouponList = null;
+		
+		try {
+			recentCouponList = memberService.getRecentCouponList(loginMember.getMember_id());
+			resultMap.put("recentCouponList", recentCouponList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return resultMap;
+	}
+	
 	// 마이페이지 (배송지 관리)
 	@RequestMapping(value = "/myPage/manageDelivery")
 	public String myPage_manageAddresses(HttpServletRequest request) {
@@ -330,28 +466,28 @@ public class MemberController {
 	public Map<String, Object> getDeliveryInfo(@RequestParam(value="deliveryNo", required=false, defaultValue="0") int deliveryNo, HttpSession session) {
 		LoginDTO loginDTO = (LoginDTO) session.getAttribute("loginMember");
 		List<DeliveryDTO> deliveryList = null;
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
 		try {
 			deliveryList = memberService.getDeliveryList(loginDTO.getMember_id());
 			for (DeliveryDTO deliveryDTO : deliveryList) {
 				if (deliveryNo != 0) {
 					if (deliveryDTO.getDelivery_no() == deliveryNo) {
-						map.put("deliveryInfo", deliveryDTO);
+						resultMap.put("deliveryInfo", deliveryDTO);
 					}
 				}
 			}
 			
 			if (deliveryNo == 0) {
-				map.put("deliveryList", deliveryList);
+				resultMap.put("deliveryList", deliveryList);
 			}
 			
-			map.put("memberInfo", loginDTO);
+			resultMap.put("memberInfo", loginDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return map;
+		return resultMap;
 	}
 	
 	// 마이페이지 (배송지 추가)
@@ -516,10 +652,6 @@ public class MemberController {
 			memberDTO.setNickname(memberDTO.getMember_name() + "_" + randomuuid.toString().substring(0, 8));
 		}
 
-		// 입력받은 우편번호+주소+상세주소
-		// 우편번호/주소/상세주소
-		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
-		System.out.println(memberDTO.toString());
 		try {
 			// update가 정상적으로 됬다면
 			if (memberService.updateMember(memberDTO)) {

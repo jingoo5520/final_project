@@ -1,5 +1,7 @@
 package com.finalProject.model.admin.product;
 
+import com.finalProject.model.admin.black.BlackMemberDTO;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,9 +26,14 @@ public class PagingInfo {
 	private int startPageNoCurBlock; // 현재 페이징 블럭의 시작 페이지 번호
 	private int endPageNoCurBlock; // 현재 페이징 블럭의 마지막 페이지 번호
 
-	public PagingInfo(ProductPagingInfoDTO dto) {
+	public PagingInfo(adminPagingInfoDTO dto) {
 		this.pageNo = dto.getPageNo();
 		this.viewPostCntPerPage = dto.getPagingSize();
+	}
+
+	public PagingInfo(BlackMemberDTO bm) {
+		this.pageNo = bm.getPageNo();
+		this.viewPostCntPerPage = bm.getPagingSize();
 	}
 
 	public void setTotalPostCnt(int totalPostCnt) {

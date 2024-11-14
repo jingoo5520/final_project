@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>아이디 찾기</title>
+<title>ELOLIA</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <!-- ========================= CSS here ========================= -->
@@ -18,6 +18,7 @@
 <link rel="stylesheet"
 	href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 </head>
 
