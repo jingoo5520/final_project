@@ -119,8 +119,25 @@
 		});
 	}
 	
+	document.addEventListener("DOMContentLoaded", function() {
+		// 현재 URL
+		const currentUrl = window.location.href;
+
+		// 모든 카테고리 링크에 대해 검사
+		document.querySelectorAll(".category-link").forEach(function(link) {
+			if (currentUrl === link.href) {
+				// URL이 일치할 경우 active 클래스를 추가
+				link.classList.add("active");
+			}
+		});
+	});
 </script>
 <style>
+.active {
+	font-weight: bold;
+	color: #9D968F !important; /* 강조 색상 */ 
+	text-decoration: underline;
+}
 .product-name {
 	display: -webkit-box;
 	-webkit-line-clamp: 2; /* 최대 줄 수를 2로 설정 */
@@ -138,16 +155,26 @@
 .stars i {
 	color: #ffa000;
 }
+.product-image {
+    position: relative;
+    padding-top: 100%; /* 정사각형 비율 (원하는 비율로 조정 가능) */
+    overflow: hidden;
+}
+
+.product-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 </style>
 <body>
 	<jsp:include page="../header.jsp">
 		<jsp:param name="categoryName" value="${products[0].category_name}" />
 	</jsp:include>
-	<!-- 찜목록 잘 받아오는지 확인 -->
-	<%-- <c:forEach var="item" items="${wishList}">
-		<div>${item}</div>
-	</c:forEach> --%>
 
 
 	<!-- Preloader -->
@@ -209,19 +236,19 @@
 						</div>
 						<!-- End Single Widget -->
 						<!-- Start Single Widget -->
-						<div class="single-widget">
-							<ul class="list">
-								<li><a href="/product/jewelry?category=196">NACKLACE <span>(${necklaceCount})</span></a></li>
-								<li><a href="/product/jewelry?category=195">EARRING <span>(${earringCount})</span></a></li>
-								<li><a href="/product/jewelry?category=203">PIERCING <span>(${piercingCount})</span></a></li>
-								<li><a href="/product/jewelry?category=197">BANGLE <span>(${bangleCount})</span></a></li>
-								<li><a href="/product/jewelry?category=201">ANKLET <span>(${ankletCount})</span></a></li>
-								<li><a href="/product/jewelry?category=198">RING <span>(${ringCount})</span></a></li>
-								<li><a href="/product/jewelry?category=200">COUPLING <span>(${couplingCount})</span></a></li>
-								<li><a href="/product/jewelry?category=202">PENDANT <span>(${pendantCount})</span></a></li>
-								<li><a href="/product/jewelry?category=204">기타 <span>(${otherCount})</span></a></li>
-							</ul>
-						</div>
+<div class="single-widget">
+	<ul class="list">
+		<li><a href="/product/jewelry?category=196" class="category-link">NACKLACE <span>(${necklaceCount})</span></a></li>
+		<li><a href="/product/jewelry?category=195" class="category-link">EARRING <span>(${earringCount})</span></a></li>
+		<li><a href="/product/jewelry?category=203" class="category-link">PIERCING <span>(${piercingCount})</span></a></li>
+		<li><a href="/product/jewelry?category=197" class="category-link">BANGLE <span>(${bangleCount})</span></a></li>
+		<li><a href="/product/jewelry?category=201" class="category-link">ANKLET <span>(${ankletCount})</span></a></li>
+		<li><a href="/product/jewelry?category=198" class="category-link">RING <span>(${ringCount})</span></a></li>
+		<li><a href="/product/jewelry?category=200" class="category-link">COUPLING <span>(${couplingCount})</span></a></li>
+		<li><a href="/product/jewelry?category=202" class="category-link">PENDANT <span>(${pendantCount})</span></a></li>
+		<li><a href="/product/jewelry?category=204" class="category-link">기타 <span>(${otherCount})</span></a></li>
+	</ul>
+</div>
 						<!-- End Single Widget -->
 					</div>
 					<!-- End Product Sidebar -->
@@ -282,10 +309,8 @@
                                     </div>
                                     <c:forEach var="product" items="${products}">
                                         <div class="col-lg-4 col-md-6 col-12">
-                                            <!-- Start Single Product -->
-                                            <!--                                         개수 -->
                                             <div class="single-product">
-                                                <div class="product-image" style="height:300px;">
+                                                <div class="product-image" >
                                                 
                                                     <a href="/product/jewelry/detail?productNo=${product.product_no}" >
                                                         <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
