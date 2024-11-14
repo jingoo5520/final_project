@@ -30,13 +30,14 @@
     limit #{limit} offset #{offset}
 </select>
 
+	
 	<select id="selectProductCount" resultType="int">
-		select count(*)
-		from products
-		where product_delete = 'N'
-		<if test="category != null">
-			and category = #{category}
-		</if>
+	        select count(*) 
+		    from products 
+		    where product_delete = 'N'
+		    <if test="category != null">
+		        and category = #{category}
+		    </if>
 	</select>
 	
 <!-- 카테고리별 상품 조회 쿼리문: 정렬 기준 추가 -->
@@ -151,7 +152,48 @@
         #{limit} OFFSET #{offset}
 </select>
 
+<select id="selectReview" parameterType="int" resultType="ReviewDetailDTO">
+SELECT  
+    r.review_no,
+    r.member_id,
+    r.review_title,
+    r.review_content,
+    r.register_date,
+    r.review_like_count,
+    r.review_ref,
+    r.review_score,
+    m.nickname
+FROM 
+    reviews r
+JOIN 
+    members m ON r.member_id = m.member_id
+WHERE 
+    r.product_no = #{product_no}
+    AND r.review_show = 'S'
+    AND (r.review_ref IS NULL OR 
+         (r.review_ref IS NOT NULL AND 
+          (SELECT review_show FROM reviews WHERE review_no = r.review_ref) = 'S'))
+ORDER BY 
+    CASE WHEN r.review_ref IS NULL THEN r.review_no ELSE r.review_ref END DESC,  
+    r.review_ref IS NOT NULL,                                                    
+    r.register_date ASC;
+</select>
 
+<select id="selectReviewImg" parameterType="int" resultType="string">
+    select 
+        ri.image_url
+    from 
+        review_images ri
+    join 
+        reviews r on r.review_no = ri.review_no
+    where 
+        r.product_no = #{product_no}
+        and r.review_show = 'S'
+</select>
+
+<select id="countReview" resultType="int">
+	SELECT COUNT(*) FROM reviews WHERE product_no = #{productNo}
+</select>
 
 
 
