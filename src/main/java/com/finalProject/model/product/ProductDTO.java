@@ -36,6 +36,8 @@ public class ProductDTO {
     private String image_type;
     
     private String category_name;
+    
+    private float average_score;
 
     // ���� ������ ��ȯ�ϴ� �޼��� ����
     public int getCalculatedPrice() {

@@ -14,7 +14,11 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.MemberPointDTO;
+import com.finalProject.model.UsedCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
+import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.persistence.MemberDAO;
 import com.finalProject.persistence.PointDAO;
 
@@ -178,14 +182,14 @@ public class MemberServiceImpl implements MemberService {
 
 	// 쿠폰 목록 조회
 	@Override
-	public List<UseCouponDTO> getCouponList(String memberId, String currentTime) throws Exception {
+	public List<PaidCouponDTO> getCouponList(String memberId, String currentTime) throws Exception {
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("memberId", memberId);
 		param.put("currentTime", currentTime);
 
-		List<UseCouponDTO> couponList = memberDAO.selectCouponList(param);
+		List<PaidCouponDTO> couponList = memberDAO.selectCouponList(param);
 
-		for (UseCouponDTO coupon : couponList) {
+		for (PaidCouponDTO coupon : couponList) {
 			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
 			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
 		}
@@ -230,6 +234,49 @@ public class MemberServiceImpl implements MemberService {
 		memberDAO.deleteDelivery(deliveryNo);
 	}
 
+	// 최근 3개월 쿠폰 조회
+	@Override
+	public List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception {
+		
+		List<RecentCouponDTO> couponList = memberDAO.selectRecentCouponList(memberId);
+		
+		for (RecentCouponDTO coupon : couponList) {
+			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
+			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
+		}
+		return couponList;
+	}
+
+	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
+	@Override
+	public MemberPointDTO getMemberPoint(String memberId) throws Exception{
+		return memberDAO.getMemberPoint(memberId);
+	}
+	
+	// 회원의 포인트 내역의 총 페이지 개수 반환
+	@Override
+	public int getPointPagingInfo(String pointType, String memberId) throws Exception {
+		int pointListCnt = memberDAO.getTotalPointList(pointType, memberId);
+		
+		if(pointListCnt % 10 == 0) {
+			return pointListCnt / 10;
+		} else {
+			return (pointListCnt / 10) + 1; 
+		}
+	}
+
+	// 회원의 포인트 적립내역 조회
+	@Override
+	public List<PointDTO> getEarnedPointList(String memberId, int pageNo) throws Exception {
+		return memberDAO.selectEarnedPointList(memberId, pageNo);
+	}
+
+	// 회원의 포인트 사용내역 조회
+	@Override
+	public List<PointDTO> getUsedPointList(String memberId, int pageNo) throws Exception {
+		return memberDAO.selectUsedPointList(memberId, pageNo);
+	}
+	
 	// 회원 수 받기(스케쥴러)
 	@Override
 	public int getMemberCount() throws Exception {

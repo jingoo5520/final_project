@@ -7,7 +7,11 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.MemberPointDTO;
+import com.finalProject.model.UsedCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
+import com.finalProject.model.RecentCouponDTO;
 
 public interface MemberDAO {
 
@@ -69,7 +73,7 @@ public interface MemberDAO {
 	List<DeliveryDTO> selectDeliveryList(String memberId)throws Exception;
 	
 	// 쿠폰 목록 조회
-	List<UseCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
+	List<PaidCouponDTO> selectCouponList(Map<String, String> param)throws Exception;
 	
 	// 배송지 수정
 	void updateDelivery(DeliveryDTO deliveryDTO) throws Exception;
@@ -113,6 +117,22 @@ public interface MemberDAO {
 	// 회원 더미 데이터 insert
 	void tumpMemberData(MemberDTO mDTO)throws Exception;
 	
+	// 사용한 쿠폰 조회
+	List<UsedCouponDTO> selectUsedCouponList(String memberId) throws Exception;
+	
+	// 최근 3개월 쿠폰 조회
+	List<RecentCouponDTO> selectRecentCouponList(String memberId) throws Exception;
 
+	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
+	MemberPointDTO getMemberPoint(String memberId) throws Exception;
 
+	// 회원의 포인트 내역의 총 개수 조회
+	int getTotalPointList(String pointType, String memberId) throws Exception;
+
+	// 회원의 포인트 적립내역 조회
+	List<PointDTO> selectEarnedPointList(String memberId, int pageNo) throws Exception;
+
+	// 회원의 포인트 사용내역 조회
+	List<PointDTO> selectUsedPointList(String memberId, int pageNo) throws Exception;
+	
 }

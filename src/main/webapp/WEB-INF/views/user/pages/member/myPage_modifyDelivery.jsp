@@ -10,7 +10,7 @@
 <title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -140,6 +140,10 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 		color: black;
 	}
 	
+	.contents {
+		background-color: #FFFFFF !important;
+	}
+	
 </style>
 <script type="text/javascript">
 	function sendData() {
@@ -262,7 +266,7 @@ function makeDeliveryInfo(deliveryInfo, memberInfo) {
 				</jsp:include>
 				<!-- / sideBar -->
 				
-				<div class="col-lg-9 col-12">
+				<div class="contents col-lg-9 col-12">
 					<div class="row inputAddressArea">
 						<div class="col-lg-2 col-md-2 col-12">
 							<p class="inputAreaHead">주소</p>
