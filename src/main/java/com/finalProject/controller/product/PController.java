@@ -227,12 +227,13 @@ public class PController {
 	    // 1. 총 리뷰 개수 조회
 	    int totalPostCnt = service.countReview(productNo);
         System.out.println("Total Review Count: " + totalPostCnt);
+        
         // 상품 리뷰 조회
         List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
-        System.out.println("Review Details: " + seeReview);
+        
         // 상품 리뷰 이미지 조회
         List <String> reviewImgs = service.getReviewImgs(productNo);
-        System.out.println("Review Images: " + reviewImgs);
+        
         
         Map<String, Object> response = new HashMap<String, Object>();
 		PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 1);

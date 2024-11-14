@@ -6,13 +6,13 @@
 <html class="no-js" lang="zxx">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>ELOLIA</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -38,73 +38,9 @@ function loadReviews(page) {
 	let productNo = $("#productNo").val(); // productNo 값을 가져옵니다
 	let productno = ${param.productNo};
 	
-	$.ajax({
-	    url: '/addCartItem',
-	    type: 'POST',
-	    data: {
-	    	productNo : productNo,
-	    	quantity : quantity
-	    	},
-	    dataType: 'json',
-	    success: function(data) {
-	    	if (data.status == 200) {
-	            $('#myModal').modal('show');
-				
-	            // 헤더의 장바구니 수량 최신화
-	            cartCountUpdate();
-	            
-	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-	            $('#goCart').off('click').on('click', function() {
-	               location.href = "/cart";
-	            });
-	            
-	            $('#keepProduct').off('click').on('click', function() {
-	            	$('#myModal').modal('hide');
-	            });
-	        }
-	    },
-	    error: function() {
-	    },
-	    complete: function(data) {
-	    	if (data.status == 200) {
-	            $('#myModal').modal('show');
-				
-	            // 헤더의 장바구니 수량 최신화
-	            cartCountUpdate();
-	            
-	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-	            $('#goCart').off('click').on('click', function() {
-	               location.href = "/cart";
-	            });
-	            
-	            $('#keepProduct').off('click').on('click', function() {
-	            	$('#myModal').modal('hide');
-	            });
-	        }
-	    }
-	});
-}
-
-function cartCountUpdate() {
-	$.ajax({
-		url: '/cartCountUpdate',
-		type: 'POST',
-		dataType: 'json',
-		success: function(data) {
-			if (data !== undefined) {
-				$('.cart-items .total-items').text(data);
-		    }
-		},
-		error: function() {
-		},
-		complete: function(data) {
-		}
-	});
-}
-
-function toggleHeart(element, product_no) {
-    const icon = element.querySelector('i');
-    icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
+//     console.log("Product No:", productNo);
+    console.log("productno:", productno);
+    console.log("Current Page:", page);
     
     $.ajax({
         url: '/product/review/load',
@@ -119,7 +55,7 @@ function toggleHeart(element, product_no) {
 //         	console.log(response);
         	const totalPages = response.pagingInfo.totalPages;
             let reviewHtml = "";
-//             console.log(response.reviewImgs);
+//             console.log(response);
          	// 리뷰 데이터를 화면에 출력
             showReview(response.seeReview, response.reviewImgs);
 //          	console.log(response);
@@ -140,7 +76,11 @@ function toggleHeart(element, product_no) {
 
 function showReview(reviews, reviewImgs) {
     let reviewHtml = "";
-
+    for (let i = 0; i < reviews.length; i++) {
+    	
+    console.log(reviews);
+    console.log(reviewImgs);
+    }
     if (reviews.length === 0) {
         reviewHtml = `<p class="text-center">리뷰가 없습니다.</p>`;
     } else {
@@ -634,7 +574,7 @@ function showPaging(currentPage, totalPages) {
 			<div class="col-lg-12 col-12">
 				<div class="single-block">
 					<div class="reviews">
-						<!-- End Single Review -->
+
 					</div>
 
 					<!-- 					페이지 네이션 -->
