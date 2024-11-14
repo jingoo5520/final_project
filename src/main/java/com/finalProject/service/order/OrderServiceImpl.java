@@ -70,12 +70,16 @@ public class OrderServiceImpl implements OrderService {
 			productDiscountCalculated.add(new ProductDiscountCalculatedDTO().builder()
 					.orderproduct_no(discountInfo.get(i).getOrderproduct_no()).build()); // orderProduct_no 설정
 			ProductDiscountDTO p = discountInfo.get(i);
+			System.out.println("이 아이템의 모든 할인 전 가격 : " + p.getProductPrice() * p.getOrderCount());
 			expectedTotalPrice += (p.getProductPrice() * p.getOrderCount() *
 			// 총 % 할인 (쿠폰 할인 + 멤버 등급 할인 + 상품 자체 할인)
 					(1 - (p.getMultipliedDiscountByCoupon() + p.getMultipliedDiscountByMemberLevel()
 							+ p.getDiscountByItem())));
+			System.out.println("아이템의 % 할인율(쿠폰) : " + p.getMultipliedDiscountByCoupon());
+			System.out.println("아이템의 % 할인율(멤버 레벨) : " + p.getMultipliedDiscountByMemberLevel());
+			System.out.println("아이템의 % 할인율(상품 자체 할인) : " + p.getDiscountByItem());
 			System.out.println(
-					"아이템의 % 할인 : " + p.getProductPrice() * p.getOrderCount() * (p.getMultipliedDiscountByCoupon()
+					"아이템의 % 할인량 : " + p.getProductPrice() * p.getOrderCount() * (p.getMultipliedDiscountByCoupon()
 							+ p.getMultipliedDiscountByMemberLevel() + p.getDiscountByItem()));
 		}
 		// 절대값 할인 (쿠폰 할인 + 포인트 할인)

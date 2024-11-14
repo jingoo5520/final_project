@@ -542,7 +542,6 @@ public class OrderController {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(resultMap);
 		}
-
 	}
 	
 	
@@ -569,7 +568,7 @@ public class OrderController {
 				cancelAmount);
 		return ResponseEntity.ok(resultMap);
 	}
-
+	
 	@PostMapping("/order/KakaoPayCancel")
 	public ResponseEntity<Map<String, String>> cancelKaKaoPay(
 			@RequestBody Map<String, String> requestMap
