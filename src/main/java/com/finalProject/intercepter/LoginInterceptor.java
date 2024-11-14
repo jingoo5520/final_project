@@ -33,11 +33,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 		System.out.println("Login preHandle 호출");
 		HttpSession ses = request.getSession();
-		System.out.println(ses.getAttribute("productInfos"));
 		boolean result = true;
 		LoginDTO loginDTO = null;
 		log.info("preHandle()");
-
 		String uri = request.getRequestURI();
 		System.out.println("LoginInterceptor 안에서 uri : " + uri);
 		if (uri.contains("/order")) {
@@ -45,12 +43,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		} else {
 			ses.setAttribute("sentByOrderRequest", null);
 		}
-
-		if (request.getSession().getAttribute("loginMember") != null) { // 로그인이 되어있을경우
-			System.out.println("로그인 된 상태로 로그인 인터셉터 동작 : 로그아웃 처리");
-			ses.removeAttribute("loginMember"); // 로그인 세션 삭제(로그아웃)
-		}
-
 		// GET방식인 경우
 		if (request.getMethod().toUpperCase().equals("GET")) {
 			// 자동 로그인
@@ -138,12 +130,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 							response.sendRedirect("/"); // 인덱스로 보냄
 						}
 					}
-				} else if(member_status.equals("black")) { // 블랙당한 회원
+				} else if (member_status.equals("black")) { // 블랙당한 회원
 					System.out.println("블랙처리된 회원입니다.");
 					BlackInfoDTO blackDTO = memberService.memberBlackInfo(loginMember.getMember_id());
 					ses.setAttribute("blackReason", blackDTO);
 					response.sendRedirect("/member/viewLogin/?status=black");
-				} else if(member_status.equals("withdrawn")) {
+				} else if (member_status.equals("withdrawn")) {
 					System.out.println("탈퇴한 회원입니다.");
 					response.sendRedirect("/member/viewLogin/?status=withdrawn");
 				}

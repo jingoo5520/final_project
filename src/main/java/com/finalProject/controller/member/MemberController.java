@@ -82,10 +82,21 @@ public class MemberController {
 	private PointService pService;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
-	public String viewLogin(HttpServletRequest request) {
+	public String viewLogin(HttpServletRequest request, HttpServletResponse response) {
+		String result = "/user/pages/member/login";
 		System.out.println("로그인 페이지로 이동");
 		HttpSession ses = request.getSession();
-		return "/user/pages/member/login";
+		System.out.println("로그인 상태 : " + ses.getAttribute("loginMember"));
+		if(ses.getAttribute("loginMember")!=null) { // 로그인 상태로 로그인페이지로 접근하려고 하면 인덱스로 되돌려보냄
+//			result = "/user/index";
+			try {
+				response.sendRedirect("/");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
