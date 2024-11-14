@@ -109,6 +109,9 @@ public interface MemberDAO {
 
 	// 회원 등급 업데이트(스케쥴러)
 	int updateMemberLevel(String member_id, int totalPrice)throws Exception;
+
+	// 회원 더미 데이터 insert
+	void tumpMemberData(MemberDTO mDTO)throws Exception;
 	
 
 

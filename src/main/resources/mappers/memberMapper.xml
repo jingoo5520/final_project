@@ -253,7 +253,7 @@
 		members LIMIT 1 OFFSET #{i}
 	</select>
 
-	<!-- 회원의 3달간 결제금액 받기(스케쥴러) -->
+	<!-- 회원의 1년간 결제금액 받기(스케쥴러) -->
 	<select id="getTotalPriceByMemberId" resultType="int">
 		SELECT
 		IFNULL(SUM(p.total_price), 0) AS totalPrice
@@ -261,7 +261,7 @@
 		INNER JOIN
 		orders o ON o.order_id = p.order_id
 		WHERE o.orderer_id = #{member_id}
-		AND p.pay_date > DATE_SUB(NOW(), INTERVAL 3 MONTH)
+		AND p.pay_date > DATE_SUB(NOW(), INTERVAL 12 MONTH)
 	</select>
 
 	<!-- 회원 등급 업데이트 -->
@@ -270,6 +270,20 @@
 		from levels l where (level_min*10000) &lt;= #{totalPrice} and
 		(level_max*10000)
 		&gt; #{totalPrice}) where member_id = #{member_id}
+	</update>
+
+	<!-- 회원 더미 데이터 insert -->
+	<update id="tumpMemberData">
+		insert into members(member_id, member_name,
+		member_pwd, phone_number,
+		birthday, email, address, nickname,
+		member_point)
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd},
+		256),
+		#{phone_number},
+		#{birthday}, #{email}, #{address},
+		#{nickname},
+		5000)
 	</update>
 
 </mapper>

@@ -18,6 +18,7 @@ import org.springframework.web.util.WebUtils;
 
 import com.finalProject.model.admin.homepage.BannerDTO;
 import com.finalProject.model.LoginDTO;
+import com.finalProject.model.MemberDTO;
 import com.finalProject.service.home.HomeService;
 import com.finalProject.service.member.MemberService;
 
@@ -35,23 +36,7 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String homePage(Model model, HttpServletResponse response, HttpServletRequest request) {
-
-		try {
-			int count = memberService.getMemberCount(); // 회원 수 저장
-			System.out.println("회원 수 : " + count);
-			// 회원 수 만큼 반복
-			for (int i = 0; i < count; i++) {
-				String member_id = memberService.getMemberId(i); // 회원 아이디 받기
-				int totalPrice = memberService.getTotalPriceByMemberId(member_id); // 회원의 3달간 결제금액 조회
-				int result = memberService.updateMemberLevel(member_id, totalPrice); // 회원 등급 업데이트
-				System.out.println("회원 아이디 : " + member_id + ", 사용금액 : " + totalPrice + ", update결과 : " + result);
-
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		
 		HttpSession ses = request.getSession();
 		ses.removeAttribute("rememberPath");
 		LoginDTO loginMember = (LoginDTO) ses.getAttribute("loginMember");
