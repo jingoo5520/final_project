@@ -36,4 +36,7 @@ public interface UserProductService {
 
     // 상품 리뷰 이미지 출력
     List<String> getReviewImgs(int productNo) throws Exception;
+
+    // 상품에 대한 리뷰 개수
+	int countReview(int productNo) throws Exception;
 }

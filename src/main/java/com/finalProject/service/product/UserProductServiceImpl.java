@@ -82,4 +82,9 @@ public class UserProductServiceImpl implements UserProductService {
 	    return pDao.selectReviewImg(productNo);
 	}
 
+	@Override
+	public int countReview(int productNo) throws Exception {
+		return pDao.selectCountReviewProduct(productNo);
+	}
+
 }

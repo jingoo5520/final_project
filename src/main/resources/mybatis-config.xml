@@ -12,6 +12,7 @@
 		<typeAlias type="com.finalProject.model.product.ProductDTO" alias="ProductDTO" />
 		<typeAlias type="com.finalProject.model.review.ReviewDTO" alias="ReviewDTO" />
 		<typeAlias type="com.finalProject.model.review.ReviewDetailDTO" alias="ReviewDetailDTO" />
+		<typeAlias type="com.finalProject.model.review.PointEarnedDTO" alias="PointEarnedDTO" />
 
 		
 		

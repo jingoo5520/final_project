@@ -190,60 +190,75 @@
                         </c:if>
                         <!-- End Cart List Title -->
 
-                        <c:if test="${currentPath  == '/review/writableReview'}">
-                            <c:forEach var="review" items="${writtenReviews}">
-                                <div class="cart-single-list">
-                                    <div class="row align-items-center">
-                                        <div class="col-lg-2 col-md-2 col-12">
-                                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">
-                                                <img src="${review.image_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 90px; width:90px; object-fit: cover;" />
-                                            </a>
-                                        </div>
-                                        <div class="col-lg-6 col-md-6 col-12">
-                                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">${review.product_name}</a>
-                                        </div>
-                                        <div class="col-lg-2 col-md-2 col-12">
-                                            <fmt:formatDate value="${review.delivered_date}" pattern="yyyy-MM-dd (EEE)" />
-                                        </div>
-                                        <div class="col-lg-2 col-md-2 col-12">
-                                            <a href="/review/writeReview?product_no=${review.product_no}&product_name=${review.product_name}">리뷰작성</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </c:if>
+<c:if test="${currentPath == '/review/writableReview'}">
+    <c:choose>
+        <c:when test="${not empty writtenReviews}">
+            <c:forEach var="review" items="${writtenReviews}">
+                <div class="cart-single-list">
+                    <div class="row align-items-center">
+                        <div class="col-lg-2 col-md-2 col-12">
+                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">
+                                <img src="${review.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 90px; width:90px; object-fit: cover;" />
+                            </a>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">${review.product_name}</a>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-12">
+                            <fmt:formatDate value="${review.delivered_date}" pattern="yyyy-MM-dd (EEE)" />
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-12">
+                            <a href="/review/writeReview?product_no=${review.product_no}&product_name=${review.product_name}">리뷰작성</a>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <p>작성 가능한 리뷰가 없습니다.</p>
+        </c:otherwise>
+    </c:choose>
+</c:if>
 
-                        <c:if test="${currentPath  == '/review/writtenByReview'}">
-                            <c:forEach var="review" items="${writableReviews}">
-                                <div class="cart-single-list">
-                                    <div class="row align-items-center">
-                                        <div class="col-lg-2 col-md-2 col-12">
-                                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">
-                                                <img src="${review.image_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 90px; width:90px; object-fit: cover;" />
-                                            </a>
-                                        </div>
-                                        <div class="col-lg-4 col-md-4 col-12">
-                                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">${review.product_name}</a>
-                                        </div>
-                                        <div class="col-lg-2 col-md-2 col-12 review-content">
- 	                                       <a href = "/review/reviewDetail?reviewNo=${review.review_no }">
-    	                                        <span>${review.review_title}</span>
-        	                               </a>
-                                        </div>
-                                        <div class="col-lg-2 col-md-2 col-12">
-                                            <span>
-                                                <c:forEach var="i" begin="1" end="5">
-                                                    <i class="<c:if test='${i <= review.review_score}'>fas fa-star</c:if><c:if test='${i > review.review_score}'>far fa-star</c:if>"></i>
-                                                </c:forEach>
-                                            </span>
-                                        </div>
-                                        <div class="col-lg-2 col-md-2 col-12">
-                                            <fmt:formatDate value="${review.register_date}" pattern="yyyy-MM-dd (EEE)" /><br>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </c:if>
+<c:if test="${currentPath == '/review/writtenByReview'}">
+    <c:choose>
+        <c:when test="${not empty writableReviews}">
+            <c:forEach var="review" items="${writableReviews}">
+                <div class="cart-single-list">
+                    <div class="row align-items-center">
+                        <div class="col-lg-2 col-md-2 col-12">
+                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">
+                                <img src="${review.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 90px; width:90px; object-fit: cover;" />
+                            </a>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-12">
+                            <a href="/product/jewelry/detail?productNo=${review.product_no}" style="text-decoration: none; color: inherit;">${review.product_name}</a>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-12 review-content">
+                            <a href="/review/reviewDetail?reviewNo=${review.review_no}">
+                                <span>${review.review_title}</span>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-12">
+                            <span>
+                                <c:forEach var="i" begin="1" end="5">
+                                    <i class="<c:if test='${i <= review.review_score}'>fas fa-star</c:if><c:if test='${i > review.review_score}'>far fa-star</c:if>'"></i>
+                                </c:forEach>
+                            </span>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-12">
+                            <fmt:formatDate value="${review.register_date}" pattern="yyyy-MM-dd (EEE)" /><br>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <p>작성한 리뷰가 없습니다.</p>
+        </c:otherwise>
+    </c:choose>
+</c:if>
+
 
 
 

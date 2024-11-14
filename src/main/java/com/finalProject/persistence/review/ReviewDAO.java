@@ -1,6 +1,8 @@
 package com.finalProject.persistence.review;
 
 import java.util.List;
+
+import com.finalProject.model.review.PointEarnedDTO;
 import com.finalProject.model.review.ReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.model.review.ReviewPagingInfo;
@@ -57,6 +59,8 @@ public interface ReviewDAO {
 	
 	//	데이터베이스에서 리뷰 삭제
 	void deleteReview(int reviewNo) throws Exception;
+
+	void pointMember(PointEarnedDTO pointDTO)  throws Exception;
 
 
 

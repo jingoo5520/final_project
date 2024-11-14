@@ -95,4 +95,9 @@ public class UserProductDAOImpl implements UserProductDAO {
 	    return ses.selectList(ns + "selectReviewImg", productNo);
 	}
 
+	@Override
+	public int selectCountReviewProduct(int productNo) throws Exception {
+		return ses.selectOne(ns + "countReview", productNo);
+	}
+
 }

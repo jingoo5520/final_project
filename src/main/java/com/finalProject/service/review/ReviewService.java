@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finalProject.model.review.ReviewPagingInfo;
+import com.finalProject.model.review.PointEarnedDTO;
 import com.finalProject.model.review.ReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 
@@ -25,7 +26,7 @@ public interface ReviewService {
 	List<ReviewDTO> getWrittenReviews(String member_id, ReviewPagingInfo pagingInfo) throws Exception;
 
 	// 리뷰 생성
-	void saveReview(ReviewDTO reviewDTO, HttpServletRequest request) throws Exception;
+	void saveReview(ReviewDTO reviewDTO, HttpServletRequest request, PointEarnedDTO pointDTO) throws Exception;
 
 	// 상품 이미지 가져오기
 	String getImageUrl(int product_no);
@@ -51,5 +52,7 @@ public interface ReviewService {
 
 	// 리뷰 삭제
 	void deleteReview(int reviewNo, HttpServletRequest request)  throws Exception;
+
+
 
 }

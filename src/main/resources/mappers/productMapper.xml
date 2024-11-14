@@ -94,17 +94,17 @@
 	
 	
 	<select id="getProductById" parameterType="int" resultType="ProductDTO">
-	    select p.*, c.*, pi.image_url as image_main_url, pi.image_type as image_sub_url from products p
+	    select p.*, c.*, pi.image_url, pi.image_type from products p
 	    left join categories c on p.product_category = c.category_no
 	    left join product_images pi on p.product_no = pi.product_no
-	    where p.product_no = #{productId}
+	    where p.product_no = #{product_no}
 	</select>
 	
 	<select id="selectProductDetailById" parameterType="int" resultType="ProductDTO">
     SELECT p.*, c.category_name 
     FROM products p
     LEFT JOIN categories c ON p.product_category = c.category_no
-    WHERE p.product_no = #{productId}
+    WHERE p.product_no = #{product_no}
 </select>
    
 
@@ -217,6 +217,10 @@ ORDER BY
     where 
         r.product_no = #{product_no}
         and r.review_show = 'S'
+</select>
+
+<select id="countReview" resultType="int">
+	SELECT COUNT(*) FROM reviews WHERE product_no = #{productNo}
 </select>
 
 

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
+import com.finalProject.model.review.PointEarnedDTO;
 import com.finalProject.model.review.ReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.model.review.ReviewPagingInfo;
@@ -137,7 +138,6 @@ public class RController {
             model.addAttribute("product_name", product_name);
             model.addAttribute("image_url", image_url);
             model.addAttribute("member_id", loginMember.getMember_id());
-//            model.addAttribute("member_id", "rhkrekgns1");
             
             return "/user/pages/review/writeReview"; // 리뷰 작성 페이지 반환
         } else {
@@ -148,7 +148,7 @@ public class RController {
     
     // 리뷰 저장
     @PostMapping("/writeReview")
-    public ResponseEntity<String> submitReview(HttpServletRequest request, ReviewDTO reviewDTO) {
+    public ResponseEntity<String> submitReview(HttpServletRequest request, ReviewDTO reviewDTO, PointEarnedDTO pointDTO) {
         HttpSession session = request.getSession();
         LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 
@@ -161,7 +161,9 @@ public class RController {
         
 			try {
 				
-				service.saveReview(reviewDTO, request);
+				service.saveReview(reviewDTO, request, pointDTO);
+
+			    
 				return new ResponseEntity<>("리뷰 저장 완료", HttpStatus.OK);
 				
 			} catch (Exception e) {

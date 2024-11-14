@@ -181,6 +181,17 @@ where
         DELETE FROM reviews 
         WHERE review_no = #{review_no}
     </delete>
+<!--     적립포인트 업데이트 -->
+    <update id="giveReviewPoint" parameterType="PointEarnedDTO">
+    UPDATE members
+    SET member_point = member_point + (SELECT point_amount FROM point_infos WHERE point_code = #{point_code})
+    WHERE member_id = #{member_id};
+</update>
 
+<!-- 적립내역저장 -->
+<insert id="insertPointEarned" parameterType="PointEarnedDTO">
+    INSERT INTO point_earned (member_id, point_code, earned_point, point_earned_date)
+    VALUES (#{member_id}, #{point_code}, #{earned_point}, NOW());
+</insert>
 
 </mapper>

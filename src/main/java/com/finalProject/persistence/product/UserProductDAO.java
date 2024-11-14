@@ -39,4 +39,7 @@ public interface UserProductDAO {
 
 	// 리뷰 이미지 조회
 	List<String> selectReviewImg(@Param("product_no") int productNo) throws Exception;
+
+	// 상품에 대한 리뷰 개수
+	int selectCountReviewProduct(int productNo) throws Exception;
 }

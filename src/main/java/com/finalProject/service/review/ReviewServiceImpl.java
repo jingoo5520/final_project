@@ -3,7 +3,6 @@ package com.finalProject.service.review;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.finalProject.model.review.PointEarnedDTO;
 import com.finalProject.model.review.ReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.model.review.ReviewPagingInfo;
@@ -58,11 +58,18 @@ public class ReviewServiceImpl implements ReviewService {
 	// 리뷰 생성 저장
 	@Override
 	@Transactional
-	public void saveReview(ReviewDTO reviewDTO, HttpServletRequest request) throws Exception {
+	public void saveReview(ReviewDTO reviewDTO, HttpServletRequest request, PointEarnedDTO pointDTO) throws Exception {
 		
 	    // 리뷰 데이터 저장
 	    RDao.insertReview(reviewDTO);
 
+	    // 포인트 적립 및 데이터 저장
+	    pointDTO.setMember_id(reviewDTO.getMember_id());  // 로그인한 사용자 ID 설정
+	    pointDTO.setPoint_code(4);  // 포인트 코드 설정 (예: 4는 리뷰 작성 포인트)
+	    pointDTO.setEarned_point(500);  // 적립할 포인트 설정 (500 포인트)
+	    RDao.pointMember(pointDTO);
+
+	    
 	    // 서버 실제 파일 저장 경로 설정
 	    String url = "/resources/reviewImg"; // 서버 경로
 	    
@@ -246,4 +253,3 @@ public class ReviewServiceImpl implements ReviewService {
 }
 
 	
-
