@@ -42,6 +42,17 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
+function showToast(title, content) {
+	$('#toastTitle').text(title); // 토스트 메시지 제목
+    $('#toastBody').text(content); // 토스트 메시지 내용
+    
+    var toastElement = $('#toastMessage');
+    toastElement.removeClass('hide').addClass('show');
+	$("#modalToggle").modal('hide'); // 모달이름
+	 setTimeout(function() {
+		 toastElement.hide();
+       }, 2000);
+} 
 let selectedValues = [];
 	$(function() {
 	
@@ -253,7 +264,7 @@ console.log(selectedType);
 							console.log('Error:', error);
 							console.log('xhr:', xhr);
 							console.log('status:', status);
-							alert('삭제 중 오류가 발생했습니다.');
+							 showToast("실패 ㅠㅠ", "상품 삭제가 실패하였습니다.")
 						}
 					});
 				});
@@ -321,20 +332,21 @@ console.log(selectedType);
 		            contentType: false, // 컨텐츠 타입을 설정하지 않도록 설정
 		            success: function(response) {
 		            	 
-		            	 $('#toastTitle').text('성공!');
-		                 $('#toastBody').text('상품 수정이 성공적으로 처리되었습니다.');
+		            	 $('#toastTitle').text('성공!'); // 토스트 메시지 제목
+		                 $('#toastBody').text('상품 수정이 성공적으로 처리되었습니다.'); // 토스트 메시지 내용
 		                 
 		                 // 토스트 메시지 표시
 		                 var toastElement = $('#toastMessage');
 		                 toastElement.removeClass('hide').addClass('show');
-						$("#modalToggle").modal('hide');
+						$("#modalToggle").modal('hide'); // 모달이름
 						 setTimeout(function() {
 							 toastElement.hide();
 				            }, 2000);
 		            },
 		            error: function(xhr, status, error) {
+		            	function showToast("쓰고 싶은 토스트 제목","쓰고 싶은 토스트 내용");
 		                console.error('Error:', error);
-		                alert('수정 중 오류가 발생했습니다.');
+		                showToast("실패 ㅠㅠ", "상품 수정이 실패하였습니다.") // 넣고싶은 문자
 		            }
 		        });
 		    });

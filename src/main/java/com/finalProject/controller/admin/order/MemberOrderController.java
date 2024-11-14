@@ -129,6 +129,7 @@ public class MemberOrderController {
 		System.out.println("취소 번호" + modifyCancelStatusDTO.getCancelList().toString());
 		System.out.println("취소 타입 " + modifyCancelStatusDTO.getCancelType());
 		System.out.println("결제 번호 " + modifyCancelStatusDTO.getPaymentNo());
+		modifyCancelStatusDTO.getAssigned_point();
 		try {
 			result = os.modifyCancelStatus(modifyCancelStatusDTO);
 		} catch (Exception e) {

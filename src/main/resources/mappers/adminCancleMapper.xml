@@ -83,10 +83,9 @@
 		resultType="com.finalProject.model.admin.order.AdminPaymentVO">
 		SELECT
 		o.payment_module_key AS payment_module_key,
-		c.cancel_reason AS
-		cancel_reason,
-		SUM(op.paid_amount) AS paid_amount,
-		SUM(op.assigned_point) AS assigned_point,
+		c.cancel_reason AS cancel_reason,
+		SUM(DISTINCT op.paid_amount) AS paid_amount,
+		SUM(DISTINCT op.assigned_point) AS assigned_point,
 		c.cancel_type AS cancel_type,
 		p.payment_method AS payment_method,
 		p.payment_id AS payment_no
