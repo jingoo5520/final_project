@@ -150,7 +150,7 @@
 		
 		for (let i = 0; i < pointList.length ; i++) {
 			output += `<li class="list-group-item earnedPointInfo">
-					   		<div class="earnedPoint">+\${pointList[i].point}</div>
+					   		<div class="earnedPoint">+\${pointList[i].point.toLocaleString('ko-KR')}</div>
 					   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
 							<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
 					   </li>`;
@@ -164,7 +164,7 @@
 		
 		for (let i = 0; i < pointList.length ; i ++) {
 			output += `<li class="list-group-item usedPointInfo">
-					   		<div class="usedPoint">+\${pointList[i].point}</div>
+					   		<div class="usedPoint">-\${pointList[i].point.toLocaleString('ko-KR')}</div>
 							<div class="usedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
 				   </li>`;
 		}

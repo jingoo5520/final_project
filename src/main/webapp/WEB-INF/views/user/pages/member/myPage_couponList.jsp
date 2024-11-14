@@ -83,7 +83,7 @@
 				if (item.coupon_dc_type == "R") {
 					couponDCText = `\${item.coupon_dc_rate * 100} %`;
 				} else if (item.coupon_dc_type == "A"){
-					couponDCText = `\${item.coupon_dc_amount} 원`;
+					couponDCText = `\${item.coupon_dc_amount.toLocaleString('ko-KR')} 원`;
 				}
 				if (expireDate >= today) {
 					expireText = `<span style="color: #0DCAF0">사용가능</span>`;
@@ -120,7 +120,7 @@
 				if (item.coupon_dc_type == "R") {
 					couponDCText = `\${item.coupon_dc_rate * 100} %`;
 				} else if (item.coupon_dc_type == "A"){
-					couponDCText = `\${item.coupon_dc_amount} 원`;
+					couponDCText = `\${item.coupon_dc_amount.toLocaleString('ko-KR')} 원`;
 				}
 				if (expireDate >= today) {
 					expireText = `<span style="color: #0DCAF0">사용가능</span>`;
@@ -174,7 +174,7 @@
 				if (item.coupon_dc_type == "R") {
 					couponDCText = `\${item.coupon_dc_rate * 100} %`;
 				} else if (item.coupon_dc_type == "A"){
-					couponDCText = `\${item.coupon_dc_amount} 원`;
+					couponDCText = `\${item.coupon_dc_amount.toLocaleString('ko-KR')} 원`;
 				}
 				if (item.remaining_days > 14) {
 					remainingDaysText = `<span style="color: #0DCAF0">\${item.remaining_days} 일</span>`;
@@ -201,7 +201,7 @@
 				if (item.coupon_dc_type == "R") {
 					couponDCText = `\${item.coupon_dc_rate * 100} %`;
 				} else if (item.coupon_dc_type == "A"){
-					couponDCText = `\${item.coupon_dc_amount} 원`;
+					couponDCText = `\${item.coupon_dc_amount.toLocaleString('ko-KR')} 원`;
 				}
 				if (item.remaining_days > 14) {
 					remainingDaysText = `<span style="color: #0DCAF0">\${item.remaining_days} 일</span>`;
