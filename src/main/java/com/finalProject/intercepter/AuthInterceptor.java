@@ -20,20 +20,31 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
 		HttpSession ses = request.getSession();
 		String uri = request.getRequestURI();
-		System.out.println(uri);
+		System.out.println("uri : " + uri);
+		
+		String requestByNonMember = (String) ses.getAttribute("requestByNonMember");
+		if ("True".equals(requestByNonMember)) {
+			ses.setAttribute("requestByNonMember", null);
+			return true;
+		}
+			
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		if (ses.getAttribute("loginMember") == null) { // 로그인이 안된경우
 			System.out.println("로그인 안됨");
-			if(uri.contains("/order")) { // 주문 요청인 경우
+			if (uri.contains("/order")) { // 주문 요청인 경우
 				System.out.println(request.getParameter("productInfos"));
 				ses.setAttribute("productInfos", request.getParameter("productInfos"));
+				response.sendRedirect("/member/viewLogin?goToOrder=True"); // 로그인 페이지로 이동
+			} else {
+				response.sendRedirect("/member/viewLogin"); // 로그인 페이지로 이동
 			}
-			response.sendRedirect("/member/viewLogin"); // 로그인 페이지로 이동
 			result = false;
 		} else { // 로그인이 되어있는 경우
 			if (uri.contains("/member/auth")) { // 마이페이지 인증요청인 경우
 				result = true;
 				response.sendRedirect(uri); // 인증 요청한 페이지로 이동
+			} else if (uri.contains("/oidsafjoihdsfoihdsaf")) {
+				// working...
 			} else {
 				System.out.println("로그인 되있음");
 				System.out.println("원래 있던 페이지 : " + uri);

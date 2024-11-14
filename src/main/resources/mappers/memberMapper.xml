@@ -35,8 +35,10 @@
 	<!-- 회원가입 -->
 	<insert id="signUpMember">
 		insert into members(member_id, member_name,
-		member_pwd, phone_number, birthday, gender, email, address, nickname, member_point)
-		values(#{member_id}, #{member_name}, sha2(#{member_pwd}, 256),
+		member_pwd, phone_number, birthday, gender, email, address, nickname,
+		member_point)
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd},
+		256),
 		#{phone_number},
 		#{birthday}, #{gender}, #{email}, #{address},
 		#{nickname}, 5000)
@@ -70,9 +72,8 @@
 		update members
 		set nickname = #{nickname}, gender =
 		#{gender}, phone_number = #{phone_number}
-		, address = #{address}, email
-		= #{email}
-		where member_id = #{member_id}
+		where member_id =
+		#{member_id}
 	</update>
 
 	<!-- 마이 페이지 비밀번호 변경 -->
@@ -186,7 +187,7 @@
 	</select>
 
 	<select id="selectCouponList"
-		resultType="com.finalProject.model.UseCouponDTO">
+		resultType="com.finalProject.model.PaidCouponDTO">
 		select p.coupon_no, p.coupon_code, p.pay_date,
 		p.expire_date, p.member,
 		DATEDIFF(p.expire_date, #{currentTime}) as
@@ -227,9 +228,11 @@
 
 	<update id="updateDeliveryInfo">
 		update delivery_addrs set
-		delivery_name = #{delivery_name},
+		delivery_name =
+		#{delivery_name},
 		delivery_address = #{delivery_address},
-		is_main = #{is_main}
+		is_main =
+		#{is_main}
 		where delivery_no = #{delivery_no}
 	</update>
 
@@ -237,5 +240,106 @@
 		delete from delivery_addrs where delivery_no =
 		#{deliveryNo}
 	</delete>
+	
+	<select id="selectUsedCouponList" resultType="com.finalProject.model.UsedCouponDTO">
+		select c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount, c.coupon_dc_rate, 
+			   p.member, u.use_date 
+			   from coupons c 
+			   inner join coupon_paid p 
+			   on c.coupon_no = p.coupon_no 
+			   inner join coupon_used u 
+			   on u.coupon_code = p.coupon_code 
+			   where u.member_id = #{memberId}
+	</select>
+	
+	<select id="selectRecentCouponList" resultType="com.finalProject.model.RecentCouponDTO">
+		select c.coupon_name, 
+			   c.coupon_dc_type, 
+			   c.coupon_dc_amount, 
+			   c.coupon_dc_rate, 
+			   p.member, 
+			   p.pay_date, 
+			   p.expire_date, 
+			   u.use_date 
+			   from coupons c 
+			   inner join coupon_paid p 
+			   on c.coupon_no = p.coupon_no and p.pay_date > DATE_SUB(NOW(), INTERVAL 3 MONTH) 
+			   left join coupon_used u on p.coupon_code = u.coupon_code and u.member_id = #{memberId} 
+			   where p.member = 'All' or p.member = #{memberId}
+	</select>
+	
+	<select id="selectMemberPoint" resultType="com.finalProject.model.MemberPointDTO">
+		select IFNULL(m.member_point,0) as member_point, IFNULL(sum(u.use_point),0) as use_point 
+		from members m, point_used u 
+		where m.member_id = #{memberId} and u.member_id = #{memberId}
+	</select>
+	
+	<select id="selectCntOfEarnedPoint" resultType="Integer">
+		select count(*) from point_earned where member_id = #{memberId}
+	</select>
+	
+	<select id="selectCntOfUsedPoint" resultType="Integer">
+		select count(*) from point_used where member_id = #{memberId} and use_point != 0
+	</select>
+	
+	<select id="selectEarnedPointListByPageNo" resultType="com.finalProject.model.PointDTO">
+		select e.earned_point as point, e.point_earned_date as pointRecordDate, i.point_reason as pointPaidReason 
+		from point_earned e 
+		join point_infos i on e.point_code = i.point_code 
+		where member_id = #{memberId} 
+		order by e.point_earned_date DESC limit 10 offset #{offset}
+	</select>
+	
+	<select id="selectUsedPointListByPageNo" resultType="com.finalProject.model.PointDTO">
+		select use_point as point, point_used_date as pointRecordDate 
+		from point_used 
+		where member_id = #{memberId} and use_point != 0 
+		order by point_used_date DESC limit 10 offset #{offset}
+	</select>
+
+	<!-- 회원 수 받기(스케쥴러) -->
+	<select id="getMemberTotalCount" resultType="int">
+		select
+		count(member_id) from members
+	</select>
+
+	<!-- 회원 아이디 받기(스케쥴러) -->
+	<select id="getMemberId" resultType="string">
+		select member_id from
+		members LIMIT 1 OFFSET #{i}
+	</select>
+
+	<!-- 회원의 1년간 결제금액 받기(스케쥴러) -->
+	<select id="getTotalPriceByMemberId" resultType="int">
+		SELECT
+		IFNULL(SUM(p.total_price), 0) AS totalPrice
+		FROM payments p
+		INNER JOIN
+		orders o ON o.order_id = p.order_id
+		WHERE o.orderer_id = #{member_id}
+		AND p.pay_date > DATE_SUB(NOW(), INTERVAL 12 MONTH)
+	</select>
+
+	<!-- 회원 등급 업데이트 -->
+	<update id="updateMemberLevel">
+		update members SET member_level = (select level_no
+		from levels l where (level_min*10000) &lt;= #{totalPrice} and
+		(level_max*10000)
+		&gt; #{totalPrice}) where member_id = #{member_id}
+	</update>
+
+	<!-- 회원 더미 데이터 insert -->
+	<update id="tumpMemberData">
+		insert into members(member_id, member_name,
+		member_pwd, phone_number,
+		birthday, email, address, nickname,
+		member_point)
+		values(#{member_id}, #{member_name}, sha2(#{member_pwd},
+		256),
+		#{phone_number},
+		#{birthday}, #{email}, #{address},
+		#{nickname},
+		5000)
+	</update>
 
 </mapper>

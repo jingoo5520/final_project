@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>로그인</title>
+<title>ELOLIA</title>
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet"
 	href="/resources/assets/user/css/bootstrap.min.css" />

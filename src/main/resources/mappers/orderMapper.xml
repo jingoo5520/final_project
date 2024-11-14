@@ -7,9 +7,9 @@
 	<select id="selectProductInfo" parameterType="list" resultType="com.finalProject.model.order.OrderProductDTO">
 	    <foreach item="item" index="index" collection="list" separator="UNION ALL">
 	        select p.*, i.image_url, #{item.quantity} AS quantity
-	        from products p inner join product_images i 
-	        on p.product_no = i.product_no 
-	        where p.product_no = #{item.productNo} and i.image_type = 'M'
+	        from products p left join product_images i 
+	        on p.product_no = i.product_no and i.image_type = 'M' 
+	        where p.product_no = #{item.productNo}
 	    </foreach>
 	</select>
 
@@ -22,6 +22,11 @@
 			   left join delivery_addrs d on d.member_id = m.member_id and d.is_main = 'M'
 			   where m.member_id = #{memberId}
 	</select>
+	
+	<delete id="deleteProductsOfOrder">
+		delete from order_products
+		where order_id = #{order_id}
+	</delete>
 	
 	<delete id="deleteOrder">
 		delete from orders
@@ -45,6 +50,11 @@
 				payment_module_key is null or
 				not exists (select 1 from payments p where orders.order_id = p.order_id) 
 			)
+	</delete>
+	
+	<delete id="deletePaidProductsFromCart">
+		delete from cart_items
+		where cart_no = (select cart_no from carts where member_id = #{memberId})
 	</delete>
 	
 	<select id="getPrice" resultType="int">
@@ -238,7 +248,7 @@
 	<insert id="insertToCouponUsed">
 		insert into coupon_used (member_id, coupon_code) values(
 			(select orderer_id from orders where order_id = #{orderId}),
-			(select coupon_code from coupon_paid where coupon_no = #{couponNo})
+			#{couponCode}
 		)
 	</insert>
 	
@@ -266,6 +276,19 @@
 			)
 		where m.member_id = (select orderer_id from orders where order_id = #{orderId})
 	</update>
+	
+	<!-- working : 포인트 적립 내역 작성-->
+	<insert id="writePointEarnedLogByPurchase">		
+		insert into point_earned (member_id, earned_point, point_code)
+		select
+			m.member_id,
+			o.total_price_expected * l.level_point,
+			1 <!-- 상품구매 point_code는 1이다 -->
+		from orders o
+		join members m on o.orderer_id = m.member_id
+		join levels l on l.level_no = m.member_level
+		where o.order_id = #{orderId}
+	</insert>
 	
 	<!-- 회원등급 업데이트 -->
  	<update id="updateUserLevel">
@@ -295,6 +318,15 @@
 	
 	<select id="selectOrderId" resultType="String">
 		select order_id from orders where orderer_id = #{memberId}
+	</select>
+	
+	<select id="selectOrderIdByNonMember" resultType="String">
+		select order_id from orders where orderer_id = 
+		(
+			select guest_id 
+			from guests 
+			where guest_name = #{name} and guest_email = #{email} and guest_phone_number = #{phoneNumber}
+		)
 	</select>
 	
 	<select id="selectProductList" resultType="com.finalProject.model.order.OrderProductDTO">
@@ -364,5 +396,13 @@
 		update payments
 		set deposit_name = #{depositName}, deposit_bank = #{depositBank}, deposit_account = #{depositAccount}
 		where order_id = #{orderId}
+	</update>
+	
+	<update id="updateOrderStatusAuto">
+		<![CDATA[
+		update orders
+		set order_status = 6
+		where order_status = 2 and order_date <= date_sub(current_timestamp(), interval 7 day);
+		]]>
 	</update>
 </mapper>
