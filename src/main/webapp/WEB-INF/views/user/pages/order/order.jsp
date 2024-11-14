@@ -295,8 +295,7 @@
 			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			
 			let usePoint = Number($('input[name="point"]').val());
-			$("#pointDC").text(usePoint.toLocaleString('ko-KR'));
-			$("#usePoint").val(0);
+			$("#pointDC").text("0");
 			$('input[name="point"]').val(0);
 			$("#allPointsUse").prop('disabled', false);
 			$("#allPointsUse").prop('checked', false);
