@@ -22,7 +22,7 @@ public class ProductVO {
 	private String product_content;
 
 	private String product_dc_type;
-	private int product_dc_amount;
+	private float dc_rate;
 	private int product_sell_count;
 
 	private List<ProductImg> list;

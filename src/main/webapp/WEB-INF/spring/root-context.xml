@@ -54,6 +54,9 @@
 		class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg ref="sqlSessionFactory"></constructor-arg>
 	</bean>
+	<tx:annotation-driven />
+	<aop:aspectj-autoproxy>
+	</aop:aspectj-autoproxy>
 
 
 	<!-- 트랜잭션 매니저 -->
@@ -73,5 +76,6 @@
 		base-package="com.finalProject.service" />
 	<context:component-scan
 		base-package="com.finalProject.util" />
-
+	<context:component-scan
+		base-package="com.finalProject.aop" />
 </beans>
