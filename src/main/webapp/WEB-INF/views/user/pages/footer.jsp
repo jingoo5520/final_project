@@ -68,8 +68,7 @@
                                 <ul>
                                     <li><a href="/serviceCenter/notice">공지사항</a></li>
                                     <li><a href="/event">이벤트</a></li>
-                                    <li><a href="javascript:void(0)">이용약관</a></li>
-                                    <li><a href="javascript:void(0)">고객센터</a></li>
+                                    <li><a href="/serviceCenter/inquiries">고객센터</a></li>
                                 </ul>
                             </div>
                             <!-- End Single Widget -->
@@ -79,8 +78,14 @@
                         	<div class="single-footer f-link">
                                 <h3>Members</h3>
                                 <ul>
-                                    <li><a href="javascript:void(0)">회원가입</a></li>
-                                    <li><a href="javascript:void(0)">로그인</a></li>
+                                	<c:if test="${empty sessionScope.loginMember }">
+                                    	<li><a href="/member/viewSignUp">회원가입</a></li>
+                                   		<li><a href="/member/viewLogin">로그인</a></li>
+                                    </c:if>
+                                    <c:if test="${not empty sessionScope.loginMember }">
+                                    	<li><a href="${pageContext.request.contextPath}/member/myPage/viewOrder">내 정보</a></li>
+										<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
+                                    </c:if>
                                     <li><a href="javascript:void(0)">멤버쉽 혜택</a></li>
                                     <li><a href="javascript:void(0)">카테고리</a></li>
                                     <li><a href="javascript:void(0)">장바구니</a></li>
