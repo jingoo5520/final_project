@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -29,13 +31,15 @@ public class ImageUploadController {
     @Autowired
     private WebApplicationContext context;
     
-    private static final String BASE_UPLOAD_DIR = "C:/spring/temp/";
+//    private static final String BASE_UPLOAD_DIR = "C:/spring/temp/";
 
     // 공통 파일 업로드 로직
     @RequestMapping("/uploadImage")
     private String uploadFile(@RequestParam("file") MultipartFile file,
-                              @RequestParam("noticeType") String noticeType) throws IOException {
+                              @RequestParam("noticeType") String noticeType,
+                              HttpServletRequest request) throws IOException {
 
+    	String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
         // noticeType이 N이면 NoticeType.N, E이면 NoticeType.E로 처리
         NoticeTypeStatus.NoticeType typeEnum = "N".equals(noticeType) 
                                                   ? NoticeTypeStatus.NoticeType.N 
@@ -79,14 +83,17 @@ public class ImageUploadController {
     // 이미지 업로드 처리
     @PostMapping("/upload")
     public ResponseEntity<String> imageUpload(@RequestParam("file") MultipartFile file,
-                                              @RequestParam("noticeType") String noticeType) {
+                                              @RequestParam("noticeType") String noticeType,
+                                              HttpServletRequest request) {
         if (file.isEmpty() || noticeType == null || noticeType.isEmpty()) {
             return ResponseEntity.badRequest().body("파일이나 noticeType이 누락되었습니다.");
         }
         try {
-            // 업로드된 파일의 이름
-            String fileName = uploadFile(file, noticeType); // noticeType 전달
-
+        	String realPath = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
+        	// 업로드된 파일의 이름
+            String fileName = uploadFile(file, noticeType, request); // noticeType 전달
+            System.out.println("fileName" + fileName);
+            
             // AJAX에서 업로드된 파일의 이름을 응답으로 반환
             return ResponseEntity.ok(fileName);
         } catch (IOException e) {
@@ -97,10 +104,11 @@ public class ImageUploadController {
     }
 
     // 이미지 파일 불러오기 처리
-    @GetMapping("/summernoteImages/{imageName:.+}")
-    public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
+    @GetMapping("/resources/eventImages/{imageName:.+}")
+    public ResponseEntity<Resource> getImage(@PathVariable String imageName, HttpServletRequest request) {
         try {
-            File file = new File(BASE_UPLOAD_DIR, imageName);
+        	String realPath = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
+            File file = new File(realPath, imageName);
 
             if (!file.exists()) {
                 System.out.println("파일이 존재하지 않습니다: " + file.getAbsolutePath());
