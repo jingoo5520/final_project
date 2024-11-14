@@ -36,8 +36,8 @@ a.active {
 			<div class="single-widget">
 				<h3>고객센터</h3>
 				<ul class="list">
-					<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">공지사항 </a></li>
-					<li><a href="product-grids.html">이벤트 </a></li>
+					<li><a href="/serviceCenter/notice" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">공지사항 </a></li>
+					<li><a href="/event">이벤트 </a></li>
 					<li><a href="/serviceCenter/inquiries" class="<%="inquiries".equals(request.getParameter("pageName")) ? "active" : ""%>">문의</a></li>
 					<li><a href="product-grids.html">멤버십 혜택</a></li>
 				</ul>

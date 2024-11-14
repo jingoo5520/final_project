@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.statisticsMapper">
+
+<!-- 이번 달 총 매출 금액 조회 -->
+	<select id="getTotalSalesThisMonth" resultType="int">
+		SELECT 
+		    IFNULL(SUM(op.product_price * op.order_count), '0') AS monthly_total_sales
+		FROM 
+		    orders o
+		JOIN 
+		    order_products op ON o.order_id = op.order_id
+		JOIN 
+		    payments p ON o.order_id = p.order_id
+		WHERE 
+		    p.payment_status = 'S'
+		    AND DATE_FORMAT(o.order_date, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m');
+	</select>
+
+<!-- 지난 달 총 매출 -->
+	<select id="getTotalSalesLastMonth" resultType="int">
+	    SELECT 
+	        IFNULL(SUM(op.product_price * op.order_count), 0) AS last_month_total_sales
+	    FROM 
+	        orders o
+	    JOIN 
+	        order_products op ON o.order_id = op.order_id
+	    JOIN 
+	        payments p ON o.order_id = p.order_id
+	    WHERE 
+	        p.payment_status = 'S'
+	        AND DATE_FORMAT(o.order_date, '%Y-%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m');
+	</select>
+<!-- 작년 총 매출 -->
+	<select id="getTotalSalesLastYear" resultType="int">
+	    SELECT 
+	        IFNULL(SUM(op.product_price * op.order_count), 0) AS last_year_total_sales
+	    FROM 
+	        orders o
+	    JOIN 
+	        order_products op ON o.order_id = op.order_id
+	    JOIN 
+	        payments p ON o.order_id = p.order_id
+	    WHERE 
+	        p.payment_status = 'S'
+	        AND YEAR(o.order_date) = YEAR(CURDATE()) - 1;
+	</select>
+<!-- 상반기 총 매출 (1~6) -->
+	<select id="getTotalSalesFirstHalfYear" resultType="int">
+	    SELECT 
+	        IFNULL(SUM(op.product_price * op.order_count), 0) AS first_half_year_total_sales
+	    FROM 
+	        orders o
+	    JOIN 
+	        order_products op ON o.order_id = op.order_id
+	    JOIN 
+	        payments p ON o.order_id = p.order_id
+	    WHERE 
+	        p.payment_status = 'S'
+	        AND MONTH(o.order_date) BETWEEN 1 AND 6
+	        AND YEAR(o.order_date) = YEAR(CURDATE());
+	</select>
+<!-- 하반기 총 매출 (7~12) -->
+	<select id="getTotalSalesSecondHalfYear" resultType="int">
+	    SELECT 
+	        IFNULL(SUM(op.product_price * op.order_count), 0) AS second_half_year_total_sales
+	    FROM 
+	        orders o
+	    JOIN 
+	        order_products op ON o.order_id = op.order_id
+	    JOIN 
+	        payments p ON o.order_id = p.order_id
+	    WHERE 
+	        p.payment_status = 'S'
+	        AND MONTH(o.order_date) BETWEEN 7 AND 12
+	        AND YEAR(o.order_date) = YEAR(CURDATE());
+	</select>
+<!-- 올해 총 매출 -->
+	<select id="getTotalSalesThisYear" resultType="int">
+	    SELECT 
+	        IFNULL(SUM(op.product_price * op.order_count), 0) AS this_year_total_sales
+	    FROM 
+	        orders o
+	    JOIN 
+	        order_products op ON o.order_id = op.order_id
+	    JOIN 
+	        payments p ON o.order_id = p.order_id
+	    WHERE 
+	        p.payment_status = 'S'
+	        AND YEAR(o.order_date) = YEAR(CURDATE());
+	</select>
+
+
+<!-- 오늘의 주문 수 조회 -->
+	<select id="getTodayOrderCount" resultType="int">
+		SELECT 
+		    IFNULL(COUNT(*), 0) AS today_order_count
+		FROM 
+		    orders
+		WHERE 
+		    DATE(order_date) = CURDATE();
+	</select>
+	
+<!-- 이번 달 주문 수 조회 -->
+	<select id="getTotalOrdersThisMonth" resultType="int">
+		SELECT 
+		    COUNT(*) AS current_month_order_count
+		FROM 
+		    orders
+		WHERE 
+		    YEAR(order_date) = YEAR(CURDATE())
+		    AND MONTH(order_date) = MONTH(CURDATE());
+	</select>
+	
+<!-- 이번 달 취소율 조회 -->
+	<select id="getCancelOrdersThisMonth" resultType="double">
+		SELECT 
+		    IFNULL(ROUND((cancel_count / total_count) * 100, 2), 0) AS cancel_rate
+		FROM (
+		    SELECT 
+		        COUNT(*) AS total_count,  -- 결제 완료된 전체 주문 건수
+		        SUM(CASE WHEN c.cancel_type = 'cancel' THEN 1 ELSE 0 END) AS cancel_count  -- 결제 완료된 주문 중 취소된 주문 건수
+		    FROM 
+		        orders o
+		    LEFT JOIN 
+		        cancels c ON o.order_id = c.order_id  -- 취소 내역을 가져오기 위해 orders와 cancels 테이블을 조인
+		    LEFT JOIN 
+		        payments p ON o.order_id = p.order_id  -- 결제 상태를 가져오기 위해 orders와 payments 테이블을 조인
+		    WHERE 
+		        p.payment_status = 'S'  -- 결제 완료된 주문만 (payments 테이블의 payment_status 컬럼)
+		        AND YEAR(o.order_date) = YEAR(CURDATE())  -- 이번 년도
+		        AND MONTH(o.order_date) = MONTH(CURDATE())  -- 이번 달
+		) AS monthly_counts;
+	</select>
+
+<!-- 이번 달 반품율 조회 -->
+	<select id="getReturnOrdersThisMonth" resultType="double">
+		SELECT 
+		    IFNULL(ROUND((return_count / total_count) * 100, 2), 0) AS return_rate
+		FROM (
+		    SELECT 
+		        COUNT(*) AS total_count,  -- 결제 완료된 전체 주문 건수
+		        SUM(CASE WHEN c.cancel_type = 'return' THEN 1 ELSE 0 END) AS return_count  -- 결제 완료된 주문 중 반품된 주문 건수
+		    FROM 
+		        orders o
+		    LEFT JOIN 
+		        cancels c ON o.order_id = c.order_id  -- 반품 내역을 가져오기 위해 orders와 cancels 테이블을 조인
+		    LEFT JOIN 
+		        payments p ON o.order_id = p.order_id  -- 결제 상태를 가져오기 위해 orders와 payments 테이블을 조인
+		    WHERE 
+		        p.payment_status = 'S'  -- 결제 완료된 주문만 (payments 테이블의 payment_status 컬럼)
+		        AND YEAR(o.order_date) = YEAR(CURDATE())  -- 이번 년도
+		        AND MONTH(o.order_date) = MONTH(CURDATE())  -- 이번 달
+		) AS monthly_counts;
+	</select>
+	
+<!-- 카테고리 별 매출 통계 -->
+	<select id="getSalesByCategory" resultType="CateSalesDTO">
+	    select c.category_name AS category, 
+	           COALESCE(sum(p.total_price), 0) as total_sales
+	    from categories c
+	    left join products prod on c.category_no = prod.product_category
+	    left join order_products op on prod.product_no = op.product_no
+	    left join orders o on op.order_id = o.order_id
+	    left join payments p on o.order_id = p.order_id and p.payment_status = 'S'
+	    group by c.category_name
+	    order by total_sales DESC;
+	</select>
+
+    
+<!-- 가격대 별 매출 통계 -->
+	<select id="getTotalSalesByPriceRange" resultType="PriceRangeDTO">
+		SELECT 
+		    priceRanges.priceRange,
+		    IFNULL(SUM(op.product_price * op.order_count), 0) AS total_sales
+		FROM
+		    (
+		        SELECT '0-100000' AS priceRange
+		        UNION ALL
+		        SELECT '100001-200000'
+		        UNION ALL
+		        SELECT '200001-300000'
+		        UNION ALL
+		        SELECT '300001-400000'
+		        UNION ALL
+		        SELECT '400001-500000'
+		        UNION ALL
+		        SELECT '500001-600000'
+		        UNION ALL
+		        SELECT '600001-700000'
+		        UNION ALL
+		        SELECT '700001-800000'
+		        UNION ALL
+		        SELECT '800001-900000'
+		        UNION ALL
+		        SELECT '900001-1000000'
+		        UNION ALL
+		        SELECT '1000001 이상'
+		    ) AS priceRanges
+		LEFT JOIN
+		    order_products op ON 
+		    (CASE 
+		        WHEN priceRanges.priceRange = '0-100000' THEN (op.product_price * op.order_count) BETWEEN 0 AND 100000
+		        WHEN priceRanges.priceRange = '100001-200000' THEN (op.product_price * op.order_count) BETWEEN 100001 AND 200000
+		        WHEN priceRanges.priceRange = '200001-300000' THEN (op.product_price * op.order_count) BETWEEN 200001 AND 300000
+		        WHEN priceRanges.priceRange = '300001-400000' THEN (op.product_price * op.order_count) BETWEEN 300001 AND 400000
+		        WHEN priceRanges.priceRange = '400001-500000' THEN (op.product_price * op.order_count) BETWEEN 400001 AND 500000
+		        WHEN priceRanges.priceRange = '500001-600000' THEN (op.product_price * op.order_count) BETWEEN 500001 AND 600000
+		        WHEN priceRanges.priceRange = '600001-700000' THEN (op.product_price * op.order_count) BETWEEN 600001 AND 700000
+		        WHEN priceRanges.priceRange = '700001-800000' THEN (op.product_price * op.order_count) BETWEEN 700001 AND 800000
+		        WHEN priceRanges.priceRange = '800001-900000' THEN (op.product_price * op.order_count) BETWEEN 800001 AND 900000
+		        WHEN priceRanges.priceRange = '900001-1000000' THEN (op.product_price * op.order_count) BETWEEN 900001 AND 1000000
+		        ELSE (op.product_price * op.order_count) > 1000000
+		    END)
+		LEFT JOIN
+		    orders o ON o.order_id = op.order_id
+		LEFT JOIN
+		    payments p ON o.order_id = p.order_id AND p.payment_status = 'S'
+		GROUP BY
+		    priceRanges.priceRange
+		ORDER BY
+		    FIELD(priceRanges.priceRange, 
+		           '0-100000', '100001-200000', '200001-300000', '300001-400000', 
+		           '400001-500000', '500001-600000', '600001-700000', '700001-800000', 
+		           '800001-900000', '900001-1000000', '1000001 이상');
+	</select>
+
+<!-- 연령 별 주문 통계 -->
+	<select id="getSalesByAgeGroup" resultType="AgeGroupSalesDTO">
+		SELECT
+		    ageGroups.ageGroup,
+		    IFNULL(SUM(op.product_price * op.order_count), 0) AS total_sales
+		FROM
+		    (
+		        SELECT '10대' AS ageGroup
+		        UNION ALL
+		        SELECT '20대'
+		        UNION ALL
+		        SELECT '30대'
+		        UNION ALL
+		        SELECT '40대'
+		        UNION ALL
+		        SELECT '50대'
+		        UNION ALL
+		        SELECT '60대'
+		        UNION ALL
+		        SELECT '70대'
+		        UNION ALL
+		        SELECT '80대'
+		        UNION ALL
+		        SELECT '90대 이상'
+		    ) AS ageGroups
+		LEFT JOIN
+		    members m ON 
+		        (CASE
+		            WHEN ageGroups.ageGroup = '10대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 10 AND 19
+		            WHEN ageGroups.ageGroup = '20대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 20 AND 29
+		            WHEN ageGroups.ageGroup = '30대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 30 AND 39
+		            WHEN ageGroups.ageGroup = '40대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 40 AND 49
+		            WHEN ageGroups.ageGroup = '50대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 50 AND 59
+		            WHEN ageGroups.ageGroup = '60대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 60 AND 69
+		            WHEN ageGroups.ageGroup = '70대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 70 AND 79
+		            WHEN ageGroups.ageGroup = '80대' THEN TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) BETWEEN 80 AND 89
+		            ELSE TIMESTAMPDIFF(YEAR, m.birthday, CURDATE()) >= 90
+		        END)
+		LEFT JOIN
+		    orders o ON o.orderer_id = m.member_id
+		LEFT JOIN
+		    order_products op ON op.order_id = o.order_id
+		LEFT JOIN
+		    payments p ON o.order_id = p.order_id AND p.payment_status = 'S'
+		GROUP BY
+		    ageGroups.ageGroup
+		ORDER BY
+		    FIELD(ageGroups.ageGroup, '10대', '20대', '30대', '40대', '50대', '60대', '70대', '80대', '90대 이상');
+	</select>
+	
+<!-- 성별별 매출 통게 -->
+    <select id="getSalseByGender" resultType="GenderSalesDTO">
+    <![CDATA[
+		SELECT m.gender AS gender, IFNULL(SUM(p.total_price), 0) AS total_sales
+		FROM members m
+		LEFT JOIN orders o ON m.member_id = o.orderer_id
+		LEFT JOIN payments p ON o.order_id = p.order_id AND p.payment_status = 'S'
+		GROUP BY m.gender;
+    ]]>
+    </select>
+
+</mapper>

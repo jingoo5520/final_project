@@ -2,6 +2,7 @@ package com.finalProject.persistence.admin.notices;
 
 import java.util.List;
 
+import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfo;
@@ -20,7 +21,7 @@ public interface NoticeDAO {
 	void addNotice(NoticeVO notice) throws Exception;
 
 	// 이벤트 저장
-	void addEvent(NoticeVO notice) throws Exception;
+	void addEvent(NoticeDTO event) throws Exception;
 
 	// 공지사항 수정 조회
 	NoticeDTO selectNoticeById(int noticeNo) throws Exception;
@@ -45,6 +46,41 @@ public interface NoticeDAO {
 	
 	// 페이지네이션이 적용된 공지 목록 조회
 	List<NoticeDTO> getNoticesWithPagination(int offset, int limit) throws Exception;
+
+	// 페이지네이션 검색어 처리
+	List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception;
+
+	// 이벤트 DB 저장 로직
+//	void createEventImg(NoticeDTO noticeDTO) throws Exception;
+
+	// 배너 이미지 저장
+	void saveBannerPath(int noticeNo, String filePath) throws Exception;
+
+	// 썸네일 이미지 저장
+	void saveThumbnailPath(int noticeNo, String filePath) throws Exception;
+
+	// url 저장
+	void saveUrl(int noticeNo, String url) throws Exception;
+
+	// 썸네일 이미지 저장
+	void saveEvent(NoticeDTO event) throws Exception;
+
+	// 배너 이미지 수정
+	void updateBannerPath(int noticeNo, String bannerImage) throws Exception;
+
+	// 썸네일 이미지 수정
+	void updateThumbnailPath(int noticeNo, String thumbnailImage) throws Exception;
+
+	// 썸네일 이미지 삭제
+	boolean deleteThumbnail(int noticeNo) throws Exception;
+
+	// 메인 배너
+	List<NoticeDTO> getBannersWithImages() throws Exception;
+
+	// url
+	boolean updateNoticeUrl(NoticeVO notice) throws Exception;
+
+
 
 	
 	// 페이지네이션 -> 페이징

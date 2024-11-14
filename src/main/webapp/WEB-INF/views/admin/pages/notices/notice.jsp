@@ -85,7 +85,6 @@
 
 						<!-- body  -->
 				<!-- / Content -->
-	
                <div class="container-xxl flex-grow-1 container-p-y">
               <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">공지 /</span> 공지사항 목록</h4>
 
@@ -113,7 +112,7 @@
 								    <tr id="notice-row-${notice.notice_no}">
 								        <td>${notice.notice_no}</td>
 								        <td>${notice.notice_type}</td>
-								        <td><a href="viewNotice/${notice.notice_no}">${notice.notice_title}</td>
+								        <td><a href="viewNotice/${notice.notice_no}">${notice.notice_title}</a></td>
 								        <td>${notice.admin_id}</td>
 								        <td>${notice.reg_date}</td>
 								        <td>
@@ -157,10 +156,21 @@
 		        <a href="?page=${currentPage + 1}">다음</a>
 		    </c:if>
 		</div>
-
-      <!-- 공지 작성 버튼 -->
+		
+<!-- 		<form method="get" action="/notices"> -->
+<!-- 		    <input type="text" name="searchWord" placeholder="검색어 입력"> -->
+<!-- 		    <select name="searchType"> -->
+<!-- 		        <option value="notice_title">제목</option> -->
+<!-- 		        <option value="admin_id">작성자</option> -->
+<!-- 		    </select> -->
+<!-- 		    <button type="submit">검색</button> -->
+<!-- 		</form> -->
+		
+		
+                    
+      <!-- 공지사항 작성 버튼 -->
       <div class="text-end mt-3">
-        <a class="btn rounded-pill btn-outline-primary" href="/admin/notices/createNotice">공지 작성</a>
+        <a class="btn rounded-pill btn-outline-primary" href="/admin/notices/createNotice">공지사항 작성</a>
                   </div>
                 </div>
               </div>
