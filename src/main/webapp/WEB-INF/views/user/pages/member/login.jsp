@@ -31,9 +31,17 @@ uri="http://java.sun.com/jsp/jstl/fmt"%>
       .kakao {
         background-color: #fee500;
       }
-
-      .naver {
-      }
+	
+	  .social-login .row div {
+	  	display: flex;
+	  	justify-content: center;
+	  }
+	  
+	  .social-login .row div img{
+	  	border-radius: 4px;
+	  	max-height: 50px;
+	  	max-width: 200px;
+	  }
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -173,35 +181,7 @@ uri="http://java.sun.com/jsp/jstl/fmt"%>
                 <span id="nonMemberFunction"></span>
                 <!-- working... -->
                 <!-- TODO : 모델이든 세션이든 정보 받아서 비회원이 장바구니에서 결제하기 버튼 누르면  '비회원으로 결제하기' 링크 만들어야 함-->
-                <%--
-                <c:if test="${sessionScope.sentByOrderRequest eq null}">
-                  <p class="outer-link">
-                    <a
-                      href="${pageContext.request.contextPath}/orderByNonMemberPage"
-                    >
-                      비회원으로 주문조회 하기
-                    </a>
-                  </p>
-                </c:if>
-
-                <c:if test="${true}">
-                  <p class="outer-link">
-                    <a
-                      href="${pageContext.request.contextPath}/orderByNonMemberPage"
-                    >
-                      비회원으로 주문조회 하기
-                    </a>
-                  </p>
-                </c:if>
-                --%> <%--
-                <c:if test="${not empty sentByOrderRequest}">
-                  <p class="outer-link">
-                    <a onclick="goToOrderPageOfNonMember()">
-                      비회원으로 주문결제 하기
-                    </a>
-                  </p>
-                </c:if>
-                --%>
+                
               </div>
             </form>
           </div>
