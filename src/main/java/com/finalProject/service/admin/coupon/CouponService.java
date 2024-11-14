@@ -23,4 +23,9 @@ public interface CouponService {
 	
 	// 쿠폰 지급
 	int payCoupon(List<String> memberIdList, int couponNo) throws Exception;
+	
+	// 쿠폰 지급 로그 리스트 가져오기
+	Map<String, Object> getCouponPayLogList(PagingInfoNewDTO pagingInfoDTO) throws Exception;
+	
+	
 }

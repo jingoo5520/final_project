@@ -52,37 +52,55 @@
 				</jsp:include>
 				<!-- / sideBar -->
 				<!-- contents -->
-				<div class="col-lg-9 col-12" id="modiInfoView">
-					<main class="right-pane">
+				<div class="col-lg-9 col-12">
+					<!-- Shopping Cart -->
+					<div class="cart-list-head" style="border: none">
+						<div class="cart-list-title">
+							<div class="register-form">
 
-						<h1>회원 탈퇴</h1>
-						<c:if test="${empty sessionScope.auth}">
-							<form class="row" action="/member/auth" method="post">
-								<div class="auth">
-									<div class="input-group">
-										<span class="input-group-text">비밀번호</span> <input
-											type="password" class="form-control" id="pwd" name="pwd">
-									</div>
-									<button class="btn" type="submit">확인</button>
-								</div>
-							</form>
-						</c:if>
-						<c:if test="${not empty sessionScope.auth}">
-							<div>정말 탈퇴하시겠어요?</div>
-							<div>탈퇴시 회원정보는 복구되지 않으며</div>
-							<div>사용하지 않은 포인트, 쿠폰은 소멸됩니다.</div>
-							<div class="form-group input-group">
-								<input type="text" id="agree" name="agree" placeholder="회원탈퇴"><input
-									type="hidden" value="">
+								<c:if test="${empty sessionScope.auth}">
+									<form class="row" action="/member/auth" method="post">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<h2 class="text-center" style="margin-bottom: 20px">비밀번호
+													인증</h2>
+												<input type="password" class="form-control" id="pwd"
+													name="pwd">
+												<div class="button">
+													<button class="btn" type="submit">확인</button>
+												</div>
+											</div>
+										</div>
+									</form>
+								</c:if>
+								<c:if test="${not empty sessionScope.auth}">
+									<c:if test="${not empty sessionScope.auth}">
+										<form class="row" id="form">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="reg-id">
+														<h2 class="text-center">정말 탈퇴하시겠어요?</h2>
+														<div class="text-center">
+															탈퇴시 회원정보는 복구되지 않으며 <br> 사용하지 않은 포인트, 쿠폰은 소멸됩니다.
+														</div>
+													</label> <input class="form-control" type="text" id="agree"
+														name="agree" style="margin-bottom: 10px"
+														placeholder="회원탈퇴"><span></span><input
+														class="form-control" type="hidden" value="">
+												</div>
+											</div>
+											<div class="button" id="button">
+												<button class="btn" type="submit">탈퇴하기</button>
+											</div>
+										</form>
+									</c:if>
+								</c:if>
+
 							</div>
-							<button id="button" class="btn btn-info" type="button"
-								value="탈퇴하기">탈퇴하기</button>
-						</c:if>
-					</main>
-					</main>
+						</div>
+					</div>
 				</div>
 				<!-- / contents -->
-
 			</div>
 		</div>
 	</section>
@@ -91,7 +109,8 @@
 </body>
 <script type="text/javascript">
 	$(function() {
-		$("#button").click(function() {
+		$("#button").click(function(e) {
+			e.preventDefault(); // 기본 제출 동작 방지
 			let agree = $("#agree").val();
 			if (agree == "회원탈퇴") {
 				$.ajax({

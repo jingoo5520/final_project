@@ -294,6 +294,8 @@
 			<p id="modalText">내용</p>
 		</div>
 	</div>
+	
+	<jsp:include page="memberModal.jsp"></jsp:include>
 
 	<!-- End Account Register Area -->
 

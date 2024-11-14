@@ -41,12 +41,19 @@ public interface OrderService {
 	
 	void makePayment(String orderId, Integer amount, String payModule, String method, HttpSession session) throws Exception;
 	
+	void deletePaidProductsFromCart(String memberId);
+	
 	Map<String, Object> makeOrder(PaymentRequestDTO request, boolean isMember, HttpSession session) throws Exception;
 	
 	void makeGuest(PaymentRequestDTO request, String orderId);
 
 	List<OrderProductsDTO> getOrderListOfMember(String memberId);
+	
+	List<OrderProductsDTO> getOrderListOfNonMember(String name, String phoneNumber, String email);
 
 	void cancelOrder(CancelOrderRequestDTO request) throws Exception;
+
+	void updateOrderStatusAuto();
+
 
 }

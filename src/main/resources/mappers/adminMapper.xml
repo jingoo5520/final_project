@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.finalProject.mappers.adminMapper">
+
+	<!-- 회원 총 수 가져오기 -->
+	<select id="selectAllMemberCnt" resultType="int">
+		select count(*) from
+		members;
+	</select>
+
+	<!-- 지난 달 회원 가입 수 가져오기 -->
+	<select id="selectLastMonthMemberRegCnt" resultType="int">
+		select
+		COUNT(*)
+		from members
+		where MONTH(reg_date) = MONTH(DATE_SUB(CURDATE(),
+		INTERVAL 1 MONTH))
+		and YEAR(reg_date) = YEAR(DATE_SUB(CURDATE(),
+		INTERVAL 1 MONTH));
+	</select>
+
+	<!-- 성별 별 회원 수 가져오기 -->
+	<select id="selectMembersByGender" resultType="GenderCountDTO">
+		SELECT gender,
+		COUNT(*) as count
+		FROM members
+		GROUP BY gender;
+	</select>
+	
+	<!-- 레벨 별 회원 수 가져오기 -->
+	<select id="selectMembersByLevel" resultType="LevelCountDTO">
+		SELECT member_level,
+		COUNT(*) as count
+		FROM members
+		GROUP BY member_level;
+	</select>
+	
+	<!-- 가입자 수 가져오기  -->
+	<select id="selectMemberRegCnt" resultType="int">
+		SELECT COUNT(*) as count
+		FROM members
+		<![CDATA[
+		where reg_date >= #{regDate_start} 
+		and reg_date <= #{regDate_end} 
+		]]>
+	</select>
+
+</mapper>

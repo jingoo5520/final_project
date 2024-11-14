@@ -101,6 +101,18 @@ public interface MemberDAO {
 
 	// 네이버 간편가입
 	int signUpNaver(MemberDTO memberDTO)throws Exception;
+
+	// 회원 수 받기(스케쥴러)
+	int getMemberCount()throws Exception;
+
+	// 회원 아이디 받기(스케쥴러)
+	String getMemberId(int i)throws Exception;
+
+	// 회원의 3달간 결제금액 받기(스케쥴러)
+	int getTotalPriceByMemberId(String member_id)throws Exception;
+
+	// 회원 등급 업데이트(스케쥴러)
+	int updateMemberLevel(String member_id, int totalPrice)throws Exception;
 	
 	// 사용한 쿠폰 조회
 	List<UsedCouponDTO> selectUsedCouponList(String memberId) throws Exception;

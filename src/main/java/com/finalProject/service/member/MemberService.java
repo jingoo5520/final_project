@@ -85,6 +85,18 @@ public interface MemberService {
 	
 	// 배송지 삭제
 	void deleteDelivery(int deliveryNo) throws Exception;
+
+	// 회원 수 받기(스케쥴러)
+	int getMemberCount()throws Exception;
+
+	// 회원 아이디 받기(스케쥴러)
+	String getMemberId(int i)throws Exception;
+
+	// 회원의 3달간 결제금액 받기(스케쥴러)
+	int getTotalPriceByMemberId(String member_id)throws Exception;
+
+	// 회원 등급 업데이트(스케쥴러)
+	int updateMemberLevel(String member_id, int totalPrice)throws Exception;
 	
 	// 최근 3개월 쿠폰 조회
 	List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception;

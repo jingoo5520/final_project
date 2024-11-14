@@ -57,8 +57,9 @@ h5 {
 					<hr>
 					<ul class="list">
 						<li><h5>내 활동</h5></li>
-						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">내 문의 </a></li>
+						<li><a href="/serviceCenter/inquiries" class="<%="inquiries".equals(request.getParameter("pageName")) ? "active" : ""%>">내 문의 </a></li>
 						<li><a href="/serviceCenter/notices" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">내 리뷰 </a></li>
+						<li><a href="${pageContext.request.contextPath}/member/myPage/wishList" class="<%="wishList".equals(request.getParameter("pageName")) ? "active" : ""%>">내 관심상품 </a></li>
 					</ul>
 					<hr>
 					<ul class="list">

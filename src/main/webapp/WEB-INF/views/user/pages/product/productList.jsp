@@ -145,9 +145,9 @@
 		<jsp:param name="categoryName" value="${products[0].category_name}" />
 	</jsp:include>
 	<!-- 찜목록 잘 받아오는지 확인 -->
-	<c:forEach var="item" items="${wishList}">
+	<%-- <c:forEach var="item" items="${wishList}">
 		<div>${item}</div>
-	</c:forEach>
+	</c:forEach> --%>
 
 
 	<!-- Preloader -->

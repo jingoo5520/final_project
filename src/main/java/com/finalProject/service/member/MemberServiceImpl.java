@@ -272,5 +272,29 @@ public class MemberServiceImpl implements MemberService {
 	public List<PointDTO> getUsedPointList(String memberId, int pageNo) throws Exception {
 		return memberDAO.selectUsedPointList(memberId, pageNo);
 	}
+	
+	// 회원 수 받기(스케쥴러)
+	@Override
+	public int getMemberCount() throws Exception {
+		return memberDAO.getMemberCount();
+	}
+
+	// 회원 아이디 받기(스케쥴러)
+	@Override
+	public String getMemberId(int i) throws Exception {
+		return memberDAO.getMemberId(i);
+	}
+
+	// 회원의 3달간 결제금액 받기(스케쥴러)
+	@Override
+	public int getTotalPriceByMemberId(String member_id) throws Exception {
+		return memberDAO.getTotalPriceByMemberId(member_id);
+	}
+
+	// 회원 등급 업데이트(스케쥴러)
+	@Override
+	public int updateMemberLevel(String member_id, int totalPrice) throws Exception {
+		return memberDAO.updateMemberLevel(member_id, totalPrice);
+	}
 
 }

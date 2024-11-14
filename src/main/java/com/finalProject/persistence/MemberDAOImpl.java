@@ -319,4 +319,31 @@ public class MemberDAOImpl implements MemberDAO {
 		return ses.selectList(ns + "selectUsedPointListByPageNo", param);
 	}
 
+	// 회원 수 받기(스케쥴러)
+	@Override
+	public int getMemberCount() throws Exception {
+		return ses.selectOne(ns+"getMemberTotalCount");
+	}
+
+	// 회원 아이디 받기(스케쥴러)
+	@Override
+	public String getMemberId(int i) throws Exception {
+		return ses.selectOne(ns+"getMemberId", i);
+	}
+
+	// 회원의 3달간 결제금액 받기(스케쥴러)
+	@Override
+	public int getTotalPriceByMemberId(String member_id) throws Exception {
+		return ses.selectOne(ns+"getTotalPriceByMemberId", member_id);
+	}
+
+	// 회원 등급 업데이트(스케쥴러)
+	@Override
+	public int updateMemberLevel(String member_id, int totalPrice) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("member_id", member_id);
+		map.put("totalPrice", totalPrice);
+		return ses.update(ns+"updateMemberLevel", map);
+	}
+
 }

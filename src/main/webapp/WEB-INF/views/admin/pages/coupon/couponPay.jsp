@@ -51,7 +51,6 @@
 	let selectedCouponNo; 
 	
 	$(function() {
-
 		$('[name="birthday_end"]').val(
 				new Date().toISOString().substring(0, 10));
 
@@ -276,6 +275,7 @@
 		});
 	}
 	
+	// 멤버 리스트 보여주기(필터)
 	function showFilterdMemberList(pageNo){
 		let found = false;
 		
@@ -290,6 +290,8 @@
 	    		filteredData.push({name: 'pagingSize',value: pagingSize })
 	    		filteredData.push({name: 'pageCntPerBlock',value: pageCntPerBlock })
 	        }
+	        
+	        console.log(item);
 	    });
 		
 		$.ajax({
@@ -298,11 +300,17 @@
 			data : filteredData,
 			dataType: 'json',
 			success : function(data) {
-				if(data.list.length != 0){
+				
 
-					let listOutput = '';
-					let paginationOutput = '';
+				let listOutput = '';
+				let paginationOutput = '';
+				let noDataTableBody = `<tr id="noDataTableBody">
+			        <td colspan="100%" class="text-center p-3">
+		            	<div class="d-flex justify-content-center">검색된 회원이 없습니다.</div>
+			        </td>
+			    </tr>`;
 					
+			    if(data.list.length != 0){
 					$.each(data.list, function(index, member) {
 						let timestamp = member.reg_date;
 						let date = new Date(timestamp);
@@ -357,13 +365,12 @@
 					}
 					
 					$('.pagination').html(paginationOutput);
+					$('#payCouponAllBtn').prop('disabled', false);
 				} else {
-					$('#memberTableBody').html("");
+					$('#memberTableBody').html(noDataTableBody);
 					$('.pagination').html("");
+					$('#payCouponAllBtn').prop('disabled', true);
 				}
-				
-				
-				
 			},
 			error : function(error) {
 				console.log(error);
@@ -436,7 +443,7 @@
 </script>
 </head>
 <style>
-table td {
+table tr:not(#noDataTableBody) {
 	font-size: 0.75rem;
 }
 
@@ -542,13 +549,13 @@ table td {
 											<label class="col-sm-2 col-form-label" for="basic-default-name">생년월일</label>
 											<div class="col-sm-10 d-flex align-items-center">
 												<div class="form-check-inline">
-													<input name="birthday_start" class="form-control" type="date" value=id="html5-date-input">
+													<input name="birthday_start" class="form-control" type="date" value="" id="">
 												</div>
 												<div class="form-check-inline">
 													<span class="mx-2">-</span>
 												</div>
 												<div class="form-check-inline">
-													<input name="birthday_end" class="form-control" type="date" value="" id="html5-date-input">
+													<input name="birthday_end" class="form-control" type="date" value="" id="">
 												</div>
 											</div>
 										</div>
@@ -556,13 +563,13 @@ table td {
 											<label class="col-sm-2 col-form-label" for="basic-default-name">가입일</label>
 											<div class="col-sm-10 d-flex align-items-center">
 												<div class="form-check-inline">
-													<input name="reg_date_start" class="form-control" type="date" value="" id="html5-date-input">
+													<input name="reg_date_start" class="form-control" type="date" value="" id="">
 												</div>
 												<div class="form-check-inline">
 													<span class="mx-2">-</span>
 												</div>
 												<div class="form-check-inline">
-													<input name="reg_date_end" class="form-control" type="date" value="" id="html5-date-input">
+													<input name="reg_date_end" class="form-control" type="date" value="" id="">
 												</div>
 											</div>
 										</div>
