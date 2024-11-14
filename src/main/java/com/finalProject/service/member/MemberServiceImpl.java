@@ -20,12 +20,16 @@ import com.finalProject.model.PaidCouponDTO;
 import com.finalProject.model.PointDTO;
 import com.finalProject.model.RecentCouponDTO;
 import com.finalProject.persistence.MemberDAO;
+import com.finalProject.persistence.PointDAO;
 
 @Service
 public class MemberServiceImpl implements MemberService {
 
 	@Inject
 	private MemberDAO memberDAO;
+	
+	@Inject
+	private PointDAO pDAO;
 
 	// 로그인
 	@Override
@@ -295,6 +299,13 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int updateMemberLevel(String member_id, int totalPrice) throws Exception {
 		return memberDAO.updateMemberLevel(member_id, totalPrice);
+	}
+
+	// 회원 더미 데이터 insert
+	@Override
+	public void tumpMemberData(MemberDTO mDTO) throws Exception {
+		memberDAO.tumpMemberData(mDTO);
+		pDAO.insertPointPlus(mDTO.getMember_id(), 2);
 	}
 
 }

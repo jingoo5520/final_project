@@ -346,4 +346,10 @@ public class MemberDAOImpl implements MemberDAO {
 		return ses.update(ns+"updateMemberLevel", map);
 	}
 
+	// 회원 더미 데이터 insert
+	@Override
+	public void tumpMemberData(MemberDTO mDTO) throws Exception {
+		ses.insert(ns+"tumpMemberData", mDTO);
+	}
+
 }
