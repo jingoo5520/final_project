@@ -111,7 +111,7 @@
 		<if test="reg_date_end != null and reg_date_end != ''">
 			and reg_date &gt; #{reg_date_end}
 		</if>
-		order by member_status asc ,reg_date desc 
+		order by member_status asc ,reg_date desc
 		limit #{startRowIndex},
 		#{viewPostCntPerPage}
 	</select>
@@ -122,4 +122,11 @@
 			#{member}
 		</foreach>
 	</update>
+	<insert id="insertBlack"
+		parameterType="com.finalProject.model.admin.black.BlackInsertDTO">
+		<foreach item="member" collection="memberIdList" separator=";">
+			insert into blacks(member_id,black_reason,admin_id)
+			values(#{member},#{blackReason},#{loginMember})
+		</foreach>
+	</insert>
 </mapper>

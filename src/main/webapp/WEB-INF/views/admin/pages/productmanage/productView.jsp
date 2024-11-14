@@ -239,6 +239,7 @@ console.log(selectedType);
 					$.ajax({
 						url : '/admin/productmanage/productDelete', // 삭제 요청을 보낼 URL
 						type : 'POST', // HTTP 메소드
+						dataType : 'json',
 						data : {
 							productId : productId
 						}, // 제품 ID 데이터 전송
@@ -249,7 +250,9 @@ console.log(selectedType);
 			            	$('#modalToggle2').modal('hide');
 						},
 						error : function(xhr, status, error) {
-							console.error('Error:', error);
+							console.log('Error:', error);
+							console.log('xhr:', xhr);
+							console.log('status:', status);
 							alert('삭제 중 오류가 발생했습니다.');
 						}
 					});
@@ -481,9 +484,6 @@ console.log(selectedType);
 										<div class="row mb-3">
 											<label class="col-sm-2 col-form-label" for="basic-default-name">할인 타입</label>
 											<div class="col-sm-10 d-flex align-items-center">
-												<div class="form-check-inline" id=>
-													<input name="product_dc_type" class="form-check-input" type="checkbox" value="M" id="product_dc_m" /> <label class="form-check-label" for="product_m"> 고정 금액 할인 </label>
-												</div>
 												<div class="form-check-inline">
 													<input name="product_dc_type" class="form-check-input" type="checkbox" value="P" id="product_dc_p" /> <label class="form-check-label" for="product_p"> 비율 할인 </label>
 												</div>

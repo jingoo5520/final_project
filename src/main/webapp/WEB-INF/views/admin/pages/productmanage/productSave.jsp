@@ -43,13 +43,19 @@
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
 	function selectCategory(name, no) {
-		document.getElementById('selectCategory').value = no;
+		no = parseInt(no);
+		$('#selectCategory').val(no);
 
 		// 버튼의 텍스트를 선택된 카테고리 이름으로 설정
 		document.querySelector('.btn-group > button').innerText = name;
 
 	}
+	function selectOption(value, text) {
 
+		document.getElementById('dropdownValue').value = value;
+
+		$("#productShow").text(text);
+	}
 	function toggleDiscountInput() {
 		let discountType = $("input[name='product_dc_type']:checked").val();
 		console.log(discountType);
@@ -59,47 +65,96 @@
 			$("#discountAmountContainer").prop('readonly', false);
 		} else {
 			$("#discountAmountContainer").val(0);
-			/* $("#discountAmountContainer").val(0); */
 			$("#discountAmountContainer").prop('readonly', true);
 		}
 	}
-	$(function () {
-		$('form').on('submit', function (e) {
-            let isValid = true;
+	$(
+			function() {
 
-            // 모든 경고 메시지 제거
-            $('.error-message').remove();
+				$('form')
+						.on(
+								'submit',
+								function(e) {
+									let isValid = true;
 
-            // 상품명 검사
-            if ($('#productName').val().trim() === '') {
-                $('#productName').after('<span class="error-message" style="color: red;">상품명을 입력해 주세요.</span>');
-                isValid = false;
-            }
+									// 모든 경고 메시지 제거
+									$('.error-message').remove();
 
-            // 가격 검사
-            if ($('#productPrice').val().trim() === '') {
-                $('#productPrice').after('<span class="error-message" style="color: red;">상품 가격을 입력해 주세요.</span>');
-                isValid = false;
-            }
+									// 상품명 검사
+									if ($('#productName').val().trim() === '') {
+										$('#productName')
+												.after(
+														'<span class="error-message" style="color: red;">상품명을 입력해 주세요.</span>');
+										isValid = false;
+									}
 
-            // 카테고리 검사
-            if ($('#selectCategory').val().trim() === '') {
-                $('#selectCategory').parent().parent().append('<div><span class="error-message" style="color: red;">카테고리를 선택해 주세요.</span></div>');
-                isValid = false;
-            }
+									if ($('#productCount').val().trim() === '') {
+										$('#productCount').val(0); // 판매수량이 비어있으면 0으로 설정
+									}
 
-            // 판매수량 검사
-            if ($('#productCount').val().trim() === '') {
-                $('#productCount').after('<span class="error-message" style="color: red;">판매 가능한 수량을 입력해 주세요.</span>');
-                isValid = false;
-            }
+									// 가격 검사
+									if ($('#productPrice').val().trim() === '') {
+										$('#productPrice')
+												.after(
+														'<span class="error-message" style="color: red;">상품 가격을 입력해 주세요.</span>');
+										isValid = false;
+									}
 
-            // 유효하지 않으면 폼 제출 방지
-            if (!isValid) {
-                e.preventDefault();
-            }
-        });
-	})
+									// 카테고리 검사
+									if ($('#selectCategory').val().trim() === '') {
+										$('#selectCategory')
+												.parent()
+												.parent()
+												.append(
+														'<div><span class="error-message" style="color: red;">카테고리를 선택해 주세요.</span></div>');
+										isValid = false;
+									}
+
+									// 판매수량 검사
+									if ($('#productCount').val().trim() === '') {
+										$('#productCount')
+												.after(
+														'<span class="error-message" style="color: red;">판매 가능한 수량을 입력해 주세요.</span>');
+										isValid = false;
+									}	
+									if ($('#productStockCount').val().trim() === '') {
+										$('#productStockCount')
+												.after(
+														'<span class="error-message" style="color: red;">재고 수량을 입력해 주세요.</span>');
+										isValid = false;
+									}
+									let discountType = $(
+											"input[name='product_dc_type']:checked")
+											.val();
+									let discountAmount = document
+											.getElementById('discountAmountContainer').value
+											.trim();
+
+									if (discountType === 'P') {
+										if (discountAmount === ''
+												|| isNaN(discountAmount)
+												|| parseInt(discountAmount) < 0
+												|| parseInt(discountAmount) > 100) {
+											$('#discountAmountContainer')
+													.parent()
+													.parent()
+													.append(
+															'<span class="error-message" style="color: red;">입력 가능한 할인율(0-100%)을 입력해 주세요.</span>');
+											isValid = false;
+										}
+									}
+									if ($('#dropdownValue').val().trim() === '') {
+										$('#productShow')
+												.after(
+														'<div>&nbsp;&nbsp;&nbsp;<span class="error-message" style="color: red;">공개여부를 선택해 주세요.</span></div>');
+										isValid = false;
+									}
+									// 유효하지 않으면 폼 제출 방지
+									if (!isValid) {
+										e.preventDefault();
+									}
+								});
+			})
 </script>
 </head>
 
@@ -201,7 +256,7 @@
 															<c:forEach var="category" items="${categories}">
 																<li>
 																	<label>${category.category_no }</label>
-																	<a href="javascript:void(0);" class="list-group-item list-group-item-action" onclick="selectCategory('${category.category_name}', '${category.category_no}')"> ${category.category_name} </a>
+																	<a href="javascript:void(0);" class="list-group-item list-group-item-action" onclick="selectCategory('${category.category_name}',' ${category.category_no}')"> ${category.category_name} </a>
 																</li>
 															</c:forEach>
 														</ul>
@@ -210,12 +265,18 @@
 											</div>
 										</div>
 										<div class="row mb-3">
-											<label class="col-sm-2 col-form-label" for="basic-default-email">할인금액</label>
+											<label class="col-sm-2 col-form-label" for="basic-default-email">할인 퍼센트</label>
 											<div class="col-sm-10">
 												<div class="input-group input-group-merge">
-													<input type="number" id="discountAmountContainer" class="form-control" placeholder="" name="product_dc_amount" readonly>
+													<input type="number" id="discountAmountContainer" class="form-control" placeholder="" name="dc_rate" value="" readonly>
 												</div>
 
+											</div>
+										</div>
+										<div class="row mb-3">
+											<label class="col-sm-2 col-form-label" for="basic-default-phone">재고수량</label>
+											<div class="col-sm-10">
+												<input type="number" id="productStockCount" class="form-control phone-mask" placeholder="재고 수량을 입력" aria-label="재고 수량을 입력" name="product_stock_count">
 											</div>
 										</div>
 										<div class="row mb-3">
@@ -243,8 +304,23 @@
 												<input type="file" class="form-control" id="basic-default-company" placeholder="게시할 상품 서브 이미지" name="image_sub_url" multiple>
 											</div>
 										</div>
+									
+											<label class="col-sm-2 col-form-label" for="basic-default-name">공개여부</label>
+											<div class="btn-group mb-3">
+												<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="productShow">공개 상태 여부</button>
+												<ul class="dropdown-menu">
+													<li>
+														<button class="dropdown-item" type="button" value="yes" onclick="selectOption('Y', 'Yes')">Yes</button>
+													</li>
+													<li>
+														<button class="dropdown-item" type="button" value="no" onclick="selectOption('N', 'no')">no</button>
+													</li>
+												</ul>
+							
+										</div>
+										<input type="hidden" name="product_show" id="dropdownValue">
 										<div class="row justify-content-end">
-											<div class="col-sm-10">
+											<div class="col-sm-10 mt-3">
 												<button type="submit" class="btn btn-primary">저장</button>
 											</div>
 										</div>

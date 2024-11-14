@@ -22,18 +22,18 @@
 		<property name="url" value="jdbc:mysql://localhost:3306/my?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false"> 
 		</property> <property name="username" value="root"></property> <property 
 		name="password" value="1234"></property> </bean> -->
-	
+
 	<bean id="dataSource"
-      class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-      <property name="driverClassName"
-         value="org.mariadb.jdbc.Driver">
-      </property>
-      <property name="url"
-         value="jdbc:mariadb://aabbcc1121.cafe24.com:3306/aabbcc1121?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true">
-      </property>
-      <property name="username" value="aabbcc1121"></property>
-      <property name="password" value="Abc123!!"></property>
-   </bean>
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="org.mariadb.jdbc.Driver">
+		</property>
+		<property name="url"
+			value="jdbc:mariadb://aabbcc1121.cafe24.com:3306/aabbcc1121?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true">
+		</property>
+		<property name="username" value="aabbcc1121"></property>
+		<property name="password" value="Abc123!!"></property>
+	</bean>
 
 	<bean id="sqlSessionFactory"
 		class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -50,13 +50,16 @@
 		class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg ref="sqlSessionFactory"></constructor-arg>
 	</bean>
-
+	<tx:annotation-driven />
+	<aop:aspectj-autoproxy>
+	</aop:aspectj-autoproxy>
 	<!-- 트랜잭션 매니저 -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
-	<tx:annotation-driven />
+
+
 
 	<context:component-scan
 		base-package="com.finalProject.persistence" />
@@ -66,5 +69,6 @@
 		base-package="com.finalProject.service" />
 	<context:component-scan
 		base-package="com.finalProject.util" />
-
+	<context:component-scan
+		base-package="com.finalProject.aop" />
 </beans>

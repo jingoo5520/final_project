@@ -138,7 +138,7 @@ public class ProductController {
 					}
 				}
 			}
-
+			productDTO.setDc_rate(productDTO.getDc_rate() / 100);
 			if (ps.saveProduct(productDTO, list, realPath) == 1) {
 				System.out.println("占쏙옙占쎌삢 占쎄쉐�⑨옙");
 				response.sendRedirect("/admin/productmanage/productSave");
@@ -202,11 +202,15 @@ public class ProductController {
 	}
 
 	@RequestMapping(value = "/productDelete", method = RequestMethod.POST)
-	public ResponseEntity<String> DeleteProduct(int productId) {
+	public ResponseEntity<Map<String, Object>> DeleteProduct(int productId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		if (ps.deleteProduct(productId) == 1) {
-			return ResponseEntity.ok("deleteSuccess");
+			map.put("status", "success");
+			return ResponseEntity.ok(map);
 		} else {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("deleteFail");
+			map.put("status", "fail");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
 		}
 	}
 }

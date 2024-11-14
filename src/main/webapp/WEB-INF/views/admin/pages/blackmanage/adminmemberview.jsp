@@ -114,7 +114,7 @@ $(function () {
 			 data: JSON.stringify({ MemberIdList: list }), 
 	
 			success: function(data) {
-				console.log(data);
+				$("#blackMemberModal").modal('hide');
 			} ,
 			error: function(error) {
 			    console.log("AJAX 에러:", error);

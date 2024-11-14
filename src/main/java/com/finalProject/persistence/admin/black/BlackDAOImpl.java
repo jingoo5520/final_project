@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.finalProject.model.admin.black.BlackInsertDTO;
 import com.finalProject.model.admin.black.BlackMemberVO;
 import com.finalProject.model.admin.product.PagingInfo;
 
@@ -53,6 +54,11 @@ public class BlackDAOImpl implements BlackDAO {
 
 		return ses.update(ns + "blackMember", map);
 
+	}
+
+	@Override
+	public void insertBlackMembers(BlackInsertDTO dto) {
+		ses.insert(ns + "insertBlack", dto);
 	}
 
 }

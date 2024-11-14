@@ -29,6 +29,8 @@ public class ProductDAOImpl implements ProductDAO {
 		params.put("product_dc_type", productDTO.getProduct_dc_type());
 		params.put("dc_rate", productDTO.getDc_rate());
 		params.put("product_sell_count", productDTO.getProduct_sell_count());
+		params.put("product_stock_count", productDTO.getProduct_stock_count());
+		params.put("product_show", productDTO.getProduct_show());
 
 		ses.insert(ns + "saveProduct", productDTO);
 

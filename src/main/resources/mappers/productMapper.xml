@@ -182,12 +182,12 @@
 		product_price,
 		product_content,
 		product_category,product_dc_type, dc_rate,
-		product_sell_count)
+		product_sell_count,product_stock_count,product_show)
 		VALUES
 		(#{product_name}, #{product_price},
 		#{product_content}, #{category_no},
 		#{product_dc_type}, #{dc_rate},
-		#{product_sell_count});
+		#{product_sell_count},#{product_stock_count},#{product_show});
 	</insert>
 
 	<insert id="saveMainImage" parameterType="map">

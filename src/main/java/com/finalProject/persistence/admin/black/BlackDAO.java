@@ -3,6 +3,7 @@ package com.finalProject.persistence.admin.black;
 import java.util.List;
 import java.util.Map;
 
+import com.finalProject.model.admin.black.BlackInsertDTO;
 import com.finalProject.model.admin.black.BlackMemberVO;
 import com.finalProject.model.admin.product.PagingInfo;
 
@@ -19,5 +20,7 @@ public interface BlackDAO {
 	void updateStatusMember(String memberId);
 
 	int blackMember(Map<String, List<String>> map);
+
+	void insertBlackMembers(BlackInsertDTO dto);
 
 }

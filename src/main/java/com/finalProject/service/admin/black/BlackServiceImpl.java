@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.admin.black.BlackInsertDTO;
 import com.finalProject.model.admin.black.BlackMemberDTO;
 import com.finalProject.model.admin.product.PagingInfo;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
@@ -95,6 +96,13 @@ public class BlackServiceImpl implements BlackService {
 	public boolean blackMember(Map<String, List<String>> map) throws Exception {
 		int updateCount = bDAO.blackMember(map);
 
+		List<String> list = map.get("MemberIdList");
+		System.out.println(list);
+		BlackInsertDTO dto = new BlackInsertDTO(list, "jingoo5520", "관리자 취소");
+		if (updateCount >= 1) {
+
+			bDAO.insertBlackMembers(dto);
+		}
 		if (updateCount < map.size()) {
 			throw new Exception("fail");
 
