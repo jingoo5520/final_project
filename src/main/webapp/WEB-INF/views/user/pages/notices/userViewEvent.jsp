@@ -7,11 +7,10 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>이벤트</title>
+    <title>ELOLIA</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon"
-        href="/resources/assets/user/images/logo/white-logo.svg" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -37,9 +36,28 @@
 
     <jsp:include page="../header.jsp"></jsp:include>
     <!-- / Content -->
+    
+    <!-- Start Breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-md-6 col-12">
+					<div class="breadcrumbs-content">
+						<h1 class="page-title">이벤트</h1>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-12">
+					<ul class="breadcrumb-nav">
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li>이벤트</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Breadcrumbs -->
 
 <div class="container mt-3">
-  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">공지 /</span> 이벤트 목록</h4>
   <div class="row">
     <c:choose>
       <c:when test="${not empty events}">
@@ -48,12 +66,12 @@
             <div class="card" style="width: 400px;">
               <c:choose>
                 <c:when test="${not empty event.thumbnail_image}">
-                <a href="userViewEventDetail/${event.notice_no}">
+                <a href="eventDetail/${event.notice_no}">
                   <img class="card-img-top" src="${pageContext.request.contextPath}${event.thumbnail_image}" alt="${event.notice_title} 이미지">
                 </a>
                 </c:when>
                 <c:otherwise>
-                <a href="userViewEventDetail/${event.notice_no}">
+                <a href="/eventDetail/${event.notice_no}">
                   <img class="card-img-top" src="${pageContext.request.contextPath}/resources/images/noP_image.png" alt="기본 이미지">
                 </a>
                 </c:otherwise>

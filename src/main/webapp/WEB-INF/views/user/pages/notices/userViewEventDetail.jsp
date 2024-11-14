@@ -7,11 +7,10 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>이벤트 상세페이지</title>
+<title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- ========================= CSS here ========================= -->
@@ -27,6 +26,26 @@
 </head>
 <body>
     <jsp:include page="../header.jsp"></jsp:include>
+    
+    <!-- Start Breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-lg-6 col-md-6 col-12">
+					<div class="breadcrumbs-content">
+						<h1 class="page-title">이벤트</h1>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-12">
+					<ul class="breadcrumb-nav">
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/event">이벤트</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Breadcrumbs -->
 
     <div class="layout-page">
         <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
@@ -39,7 +58,6 @@
 
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-                <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">이벤트 /</span> 이벤트 상세</h4>
 
 				<c:if test="${not empty event}">
 				    <div class="card">
@@ -60,7 +78,7 @@
 				            <p class="card-text">${event.notice_content}</p>
 				        </div>
 				        <div style="transform: translate(15px, -10px);">
-				            <a class="btn rounded-pill btn-outline-secondary" href="/notices/event">목록으로 돌아가기</a>
+				            <a class="btn rounded-pill btn-outline-secondary" href="/event">목록으로 돌아가기</a>
 				        </div>
 				    </div>
 				</c:if>

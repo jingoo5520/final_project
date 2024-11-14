@@ -7,11 +7,10 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>공지사항</title>
+<title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- ========================= CSS here ========================= -->
@@ -45,14 +44,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">Shop Grid</h1>
+						<h1 class="page-title">공지사항</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="javascript:void(0)">Shop</a></li>
-						<li>Shop Grid</li>
+						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
+						<li><a href="/serviceCenter/inquiries">Service Center</a></li>
+						<li>공지사항</li>
 					</ul>
 				</div>
 			</div>
@@ -109,7 +108,7 @@
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-12">
                                                     <h5 class="card-title">
-                                                        <a href="userViewNoticeDetail/${notice.notice_no}">${notice.notice_title}</a>
+                                                        <a href="/serviceCenter/noticeDetail/${notice.notice_no}">${notice.notice_title}</a>
                                                     </h5>
                                                 </div>
                                                 <div class="col-lg-2 col-md-2 col-12">
@@ -171,31 +170,6 @@
 </div>
 </div>
 </section>
-
-            <!-- / Content -->
-<!--     <h2>공지사항</h2> -->
-<!--     <form action="/notice" method="get"> -->
-<!--         <table border="1"> -->
-<!--             <thead> -->
-<!--                 <tr> -->
-<!--                     <th>번호</th> -->
-<!--                     <th>제목</th> -->
-<!--                     <th>작성일</th> -->
-<!--                     <th>상세보기</th> -->
-<!--                 </tr> -->
-<!--             </thead> -->
-<!--             <tbody> -->
-<%-- 				<c:forEach var="notice" items="${noticeList}"> --%>
-<!-- 				    <div> -->
-<%-- 				        <h3>${notice.notice_title}</h3> --%>
-<%-- 				        <div>${notice.notice_content}</div> --%>
-<%-- 				        <p>등록일: ${notice.reg_date}</p> --%>
-<%-- 				        <p>관리자: ${notice.admin_id}</p> --%>
-<!-- 				    </div> -->
-<%-- 				</c:forEach> --%>
-<!--             </tbody> -->
-<!--         </table> -->
-<!--     </form> -->
 
 	<!-- Start Breadcrumbs -->
 
