@@ -82,15 +82,43 @@
     limit #{limit} offset #{offset}
 </select>
 
-	<select id="getProductById" parameterType="int"
-		resultType="ProductDTO">
-		select p.*,c.*,pi.* from products p
-		left join categories c
-		on p.product_category = c.category_no
-		left join product_images pi on
-		p.product_no = pi.product_no
-		where p.product_no = #{productId}
+<!-- 전체 상품 개수 조회 쿼리문 -->
+	<select id="selectProductCountByCategory" parameterType="int" resultType="int">
+	    select count(*) 
+	    from products p
+	    where p.product_delete = 'N'
+	    <if test="category != null">
+	        and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
+	    </if>
 	</select>
+	
+	
+	<select id="getProductById" parameterType="int" resultType="ProductDTO">
+	    select p.*, c.*, pi.image_url, pi.image_type from products p
+	    left join categories c on p.product_category = c.category_no
+	    left join product_images pi on p.product_no = pi.product_no
+	    where p.product_no = #{product_no}
+	</select>
+	
+	<select id="selectProductDetailById" parameterType="int" resultType="ProductDTO">
+    SELECT p.*, c.category_name 
+    FROM products p
+    LEFT JOIN categories c ON p.product_category = c.category_no
+    WHERE p.product_no = #{product_no}
+</select>
+   
+
+
+<select id="countSearchResults" parameterType="map" resultType="int">
+    SELECT 
+        COUNT(*) 
+    FROM 
+        products p
+    WHERE 
+        p.product_delete = 'N'
+        AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search}, '%'))
+        AND (#{category} IS NULL OR p.product_category = #{category})
+</select>
 
 <select id="searchProducts" parameterType="map" resultType="ProductDTO">
     SELECT 
