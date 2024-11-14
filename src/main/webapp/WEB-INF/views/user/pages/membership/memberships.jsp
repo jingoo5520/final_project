@@ -21,85 +21,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-	let pageNo = 1;
-	let pagingSize = 5;
-	let pageCntPerBlock = 5;
-
-	// 문의 리스트 보여주기
-	function showInquiryList(pageNo) {
-		$.ajax({
-			url : '/serviceCenter/getInquiries',
-			type : 'GET',
-			dataType: 'json',
-			data : {
-				"pageNo" : pageNo,
-				"pagingSize" : pagingSize,
-				"pageCntPerBlock" : pageCntPerBlock
-			},
-			success : function(data) {
-				console.log(data);
-
-				let listOutput = '';
-				let paginationOutput = '';
-				
-				$.each(data.list, function(index, inquiry) {
-					let timestamp = inquiry.inquiry_reg_date;
-					let date = new Date(timestamp);
-					
-					let year = date.getFullYear();
-					let month = String(date.getMonth() + 1).padStart(2, '0'); 
-					let day = String(date.getDate()).padStart(2, '0'); 
-
-				    date = `\${year}-\${month}-\${day}`;
-					
-					listOutput +=
-						`<div class="cart-single-list" onclick="location.href='/serviceCenter/inquiryDetail?inquiryNo=\${inquiry.inquiry_no}'">`
-						+ '<div class="row align-items-center">'
-						+ `<div class="col-lg-2 col-md-2 col-12">\${inquiry.inquiry_no }</div>`
-						+ `<div class="col-lg-6 col-md-6 col-12">\${inquiry.inquiry_title }</div>`
-						+ `<div class="col-lg-2 col-md-2 col-12">\${date}</div>`
-						+ `<div class="col-lg-2 col-md-2 col-12">\${inquiry.inquiry_status == "W" ? "답변 대기" : "답변 완료"} </div>`
-						+ `</div>`
-						+ `</div>`;
-				});
-
-				$('#inquiryList').html(listOutput);
-				
-				if(data.pi.pageNo == 1){
-				} else {
-					paginationOutput += `<li><a href="javascript:void(0)" onclick="showInquiryList(\${data.pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>`;
-				}
-				
-				
-				for(let i = data.pi.startPageNoCurBloack; i < data.pi.endPageNoCurBlock + 1; i++){
-					if(i == data.pi.pageNo) {
-						paginationOutput += `<li class="active"><a href="javascript:void(0)" onclick="showInquiryList(\${i})">\${i}</a></li>`;
-					} else {
-						paginationOutput += `<li><a href="javascript:void(0)" onclick="showInquiryList(\${i})">\${i}</a></li>`;	
-					}
-				}
-				
-				
-				if(data.pi.pageNo == data.pi.totalPageCnt){
-				} else {
-					paginationOutput += `<li><a href="javascript:void(0)" onclick="showInquiryList(\${data.pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>`;
-				}
-				
-				$('.pagination-list').html(paginationOutput);
-				
-				
-			},
-			error : function(error) {
-				console.log(error);
-			}
-		});
-	}
 	
-	// 디테일 페이지 이동
-	function goInquiryDetailPage(inquiryNo) {
-		
-	}
-
 </script>
 </head>
 
@@ -145,14 +67,14 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">문의</h1>
+						<h1 class="page-title">멤버쉽</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
 						<li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
 						<li><a href="/serviceCenter/notice">Service Center</a></li>
-						<li>문의</li>
+						<li>멤버쉽</li>
 					</ul>
 				</div>
 			</div>
@@ -166,95 +88,80 @@
 				<!-- sideBar -->
 				<jsp:include page="/WEB-INF/views/user/pages/serviceCenterSideBar.jsp">
 
-					<jsp:param name="pageName" value="inquiries" />
+					<jsp:param name="pageName" value="memberships" />
 
 				</jsp:include>
 				<!-- / sideBar -->
+
+
 
 
 				<div class="col-lg-9 col-12">
 					<!-- Shopping Cart -->
 					<div class="cart-list-head" style="border: none">
 						<div class="cart-list-title">
-							<h5>내 문의</h5>
+							<h5>멤버십 혜택</h5>
 						</div>
-						<!-- Cart List Title -->
+
 						<div class="cart-list-title">
 							<div class="row">
-								<div class="col-lg-2 col-md-2 col-12">
-									<p>문의 번호</p>
-								</div>
-								<div class="col-lg-6 col-md-6 col-12">
-									<p>문의 제목</p>
+								<div class="col-lg-1 col-md-1 col-12">
+									<p>번호</p>
 								</div>
 								<div class="col-lg-2 col-md-2 col-12">
-									<p>작성 시간</p>
+									<p>사진</p>
 								</div>
 								<div class="col-lg-2 col-md-2 col-12">
-									<p>문의 상태</p>
+									<p>등급</p>
+								</div>
+								<div class="col-lg-2 col-md-2 col-12">
+									<p>사용 금액</p>
+								</div>
+								<div class="col-lg-2 col-md-2 col-12">
+									<p>등급 할인</p>
+								</div>
+								<div class="col-lg-3 col-md-3 col-12">
+									<p>적립 포인트</p>
 								</div>
 							</div>
 						</div>
 						<!-- End Cart List Title -->
 
 						<div id="inquiryList">
-							<c:forEach var="inquiry" items="${inquiryData.list}">
-								<div class="cart-single-list" onclick="location.href='/serviceCenter/inquiryDetail?inquiryNo=${inquiry.inquiry_no}'">
+							<c:forEach var="level" items="${levelList}">
+								<div class="cart-single-list" onclick="">
 									<div class="row align-items-center">
-										<div class="col-lg-2 col-md-2 col-12">${inquiry.inquiry_no }</div>
-										<div class="col-lg-6 col-md-6 col-12">${inquiry.inquiry_title }</div>
+										<div class="col-lg-1 col-md-1 col-12">${level.level_no}</div>
 										<div class="col-lg-2 col-md-2 col-12">
-											<fmt:formatDate value="${inquiry.inquiry_reg_date}" pattern="yyyy-MM-dd" />
+											<c:choose>
+												<c:when test="${level.level_no == 1}">
+													<img src="/resources/images/bronze.png" width="60%">
+												</c:when>
+												<c:when test="${level.level_no == 2}">
+													<img src="/resources/images/silver.png" width="60%">
+												</c:when>
+												<c:when test="${level.level_no == 3}">
+													<img src="/resources/images/gold.png" width="60%">
+												</c:when>
+												<c:when test="${level.level_no == 4}">
+													<img src="/resources/images/diamond.png" width="60%">
+												</c:when>
+												<c:otherwise>
+												</c:otherwise>
+											</c:choose>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">${inquiry.inquiry_status == "W" ? "답변 대기" : "답변 완료"}</div>
+										<div class="col-lg-2 col-md-2 col-12">${level.level_name}</div>
+										<div class="col-lg-2 col-md-2 col-12">${level.level_min}이상${level.level_max}미만</div>
+										<div class="col-lg-2 col-md-2 col-12">${level.level_dc}</div>
+										<div class="col-lg-3 col-md-3 col-12">${level.level_point}</div>
 									</div>
 								</div>
 							</c:forEach>
 						</div>
 
-						<div class="pagination center">
-							<ul class="pagination-list">
-
-								<c:choose>
-									<c:when test="${inquiryData.pi.pageNo == 1}">
-									</c:when>
-									<c:otherwise>
-										<li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
-									</c:otherwise>
-								</c:choose>
-
-								<c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
-									<c:choose>
-										<c:when test="${inquiryData.pi.pageNo == i}">
-											<li class="active"><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo})">${i}</a></li>
-										</c:when>
-										<c:otherwise>
-											<li><a href="javascript:void(0)" onclick="showInquiryList(${i})">${i}</a></li>
-										</c:otherwise>
-									</c:choose>
-
-								</c:forEach>
-
-
-								<c:choose>
-									<c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
-									</c:when>
-									<c:otherwise>
-										<li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
-									</c:otherwise>
-								</c:choose>
-							</ul>
-						</div>
-
 
 					</div>
 
-					<div id="writeInquiryBtnArea" class="button mt-2">
-						<button class="btn" onclick="location.href = '/serviceCenter/writeInquiry'">
-							문의 작성
-							<span class="dir-part"></span>
-						</button>
-					</div>
 				</div>
 				<!--/ End Shopping Cart -->
 			</div>

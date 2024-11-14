@@ -64,7 +64,7 @@
 	<!-- 특정 날 판매 량 -->
 	<select id="selectDaySaleCnt" resultType="int">
 		SELECT
-		SUM(op.order_count)
+		IFNULL(SUM(op.order_count), 0)
 		FROM payments p
 		JOIN orders o ON p.order_id =
 		o.order_id
@@ -75,7 +75,7 @@
 
 	<!-- 특정 날 매출 -->
 	<select id="selectDayRevenue" resultType="int">
-		SELECT SUM(total_price)
+		SELECT IFNULL(SUM(total_price), 0)
 		FROM payments
 		WHERE DATE(pay_date) = DATE(#{time})
 	</select>

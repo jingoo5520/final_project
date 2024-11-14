@@ -290,14 +290,14 @@ let fileList = [];
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-6 col-12">
 					<div class="breadcrumbs-content">
-						<h1 class="page-title">Shop Grid</h1>
+						<h1 class="page-title">문의 작성</h1>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
 						<li><a href="index.html"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="javascript:void(0)">Shop</a></li>
-						<li>Shop Grid</li>
+						<li><a href="javascript:void(0)">Service Center</a></li>
+						<li>문의 작성</li>
 					</ul>
 				</div>
 			</div>

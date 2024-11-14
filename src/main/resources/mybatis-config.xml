@@ -40,5 +40,7 @@
 		<typeAlias type="com.finalProject.model.admin.GenderCountDTO" alias="GenderCountDTO" />
 		<typeAlias type="com.finalProject.model.admin.LevelCountDTO" alias="LevelCountDTO" />
 		
+		<typeAlias type="com.finalProject.model.level.LevelDTO" alias="LevelDTO" />
+		
 	</typeAliases>
 </configuration>
