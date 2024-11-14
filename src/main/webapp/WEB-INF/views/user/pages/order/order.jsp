@@ -34,7 +34,9 @@
 			let totalProductDcPrice = 0;
 			let totalEarnedPoint = 0;
 			let memberLevelPoint = "${orderMember.level_point}";
+			let memberLevelDc = "${orderMember.level_dc}";
 			
+			console.log(memberLevelDc);
 			$(".productPrice").each(function() {
 				let productPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
 				totalPrices += productPriceText;
@@ -50,14 +52,14 @@
 				totalProductDcPrice += productDcPriceText;
 			});
 			
-			
+			let levelDCPrice = Math.floor((totalPrices * parseFloat(memberLevelDc)) / 10) * 10;
 			
 			$("#totalProductCount").text(totalCount + " 개");
 			$("#totalProductPrice").text(totalPrices.toLocaleString('ko-KR') + " 원");
-			$("#totalDCPrices").text(totalProductDcPrice.toLocaleString('ko-KR') + " 원");
+			$("#totalDCPrices").text((totalProductDcPrice + levelDCPrice).toLocaleString('ko-KR') + " 원");
 			$("#totalOriginalPrices").text(totalOriginalPrices.toLocaleString('ko-KR') + " 원");
 			$(".totalProductCount").text(totalCount + " 개");
-			$(".totalPrice").text((totalPrices + 2500).toLocaleString('ko-KR') + " 원");
+			$(".totalPrice").text((totalPrices + 2500 - (totalProductDcPrice + levelDCPrice)).toLocaleString('ko-KR') + " 원");
 			
 			setTotalEarnedPoint();
 			
