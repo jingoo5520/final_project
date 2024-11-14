@@ -107,7 +107,15 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public CookieCartDTO getProductInfoOfCookieCart(int productNo) {
-		return cDAO.selectProductInfoByCookie(productNo);
+		CookieCartDTO cookieCartDTO = cDAO.selectProductInfoByCookie(productNo);
+		
+		System.out.println(cookieCartDTO);
+		
+		if (cookieCartDTO == null) {
+			System.out.println("없음 이미지");
+		}
+		
+		return cookieCartDTO;
 	}
 
 	@Override

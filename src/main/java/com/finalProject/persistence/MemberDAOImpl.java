@@ -13,7 +13,11 @@ import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.MemberDTO;
-import com.finalProject.model.UseCouponDTO;
+import com.finalProject.model.MemberPointDTO;
+import com.finalProject.model.UsedCouponDTO;
+import com.finalProject.model.PaidCouponDTO;
+import com.finalProject.model.PointDTO;
+import com.finalProject.model.RecentCouponDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -237,7 +241,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 	// 쿠폰 목록 조회
 	@Override
-	public List<UseCouponDTO> selectCouponList(Map<String, String> param) throws Exception {
+	public List<PaidCouponDTO> selectCouponList(Map<String, String> param) throws Exception {
 		return ses.selectList(ns + "selectCouponList", param);
 	}
 
@@ -263,6 +267,56 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public void deleteDelivery(int deliveryNo) throws Exception {
 		ses.delete(ns + "deleteDeliveryInfo", deliveryNo);
+	}
+	
+	// 사용한 쿠폰 조회
+	@Override
+	public List<UsedCouponDTO> selectUsedCouponList(String memberId) throws Exception {
+		return ses.selectList(ns + "selectUsedCouponList", memberId);
+	}
+
+	// 최근 3개월 쿠폰 조회
+	@Override
+	public List<RecentCouponDTO> selectRecentCouponList(String memberId) throws Exception {
+		return ses.selectList(ns + "selectRecentCouponList", memberId);
+	}
+
+	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
+	@Override
+	public MemberPointDTO getMemberPoint(String memberId) throws Exception {
+		return ses.selectOne(ns + "selectMemberPoint", memberId);
+	}
+
+	// 회원의 포인트 내역의 총 개수 조회
+	@Override
+	public int getTotalPointList(String pointType, String memberId) throws Exception {
+		int totalPointListCnt = 0; 
+		if (pointType.equals("earned")) {
+			totalPointListCnt = ses.selectOne(ns + "selectCntOfEarnedPoint", memberId);
+		} else if (pointType.equals("used")) {
+			totalPointListCnt = ses.selectOne(ns + "selectCntOfUsedPoint", memberId);
+		}
+		
+		return totalPointListCnt;
+	}
+
+	// 회원의 포인트 적립내역 조회
+	@Override
+	public List<PointDTO> selectEarnedPointList(String memberId, int pageNo) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		param.put("memberId", memberId);
+		param.put("offset", (pageNo - 1) * 10);
+		return ses.selectList(ns + "selectEarnedPointListByPageNo", param);
+	}
+
+	// 회원의 포인트 사용내역 조회
+	@Override
+	public List<PointDTO> selectUsedPointList(String memberId, int pageNo) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		
+		param.put("memberId", memberId);
+		param.put("offset", (pageNo - 1) * 10);
+		return ses.selectList(ns + "selectUsedPointListByPageNo", param);
 	}
 
 	// 회원 수 받기(스케쥴러)
@@ -290,6 +344,12 @@ public class MemberDAOImpl implements MemberDAO {
 		map.put("member_id", member_id);
 		map.put("totalPrice", totalPrice);
 		return ses.update(ns+"updateMemberLevel", map);
+	}
+
+	// 회원 더미 데이터 insert
+	@Override
+	public void tumpMemberData(MemberDTO mDTO) throws Exception {
+		ses.insert(ns+"tumpMemberData", mDTO);
 	}
 
 }

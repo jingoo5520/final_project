@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="EUC-KR">
-<title>주문 모달창</title>
+<title>주문페이지 모달창</title>
 <style type="text/css">
 
 	#orderModal .modal-dialog {
