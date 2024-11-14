@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,14 +29,14 @@ public class UserProductDAOImpl implements UserProductDAO {
         params.put("offset", offset);
         params.put("limit", limit);
         List<ProductDTO> products = ses.selectList(ns + "selectProductsByPage", params);
-        System.out.println("상품 반환 : " + products.size());
+//        System.out.println("상품 반환 : " + products.size());
         return ses.selectList(ns + "selectProductsByPage", params);
     }
 
     @Override
     public int selectProductCount() throws Exception {
         int productCount = ses.selectOne(ns + "selectProductCount");
-        System.out.println("db 에서 총 상품 수 : " + productCount);
+//        System.out.println("db 에서 총 상품 수 : " + productCount);
         return ses.selectOne(ns + "selectProductCount");
     }
 
@@ -81,5 +82,22 @@ public class UserProductDAOImpl implements UserProductDAO {
        
         return ses.selectList(ns + "searchProducts" , params);
     }
+
+	@Override
+	public List<ReviewDetailDTO> selectReview(int productNo) throws Exception {
+	    List<ReviewDetailDTO> reviews = ses.selectList(ns + "selectReview", productNo);
+	    return reviews;
+	}
+
+	@Override
+	public List<String> selectReviewImg(int productNo) throws Exception {
+		System.out.println("pDao" + productNo);
+	    return ses.selectList(ns + "selectReviewImg", productNo);
+	}
+
+	@Override
+	public int selectCountReviewProduct(int productNo) throws Exception {
+		return ses.selectOne(ns + "countReview", productNo);
+	}
 
 }

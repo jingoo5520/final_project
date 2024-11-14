@@ -7,32 +7,32 @@ import lombok.ToString;
 @ToString
 public class PagingInfo {
 
-    private int currentPage; // ÇöÀç ÆäÀÌÁö ¹øÈ£ (±âÁ¸: pageNo)
-    private int pageSize; // ÇÑ ÆäÀÌÁö´ç º¸¿©ÁÙ °Ô½Ã¹° ¼ö (±âÁ¸: viewPostCntPerPage)
+    private int currentPage; // í˜„ì¬ í˜ì´ì§€ ë²ˆí˜¸ (ê¸°ì¡´: pageNo)
+    private int pageSize; // í•œ í˜ì´ì§€ì— ë³´ì—¬ì¤„ ê²Œì‹œë¬¼ ìˆ˜ (ê¸°ì¡´: viewPostCntPerPage)
     
-    private int totalProductCount; // ÀüÃ¼ °Ô½Ã¹° ¼ö (±âÁ¸: totalPostCnt)
-    private int totalPages; // ÀüÃ¼ ÆäÀÌÁö ¼ö (±âÁ¸: totalPageCnt)
-    private int startRowIndex; // ½ÃÀÛ ÀÎµ¦½º (DB Á¶È¸¸¦ À§ÇÑ ½ÃÀÛ À§Ä¡)
+    private int totalProductCount; // ì „ì²´ ê²Œì‹œë¬¼ ìˆ˜ (ê¸°ì¡´: totalPostCnt)
+    private int totalPages; // ì „ì²´ í˜ì´ì§€ ìˆ˜ (ê¸°ì¡´: totalPageCnt)
+    private int startRowIndex; // ì‹œì‘ ì¸ë±ìŠ¤ (DB ì¡°íšŒ ì‹œ ì‹œì‘ ìœ„ì¹˜)
     
-    private int pageBlockSize = 10; // ÇÑ ÆäÀÌÁö ºí·Ï¿¡ º¸¿©ÁÙ ÆäÀÌÁö ¼ö (¿¹: 10ÆäÀÌÁö¾¿)
-    private int currentBlock; // ÇöÀç ÆäÀÌÁö°¡ ¼ÓÇÑ ºí·Ï ¹øÈ£ (±âÁ¸: pageBlockNoCurPage)
-    private int startPage; // ÇöÀç ºí·ÏÀÇ ½ÃÀÛ ÆäÀÌÁö ¹øÈ£ (±âÁ¸: startPageNoCurBlock)
-    private int endPage; // ÇöÀç ºí·ÏÀÇ ³¡ ÆäÀÌÁö ¹øÈ£ (±âÁ¸: endPageNoCurBlock)
+    private int pageBlockSize = 10; // í•œ í™”ë©´ì— ë³´ì—¬ì¤„ í˜ì´ì§€ ìˆ˜ (ì˜ˆ: 10í˜ì´ì§€ì”©)
+    private int currentBlock; // í˜„ì¬ í˜ì´ì§€ê°€ ì†í•œ ë¸”ë¡ ë²ˆí˜¸ (ê¸°ì¡´: pageBlockNoCurPage)
+    private int startPage; // í˜„ì¬ ë¸”ë¡ì˜ ì‹œì‘ í˜ì´ì§€ ë²ˆí˜¸ (ê¸°ì¡´: startPageNoCurBlock)
+    private int endPage; // í˜„ì¬ ë¸”ë¡ì˜ ë§ˆì§€ë§‰ í˜ì´ì§€ ë²ˆí˜¸ (ê¸°ì¡´: endPageNoCurBlock)
     
     public PagingInfo(PagingInfoDTO dto, int totalProductCount) {
         this.currentPage = dto.getPageNo();
         this.pageSize = dto.getPageSize();
         this.totalProductCount = totalProductCount;
         
-        // ÀüÃ¼ ÆäÀÌÁö ¼ö °è»ê
+        // ì „ì²´ í˜ì´ì§€ ìˆ˜ ê³„ì‚°
         setTotalPages();
-        // ½ÃÀÛ ÀÎµ¦½º °è»ê
+        // ì‹œì‘ ì¸ë±ìŠ¤ ê³„ì‚°
         setStartRowIndex();
-        // ÇöÀç ÆäÀÌÁö°¡ ¼ÓÇÑ ºí·Ï ¹øÈ£ °è»ê
+        // í˜„ì¬ í˜ì´ì§€ê°€ ì†í•œ ë¸”ë¡ ë²ˆí˜¸ ê³„ì‚°
         setCurrentBlock();
-        // ÇöÀç ºí·ÏÀÇ ½ÃÀÛ ÆäÀÌÁö ¹øÈ£ °è»ê
+        // í˜„ì¬ ë¸”ë¡ì˜ ì‹œì‘ í˜ì´ì§€ ë²ˆí˜¸ ê³„ì‚°
         setStartPage();
-        // ÇöÀç ºí·ÏÀÇ ³¡ ÆäÀÌÁö ¹øÈ£ °è»ê
+        // í˜„ì¬ ë¸”ë¡ì˜ ë§ˆì§€ë§‰ í˜ì´ì§€ ë²ˆí˜¸ ê³„ì‚°
         setEndPage();
     }
     
@@ -59,12 +59,12 @@ public class PagingInfo {
         this.endPage = Math.min(this.startPage + this.pageBlockSize - 1, this.totalPages);
     }
     
-    // ÇöÀç ºí·ÏÀÇ ÀÌÀü ºí·ÏÀÌ ÀÖ´ÂÁö ¿©ºÎ ¹İÈ¯
+    // ì´ì „ ë¸”ë¡ì´ ì¡´ì¬í•˜ëŠ”ì§€ ì—¬ë¶€ ë°˜í™˜
     public boolean hasPrevBlock() {
         return this.currentBlock > 1;
     }
 
-    // ÇöÀç ºí·ÏÀÇ ´ÙÀ½ ºí·ÏÀÌ ÀÖ´ÂÁö ¿©ºÎ ¹İÈ¯
+    // ë‹¤ìŒ ë¸”ë¡ì´ ì¡´ì¬í•˜ëŠ”ì§€ ì—¬ë¶€ ë°˜í™˜
     public boolean hasNextBlock() {
         return this.endPage < this.totalPages;
     }

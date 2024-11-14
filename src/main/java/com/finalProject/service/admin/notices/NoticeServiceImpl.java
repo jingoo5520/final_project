@@ -1,4 +1,4 @@
-package com.finalProject.service;
+package com.finalProject.service.admin.notices;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.admin.coupon.PagingInfoNew;
+import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
-import com.finalProject.model.admin.notices.PagingInfo;
 import com.finalProject.model.admin.notices.PagingInfoDTO;
 import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 import com.finalProject.persistence.admin.notices.NoticeDAO;
-import com.mysql.cj.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,9 +50,9 @@ public class NoticeServiceImpl implements NoticeService {
 
 	@Transactional
 	@Override
-	public void addEvent(NoticeVO notice) throws Exception {
+	public void addEvent(NoticeDTO event) throws Exception {
 	    try {
-	        nDao.addEvent(notice);
+	        nDao.addEvent(event);
 	    } catch (Exception e) {
 	        log.error("이벤트 저장 실패: ", e);
 	        throw e; // 예외를 다시 던져서 트랜잭션이 롤백되도록 함
@@ -98,6 +98,67 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<NoticeDTO> getNoticesWithPagination(int startRowIndex, int viewPostCntPerPage) throws Exception {
 		return nDao.getNoticesWithPagination(startRowIndex, viewPostCntPerPage);
 	}
+
+	@Override
+	public List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception {
+		return nDao.getNotices(criteria, pagingInfoDTO);
+	}
+
+	//	@Override
+//	public void createEventImg(NoticeDTO noticeDTO) throws Exception{
+//		nDao.createEventImg(noticeDTO);
+//	}
+
+	@Override
+	public void saveBannerPath(int noticeNo, String filePath) throws Exception {
+		nDao.saveBannerPath(noticeNo, filePath);
+	}
+
+	@Override
+	public void saveThumbnailPath(int noticeNo, String filePath) throws Exception {
+		nDao.saveThumbnailPath(noticeNo, filePath);
+	}
+
+	@Override
+	public void saveUrl(int noticeNo, String url) throws Exception {
+		nDao.saveUrl(noticeNo, url);
+	}
+
+	@Override
+	public void saveEvent(NoticeDTO event) throws Exception {
+		nDao.saveEvent(event);
+	}
+
+	@Transactional
+	@Override
+	public void updateBannerPath(int noticeNo, String newBannerPath) throws Exception {
+		nDao.updateBannerPath(noticeNo, newBannerPath);
+	}
+	
+	@Override
+	public void updateThumbnailPath(int noticeNo, String newThumbnailPath) throws Exception {
+		nDao.updateThumbnailPath(noticeNo, newThumbnailPath);
+		
+	}
+
+	@Override
+	public boolean deleteThumbnail(int noticeNo) throws Exception {
+		return nDao.deleteThumbnail(noticeNo);
+	}
+
+	@Override
+	public List<NoticeDTO> getBannersWithImages() throws Exception {
+		return nDao.getBannersWithImages();
+	}
+
+	@Override
+	public boolean updateNoticeUrl(NoticeVO notice) throws Exception {
+	    // DAO 호출 후 결과 반환
+	    boolean result = nDao.updateNoticeUrl(notice);
+	    return result;  // true 또는 false 반환
+	}
+
+
 
 //	@Override
 //	public int getTotalNoticeCount() throws Exception {

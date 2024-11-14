@@ -28,11 +28,18 @@ public class PagingInfo {
    public PagingInfo(PagingInfoDTO dto) {
       this.pageNo = dto.getPageNo();
       this.viewPostCntPerPage = dto.getPagingSize();
+      this.pageCntPerBlock = dto.getPageCntPerBlock();
    }
    
-   public void setTotalPostCnt(int totalPostCnt) {
-      this.totalPostCnt = totalPostCnt;
-   }
+   public void setTotalPostCnt(int totalPostCnt2, SearchCriteriaDTO criteria) {
+	    this.totalPostCnt = totalPostCnt2;
+	    // (검색 로직은 나중에 서비스 계층에서 처리)
+	    if (this.totalPostCnt > 0 && this.viewPostCntPerPage > 0) {
+	        this.totalPageCnt = (int) Math.ceil((double) this.totalPostCnt / this.viewPostCntPerPage);
+	    } else {
+	        this.totalPageCnt = 0; // 게시물이 없거나 페이지당 게시물 수가 0이면 페이지 수는 0
+	    }
+	}
    
    public void setTotalPageCnt() {
       // => 전체 페이지 수 : 전체 글의 수 / 1페이지당 보여줄 글의 갯수
@@ -56,12 +63,11 @@ public class PagingInfo {
       // => (현재 페이지 번호) / (1개 페이징 블럭에서 보여줄 페이지 수)
       //                 -> 나누어 떨어지면 몫이 페이지 수가 됨
       //                 -> 나누어 떨어지지 않으면 몫 + 1이 페이지 수가 됨
-      this.pageBlockNoCurPage = (this.pageNo - 1) / this.pageCntPerBlock + 1;
-//      if (this.pageNo % this.pageCntPerBlock == 0) {
-//         this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock;
-//      } else {
-//         this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock + 1;
-//      }
+		if(this.pageNo % this.pageCntPerBlock == 0) {
+			this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock;
+		} else {
+			this.pageBlockNoCurPage = this.pageNo / this.pageCntPerBlock + 1; 
+		}
    }
    
    public void setStartPageNoCurBlock() {

@@ -48,7 +48,7 @@
 	</script>
 
 	<h1>카카오페이 API 테스트</h1>
-	<button onclick="kakaopayAPITest('T72fe5bd05806393039b', '이유는 없다', 10000)">카카오페이APITest</button>
+	<button onclick="kakaopayAPITest('T72fe6147f575eb02b72', '이유는 없다', 3886888)">카카오페이APITest</button>
 	
 	<h1>이 cancels 테이블의 정보로 API를 실험해보세요</h1>
 	<p>K : 카카오페이, T : 토스, N : 네이버페이</p>
