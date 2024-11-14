@@ -10,7 +10,7 @@
 <title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -197,6 +197,11 @@
 		border-left: 1px solid #e6e6e6;
 	}
 	
+	.contents {
+		background-color: #FFFFFF;
+		border: 1px solid #eee;
+		border-radius: 4px;
+	}
 	
 </style>
 
@@ -246,7 +251,7 @@
 				</jsp:include>
 				<!-- / sideBar -->
 				
-				<div class="col-lg-9 col-12">
+				<div class="col-lg-9 col-12 contents">
 					<div class="addDeliveryArea">
 						<div class="button">
 							<a class="btn" href="/member/myPage/addDeliveryPage">배송지 추가</a>

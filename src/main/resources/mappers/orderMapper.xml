@@ -7,9 +7,9 @@
 	<select id="selectProductInfo" parameterType="list" resultType="com.finalProject.model.order.OrderProductDTO">
 	    <foreach item="item" index="index" collection="list" separator="UNION ALL">
 	        select p.*, i.image_url, #{item.quantity} AS quantity
-	        from products p inner join product_images i 
-	        on p.product_no = i.product_no 
-	        where p.product_no = #{item.productNo} and i.image_type = 'M'
+	        from products p left join product_images i 
+	        on p.product_no = i.product_no and i.image_type = 'M' 
+	        where p.product_no = #{item.productNo}
 	    </foreach>
 	</select>
 

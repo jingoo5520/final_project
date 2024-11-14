@@ -8,11 +8,11 @@
 <head>
 <meta charset="utf-8" />
 <meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>장바구니</title>
+<title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/white-logo.svg" />
+	href="/resources/assets/user/images/logo/favicon.png" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- ========================= CSS here ========================= -->
@@ -30,6 +30,11 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
+	var successMessage = '${successMessage}';
+	
+	if (successMessage) {
+		showCartModal(successMessage);
+	}
 	
 	let productCount = $("div.cart-single-list").length;
 	let totalPrices = 0;
@@ -294,13 +299,13 @@ function checkedOrder() {
 }
 
 function showCartModal(message) {
-	  $("#cartModal").modal("show");
-		$("#cartModal .modal-text").text(message);
-		
-		setTimeout(function() {
+	$("#cartModal").modal("show");
+	$("#cartModal .modal-text").text(message);
+	
+	setTimeout(function() {
 		$('#cartModal').modal('hide');
-		}, 750);
- }
+	}, 1000);
+}
 
 </script>
 
@@ -577,17 +582,17 @@ input[type="checkbox"]:hover {
 									<div class="row align-items-center">
 										<div class="col-lg-1 col-md-1 col-12">
 											<a
-												href="/product/productDetail?productNo=${item.product_no }"><img
-												src="${item.image_url }" alt="#"></a>
+												href="/product/jewelry/detail?productNo=${item.product_no }"><img
+												src="${empty item.image_url ? '/resources/images/noP_image.png' : item.image_url}" alt="${item.product_name }"></a>
 										</div>
 										<div class="col-lg-3 col-md-3 col-12">
 											<h5 class="product-name">
 												<a
-													href="/product/productDetail?productNo=${item.product_no }">
+													href="/product/jewelry/detail?productNo=${item.product_no }">
 													${item.product_name }</a>
 											</h5>
 											<p class="product-des">
-												<span><em>Type:</em> Mirrorless</span>
+												<span>${item.category_name }</span>
 											</p>
 										</div>
 										<div class="count-input-div col-lg-2 col-md-2 col-12">
@@ -627,7 +632,7 @@ input[type="checkbox"]:hover {
 													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
 													<p class="product-des"><span><em>할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
 												</c:if>
-												<c:if test="${empty item.product_dc_type || item.product_dc_type == 'N'}">
+												<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
 													<p class="productDCPrice">0</p>
 												</c:if>
 											</div>
@@ -653,17 +658,17 @@ input[type="checkbox"]:hover {
 									<div class="row align-items-center">
 										<div class="col-lg-1 col-md-1 col-12">
 											<a
-												href="/product/productDetail?productNo=${item.product_no }"><img
-												src="${item.image_url }" alt="#"></a>
+												href="/product/jewelry/detail?productNo=${item.product_no }"><img
+												src="${empty item.image_url ? '/resources/images/noP_image.png' : item.image_url}" alt="${item.product_name }"></a>
 										</div>
 										<div class="col-lg-3 col-md-2 col-12">
 											<h5 class="product-name">
 												<a
-													href="/product/productDetail?productNo=${item.product_no }">
+													href="/product/jewelry/detail?productNo=${item.product_no }">
 													${item.product_name }</a>
 											</h5>
 											<p class="product-des">
-												<span><em>Type:</em> Mirrorless</span>
+												<span>${item.category_name }</span>
 											</p>
 										</div>
 										<div class="count-input-div col-lg-2 col-md-1 col-12">
@@ -692,7 +697,7 @@ input[type="checkbox"]:hover {
 													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
 													<p class="product-des"><span><em>할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
 												</c:if>
-												<c:if test="${empty item.product_dc_type || item.product_dc_type == 'N'}">
+												<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
 													<p class="productDCPrice">0</p>
 												</c:if>
 											</div>
