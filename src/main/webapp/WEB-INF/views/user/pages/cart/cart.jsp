@@ -65,7 +65,7 @@ $(document).ready(function() {
 	let levelDCPrice = 0;
 	
 	if (levelDC != 0) {
-		levelDCPrice = Math.floor(totalPrices * levelDC / 10) * 10;
+		levelDCPrice = totalPrices * levelDC;
 	} else {
 		levelDCPrice = 0;
 	}
@@ -607,7 +607,7 @@ input[type="checkbox"]:hover {
 										<c:if test="${not empty levelInfo }">
 											<div class="col-lg-2 col-md-2 col-12">
 												<p class="productPoint">
-													<fmt:formatNumber value="${Math.floor(item.product_price * item.product_count * levelInfo.level_point / 10) * 10}" type="number" pattern="#,###" />P
+													<fmt:formatNumber value="${item.product_price * item.product_count * levelInfo.level_point}" type="number" pattern="#,###" />P
 												</p>
 												<p class="product-des">
 													<span><em>등급:</em> ${levelInfo.level_name }</span> <span><em>포인트적립:</em>
