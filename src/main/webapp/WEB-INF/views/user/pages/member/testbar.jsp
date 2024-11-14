@@ -6,12 +6,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Blog Grid Sidebar - ShopGrids Bootstrap 5 eCommerce HTML
-	Template.</title>
+<title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="assets/images/favicon.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet"

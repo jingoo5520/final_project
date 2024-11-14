@@ -6,13 +6,13 @@
 <html class="no-js" lang="zxx">
 
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
-<meta name="description" content="" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>ELOLIA</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -38,9 +38,73 @@ function loadReviews(page) {
 	let productNo = $("#productNo").val(); // productNo 값을 가져옵니다
 	let productno = ${param.productNo};
 	
-//     console.log("Product No:", productNo);
-    console.log("productno:", productno);
-    console.log("Current Page:", page);
+	$.ajax({
+	    url: '/addCartItem',
+	    type: 'POST',
+	    data: {
+	    	productNo : productNo,
+	    	quantity : quantity
+	    	},
+	    dataType: 'json',
+	    success: function(data) {
+	    	if (data.status == 200) {
+	            $('#myModal').modal('show');
+				
+	            // 헤더의 장바구니 수량 최신화
+	            cartCountUpdate();
+	            
+	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
+	            $('#goCart').off('click').on('click', function() {
+	               location.href = "/cart";
+	            });
+	            
+	            $('#keepProduct').off('click').on('click', function() {
+	            	$('#myModal').modal('hide');
+	            });
+	        }
+	    },
+	    error: function() {
+	    },
+	    complete: function(data) {
+	    	if (data.status == 200) {
+	            $('#myModal').modal('show');
+				
+	            // 헤더의 장바구니 수량 최신화
+	            cartCountUpdate();
+	            
+	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
+	            $('#goCart').off('click').on('click', function() {
+	               location.href = "/cart";
+	            });
+	            
+	            $('#keepProduct').off('click').on('click', function() {
+	            	$('#myModal').modal('hide');
+	            });
+	        }
+	    }
+	});
+}
+
+function cartCountUpdate() {
+	$.ajax({
+		url: '/cartCountUpdate',
+		type: 'POST',
+		dataType: 'json',
+		success: function(data) {
+			if (data !== undefined) {
+				$('.cart-items .total-items').text(data);
+		    }
+		},
+		error: function() {
+		},
+		complete: function(data) {
+		}
+	});
+}
+
+function toggleHeart(element, product_no) {
+    const icon = element.querySelector('i');
+    icon.className = icon.className === 'lni lni-heart' ? 'lni lni-heart-filled' : 'lni lni-heart';
     
     $.ajax({
         url: '/product/review/load',
@@ -570,43 +634,6 @@ function showPaging(currentPage, totalPages) {
 			<div class="col-lg-12 col-12">
 				<div class="single-block">
 					<div class="reviews">
-
-
-<!-- 						Check if reviews list is empty -->
-<%-- 						<c:if test="${empty reviews}"> --%>
-<!-- 							<p class="text-center">리뷰가 없습니다.</p> -->
-<%-- 						</c:if> --%>
-
-<%-- 						<c:forEach var="review" items="${reviews}"> --%>
-
-<!-- 							<div class="single-review row col-lg-12 col-12" style="padding: 20px !important"> -->
-<!-- 								<div class="col-lg-1 col-12"> -->
-<!-- 									<img src="/resources/images/nobody.png"> -->
-<!-- 								</div> -->
-<!-- 								<div class="review-info col-lg-11 col-12"> -->
-<!-- 									<div> -->
-<%-- 										<c:forEach var="image" items="${reviewImgs}"> --%>
-<%-- 											<img src="${image}" alt="Review Image" style="padding: 5px; height: 150px; width: 150px !important;"> --%>
-<%-- 										</c:forEach> --%>
-<!-- 									</div> -->
-
-<%-- 									<h4 class="mt-4">${review.review_title} --%>
-<%-- 										<span>${review.nickname}</span> --%>
-<!-- 									</h4> -->
-<!-- 									<div> -->
-<!-- 										작성일 : -->
-<%-- 										<fmt:formatDate value="${review.register_date}" pattern="yyyy-MM-dd h시 m분 s초 (EEE) " /> --%>
-<!-- 									</div> -->
-
-<!-- 									<ul class="stars"> -->
-<%-- 										<c:forEach begin="1" end="5" var="star"> --%>
-<%-- 											<li><i class="${star <= review.review_score ? 'lni lni-star-filled' : 'lni lni-star'}"></i></li> --%>
-<%-- 										</c:forEach> --%>
-<!-- 									</ul> -->
-<%-- 									<p>${review.review_content}</p> --%>
-<!-- 								</div> -->
-<!-- 							</div> -->
-<%-- 						</c:forEach> --%>
 						<!-- End Single Review -->
 					</div>
 

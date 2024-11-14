@@ -17,16 +17,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.finalProject.model.admin.product.ProductDTO;
-import com.finalProject.model.admin.product.ProductPagingInfoDTO;
 import com.finalProject.model.admin.product.ProductSearchDTO;
 import com.finalProject.model.admin.product.ProductUpdateDTO;
 import com.finalProject.model.admin.product.ProductVO;
+import com.finalProject.model.admin.product.adminCategories;
+import com.finalProject.model.admin.product.adminPagingInfoDTO;
 import com.finalProject.service.admin.product.ProductService;
 import com.finalProject.util.ProductUtil;
 
@@ -36,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin/productmanage")
 public class ProductController {
-
 	@Autowired
 	private ProductService ps;
 	@Autowired
@@ -48,36 +49,24 @@ public class ProductController {
 //	}
 
 	@RequestMapping(value = "/productSave")
-	public String productSave(HttpServletRequest request) {
+	public String productSave(HttpServletRequest request, Model model) {
 		System.out.println(request.getSession().getServletContext().getRealPath("product"));
+		List<adminCategories> list = new ArrayList<adminCategories>();
+
+		list = ps.getCategories();
+
+		model.addAttribute("categories", list);
 		return "admin/pages/productmanage/productSave";
 	}
 
 	@RequestMapping(value = "/productUpdate", method = RequestMethod.POST)
-	public ResponseEntity<String> productUpdate(ProductUpdateDTO updateProduct, HttpServletRequest request) {
-		System.out.println(updateProduct.toString());
-		List<String> subArr = new ArrayList<String>();
+	public ResponseEntity<String> productUpdate(@ModelAttribute ProductUpdateDTO updateProduct,
+			HttpServletRequest request) {
+		System.out.println("sdsdsddsds");
+		return ps.updateFile(updateProduct, request);
 
-		ServletContext sc = request.getSession().getServletContext();
-		if (ps.updateProduct(updateProduct)) {
-
-			if (!(updateProduct.getProduct_main_image().equals("true"))) {
-
-				String realPath = sc.getRealPath(updateProduct.getProduct_main_image());
-
-				pu.removeFile(realPath);
-			}
-			if (updateProduct.getProduct_sub_image() != null) {
-				for (String a : updateProduct.getProduct_sub_image()) {
-					subArr.add(sc.getRealPath(a));
-
-				}
-				pu.removeFile(subArr);
-			}
-			return ResponseEntity.ok("수정 성공");
-		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("updateFail");
 	}
+
 //
 //	@RequestMapping("/test")
 //	public void home() {
@@ -97,7 +86,7 @@ public class ProductController {
 //				"attachment; filename=\"" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1") + "\"");
 //
 //		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), "MS949"))) {
-//			out.println("�긽�뭹 �씠由�,媛�寃�,�븷�씤���엯");
+
 //			out.println(productDTO.getProduct_name() + "," + productDTO.getProduct_dc_type());
 //			out.flush();
 //		}
@@ -107,6 +96,7 @@ public class ProductController {
 	public void UploadProduct(ProductDTO productDTO, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println(productDTO.toString());
 		System.out.println(productDTO.getImage_main_url().getOriginalFilename());
+
 		String url = "/resources/product";
 		ServletContext sc = request.getSession().getServletContext();
 
@@ -116,7 +106,7 @@ public class ProductController {
 		String route = "";
 		System.out.println(realPath);
 		List<String> list = new ArrayList<>();
-		pu.makeDirectory(request, realPath);
+		pu.makeDirectory(realPath);
 
 		try {
 			if (productDTO.getImage_main_url().getOriginalFilename() != "") {
@@ -124,7 +114,7 @@ public class ProductController {
 				route = realPath + File.separator + fileName;
 				File Directory = new File(realPath + File.separator + fileName);
 
-				list.add(File.separator + fileName);
+				list.add(fileName);
 				try {
 					productDTO.getImage_main_url().transferTo(Directory);
 				} catch (IllegalStateException | IOException e) {
@@ -139,7 +129,7 @@ public class ProductController {
 					route = realPath + File.separator + fileName;
 
 					File Directory = new File(realPath + File.separator + fileName);
-					list.add(File.separator + fileName);
+					list.add(fileName);
 					try {
 						file.transferTo(Directory);
 					} catch (IllegalStateException | IOException e) {
@@ -148,18 +138,18 @@ public class ProductController {
 					}
 				}
 			}
-
-			if (ps.saveProduct(productDTO, list) == 1) {
-				System.out.println("���옣 �꽦怨�");
+			productDTO.setDc_rate(productDTO.getDc_rate() / 100);
+			if (ps.saveProduct(productDTO, list, realPath) == 1) {
+				System.out.println("占쏙옙占쎌삢 占쎄쉐�⑨옙");
 				response.sendRedirect("/admin/productmanage/productSave");
 			} else {
-				pu.removeFile(list); // �떎�뙣 �떆 �뙆�씪 �궘�젣
+				pu.removeFile(list); // 占쎈뼄占쎈솭 占쎈뻻 占쎈솁占쎌뵬 占쎄텣占쎌젫
 				response.sendRedirect("/admin/productmanage/productSave");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			log.error("�뙆�씪 �뾽濡쒕뱶 以� �삤瑜� 諛쒖깮: {}", e.getMessage());
-			pu.removeFile(list); // �삤瑜� 諛쒖깮 �떆 �뙆�씪 �궘�젣
+			log.error("占쎈솁占쎌뵬 占쎈씜嚥≪뮆諭� 餓ο옙 占쎌궎�몴占� 獄쏆뮇源�: {}", e.getMessage());
+			pu.removeFile(list); // 占쎌궎�몴占� 獄쏆뮇源� 占쎈뻻 占쎈솁占쎌뵬 占쎄텣占쎌젫
 
 		}
 	}
@@ -167,12 +157,15 @@ public class ProductController {
 	@RequestMapping("/productView")
 	public String GetAllProduct(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
-		ProductPagingInfoDTO dto = ProductPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		adminPagingInfoDTO dto = adminPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
 		Map<String, Object> maps = new HashMap<String, Object>();
+
 		try {
+
 			maps = ps.getAllProducts(dto);
 			model.addAttribute("productList", maps.get("list"));
 			model.addAttribute("pi", maps.get("pi"));
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -184,7 +177,7 @@ public class ProductController {
 	public String getSearchProduct(ProductSearchDTO psd, Model model,
 			@RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
 			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
-		ProductPagingInfoDTO dto = ProductPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		adminPagingInfoDTO dto = adminPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
 		List<ProductVO> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<>();
 		map.put("product_dc_type", psd.getProduct_dc_type());
@@ -209,11 +202,15 @@ public class ProductController {
 	}
 
 	@RequestMapping(value = "/productDelete", method = RequestMethod.POST)
-	public ResponseEntity<String> DeleteProduct(int productId) {
+	public ResponseEntity<Map<String, Object>> DeleteProduct(int productId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		if (ps.deleteProduct(productId) == 1) {
-			return ResponseEntity.ok("deleteSuccess");
+			map.put("status", "success");
+			return ResponseEntity.ok(map);
 		} else {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("deleteFail");
+			map.put("status", "fail");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
 		}
 	}
 }

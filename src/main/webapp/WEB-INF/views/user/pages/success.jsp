@@ -10,7 +10,7 @@
 <title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -99,16 +99,6 @@
 </head>
 
 <body>
-	<!-- Preloader -->
-	<div class="preloader">
-		<div class="preloader-inner">
-			<div class="preloader-icon">
-				<span></span> <span></span>
-			</div>
-		</div>
-	</div>
-	<!-- /End Preloader -->
-
 	<div class="topHeader">
 		<a class="navbar-brand" href="${pageContext.request.contextPath}/">
 			<img src="/resources/assets/user/images/logo/logo.svg" alt="Logo" />
@@ -151,6 +141,13 @@
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
 
+	<script>
+		window.onload = function() {
+			if ('${cookieDelete}' == 'delete') {
+				document.cookie = `cartItem=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+			}
+		}
+	</script>
 </body>
 
 </html>

@@ -10,8 +10,7 @@
 <title>Header</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/white-logo.svg" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet"
@@ -26,6 +25,11 @@
 <style type="text/css">
 .user-login a:hover {
 	color: #fff !important;
+}
+
+.levelImg {
+	width: 30px;
+	border-radius: 10px;
 }
 </style>
 </head>
@@ -60,7 +64,26 @@
 							<!-- 로그인 됬을 때 -->
 							<c:if test="${not empty sessionScope.loginMember }">
 								<div class="user">
-									<i class="lni lni-user"></i>
+									<c:if test="${sessionScope.loginMember.member_level == 1}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/bronze.PNG"></a>
+									</c:if>
+									<c:if test="${sessionScope.loginMember.member_level == 2}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/silver.PNG"></a>
+									</c:if>
+									<c:if test="${sessionScope.loginMember.member_level == 3}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/gold.PNG"></a>
+									</c:if>
+									<c:if test="${sessionScope.loginMember.member_level == 4}">
+										<a
+											href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img
+											class="levelImg" alt="" src="/resources/images/dia.PNG"></a>
+									</c:if>
 									${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">
@@ -135,42 +158,15 @@
 							<div class="collapse navbar-collapse sub-menu-bar"
 								id="navbarSupportedContent">
 								<ul id="nav" class="navbar-nav ms-auto">
-									<li class="nav-item"><a
-										href="/product/jewelry?category=195"
-										class="<%="earring".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">earring</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=196"
-										class="<%="nacklace".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">nacklace</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=197"
-										class="<%="bangle".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">bangle</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=198"
-										class="<%="ring".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">ring</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=200"
-										class="<%="coupling".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">coupling</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=201"
-										class="<%="anklet".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">anklet</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=202"
-										class="<%="pendant".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">pendant</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=203"
-										class="<%="piercing".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">piercing</a></li>
-									<li class="nav-item"><a
-										href="/product/jewelry?category=204"
-										class="<%="etc".equals(request.getParameter("categoryName")) ? "active" : ""%>"
-										aria-label="Toggle navigation">etc</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=196" class="<%="nacklace".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">nacklace</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=195" class="<%="earring".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">earring</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=203" class="<%="piercing".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">piercing</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=197" class="<%="bangle".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">bangle</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=201" class="<%="anklet".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">anklet</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=198" class="<%="ring".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">ring</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=200" class="<%="coupling".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">coupling</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=202" class="<%="pendant".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">pendant</a></li>
+									<li class="nav-item"><a href="/product/jewelry?category=204" class="<%="etc".equals(request.getParameter("categoryName")) ? "active" : ""%>" aria-label="Toggle navigation">etc</a></li>
 								</ul>
 							</div>
 							<!-- navbar collapse -->
