@@ -309,7 +309,7 @@
                 contentType: false,
                 processData: false,
                 success: function(fileName) {
-                    let imageUrl = '/post/summernoteImages/' + fileName;
+                    let imageUrl = '/resources/inquiryImages/' + fileName;
                     $('#summernote').summernote('insertImage', imageUrl);
                     console.log('업로드 성공:', fileName);
                 },
@@ -347,9 +347,9 @@
 
         // 폼 제출 시 내용 가져오기 및 검증
         $('form').on('submit', function(e) {
-            var noticeTitle = $('input[name="notice_title"]').val();
-            var adminId = $('input[name="admin_id"]').val();
-            var noticeContent = $('#summernote').summernote('code');
+            let noticeTitle = $('input[name="notice_title"]').val();
+            let adminId = $('input[name="admin_id"]').val();
+            let noticeContent = $('#summernote').summernote('code');
 
             console.log("Notice Title:", noticeTitle);
             console.log("Admin ID:", adminId);

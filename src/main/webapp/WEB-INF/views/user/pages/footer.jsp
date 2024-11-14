@@ -66,8 +66,8 @@
                             <div class="single-footer f-link">
                                 <h3>Pages</h3>
                                 <ul>
-                                    <li><a href="javascript:void(0)">공지사항</a></li>
-                                    <li><a href="javascript:void(0)">이벤트</a></li>
+                                    <li><a href="/serviceCenter/notice">공지사항</a></li>
+                                    <li><a href="/event">이벤트</a></li>
                                     <li><a href="javascript:void(0)">이용약관</a></li>
                                     <li><a href="javascript:void(0)">고객센터</a></li>
                                 </ul>

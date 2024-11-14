@@ -116,50 +116,90 @@
 						<!-- body  -->
 				<!-- / Content -->
 
-               <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">공지 /</span>이벤트 작성</h4>
+<div class="container-xxl flex-grow-1 container-p-y">
+  <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">공지 /</span>이벤트 수정</h4>
 
-              <div class="row w-100">
-                <!-- Basic -->
-                <div class="col-12">
-                  <div class="card mb-4">
-                    <div class="card-body demo-vertical-spacing demo-only-element">
-                      <form action="/admin/notices/updateEvent" method="post">
-                      <input type="hidden" name="notice_no" value="${event.notice_no}" />
-                      <div class="input-group">
-						<input id = "notice_title" type="text" class="form-control" name="notice_title" placeholder="제목을 입력하세요" value="${event.notice_title}" required />
-						</div>
-                      <div class="input-group">
-   	                   	<input id="admin_id" type="text" class="form-control" name="admin_id" placeholder="작성자를 입력하세요" value="${event.admin_id}" required />
-                      </div>
-                      <div class="input-group">
-				        <div class="input-group-text">
-							<input id="noticeType1" class="form-check-input mt-0" type="radio" name="notice_type" value="N" 
-										           required id="noticeType1" onchange="changeForm(this.value)"/>
-							<label for="noticeType1">공지</label>
-						</div>
-						<div class="input-group-text">
-						<input id="noticeType2" class="form-check-input mt-0" type="radio" name="notice_type" value="E" 
-										           checked required id="noticeType2" onchange="changeForm(this.value)"/>
-						<label for="noticeType2">이벤트</label>
-				      </div>
-				      </div>
-                      <div class="input-group">
-                        <div id="summernote" aria-label="With textarea">${event.notice_content}</div>
-                      </div>
-                      <input type="hidden" name="notice_content" id="eventContentInput" />
-					<div class="text-end mt-3">
-						<button type="submit" class="btn rounded-pill btn-outline-warning">수정하기</button>
-						<a href="/admin/notices/event" class="btn rounded-pill btn-outline-secondary">취소</a>
-					</div>
-                </form>
-                </div>
-                    </div>
-                  </div>
-                </div>
+  <div class="row w-100">
+    <!-- Basic -->
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-body demo-vertical-spacing demo-only-element">
+          <form action="/admin/notices/updateEvent" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="notice_no" name="notice_no" value="${event.notice_no}" />
+            <div class="input-group">
+              <input id="notice_title" type="text" class="form-control" name="notice_title" placeholder="제목을 입력하세요" value="${event.notice_title}" required />
+            </div>
+            <div class="input-group">
+              <input id="admin_id" type="text" class="form-control" name="admin_id" placeholder="작성자를 입력하세요" value="${event.admin_id}" required />
+            </div>
+            <div class="input-group">
+              <div class="input-group-text">
+                <input id="noticeType1" class="form-check-input mt-0" type="radio" name="notice_type" value="N" required id="noticeType1" onchange="changeForm(this.value)" />
+                <label for="noticeType1">공지</label>
+              </div>
+              <div class="input-group-text">
+                <input id="noticeType2" class="form-check-input mt-0" type="radio" name="notice_type" value="E" checked required id="noticeType2" onchange="changeForm(this.value)" />
+                <label for="noticeType2">이벤트</label>
+              </div>
+            </div>
+			<div class="mb-3">
+			    <label for="event_start_date" class="form-label">이벤트 시작 날짜</label>
+			    <!-- 날짜와 시간을 함께 입력하는 datetime-local 타입으로 변경 -->
+			    <input type="datetime-local" class="form-control" id="event_start_date" name="event_start_date"
+			           value="${event.event_start_date != null ? event.event_start_date : ''}">
+			</div>
+			
+			<div class="mb-3">
+			    <label for="event_end_date" class="form-label">이벤트 종료 날짜</label>
+			    <input type="datetime-local" class="form-control" id="event_end_date" name="event_end_date"
+			           value="${event.event_end_date != null ? event.event_end_date : ''}">
+			</div>
 
-				    </div>
-				  </div>
+            <div class="input-group">
+			<div id="summernote" aria-label="With textarea">${event.notice_content}</div>
+			</div>
+			<input type="hidden"  name="notice_content" id="eventContentInput" />
+            <!-- 기존 썸네일 -->
+            <div class="card-body">
+              <h5>현재 썸네일</h5>
+              <img id="currentThumbnail" src="${event.thumbnail_image}" alt="현재 썸네일" style="width: 100%; height: auto;" />
+              <input type="file" id="thumbnailInput" name="thumbnail_image" accept="image/*" style="display: none;" data-current-image="${event.thumbnail_image}"/>
+			  
+			<div class="mb-3">
+				<label for="banner_image" class="form-label">배너 이미지 업로드</label>
+				<input type="file" class="form-control" id="banner_image" name="banner_image" accept="image/*">
+			</div>
+			<div class="mb-3">
+				<label for="thumbnail_image" class="form-label">썸네일 이미지 업로드</label>
+				<input type="file" class="form-control" id="thumbnailInput2" name="thumbnail_image" accept="image/*">
+			</div>
+            </div>
+<!--           <form action="/updateThumbnail" method="post" enctype="multipart/form-data"> -->
+<%-- 		    <input type="hidden" name="noticeNo" value="${notice.notice_no}" /> --%>
+<!-- 		    <input type="file" id="updateThumbnail" name="file" accept="image/*" /> -->
+<!-- 		    <button type="submit">썸네일 교체</button> -->
+<!-- 		</form> -->
+		
+<!-- 		<form action="/deleteThumbnail" method="post"> -->
+<%-- 		    <input type="hidden" id="deleteThumbnail" name="noticeNo" value="${notice.notice_no}" />  --%>
+<!-- 		    <button type="submit">썸네일 삭제</button> -->
+<!-- 		</form> -->
+<!--           <div class="text-end mt-3"> -->
+         
+            <button type="submit" class="btn rounded-pill btn-outline-warning">수정하기</button>
+            <a href="/admin/notices/event" class="btn rounded-pill btn-outline-secondary">취소</a>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
             <!-- / Content -->
     
     
@@ -266,6 +306,9 @@
             fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72', '96'],
             focus: true,
             callbacks: {
+                onChange: function (contents, $editable) {
+                    $('#eventContentInput').val(contents);
+                }, // 여기에 콤마 추가
                 onImageUpload: function(files) {
                     const selectedType = $('input[name="notice_type"]:checked').val();
                     for (let i = 0; i < files.length; i++) {
@@ -296,12 +339,12 @@
                 console.error("유효하지 않은 range입니다.");
             }
         }
-    	
-    	function sendFile(file, noticeType) {
-    	    let data = new FormData();
-    	    data.append("file", file);
-    	    data.append("noticeType", noticeType);
-    	    
+        
+        function sendFile(file, noticeType) {
+            let data = new FormData();
+            data.append("file", file);
+            data.append("noticeType", noticeType);
+
             $.ajax({
                 url: "/post/uploadImage",
                 type: "POST",
@@ -309,7 +352,7 @@
                 contentType: false,
                 processData: false,
                 success: function(fileName) {
-                    let imageUrl = '/post/summernoteImages/' + fileName;
+                    let imageUrl = '/resources/inquiryImages/' + fileName;
                     $('#summernote').summernote('insertImage', imageUrl);
                     console.log('업로드 성공:', fileName);
                 },
@@ -318,8 +361,8 @@
                 }
             });
         }
-    	
-        function saveEvent() {
+
+        function saveNotice() {
             let noticeContent = $('#summernote').summernote('code');
             $.ajax({
                 url: '/post/saveEvent',
@@ -333,7 +376,7 @@
                 }
             });
         }
-        
+    	
         window.onload = function() {
             const noticeType = "${event.notice_type}";
             if (noticeType === 'E') {
@@ -345,25 +388,178 @@
             }
         };
     	
-     	// 폼 제출 시 내용 가져오기 및 검증
+     // 폼 제출 시 내용 가져오기 및 검증
         $('form').on('submit', function(e) {
+            let noticeNo = $('input[name="notice_no"]').val();
             let noticeTitle = $('input[name="notice_title"]').val();
             let adminId = $('input[name="admin_id"]').val();
             let noticeContent = $('#summernote').summernote('code');
-
+            
+            // 이벤트 시작일 및 종료일 입력값 가져오기
+            let eventStartDate = $('input[name="event_start_date"]').val();
+            let eventEndDate = $('input[name="event_end_date"]').val();
+            
+            // 썸네일 + 배너
+            let thumbnailImage = $('input[name="thumbnail_image"]')[0].files[0]; // 썸네일 이미지
+            let bannerImage = $('input[name="banner_image"]')[0].files[0]; // 배너 이미지
+            
             console.log("Event Title:", noticeTitle); // 확인
             console.log("Admin ID:", adminId); // 확인
             console.log("Event Content:", noticeContent); // 확인
+            console.log("Event Start Date:", eventStartDate); // 확인
+            console.log("Event End Date:", eventEndDate); // 확인
+            console.log("Thumbnail Image:", thumbnailImage); // 확인
+            console.log("Banner Image:", bannerImage); // 확인
 
-            // 필드 검증
+            // 필드 검증: 제목, 관리자 ID, 내용만 필수
             if (!noticeTitle || !adminId || !noticeContent.trim()) {
-            	e.preventDefault();
-                alert('모든 필드를 채워주세요.'); // 경고 메시지 표시
+                e.preventDefault();
+                alert('제목, 관리자 ID, 내용을 모두 채워주세요.'); // 경고 메시지 표시
             } else {
                 $('#eventContentInput').val(noticeContent); // 실제 hidden input에 값 설정
             }
         });
     });
+    
+    
+// 썸네일 교체 버튼 클릭 시 파일 선택 대화상자 열기
+document.addEventListener("DOMContentLoaded", function() {
+    const thumbnailInput = document.getElementById("thumbnailInput");
+    const thumbnailInput2 = document.getElementById("thumbnailInput2");
+    const currentThumbnail = document.getElementById("currentThumbnail");
+    const noticeNo = document.getElementById("notice_no").value;
+//     alert(noticeNo);
+
+    // 현재 썸네일 이미지 설정
+    if (thumbnailInput) {
+        const currentImageSrc = thumbnailInput.value ? URL.createObjectURL(thumbnailInput.files[0]) : thumbnailInput.dataset.currentImage;
+        currentThumbnail.src = currentImageSrc; // 현재 썸네일 이미지 경로 설정
+    }
+
+    // thumbnailInput2에서 파일 선택 시 이벤트 처리
+    if (thumbnailInput2) {
+        thumbnailInput2.onchange = function(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                alert("파일을 선택하지 않았습니다.");
+                return;
+            }
+            console.log("thumbnailInput2에서 파일 선택됨:", file.name);
+
+            const formData = new FormData();
+            formData.append("thumbnail", file);
+
+            if (!noticeNo) {
+                console.error("noticeNo가 설정되지 않았습니다.");
+                alert("공지 번호를 찾을 수 없습니다.");
+                return;
+            }
+
+            fetch('/admin/notices/updateThumbnail/' + noticeNo, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답 오류');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    currentThumbnail.src = data.newThumbnailPath; // 썸네일 경로 업데이트
+                    alert("썸네일 교체 완료");
+                } else {
+                    alert("썸네일 교체 실패: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("오류 발생: " + error.message);
+            });
+        };
+    } else {
+        console.error("Element not found: thumbnailInput2");
+    }
+});
+
+// 배너 교체 버튼 클릭 시 파일 선택 대화상자 열기
+document.addEventListener("DOMContentLoaded", function() {
+    const bannerInput = document.getElementById("banner_image");
+    const noticeNo = document.getElementById("notice_no").value;
+
+    // 배너 파일 선택 시 이벤트 처리
+    bannerInput.addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            alert("파일을 선택하지 않았습니다.");
+            return;
+        }
+        console.log("배너 파일 선택됨:", file.name);
+
+        const formData = new FormData();
+        formData.append("banner", file);
+
+        if (!noticeNo) {
+            console.error("noticeNo가 설정되지 않았습니다.");
+            alert("공지 번호를 찾을 수 없습니다.");
+            return;
+        }
+
+        // 배너 이미지 업로드 요청
+        fetch('/admin/notices/updateBanner/' + noticeNo, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert("배너 교체 완료");
+            } else {
+                alert("배너 교체 실패: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("오류 발생: " + error.message);
+        });
+    });
+});
+
+
+    // 썸네일 삭제
+//     document.getElementById("deleteThumbnailBtn").onclick = function() {
+//         if (confirm("정말로 썸네일을 삭제하시겠습니까?")) {
+//             const noticeNo = document.getElementById("deleteThumbnailBtn").dataset.noticeNo; // 공지 번호 가져오기
+//             fetch('/admin/notices/deleteThumbnail/' + noticeNo, {
+//                 method: "DELETE"
+//             })
+//             .then(response => {
+//                 if (!response.ok) {
+//                     throw new Error('Network response was not ok');
+//                 }
+//                 return response.json();
+//             })
+//             .then(data => {
+//                 if (data.success) {
+//                     document.getElementById("currentThumbnail").src = ""; // 썸네일 경로 비우기
+//                     alert("썸네일 삭제 완료");
+//                 } else {
+//                     alert("썸네일 삭제 실패: " + data.error);
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error("Error:", error);
+//                 alert("썸네일 삭제 중 오류 발생");
+//             });
+//         }
+//     };
+
 </script>
   </body>
 </html>

@@ -103,6 +103,8 @@
                           <th>제목</th>
                           <th>작성자</th>
                           <th>작성일자</th>
+                          <th>이벤트 시작일</th>
+                          <th>이벤트 종료일</th>
                           <th>관리</th>
                         </tr>
                       </thead>
@@ -117,6 +119,54 @@
 								        <td>${event.admin_id}</td>
 								        <td>${event.reg_date}</td>
 								        <td>
+										    <c:choose>
+										        <c:when test="${not empty event.event_start_date}">
+										            ${event.event_start_date}
+										        </c:when>
+										        <c:otherwise>
+										            미정
+										        </c:otherwise>
+										    </c:choose>
+										</td>
+										<td>
+										    <c:choose>
+										        <c:when test="${not empty event.event_end_date}">
+										            ${event.event_end_date}
+										        </c:when>
+										        <c:otherwise>
+										            미정
+										        </c:otherwise>
+										    </c:choose>
+										</td>
+
+<!-- 										배너 이미지 업로드 폼 -->
+<!-- 										<td> -->
+<%-- 										    <form id="uploadBannerForm_${event.notice_no}"> --%>
+<%-- 										        <input type="hidden" name="notice_no" value="${event.notice_no}"> <!-- 숨겨진 입력 필드 추가 --> --%>
+<%-- 										        <input type="file" id="bannerInput_${event.notice_no}" name="banner" accept="image/*"> --%>
+<%-- 										        <img id="bannerPreview_${event.notice_no}" style="display:none;" alt="배너 미리보기"> --%>
+<!-- 										        <button type="submit">배너 업로드</button> -->
+<!-- 										    </form> -->
+<!-- 										</td> -->
+										
+<!-- 										썸네일 이미지 업로드 폼 -->
+<!-- 										<td> -->
+<%-- 										    <form id="uploadThumbnailForm_${event.notice_no}"> --%>
+<%-- 										        <input type="hidden" name="notice_no" value="${event.notice_no}"> <!-- 숨겨진 입력 필드 추가 --> --%>
+<%-- 										        <input type="file" id="thumbnailInput_${event.notice_no}" name="thumbnail" accept="image/*"> --%>
+<%-- 										        <img id="thumbnailPreview_${event.notice_no}" style="display:none;" alt="썸네일 미리보기"> --%>
+<!-- 										        <button type="submit">썸네일 업로드</button> -->
+<!-- 										    </form> -->
+<!-- 										</td> -->
+
+
+<!-- 										    <td><input type="file" name="file" id="bannerFileInput" onclick="uploadBanner()"></td> -->
+<!-- 										    <td><input type="file" name="file" id="thumbnailFileInput" onclick="uploadThumnail()"></td> -->
+<%-- 								        <td><img src="C:/spring/temp/${notice.banner_image}" alt="배너 이미지" width="100"></td> --%>
+<%--                                         <td><img src="C:/spring/temp/${notice.thumbnail_image}" alt="썸네일 이미지" width="50"></td> --%>
+<%--                                         <td><a href="${notice.url}" target="_blank">링크</a></td> --%>
+								        
+								        <td>
 											<div>${event.notice_content}</div>
 											<a class="btn rounded-pill btn-outline-warning" href="editEvent/${event.notice_no}">수정</a>
 										    <a class="btn rounded-pill btn-outline-danger" onclick="confirmDelete(${event.notice_no});">삭제</a>
@@ -126,7 +176,7 @@
 	                        </c:when>
 	                        <c:otherwise>
 	                        	<tr>
-	                            	<td colspan="6">등록된 이벤트가 없습니다.</td>
+	                            	<td colspan="8">등록된 이벤트가 없습니다.</td>
 	                            </tr>
 							</c:otherwise>
 	                      </c:choose>
@@ -220,29 +270,113 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-	<script type="text/javascript">
-	function confirmDelete(noticeNo) {
-	    if (confirm("정말 삭제하시겠습니까?")) {
-	        deleteEvent(noticeNo);
-	    }
-	}
+<script type="text/javascript">
+    // 이미지 업로드 함수
+    function uploadImage(url, noticeNo, type) {
+        const form = document.getElementById(`upload${type}Form_${noticeNo}`);
+        const formData = new FormData(form);
+        
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(`${type} 업로드 성공:`, data);
+            const imgPreview = document.getElementById(`${type}Preview_${noticeNo}`);
+            imgPreview.src = `C:/spring/temp/${data.fileName}`; // 업로드한 파일 경로
+            imgPreview.style.display = 'block'; // 미리보기 표시
+        })
+        .catch(error => {
+            console.error(`${type} 업로드 오류:`, error);
+            alert(`${type} 업로드 중 오류가 발생했습니다: ${error.message}`);
+        });
+    }
 
-	function deleteEvent(noticeNo) {
-	    $.ajax({
-	        type: "POST",
-	        url: "/admin/notices/deleteEvent",
-	        data: { notice_no: noticeNo },
-	        success: function(response) {
-	            $("#event-row-" + noticeNo).remove(); // 공지사항 행 제거
-	            alert("이벤트 삭제 완료");
-	        },
-	        error: function(xhr, status, error) {
-	            alert("이벤트 삭제 실패");
-	            console.error(xhr.responseText);
-	        }
-	    });
-	}
-	</script>
+    // 삭제 확인 함수
+    function confirmDelete(noticeNo) {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            deleteEvent(noticeNo);
+        }
+    }
+
+    // 이벤트 삭제 함수
+    function deleteEvent(noticeNo) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/notices/deleteEvent",
+            data: { notice_no: noticeNo },
+            success: function(response) {
+                $("#event-row-" + noticeNo).remove(); // 공지사항 행 제거
+                alert("이벤트 삭제 완료");
+            },
+            error: function(xhr) {
+                alert("이벤트 삭제 실패");
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const forms = document.querySelectorAll("form[id^='uploadForm_']");
+
+        forms.forEach(form => {
+            const noticeNo = form.querySelector("input[name='notice_no']").value; 
+            console.log('Notice No:', noticeNo); // 디버깅: notice_no 값 출력
+
+            // 파일 입력 요소에 change 이벤트 리스너 추가
+            const bannerInput = form.querySelector(`input[id='bannerInput_${noticeNo}']`);
+            const thumbnailInput = form.querySelector(`input[id='thumbnailInput_${noticeNo}']`);
+
+            // 이미지 미리보기 설정
+            if (bannerInput) {
+                bannerInput.addEventListener('change', event => handleImagePreview(event, noticeNo, 'banner'));
+            }
+            if (thumbnailInput) {
+                thumbnailInput.addEventListener('change', event => handleImagePreview(event, noticeNo, 'thumbnail'));
+            }
+
+            // 폼 제출 이벤트 리스너 추가
+            form.addEventListener("submit", event => {
+                event.preventDefault(); // 기본 제출 방지
+                console.log("폼 제출 이벤트 발생"); // 디버깅 로그 추가
+
+                const uploadPromises = [];
+                if (bannerInput) {
+                    uploadPromises.push(uploadImage(`/admin/notices/event/${noticeNo}/banner`, noticeNo, '배너'));
+                }
+                if (thumbnailInput) {
+                    uploadPromises.push(uploadImage(`/admin/events/uploadThumbnail`, noticeNo, '썸네일'));
+                }
+
+                // 모든 업로드가 완료된 후 페이지 새로 고침
+                Promise.all(uploadPromises).then(() => location.reload());
+            });
+        });
+    });
+
+    // 이미지 미리보기 처리 함수
+    function handleImagePreview(event, noticeNo, type) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const imgPreview = document.getElementById(`${type}Preview_${noticeNo}`);
+            imgPreview.src = e.target.result; // 미리보기 이미지 경로 설정
+            imgPreview.style.display = 'block'; // 이미지 표시
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
   </body>
 
 </html>

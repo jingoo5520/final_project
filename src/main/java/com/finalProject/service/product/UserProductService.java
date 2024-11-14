@@ -7,27 +7,27 @@ import com.finalProject.model.product.ProductDTO;
 
 public interface UserProductService {
 
-	// »óÇ° Ãâ·Â
+	// ï¿½ï¿½Ç° ï¿½ï¿½ï¿½
 	List<ProductDTO> getProductsByPage(int page, int pageSize) throws Exception;
 	
-	// »óÇ°¼ö °¡Á®¿À±â
+	// ï¿½ï¿½Ç°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	int getProductCount() throws Exception;
 
-	// Ä«Å×°í¸®º° »óÇ° Ãâ·Â
+	// Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½
 	List<ProductDTO> getProductsByCategoryAndPage(Integer category, int page, int pageSize, String sortOrder) throws Exception;
 
-	// Ä«Å×°í¸®º° »óÇ° ¼ö °Ë»ö
+	// Ä«ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ ï¿½Ë»ï¿½
 	int getProductCountByCategory(Integer category) throws Exception;
 
 	List<ProductDTO> getProductInfo(int productId) throws Exception;
 
-	// content °¡Á®¿À´Â ¸Ş¼­µå
-	ProductDTO getProductDetailById(int productId) throws Exception;
+	// content ê°€ì ¸ì˜¤ëŠ” ë©”ì†Œë“œ
+	ProductDTO getProductDetailById(int productId)throws Exception;
 
-	// ÃÑ °Ô½Ã¹° ¼ö Á¶È¸
+	// ì´ ê²Œì‹œë¬¼ ìˆ˜ ì¡°íšŒ
 	int countSearchResults(String search, Integer category) throws Exception;
 
-	// °Ë»ö °á°ú Á¶È¸
+	// ê²€ìƒ‰ ê²°ê³¼ ì¡°íšŒ
 	List<ProductDTO> searchProducts(String search, Integer category, PagingInfo pagingInfo, String sortOrder) throws Exception;
 	
 }

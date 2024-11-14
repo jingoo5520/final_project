@@ -140,12 +140,40 @@
 						<div class="input-group-text">
 				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" checked required id="noticeType2" onchange="changeForm(this.value)"/>이벤트</div>
 				      </div>
-
+					<div class="mb-3">
+					    <label for="eventStartDate" class="form-label">이벤트 시작 날짜</label>
+					    <input type="datetime-local" class="form-control" id="eventStartDate" name="eventStartDate">
+					</div>
+					<div class="mb-3">
+					    <label for="eventEndDate" class="form-label">이벤트 종료 날짜</label>
+					    <input type="datetime-local" class="form-control" id="eventEndDate" name="eventEndDate">
+					</div>
                       <div class="input-group" id="summerSize">
                         <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요"></div>
                       </div>
                       <input type="hidden" name="noticeContent" id="eventContentInput" />
                       
+<!-- 					<label for="bannerImage">배너 이미지 업로드:</label> -->
+<!-- 					<input type="file" id="bannerImage" accept="image/*" required> -->
+<!-- 					<img id="bannerPreview" style="display:none; width: 100%; max-width: 500px;" alt="배너 이미지 미리보기"> -->
+					
+<!-- 					<label for="thumbnailImage">썸네일 이미지 업로드:</label> -->
+<!-- 					<input type="file" id="thumbnailImage" accept="image/*" required> -->
+<!-- 					<img id="thumbnailPreview" style="display:none; width: 100px; height: auto;" alt="썸네일 이미지 미리보기"> -->
+					
+<!-- 					<button id="uploadButton">저장</button> -->
+
+						<div class="mb-3">
+						    <label for="bannerImage" class="form-label">배너 이미지 업로드</label>
+						    <input type="file" class="form-control" id="bannerImage" name="banner_image" accept="image/*">
+							<img id="bannerPreview" style="display:none; width: 100%; max-width: 500px;" alt="배너 이미지 미리보기">
+						</div>
+					    <div class="mb-3">
+					        <label for="thumbnail" class="form-label">썸네일 이미지 업로드</label>
+					        <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+							<img id="thumbnailPreview" style="display:none; width: 100px; height: auto;" alt="썸네일 이미지 미리보기">
+					    </div>
+				
 				<!-- 이벤트 등록 버튼 -->
 		      	<div class="text-end mt-3">
 					<button type="submit" class="btn rounded-pill btn-outline-primary">이벤트 등록</button>
@@ -313,7 +341,7 @@
                 contentType: false,
                 processData: false,
                 success: function(fileName) {
-                    let imageUrl = '/post/summernoteImages/' + fileName;
+                    let imageUrl = '/resources/eventImages/' + fileName;
                     $('#summernote').summernote('insertImage', imageUrl);
                     console.log('업로드 성공:', fileName);
                 },
@@ -366,6 +394,24 @@
             } else {
                 $('#eventContentInput').val(noticeContent); // 실제 hidden input에 값 설정
             }
+        });
+     	
+     // 배너 이미지 미리보기
+        $('#bannerImage').on('change', function(event) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#bannerPreview').attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
+
+        // 썸네일 이미지 미리보기
+        $('#thumbnail').on('change', function(event) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#thumbnailPreview').attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(event.target.files[0]);
         });
     });
 </script>

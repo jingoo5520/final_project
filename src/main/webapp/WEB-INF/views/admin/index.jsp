@@ -597,6 +597,140 @@
 
 
 				</div>
+				                    
+<!-- 				<div class="container-xxl flex-grow-1 container-p-y"> -->
+<!-- 				 Collapse -->
+<!-- 				  <h5>주문 수</h5> -->
+<!-- 				  <div class="row"> -->
+<!-- 				    <div class="col-12"> -->
+<!-- 				      <div class="card mb-4"> -->
+<!-- 				        <h5 class="card-header">주문 수 통계</h5> -->
+<!-- 				        <div class="card-body"> -->
+<!-- 				          <p class="card-text">원하는 옵션을 선택하여 주문 수 통계를 확인하세요.</p> -->
+				
+<!-- 				          Collapse 트리거 버튼들 -->
+<!-- 				          <p class="demo-inline-spacing"> -->
+<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#todayOrderCount" aria-expanded="false" aria-controls="todayOrderCount">오늘의 주문 수</button> -->
+<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#totalOrders" aria-expanded="false" aria-controls="totalOrders">이번 달 주문 수</button> -->
+<!-- 				          </p> -->
+				
+<!-- 				          Collapse 내용들 -->
+				
+<!-- 				          <div class="collapse" id="todayOrderCount"> -->
+<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
+<!-- 								<i class='bx bxs-wallet'> 오늘의 주문 수 : </i>&nbsp; -->
+<%-- 				                <h3 class="card-title mb-2" id="todayOrderCount">${todayOrderCount} 개</h3> --%>
+<!-- 				            </div> -->
+<!-- 				          </div> -->
+				          
+<!-- 				          <div class="collapse" id="totalOrders"> -->
+<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
+<!-- 				              <i class='bx bxs-wallet'> 이번 달 주문 수 : </i>&nbsp; -->
+<%-- 				              <h3 class="card-title mb-2" id="totalOrders">${totalOrders} 개</h3> --%>
+<!-- 				            </div> -->
+<!-- 				          </div> -->
+				
+<!-- 				        </div> -->
+<!-- 				      </div> -->
+<!-- 				    </div> -->
+<!-- 				  </div> -->
+<!-- 				</div> -->
+				
+<!-- 				<div class="container-xxl flex-grow-1 container-p-y"> -->
+<!-- 				 Collapse -->
+<!-- 				  <h5>취소 및 반품</h5> -->
+<!-- 				  <div class="row"> -->
+<!-- 				    <div class="col-12"> -->
+<!-- 				      <div class="card mb-4"> -->
+<!-- 				        <h5 class="card-header">취소 및 반품 통계</h5> -->
+<!-- 				        <div class="card-body"> -->
+<!-- 				          <p class="card-text">원하는 옵션을 선택하여 취소 및 반품 통계를 확인하세요.</p> -->
+				
+<!-- 				          Collapse 트리거 버튼들 -->
+<!-- 				          <p class="demo-inline-spacing"> -->
+<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#cancelRate" aria-expanded="false" aria-controls="cancelRate">이번 달 취소율</button> -->
+<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#returnRate" aria-expanded="false" aria-controls="returnRate">이번 달 반품율</button> -->
+<!-- 				          </p> -->
+				
+<!-- 				          Collapse 내용들 -->
+				
+<!-- 				          <div class="collapse" id="cancelRate"> -->
+<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
+<!-- 								<i class='bx bxs-wallet'> 이번 달 취소율 : </i>&nbsp; -->
+<%-- 				                <h3 class="card-title mb-2" id="cancelRate">${cancelRate} %</h3> --%>
+<!-- 				            </div> -->
+<!-- 				          </div> -->
+				          
+<!-- 				          <div class="collapse" id="returnRate"> -->
+<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
+<!-- 				              <i class='bx bxs-wallet'> 이번 달 반품율 : </i>&nbsp; -->
+<%-- 				              <h3 class="card-title mb-2" id="returnRate">${returnRate} %</h3> --%>
+<!-- 				            </div> -->
+<!-- 				          </div> -->
+				
+<!-- 				        </div> -->
+<!-- 				      </div> -->
+<!-- 				    </div> -->
+<!-- 				  </div> -->
+<!-- 				</div> -->
+                    
+<!--                   </div> -->
+<!--                 </div> -->
+<!--                 Total Revenue -->
+<!--               </div> -->
+<!--               <div class="row"> -->
+<!-- 				<div class="col-12 col-lg-8 mb-4"> -->
+<!-- 				    <div class="card mx-0"> -->
+<!-- 				        <div class="row g-0"> -->
+<!-- 				            <div class="col-md-12"> -->
+<!-- 				                <h5 class="card-header m-0 me-2 pb-3">카테고리별 매출 통계</h5> -->
+<!-- 				                <div id="categoryChart" class="px-2"></div> -->
+<!-- 				            </div> -->
+<!-- 				        </div> -->
+<!-- 				    </div> -->
+<!-- 				</div> -->
+<!-- 				<div class="col-12 col-lg-8 mb-4"> -->
+<!-- 				    <div class="card mx-0"> -->
+<!-- 				        <div class="row g-0"> -->
+<!-- 				            <div class="col-md-12"> -->
+<!-- 				                <h5 class="card-header m-0 me-2 pb-3">가격대 별 통계</h5> -->
+<!-- 				                <div id="priceRangeChart" class="px-2"></div> -->
+<!-- 				            </div> -->
+<!-- 				        </div> -->
+<!-- 				    </div> -->
+<!-- 				</div> -->
+<!-- 				<div class="col-12 col-lg-8 mb-4"> -->
+<!-- 				    <div class="card mx-0"> -->
+<!-- 				        <div class="row g-0"> -->
+<!-- 				            <div class="col-md-12"> -->
+<!-- 				                <h5 class="card-header m-0 me-2 pb-3">회원 연령 별 주문 통계</h5> -->
+<!-- 				                <div id="ageGroupChart" class="px-2"></div> -->
+<!-- 				            </div> -->
+<!-- 				        </div> -->
+<!-- 				    </div> -->
+<!-- 				</div> -->
+<!--                 Order Statistics -->
+<!--                 <div class="col-12 col-md-12 col-lg-6 order-3 order-md-2"> -->
+<!--                   <div class="row"> -->
+<!-- 					<div class="col-12 mb-4"> -->
+<!--                       <div class="card"> -->
+<!--                         <div class="card-body"> -->
+<!--                           <div class="card-title d-flex align-items-start justify-content-between"> -->
+<!--                           </div> -->
+<!--                           <div class="col-md-12"> -->
+<!-- 	                          <span class="d-block mb-1">회원 성별 별 주문 통계</span> -->
+<!-- 	                          <div id="genderChart" class="px-2"></div> -->
+<!--                           </div> -->
+<!--                           <h3 class="card-title text-nowrap mb-2"></h3> -->
+<!--                         </div> -->
+<!--                       </div> -->
+<!--                     </div> -->
+<!--                    </div> -->
+<!--                   </div> -->
+<!--                 / Order Statistics -->
+<!--               </div> -->
+<!--             </div> -->
+<!-- 			</div> -->
 				<!-- / Content -->
 
 				<!-- Footer -->
