@@ -1,6 +1,5 @@
 package com.finalProject.model.review;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,23 +7,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
 @ToString
 public class ReviewPagingInfoDTO {
-    private int pageNo;          // ÇöÀç ÆäÀÌÁö ¹øÈ£
-    private int pageSize;        // ÆäÀÌÁö´ç °Ô½Ã¹° ¼ö
-    private int totalPostCnt;    // ÀüÃ¼ °Ô½Ã¹° ¼ö
+    private int pageNo;          // í˜„ìž¬ íŽ˜ì´ì§€ ë²ˆí˜¸
+    private int pageSize;        // í•œ íŽ˜ì´ì§€ë‹¹ ê²Œì‹œë¬¼ ìˆ˜
+    private int totalPostCnt;    // ì „ì²´ ê²Œì‹œë¬¼ ìˆ˜
 
     public ReviewPagingInfoDTO(int pageNo, int pageSize) {
-        this.pageNo = pageNo > 0 ? pageNo : 1;  // ÆäÀÌÁö ¹øÈ£°¡ 1º¸´Ù ÀÛÀ¸¸é ±âº»°ª 1 ¼³Á¤
-        this.pageSize = pageSize > 0 ? pageSize : 10;  // ÆäÀÌÁö Å©±â°¡ 0º¸´Ù ÀÛÀ¸¸é ±âº»°ª 10 ¼³Á¤
+        this.pageNo = pageNo > 0 ? pageNo : 1;  // íŽ˜ì´ì§€ ë²ˆí˜¸ê°€ 1 ì´ìƒì´ì–´ì•¼ í•˜ë¯€ë¡œ ê¸°ë³¸ê°’ì€ 1ë¡œ ì„¤ì •
+        this.pageSize = pageSize > 0 ? pageSize : 10;  // íŽ˜ì´ì§€ í¬ê¸°ê°€ 0 ì´ìƒì´ì–´ì•¼ í•˜ë¯€ë¡œ ê¸°ë³¸ê°’ì€ 10ìœ¼ë¡œ ì„¤ì •
     }
 
-    // ÀüÃ¼ °Ô½Ã¹° ¼ö¸¦ ¼³Á¤ÇÏ°í ÀüÃ¼ ÆäÀÌÁö ¼ö¸¦ °è»ê
+    // ì „ì²´ ê²Œì‹œë¬¼ ìˆ˜ë¥¼ ì„¤ì •í•˜ê³  ì „ì²´ íŽ˜ì´ì§€ ìˆ˜ ê³„ì‚°í•˜ê¸° ìœ„í•´ ì‚¬ìš©
     public void setTotalPostCnt(int totalPostCnt) {
         this.totalPostCnt = totalPostCnt;
     }

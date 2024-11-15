@@ -1,21 +1,28 @@
 package com.finalProject.controller.product;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.PagingInfoDTO;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.service.product.UserProductService;
 
@@ -26,8 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/product")
 public class PController {
 
-	@Autowired
-	private UserProductService service;
+    @Autowired
+    private UserProductService service;
+
 
 	@Autowired
 	private MemberService memberService;
@@ -38,7 +46,7 @@ public class PController {
 			@RequestParam(value = "category", required = false) Integer category,
 			@RequestParam(value = "page", defaultValue = "1") int page, // 페이지 기본 값 설정
 			@RequestParam(value = "pageSize", defaultValue = "6") int pageSize, // 한 페이지에서 보여줄 상품 개수
-			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model) throws Exception {
+			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model) throws Exception  {
 
 		List<ProductDTO> products = service.getProductsByPage(page, pageSize); // 전체 상품 조회
 
@@ -178,14 +186,23 @@ public class PController {
 
 	// 3. 상품의 세부 정보를 표시함
 	@GetMapping("/jewelry/detail")
-	public String showProductDetail(@RequestParam("productNo") int productId, Model model, HttpServletRequest request) throws Exception {
+	public String showProductDetail(@RequestParam("productNo") int productNo, 
+			Model model, HttpServletRequest request
+			) throws Exception {
 
-		// 상품 상세 정보 조회
-		List<ProductDTO> products = service.getProductInfo(productId);
-
-		// 세부 상품 정보 조회
-		ProductDTO product = service.getProductDetailById(productId);
-
+        // 상품 상세 정보 조회
+        List<ProductDTO> products = service.getProductInfo(productNo);
+        // 세부 상품 정보 조회
+        ProductDTO product = service.getProductDetailById(productNo);
+        
+        // 상품 리뷰 조회
+        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
+//        // 상품 리뷰 이미지 조회
+        List <String> reviewImgs = service.getReviewImgs(productNo);
+        
+        // Model에 데이터 추가
+        model.addAttribute("reviews", seeReview);
+        model.addAttribute("reviewImgs", reviewImgs);
 		// 찜
 		HttpSession ses = request.getSession();
 		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인정보 받기
@@ -194,13 +211,51 @@ public class PController {
 			model.addAttribute("wishList", wishList);
 			System.out.println("찜목록 조회");
 		}
+        
+        model.addAttribute("products", products);
+        model.addAttribute("product_content", product.getProduct_content());
+        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 계산된 가격 추가
+        return "/user/pages/product/productDetail";
+    }
+	
+	@GetMapping("/review/load")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> loadReviews(@RequestParam int productNo,  
+			@RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "1") int size) throws Exception {
+	    
+	    // 1. 총 리뷰 개수 조회
+	    int totalPostCnt = service.countReview(productNo);
+        System.out.println("Total Review Count: " + totalPostCnt);
+        
+        // 상품 리뷰 조회
+        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
+        
+        // 상품 리뷰 이미지 조회
+        List <String> reviewImgs = service.getReviewImgs(productNo);
+        
+        
+        Map<String, Object> response = new HashMap<String, Object>();
+		PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 1);
+		PagingInfo pagingInfo = new PagingInfo(pagingInfoDTO, totalPostCnt);
 
-		// Model에 데이터 추가
-		model.addAttribute("products", products);
-		model.addAttribute("product_content", product.getProduct_content());
-		model.addAttribute("calculatedPrice", product.getCalculatedPrice()); // 계산된 가격 추가
-		return "/user/pages/product/productDetail";
-	}
+		response.put("pagingInfo", pagingInfo);
+        response.put("seeReview", seeReview);
+        response.put("reviewImgs", reviewImgs);
+        response.put("totalPostCnt", totalPostCnt);
+        
+        // JSON 형태로 출력하기 위해 ObjectMapper 사용
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
+        
+        System.out.println(totalPostCnt);
+        System.out.println(jsonString);
+        
+	    return ResponseEntity.ok(response);
+	    
+    }
+
+
 
 	// 4. 검색기능
 	@GetMapping("/jewelry/result")
@@ -284,4 +339,6 @@ public class PController {
 
 		return "/user/pages/product/productList";
 	}
+	
+	
 }

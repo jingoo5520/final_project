@@ -94,17 +94,17 @@
 	
 	
 	<select id="getProductById" parameterType="int" resultType="ProductDTO">
-	    select p.*, c.*, pi.image_url as image_main_url, pi.image_type as image_sub_url from products p
+	    select p.*, c.*, pi.image_url, pi.image_type from products p
 	    left join categories c on p.product_category = c.category_no
 	    left join product_images pi on p.product_no = pi.product_no
-	    where p.product_no = #{productId}
+	    where p.product_no = #{product_no}
 	</select>
 	
 	<select id="selectProductDetailById" parameterType="int" resultType="ProductDTO">
     SELECT p.*, c.category_name 
     FROM products p
     LEFT JOIN categories c ON p.product_category = c.category_no
-    WHERE p.product_no = #{productId}
+    WHERE p.product_no = #{product_no}
 </select>
    
 
@@ -180,7 +180,48 @@
         #{limit} OFFSET #{offset}
 </select>
 
+<select id="selectReview" parameterType="int" resultType="ReviewDetailDTO">
+SELECT  
+    r.review_no,
+    r.member_id,
+    r.review_title,
+    r.review_content,
+    r.register_date,
+    r.review_like_count,
+    r.review_ref,
+    r.review_score,
+    m.nickname
+FROM 
+    reviews r
+JOIN 
+    members m ON r.member_id = m.member_id
+WHERE 
+    r.product_no = #{product_no}
+    AND r.review_show = 'S'
+    AND (r.review_ref IS NULL OR 
+         (r.review_ref IS NOT NULL AND 
+          (SELECT review_show FROM reviews WHERE review_no = r.review_ref) = 'S'))
+ORDER BY 
+    CASE WHEN r.review_ref IS NULL THEN r.review_no ELSE r.review_ref END DESC,  
+    r.review_ref IS NOT NULL,                                                    
+    r.register_date ASC;
+</select>
 
+<select id="selectReviewImg" parameterType="int" resultType="string">
+    select 
+        ri.image_url
+    from 
+        review_images ri
+    join 
+        reviews r on r.review_no = ri.review_no
+    where 
+        r.product_no = #{product_no}
+        and r.review_show = 'S'
+</select>
+
+<select id="countReview" resultType="int">
+	SELECT COUNT(*) FROM reviews WHERE product_no = #{productNo}
+</select>
 
 
 
@@ -196,32 +237,37 @@
 	<insert id="saveProduct"
 		parameterType="com.finalProject.model.admin.product.ProductDTO"
 		useGeneratedKeys="true" keyProperty="product_no">
-		INSERT INTO Product (product_name,
+		INSERT INTO products
+		(product_name,
 		product_price,
-		product_content, product_dc_type, product_dc_amount,
-		product_sell_count)
-		VALUES (#{product_name}, #{product_price},
-		#{product_content},
-		#{product_dc_type}, #{product_dc_amount},
-		#{product_sell_count});
+		product_content,
+		product_category,product_dc_type, dc_rate,
+		product_sell_count,product_stock_count,product_show)
+		VALUES
+		(#{product_name}, #{product_price},
+		#{product_content}, #{category_no},
+		#{product_dc_type}, #{dc_rate},
+		#{product_sell_count},#{product_stock_count},#{product_show});
 	</insert>
 
 	<insert id="saveMainImage" parameterType="map">
-		INSERT INTO Image
+		INSERT INTO
+		product_images
 		(product_no, image_url,image_type)
 		VALUES (#{product_no},
 		#{mainImage},'M')
 	</insert>
 
 	<insert id="saveSubImage" parameterType="map">
-		INSERT INTO Image (product_no, image_url, image_type)
+		INSERT INTO product_images (product_no, image_url, image_type)
 		VALUES
 		<foreach collection="subImage" item="sub_Image" separator=",">
 			(#{product_no}, #{sub_Image},'S')
 		</foreach>
 	</insert>
 
-	<resultMap type="com.finalProject.model.admin.product.ProductVO"
+	<resultMap
+		type="com.finalProject.model.admin.product.ProductVO"
 		id="productResultMap">
 		<id column="product_no" property="product_no" javaType="int" />
 		<result column="product_name" property="product_name"
@@ -232,45 +278,48 @@
 			javaType="String" />
 		<result column="product_dc_type" property="product_dc_type"
 			javaType="String" />
-		<result column="product_dc_amount" property="product_dc_amount"
-			javaType="int" />
+		<result column="dc_rate" property="dc_rate" javaType="int" />
 		<result column="product_sell_count"
 			property="product_sell_count" javaType="int" />
 
 		<collection column="product_no" property="list"
-			ofType="com.finalProject.model.admin.product.ProductImg" javaType="java.util.List"
-			select="getAllImg" />
+			ofType="com.finalProject.model.admin.product.ProductImg"
+			javaType="java.util.List" select="getAllImg" />
 	</resultMap>
 
 	<select id="getAllBoard" resultMap="productResultMap">
 		SELECT product_no,
 		product_name, product_price, product_content, product_dc_type,
-		product_dc_amount,
+		dc_rate,
 		product_sell_count
-		FROM product
+		FROM products
 		limit #{startRowIndex}
 		,#{viewPostCntPerPage}
 	</select>
 
 	<select id="getAllImg"
 		resultType="com.finalProject.model.admin.product.ProductImg">
-		SELECT image_url, image_type FROM image WHERE product_no =
+		SELECT image_url, image_type FROM product_images WHERE
+		product_no =
 		#{product_no}
 	</select>
 
 	<update id="updateProduct">
-		update product set product_name = #{product_name} ,
-		product_price = #{product_price},
-		product_content = #{product_content}
-		, product_dc_type = #{product_dc_type}, product_dc_amount =
-		#{product_dc_amount}, product_sell_count = #{product_sell_count} where
-		product_no =#{product_no};
+		update products set product_name = #{product_name} ,
+		product_price = #{product_price}
+		, product_dc_type =
+		#{product_dc_type}, dc_rate =
+		#{dc_rate},
+		product_sell_count =
+		#{product_sell_count} where
+		product_no
+		=#{product_no};
 	</update>
 
 	<select id="getSearchProduct" resultMap="productSearchResultMap">
 		SELECT product_no, product_name, product_price, product_content,
-		product_dc_type, product_dc_amount, product_sell_count
-		FROM product
+		product_dc_type, dc_rate, product_sell_count
+		FROM products
 		WHERE 1=1
 		<if test="product_name != null and product_name != ''">
 			AND product_name LIKE #{product_name}
@@ -296,16 +345,17 @@
 				order by product_price
 			</when>
 			<when test="searchType == 'sortAmountLow'">
-				order by product_dc_amount
+				order by dc_rate
 			</when>
 			<when test="searchType == 'sortAmountHigh'">
-				order by product_dc_amount desc
+				order by dc_rate desc
 			</when>
 		</choose>
 		limit #{startRowIndex} ,#{viewPostCntPerPage}
 	</select>
 
-	<resultMap type="com.finalProject.model.admin.product.ProductVO"
+	<resultMap
+		type="com.finalProject.model.admin.product.ProductVO"
 		id="productSearchResultMap">
 		<id column="product_no" property="product_no" javaType="int" />
 		<result column="product_name" property="product_name"
@@ -316,23 +366,22 @@
 			javaType="String" />
 		<result column="product_dc_type" property="product_dc_type"
 			javaType="String" />
-		<result column="product_dc_amount" property="product_dc_amount"
-			javaType="int" />
+		<result column="dc_rate" property="dc_rate" javaType="float" />
 		<result column="product_sell_count"
 			property="product_sell_count" javaType="int" />
 
 		<collection column="product_no" property="list"
-			ofType="com.finalProject.model.admin.product.ProductImg" javaType="java.util.List"
-			select="getAllImg" />
+			ofType="com.finalProject.model.admin.product.ProductImg"
+			javaType="java.util.List" select="getAllImg" />
 	</resultMap>
 
 	<select id="getCountAllProduct" resultType="int">
 		select count(*) from
-		product
+		products
 	</select>
 
 	<select id="getSearchAllProduct" resultType="int">
-		select count(*) from product
+		select count(*) from products
 		where 1=1
 		<if test="product_name != null and product_name != ''">
 			AND product_name LIKE #{product_name}
@@ -358,16 +407,16 @@
 				order by product_price
 			</when>
 			<when test="searchType == 'sortAmountLow'">
-				order by product_dc_amount
+				order by dc_rate
 			</when>
 			<when test="searchType == 'sortAmountHigh'">
-				order by product_dc_amount desc
+				order by dc_rate desc
 			</when>
 		</choose>
 	</select>
 
 	<delete id="deleteProductImg">
-		delete from image where product_no = #{product_no}
+		delete from product_images where product_no = #{product_no}
 		<if test="product_main_image !=null and product_main_image != ''">
 			and image_url = #{product_main_image}
 		</if>
@@ -378,8 +427,22 @@
 			</foreach>
 		</if>
 	</delete>
-	
+
 	<delete id="deleteProduct">
-		delete from product where product_no = #{productId}
+		delete from products where product_no = #{productId}
 	</delete>
+
+	<select id="getCategories"
+		resultType="com.finalProject.model.admin.product.adminCategories">
+		select * from categories
+	</select>
+	<update id="updateContent">
+		update products set product_content = #{content}
+		where
+		product_no = #{product_no}
+	</update>
+
+	<update id="deleteContentImg" parameterType="int">
+        UPDATE products SET product_content = NULL WHERE product_no = #{product_no}
+    </update>
 </mapper>

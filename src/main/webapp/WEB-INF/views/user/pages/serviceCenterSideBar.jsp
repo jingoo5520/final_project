@@ -39,7 +39,7 @@ a.active {
 					<li><a href="/serviceCenter/notice" class="<%="notices".equals(request.getParameter("pageName")) ? "active" : ""%>">공지사항 </a></li>
 					<li><a href="/event">이벤트 </a></li>
 					<li><a href="/serviceCenter/inquiries" class="<%="inquiries".equals(request.getParameter("pageName")) ? "active" : ""%>">문의</a></li>
-					<li><a href="product-grids.html">멤버십 혜택</a></li>
+					<li><a href="/serviceCenter/memberships" class="<%="memberships".equals(request.getParameter("pageName")) ? "active" : ""%>">멤버십 혜택</a></li>
 				</ul>
 			</div>
 			<!-- End Single Widget -->

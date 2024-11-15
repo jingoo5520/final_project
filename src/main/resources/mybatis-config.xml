@@ -7,11 +7,17 @@
 		<typeAlias type="com.finalProject.model.LoginDTO" alias="LoginDTO" />
 		<typeAlias type="com.finalProject.model.admin.notices.NoticeDTO" alias="NoticeDTO" />
 		<typeAlias type="com.finalProject.model.MemberDTO" alias="MemberDTO" />
+		
 		<typeAlias type="com.finalProject.model.product.ProductDTO" alias="ProductDTO" />
 		<typeAlias type="com.finalProject.model.admin.notices.NoticeVO" alias="NoticeVO" />
 		<typeAlias type="com.finalProject.model.admin.notices.SearchCriteriaDTO" alias="SearchCriteriaDTO" />
 		<typeAlias type="com.finalProject.model.admin.notices.BannerVO" alias="BannerVO" />
 		<typeAlias type="com.finalProject.model.review.ReviewDTO" alias="ReviewDTO" />
+		<typeAlias type="com.finalProject.model.review.ReviewDetailDTO" alias="ReviewDetailDTO" />
+		<typeAlias type="com.finalProject.model.review.PointEarnedDTO" alias="PointEarnedDTO" />
+
+		
+		
 		<typeAlias type="com.finalProject.model.inquiry.InquiryDTO" alias="InquiryDTO" />
 		<typeAlias type="com.finalProject.model.inquiry.InquiryDetailDTO" alias="InquiryDetailDTO" />
 		<typeAlias type="com.finalProject.model.inquiry.InquiryImgDTO" alias="InquiryImgDTO" />
@@ -41,6 +47,11 @@
 		
 		<typeAlias type="com.finalProject.model.admin.GenderCountDTO" alias="GenderCountDTO" />
 		<typeAlias type="com.finalProject.model.admin.LevelCountDTO" alias="LevelCountDTO" />
+		<typeAlias type="com.finalProject.model.admin.SaleCountDTO" alias="SaleCountDTO" />
+		<typeAlias type="com.finalProject.model.admin.RevenueDTO" alias="RevenueDTO" />
+		
+		
+		<typeAlias type="com.finalProject.model.level.LevelDTO" alias="LevelDTO" />
 		
 	</typeAliases>
 </configuration>
