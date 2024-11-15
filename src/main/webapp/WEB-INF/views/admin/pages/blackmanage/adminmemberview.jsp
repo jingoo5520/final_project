@@ -43,6 +43,17 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
+function showToast(title, content) {
+	$('#toastTitle').text(title); // 토스트 메시지 제목
+    $('#toastBody').text(content); // 토스트 메시지 내용
+    
+    var toastElement = $('#toastMessage');
+    toastElement.removeClass('hide').addClass('show');
+	$("#modalToggle").modal('hide'); // 모달이름
+	 setTimeout(function() {
+		 toastElement.hide();
+       }, 2000);
+} 
 let pageNo = 1;
 let pagingSize =10;
 let checkedMemberIdList = [];
@@ -115,9 +126,11 @@ $(function () {
 	
 			success: function(data) {
 				$("#blackMemberModal").modal('hide');
+				 showToast("성공", "회원을 블랙 했습니다");
 			} ,
 			error: function(error) {
 			    console.log("AJAX 에러:", error);
+			    showToast("실패", "회원을 블랙 실패");
 			}	
 		});
 	});
@@ -556,7 +569,15 @@ function showMemberList(pageNumber) {
 					</footer>
 				</div>
 			</div>
-
+			<div class="bs-toast toast toast-placement-ex m-2 fade bg-secondary top-0 end-0 hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000" id="toastMessage">
+				<div class="toast-header">
+					<i class="bx bx-bell me-2"></i>
+					<div class="me-auto fw-semibold" id="toastTitle"></div>
+					<small></small>
+					<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+				</div>
+				<div class="toast-body" id="toastBody"></div>
+			</div>
 			<!-- / Footer -->
 			<!-- Core JS -->
 			<!-- build:js assets/vendor/js/core.js -->

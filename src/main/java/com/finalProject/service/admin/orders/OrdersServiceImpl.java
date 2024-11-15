@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -167,12 +169,17 @@ public class OrdersServiceImpl implements OrdersService {
 		log.info("비회원이 아닐경우 멤버 테이블에서 멤버아이디를 가져온다");
 		String findMemberId = oDAO.findMemberId(orderId);
 		log.info("가져오기 성공");
+		log.info(orderId);
+		log.info(findMemberId);
 		if (findMemberId != null && findMemberId != "") {
 			log.info("돌려줘야할 포인트가 0이 아닐시");
 			if (modifyCancelStatusDTO.getAssigned_point() != 0) {
 
 				AdminPayOrdererVO expectResult = oDAO.getExpectPayAmount(orderId);
+				log.info("" + expectResult.getTotal_price_expected());
+				log.info("" + modifyCancelStatusDTO.getAmount());
 				log.info("포인트 적립 내역에 사용한 포인트 넣기");
+				log.info(expectResult.getOrderer_id());
 				int result = oDAO.refundPoint((modifyCancelStatusDTO.getAssigned_point()),
 						expectResult.getOrderer_id());
 				if (result >= 1) {
@@ -185,7 +192,9 @@ public class OrdersServiceImpl implements OrdersService {
 				if (modifyCancelStatusDTO.getAmount() != 0) {
 					log.info("해당하는 회원의 level_point 를 가져오기");
 					float levelPoint = oDAO.memberLevelPoint(orderId);
+					log.info("" + levelPoint);
 					int stealPoint = (int) (modifyCancelStatusDTO.getAmount() * levelPoint);
+					log.info("" + stealPoint);
 					int minusStealPoint = stealPoint * -1;
 					log.info("포인트 적립내역 테이블에 데이터 삽입하기");
 					if (oDAO.restractPoint(findMemberId, minusStealPoint) >= 1) {
@@ -209,10 +218,14 @@ public class OrdersServiceImpl implements OrdersService {
 						log.info("멤버에게 포인트 환불하기");
 						oDAO.refundMemberUsePoint(expectResult.getUse_point(), expectResult.getOrderer_id());
 						log.info("쿠폰 사용 내역 삭제하기");
-						oDAO.deleteUseCoupon(expectResult.getCoupon_no());
+						if (expectResult.getCoupon_no() <= 0) {
+							oDAO.deleteUseCoupon(expectResult.getCoupon_no());
+						}
 					}
 				}
 			}
+		} else {
+			throw new RuntimeErrorException(null, "error");
 		}
 		return true;
 	}
