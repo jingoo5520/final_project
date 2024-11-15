@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,8 +50,17 @@ public class inquiryController {
 	FileProcess fp;
 
 	// 문의 페이지 이동
+	/*
+	 * @RequestMapping("/**") public String errorPage(Model model,
+	 * HttpServletRequest request) throws Exception { throw new
+	 * Exception("잘못된 경로입니다."); }
+	 * 
+	 * @ExceptionHandler(Exception.class) public String handleError() { // 예외가 발생하면
+	 * warningPage로 포워딩 System.out.println("제발"); return "warningPage"; }
+	 */
+
 	@GetMapping("/inquiries")
-	public String inquiryPage(Model model, HttpServletRequest request) {
+	public String inquiryPage(Model model, HttpServletRequest request) throws Exception {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		HttpSession ses = request.getSession();
@@ -123,20 +133,16 @@ public class inquiryController {
 	@GetMapping("/getInquiries")
 	@ResponseBody
 	public Map<String, Object> getInquiries(@RequestParam int pageNo, @RequestParam int pagingSize,
-			@RequestParam int pageCntPerBlock, HttpServletRequest request) {
+			@RequestParam int pageCntPerBlock, HttpServletRequest request) throws Exception {
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		HttpSession ses = request.getSession();
 		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
 		String memberId = loginDTO.getMember_id();
 
-		try {
-			data = iService.getInquiryList(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock), memberId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		data = iService.getInquiryList(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock), memberId);
 
-		return data;
+		throw new Exception("Forced exception for testing ControllerAdvice");
 	}
 
 	// 주문 상품 리스트 가져오기
