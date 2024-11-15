@@ -201,30 +201,33 @@ uri="http://java.sun.com/jsp/jstl/fmt"%>
     <script src="/resources/assets/user/js/glightbox.min.js"></script>
     <script src="/resources/assets/user/js/main.js"></script>
     <script>
-      window.addEventListener("load", function () {
-        let sentByOrderRequest = null;
-        $.ajax({
-          async: false,
-          type: "GET",
-          url: "/order/sessionState",
-          dataType: "json",
-          success: function (res) {
-            sentByOrderRequest = res.sentByOrderRequest;
-          },
-          error: function (request, status, error) {
-            console.log(
-              "code:" +
-                request.status +
-                "\n" +
-                "message:" +
-                request.responseText +
-                "\n" +
-                "error:" +
-                error
-            );
-          },
-        });
-        console.log("sentByOrderRequest : " + sentByOrderRequest);
+      //  window.addEventListener("load", function () {
+      //   let sentByOrderRequest = null;
+      //     $.ajax({
+      //         async: false,
+      //         type: "POST",
+      //         url: "/order/sessionState",
+      //         dataType: "json",
+      //         success: function (res) {
+      //           sentByOrderRequest = res.sentByOrderRequest;
+      //         },
+      //         error: function (request, status, error) {
+      //           console.log(
+      //             "code:" +
+      //               request.status +
+      //               "\n" +
+      //               "message:" +
+      //               request.responseText +
+      //               "\n" +
+      //               "error:" +
+      //               error
+      //           );
+      //         },
+      //     }); // ajax end
+      //  })
+        
+        
+        
         const params = new URLSearchParams(window.location.search);
         console.log(params);
         console.log(params.get("goToOrder"));
@@ -239,13 +242,12 @@ uri="http://java.sun.com/jsp/jstl/fmt"%>
 				</a></p>`;
           $("#nonMemberFunction").after(tags);
         }
-      });
 
       function goToOrderPageOfNonMember() {
         $.ajax({
           async: false,
           type: "POST",
-          url: "/order/session",
+          url: "/order/session/requestByNonMember",
           data: {
             requestByNonMember: "True",
           },

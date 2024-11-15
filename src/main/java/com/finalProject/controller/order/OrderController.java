@@ -600,7 +600,7 @@ public class OrderController {
 		return orderService.getOrderListOfNonMember(name, phoneNumber, email);
 	}
 	
-	@PostMapping("/order/session")
+	@PostMapping("/order/session/requestByNonMember")
 	@ResponseBody
 	public void getSessionState(
 			HttpSession session,
