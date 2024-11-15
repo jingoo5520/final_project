@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.finalProject.model.admin.GenderCountDTO;
 import com.finalProject.model.admin.LevelCountDTO;
+import com.finalProject.model.admin.RevenueDTO;
+import com.finalProject.model.admin.SaleCountDTO;
 import com.finalProject.persistence.admin.AdminDAO;
 
 @Service
@@ -65,11 +67,11 @@ public class AdminServiceImpl implements AdminService {
 		List<GenderCountDTO> genderCountDTOList = aDao.selectMembersByGender();
 		List<LevelCountDTO> levelCountDTOList = aDao.selectMembersByLevel();
 		
-		// 총 판매량 가져오기
+		// 카테고리별 판매량 가져오기
+		List<SaleCountDTO> saleCountDTOList = aDao.selectTotalSales();
 		
-		// 총 매출 가져오기
-		aDao.getTotalSales();
-		
+		// 카테고리별 매출 가져오기
+		List<RevenueDTO> revenueDTOList = aDao.selectTotalRevenues();
 		
 		data.put("memberCnt", memberCnt);
 		data.put("memberGrowthRate", memberGrowthRate);
@@ -82,6 +84,8 @@ public class AdminServiceImpl implements AdminService {
 		data.put("saleGrowthRate", saleGrowthRate);
 		data.put("revenueGrowthRate", revenueGrowthRate);
 		data.put("regGrowthRate", regGrowthRate);
+		data.put("saleCountDTOList", saleCountDTOList);
+		data.put("revenueDTOList", revenueDTOList);
 		
 		return data;
 	}
@@ -91,6 +95,24 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public int selectRangedMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception {
 		return aDao.selectRangedMemberRegCnt(regDate_start, regDate_end);
+	}
+
+	@Override
+	public List<SaleCountDTO> getSalesByMonth(String selectedMonth) throws Exception {
+		if(selectedMonth.equals("")) {
+			return aDao.selectTotalSales();
+		}
+		return aDao.selectSalesByMonth(selectedMonth);
+	}
+
+
+
+	@Override
+	public List<RevenueDTO> getRevenuesByMonth(String selectedMonth) throws Exception {
+		if(selectedMonth.equals("")) {
+			return aDao.selectTotalRevenues();
+		}
+		return aDao.selectRevenuesByMonth(selectedMonth);
 	}
 
 }

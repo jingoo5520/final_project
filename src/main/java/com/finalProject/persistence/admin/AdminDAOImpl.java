@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.GenderCountDTO;
 import com.finalProject.model.admin.LevelCountDTO;
+import com.finalProject.model.admin.RevenueDTO;
+import com.finalProject.model.admin.SaleCountDTO;
 
 @Repository
 public class AdminDAOImpl implements AdminDAO {
@@ -49,11 +51,6 @@ public class AdminDAOImpl implements AdminDAO {
 	}
 
 	@Override
-	public int getTotalSales() throws Exception {
-		return 1; 
-	}
-
-	@Override
 	public int selectWaitInquiryCnt() throws Exception {
 		return ses.selectOne(ns + "selectWaitInquiryCnt");
 	}
@@ -79,4 +76,23 @@ public class AdminDAOImpl implements AdminDAO {
 		return ses.selectOne(ns + "selectRangedMemberRegCnt", params);
 	}
 
+	@Override
+	public List<SaleCountDTO> selectTotalSales() throws Exception {
+		return ses.selectList(ns + "selectTotalSales");
+	}
+
+	@Override
+	public List<SaleCountDTO> selectSalesByMonth(String selectedMonth) throws Exception {
+		return ses.selectList(ns + "selectSalesByMonth", selectedMonth);
+	}
+
+	@Override
+	public List<RevenueDTO> selectTotalRevenues() throws Exception {
+		return ses.selectList(ns + "selectTotalRevenues");
+	}
+
+	@Override
+	public List<RevenueDTO> selectRevenuesByMonth(String selectedMonth) throws Exception {
+		return ses.selectList(ns + "selectRevenuesByMonth", selectedMonth);
+	}
 }
