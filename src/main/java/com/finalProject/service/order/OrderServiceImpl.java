@@ -172,10 +172,20 @@ public class OrderServiceImpl implements OrderService {
 		if (isMember == true) {
 			// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
 			String couponCode = (String) session.getAttribute("couponCodeUsed");
+			System.out.println("###############makePayment##############");
+			System.out.println("orderId : " + orderId);
+			System.out.println("couponCode : " + couponCode);
+			
+			if (couponCode == null) {
+				couponCode = "";
+			}
 			// 쿠폰 사용
-			if (orderDAO.useCoupon(orderId, couponCode) != 1) {
-				throw new DataAccessException("쿠폰 사용 실패") {};
+			if (!("".equals(couponCode))) {
+				if (orderDAO.useCoupon(orderId, couponCode) != 1) {
+					throw new DataAccessException("쿠폰 사용 실패") {};
+				};
 			};
+
 			// 포인트 적립
 			if (orderDAO.updatePoint(orderId) != true) {
 				throw new DataAccessException("포인트 적립 실패") {
