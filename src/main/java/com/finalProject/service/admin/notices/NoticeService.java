@@ -7,12 +7,13 @@ import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfoDTO;
+import com.finalProject.model.admin.notices.PagingInfoNoticeDTO;
 import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 
 public interface NoticeService {
 	
 	// 공지사항 목록 조회
-	List<NoticeDTO> getAllNotices(int pagingSize, int startRowIndex) throws Exception;
+	Map<String, Object> getAllNotices(PagingInfoNoticeDTO pDto) throws Exception;
 
 	// 이벤트 목록 조회
 	List<NoticeDTO> getAllEvents(int pagingSize, int startRowIndex) throws Exception;
@@ -45,10 +46,10 @@ public interface NoticeService {
     int getTotalPostCnt() throws Exception;
 
     // 페이지네이션이 적용된 공지 목록 조회
-    List<NoticeDTO> getNoticesWithPagination(int startRowIndex, int viewPostCntPerPage) throws Exception;
+//    List<NoticeDTO> getNoticesWithPagination(int startRowIndex, int viewPostCntPerPage) throws Exception;
 
     // 페이지네이션 검색어 처리
-    List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception;
+//    List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception;
     
     // 이벤트 DB 저장 로직
 //	void createEventImg(NoticeDTO noticeDTO) throws Exception;
@@ -80,7 +81,11 @@ public interface NoticeService {
 	// url
 	boolean updateNoticeUrl(NoticeVO notice) throws Exception;
 
+	// 페이지네이션
+	Map<String, Object> getNoticeList(PagingInfoNoticeDTO pagingInfoNoticeDTO) throws Exception;
 
+
+	
 	// 페이지네이션
 //	public int getTotalNoticeCount() throws Exception;
 //	public List<NoticeDTO> getNotices(int currentPage, int pageSize) throws Exception;

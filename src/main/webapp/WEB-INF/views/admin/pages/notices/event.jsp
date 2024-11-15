@@ -184,29 +184,29 @@
                     </table>
                     
 		<!-- 페이지네이션 -->
-		<p>현재 페이지: ${currentPage != null ? currentPage : 'N/A'} / 총 페이지: ${totalPages != null ? totalPages : 'N/A'}</p>
-		<div class="pagination">
-		    <c:if test="${currentPage > 1}">
-		        <a href="?page=${currentPage - 1}">이전</a>
-		    </c:if>
+<%-- 		<p>현재 페이지: ${currentPage != null ? currentPage : 'N/A'} / 총 페이지: ${totalPages != null ? totalPages : 'N/A'}</p> --%>
+<!-- 		<div class="pagination"> -->
+<%-- 		    <c:if test="${currentPage > 1}"> --%>
+<%-- 		        <a href="?page=${currentPage - 1}">이전</a> --%>
+<%-- 		    </c:if> --%>
 		    
-		    <c:if test="${totalPages > 0}">
-		        <c:forEach var="i" begin="1" end="${totalPages}">
-		            <c:choose>
-		                <c:when test="${i == currentPage}">
-		                    <span>${i}</span> <!-- 현재 페이지는 그냥 숫자 표시 -->
-		                </c:when>
-		                <c:otherwise>
-		                    <a href="?page=${i}">${i}</a>
-		                </c:otherwise>
-		            </c:choose>
-		        </c:forEach>
-		    </c:if>
+<%-- 		    <c:if test="${totalPages > 0}"> --%>
+<%-- 		        <c:forEach var="i" begin="1" end="${totalPages}"> --%>
+<%-- 		            <c:choose> --%>
+<%-- 		                <c:when test="${i == currentPage}"> --%>
+<%-- 		                    <span>${i}</span> <!-- 현재 페이지는 그냥 숫자 표시 --> --%>
+<%-- 		                </c:when> --%>
+<%-- 		                <c:otherwise> --%>
+<%-- 		                    <a href="?page=${i}">${i}</a> --%>
+<%-- 		                </c:otherwise> --%>
+<%-- 		            </c:choose> --%>
+<%-- 		        </c:forEach> --%>
+<%-- 		    </c:if> --%>
 		
-		    <c:if test="${currentPage < totalPages}">
-		        <a href="?page=${currentPage + 1}">다음</a>
-		    </c:if>
-		</div>
+<%-- 		    <c:if test="${currentPage < totalPages}"> --%>
+<%-- 		        <a href="?page=${currentPage + 1}">다음</a> --%>
+<%-- 		    </c:if> --%>
+<!-- 		</div> -->
                     
       <!-- 이벤트 작성 버튼 -->
       <div class="text-end mt-3">
@@ -214,7 +214,44 @@
                   </div>
                 </div>
               </div>
- 
+  							<!-- 페이지 네이션 -->
+							<div class="mt-4">
+								<nav aria-label="Page navigation">
+									<ul class="pagination justify-content-center">
+										<c:choose>
+											<c:when test="${couponData.pi.pageNo == 1}">
+												<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
+											</c:when>
+											<c:otherwise>
+												<li class="page-item prev"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>
+											</c:otherwise>
+										</c:choose>
+
+										<c:forEach var="i" begin="${couponData.pi.startPageNoCurBloack}" end="${couponData.pi.endPageNoCurBlock}">
+											<c:choose>
+												<c:when test="${couponData.pi.pageNo == i}">
+													<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(${couponData.pi.pageNo}, ${couponData.pi.viewDataCntPerPage})">${i}</a></li>
+												</c:when>
+												<c:otherwise>
+													<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showCouponList(${i}, ${couponData.pi.viewDataCntPerPage})">${i}</a></li>
+												</c:otherwise>
+											</c:choose>
+
+										</c:forEach>
+
+										<c:choose>
+											<c:when test="${couponData.pi.pageNo == couponData.pi.totalPageCnt}">
+												<li class="page-item disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
+											</c:when>
+											<c:otherwise>
+												<li class="page-item next"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a></li>
+											</c:otherwise>
+										</c:choose>
+
+									</ul>
+								</nav>
+							</div>
+							<!-- / 페이지 네이션 -->
  
             </div>
             <!-- / Content -->

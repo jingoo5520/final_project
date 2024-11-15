@@ -14,6 +14,7 @@ import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfo;
 import com.finalProject.model.admin.notices.PagingInfoDTO;
+import com.finalProject.model.admin.notices.PagingInfoNotice;
 import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +77,6 @@ public class NoticeDAOImpl implements NoticeDAO {
 
 	@Override
 	public void updateEvent(NoticeDTO noticeDTO) throws Exception {
-		System.out.println(ses.update(ns + "updateEvent", noticeDTO));
 		ses.update(ns + "updateEvent", noticeDTO);
 	}
 
@@ -120,13 +120,13 @@ public class NoticeDAOImpl implements NoticeDAO {
 //	    return ses.selectList(ns + "getAllNotices", Map.of("offset", offset, "limit", limit));
 //	}
 	
-	@Override
-	public List<NoticeDTO> getNoticesWithPagination(int offset, int limit) throws Exception {
-	    Map<String, Object> params = new HashMap<>();
-	    params.put("offset", offset);
-	    params.put("limit", limit);
-	    return ses.selectList(ns + "getAllNotices", params);
-	}
+//	@Override
+//	public List<NoticeDTO> getNoticesWithPagination(int offset, int limit) throws Exception {
+//	    Map<String, Object> params = new HashMap<>();
+//	    params.put("offset", offset);
+//	    params.put("limit", limit);
+//	    return ses.selectList(ns + "getAllNotices", params);
+//	}
 
 	@Override
 	public List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception {
@@ -242,6 +242,16 @@ public class NoticeDAOImpl implements NoticeDAO {
 	        e.printStackTrace();
 	        return false;
 	    }
+	}
+
+	@Override
+	public int getTotalNoticeCnt() throws Exception {
+		return ses.selectOne(ns + "selectNoticeCnt");
+	}
+
+	@Override
+	public List<NoticeDTO> selectNoticeList(PagingInfoNotice pi) throws Exception {
+		return ses.selectList(ns + "selectNoticeList", pi);
 	}
 
 

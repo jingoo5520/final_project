@@ -2,11 +2,13 @@ package com.finalProject.persistence.admin.notices;
 
 import java.util.List;
 
+import com.finalProject.model.admin.coupon.CouponDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNew;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfo;
 import com.finalProject.model.admin.notices.PagingInfoDTO;
+import com.finalProject.model.admin.notices.PagingInfoNotice;
 import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 
 public interface NoticeDAO {
@@ -45,7 +47,7 @@ public interface NoticeDAO {
 	int getTotalPostCnt() throws Exception;
 	
 	// 페이지네이션이 적용된 공지 목록 조회
-	List<NoticeDTO> getNoticesWithPagination(int offset, int limit) throws Exception;
+//	List<NoticeDTO> getNoticesWithPagination(int offset, int limit) throws Exception;
 
 	// 페이지네이션 검색어 처리
 	List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception;
@@ -79,6 +81,11 @@ public interface NoticeDAO {
 
 	// url
 	boolean updateNoticeUrl(NoticeVO notice) throws Exception;
+
+	// 공지 페이지네이션
+	int getTotalNoticeCnt() throws Exception;
+	List<NoticeDTO> selectNoticeList(PagingInfoNotice pi) throws Exception;
+
 
 
 

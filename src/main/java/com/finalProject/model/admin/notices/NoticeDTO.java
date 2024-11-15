@@ -26,12 +26,14 @@ public class NoticeDTO {
 	
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime reg_date;
-
+    private String formatted_reg_date;
+    
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime event_start_date;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime event_end_date;
+    
 	
     private String banner_image;
     private String thumbnail_image;
