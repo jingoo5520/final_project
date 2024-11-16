@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ProductDetailReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 
 public interface UserProductDAO {
@@ -35,10 +36,10 @@ public interface UserProductDAO {
 	List<ProductDTO> searchProducts(String search, Integer category, int startRowIndex, int pageSize, String sortOrder) throws Exception;
 
 	// 리뷰 조회
-	List<ReviewDetailDTO> selectReview(@Param("product_no") int productNo) throws Exception;
+	List<ProductDetailReviewDTO> selectReview(@Param("product_no") int productNo, int offset, int limit) throws Exception;
 
 	// 리뷰 이미지 조회
-	List<String> selectReviewImg(@Param("product_no") int productNo) throws Exception;
+//	List<String> selectReviewImg(@Param("product_no") int productNo) throws Exception;
 
 	// 상품에 대한 리뷰 개수
 	int selectCountReviewProduct(int productNo) throws Exception;

@@ -175,9 +175,9 @@ public class ReviewServiceImpl implements ReviewService {
 	    String url = "/resources/reviewImg";
 	    String realPath = request.getSession().getServletContext().getRealPath(url);
 
-	    System.out.println("files: " + files);
-	    System.out.println("existFiles: " + existFiles);
-	    System.out.println("removedFiles: " + removedFiles);
+//	    System.out.println("files: " + files);
+//	    System.out.println("existFiles: " + existFiles);
+//	    System.out.println("removedFiles: " + removedFiles);
 	    
 	    // 1. 삭제할 파일 처리
 	    if (removedFiles != null && !removedFiles.isEmpty()) {
@@ -237,9 +237,9 @@ public class ReviewServiceImpl implements ReviewService {
 	        String fullPath = realPath + File.separator + imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
 	        File file = new File(fullPath);
 	        if (file.exists() && file.delete()) {
-	            System.out.println("파일 삭제 성공: " + fullPath);
+//	            System.out.println("파일 삭제 성공: " + fullPath);
 	        } else {
-	            System.out.println("파일 삭제 실패 또는 파일이 존재하지 않음: " + fullPath);
+//	            System.out.println("파일 삭제 실패 또는 파일이 존재하지 않음: " + fullPath);
 	        }
 	    }
 

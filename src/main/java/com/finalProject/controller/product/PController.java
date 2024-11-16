@@ -22,6 +22,7 @@ import com.finalProject.model.LoginDTO;
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.PagingInfoDTO;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ProductDetailReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.service.member.MemberService;
 import com.finalProject.service.product.UserProductService;
@@ -67,7 +68,7 @@ public class PController {
 		if (loginDTO != null) { // 로그인 상태 확인
 			int wishList[] = memberService.getWishList(loginDTO.getMember_id()); // member_id로 찜목록 조회
 			model.addAttribute("wishList", wishList);
-			System.out.println("찜목록 조회");
+//			System.out.println("찜목록 조회");
 		}
 
 		// Model에 데이터 추가
@@ -83,7 +84,7 @@ public class PController {
 		model.addAttribute("sortOrder", sortOrder); // 정렬 기준 추가
 		model.addAttribute("category", category); // 카테고리 추가
 		model.addAttribute("totalProducts", totalProducts);
-		System.out.println("all : " + totalProducts);
+//		System.out.println("all : " + totalProducts);
 
 		// 각 카테고리별 상품 개수 조회
 		int necklaceCount = service.getProductCountByCategory(196);
@@ -117,7 +118,7 @@ public class PController {
 			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model,
 			HttpServletRequest request) throws Exception {
 
-		System.out.println("카테고리 선택됨 : " + category);
+//		System.out.println("카테고리 선택됨 : " + category);
 		sortOrder = sortOrder.trim();
 
 		List<ProductDTO> products = service.getProductsByCategoryAndPage(category, page, pageSize, sortOrder);
@@ -126,8 +127,8 @@ public class PController {
 		int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 		int totalProductCount = service.getProductCount();
 
-		System.out.println("전체 상품 수: " + totalProducts);
-		System.out.println("Received sortOrder: '" + sortOrder + "'");
+//		System.out.println("전체 상품 수: " + totalProducts);
+//		System.out.println("Received sortOrder: '" + sortOrder + "'");
 
 		// 페이지 블록 설정
 		int pageBlockSize = 10;
@@ -152,7 +153,7 @@ public class PController {
 		if (loginDTO != null) { // 로그인 상태 확인
 			int wishList[] = memberService.getWishList(loginDTO.getMember_id()); // member_id로 찜목록 조회
 			model.addAttribute("wishList", wishList);
-			System.out.println("찜목록 조회");
+//			System.out.println("찜목록 조회");
 		}
 
 		// 각 카테고리별 상품 개수 추가
@@ -180,7 +181,7 @@ public class PController {
 		model.addAttribute("hasPrevBlock", currentBlock > 1);
 		model.addAttribute("hasNextBlock", endPage < totalPages);
 
-		System.out.println("카테고리별 상품 수 : " + totalProducts);
+//		System.out.println("카테고리별 상품 수 : " + totalProducts);
 		return "/user/pages/product/productList"; // JSP 페이지로 반환
 	}
 
@@ -196,20 +197,20 @@ public class PController {
         ProductDTO product = service.getProductDetailById(productNo);
         
         // 상품 리뷰 조회
-        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
-//        // 상품 리뷰 이미지 조회
-        List <String> reviewImgs = service.getReviewImgs(productNo);
+//        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
+        // 상품 리뷰 이미지 조회
+//        List <String> reviewImgs = service.getReviewImgs(productNo);
         
         // Model에 데이터 추가
-        model.addAttribute("reviews", seeReview);
-        model.addAttribute("reviewImgs", reviewImgs);
+//        model.addAttribute("reviews", seeReview);
+//        model.addAttribute("reviewImgs", reviewImgs);
 		// 찜
 		HttpSession ses = request.getSession();
 		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember"); // 로그인정보 받기
 		if (loginDTO != null) { // 로그인 상태 확인
 			int wishList[] = memberService.getWishList(loginDTO.getMember_id()); // member_id로 찜목록 조회
 			model.addAttribute("wishList", wishList);
-			System.out.println("찜목록 조회");
+//			System.out.println("찜목록 조회");
 		}
         
         model.addAttribute("products", products);
@@ -226,30 +227,35 @@ public class PController {
 	    
 	    // 1. 총 리뷰 개수 조회
 	    int totalPostCnt = service.countReview(productNo);
-        System.out.println("Total Review Count: " + totalPostCnt);
+//        System.out.println("Total Review Count: " + totalPostCnt);
+        
+        int offset = (page - 1) * size;
         
         // 상품 리뷰 조회
-        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo);
+//        List<ReviewDetailDTO> seeReview = service.getReviewDetail(productNo, offset, size);
         
         // 상품 리뷰 이미지 조회
-        List <String> reviewImgs = service.getReviewImgs(productNo);
+//        List <String> reviewImgs = service.getReviewImgs(productNo);
         
+        // 리뷰 이미지까지 한 번에 조회
+        List<ProductDetailReviewDTO> seeReview = service.getReviewDetail(productNo, offset, size);
         
         Map<String, Object> response = new HashMap<String, Object>();
-		PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 1);
+		PagingInfoDTO pagingInfoDTO = new PagingInfoDTO(page, 3);
 		PagingInfo pagingInfo = new PagingInfo(pagingInfoDTO, totalPostCnt);
 
+//		System.out.println(pagingInfo);
 		response.put("pagingInfo", pagingInfo);
         response.put("seeReview", seeReview);
-        response.put("reviewImgs", reviewImgs);
+//        response.put("reviewImgs", reviewImgs);
         response.put("totalPostCnt", totalPostCnt);
         
         // JSON 형태로 출력하기 위해 ObjectMapper 사용
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
+//        ObjectMapper mapper = new ObjectMapper();
+//        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
         
-        System.out.println(totalPostCnt);
-        System.out.println(jsonString);
+//        System.out.println(totalPostCnt);
+//        System.out.println(jsonString);
         
 	    return ResponseEntity.ok(response);
 	    
@@ -264,8 +270,7 @@ public class PController {
 			@RequestParam(defaultValue = "1") int page, // 현재 페이지 번호
 			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model) throws Exception {
 
-		System.out.println(
-				"검색검색 : search=" + search + ", category=" + category + ", page=" + page + ", sortOrder=" + sortOrder);
+//		System.out.println("검색검색 : search=" + search + ", category=" + category + ", page=" + page + ", sortOrder=" + sortOrder);
 
 		// 1. 총 게시물 수 조회
 		int totalPostCnt = service.countSearchResults(search, category);
@@ -276,8 +281,8 @@ public class PController {
 
 		// 3. 검색 결과 조회
 		List<ProductDTO> searchResults = service.searchProducts(search, category, pagingInfo, sortOrder);
-		System.out.println("데이터");
-		System.out.println(searchResults);
+//		System.out.println("데이터");
+//		System.out.println(searchResults);
 
 		// 4. 모델에 검색 결과 및 페이징 정보 담기
 		model.addAttribute("products", searchResults);
@@ -293,7 +298,7 @@ public class PController {
 		model.addAttribute("hasPrevBlock", pagingInfo.hasPrevBlock()); // 이전 페이지 추가
 		model.addAttribute("hasNextBlock", pagingInfo.hasNextBlock()); // 다음 페이지 추가
 
-		System.out.println("검색 : " + totalPostCnt);
+//		System.out.println("검색 : " + totalPostCnt);
 
 		if (totalPostCnt == 0) {
 			model.addAttribute("noResult", true);

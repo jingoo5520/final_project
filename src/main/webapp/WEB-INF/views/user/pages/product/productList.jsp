@@ -59,7 +59,7 @@
             },
             dataType: "json",
             success: function (data) {
-                console.log(data); // 서버 응답 확인
+//                 console.log(data); // 서버 응답 확인
             },
             error: function () {
                 console.error("AJAX 요청 실패");
@@ -105,14 +105,14 @@
 			type: 'POST',
 			dataType: 'json',
 			success: function(data) {
-				console.log(data);
+// 				console.log(data);
 				if (data !== undefined) {
 					$('.cart-items .total-items').text(data);
 				}
 			},
 			error: function(data) {
 				console.error("장바구니 개수 업데이트 실패");
-				console.log(data);
+// 				console.log(data);
 			},
 			complete: function(data) {
 			}
