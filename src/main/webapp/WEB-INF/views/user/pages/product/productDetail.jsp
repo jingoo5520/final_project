@@ -94,7 +94,7 @@
                     // 각 리뷰의 이미지를 순회하며 HTML 생성
                     reviewImgs.forEach((img) => {
                         reviewHtml += `
-                            <img src="\${img}" alt="Review Image" style="padding: 5px; height: 150px; width: 150px !important;">
+                            <img src="\${img}" alt="Review Image" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="padding: 5px; height: 150px; width: 150px !important;">
                         `;
                     });
                 }
@@ -247,17 +247,6 @@
             }
         });
     }
-
-//     function getProductNo() {
-//         // 여기에서 productNo 값을 제대로 가져오고 있는지 확인하세요
-//         const productNo = $("#productNo").val(); // 또는 다른 방법으로 productNo 값을 가져옴
-
-//         if (!productNo) {
-//             console.error("productNo 값을 찾을 수 없습니다.");
-//             return null;
-//         }
-//         return productNo;
-//     }
 </script>
 <style>
     #gallery {
