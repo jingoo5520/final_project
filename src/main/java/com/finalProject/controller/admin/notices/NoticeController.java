@@ -68,7 +68,7 @@ public class NoticeController {
 	private List<NoticeDTO> cachedNotices;
 	private List<NoticeDTO> cachedEvents;
 
-	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 //    private static final String UPLOAD_DIR = "C:/spring/temp/";
 
@@ -161,45 +161,68 @@ public class NoticeController {
 //
 //	    return data;
 //	}
-
+	
 	// 이벤트 목록 조회
 	@RequestMapping("/event")
-	public String showEvents(@RequestParam(defaultValue = "1") int page, Model model) {
-		int pagingSize = 10; // 한 페이지에 보여줄 게시글 수
-		int startRowIndex = (page - 1) * pagingSize; // 시작 인덱스
+	public String showEvents(Model model) {
 
-		// 총 게시글 수 가져오기
-		int totalPostCount = 0;
+	Map<String, Object> data = new HashMap<String, Object>();
+	
 		try {
-			totalPostCount = noticeService.getTotalPostCnt(); // 총 게시글 수 조회
+			data = noticeService.getAllEvents(new PagingInfoNoticeDTO(1, 10, 5)); // 이벤트 조회
+		
+			model.addAttribute("events", data.get("list"));
+			model.addAttribute("pi", data.get("pi"));
+		
 		} catch (Exception e) {
 			e.printStackTrace();
-			model.addAttribute("error", "총 게시글 리스팅 실패");
+			model.addAttribute("error", "이벤트 목록 리스팅 실패");
 		}
-
-		int totalPages = (int) Math.ceil((double) totalPostCount / pagingSize); // 총 페이지 수 계산
-
-		// 페이지 유효성 체크
-		if (page > totalPages && totalPages > 0) {
-			page = totalPages; // 요청한 페이지가 총 페이지 수보다 크면 마지막 페이지로 설정
-		}
-
-		List<NoticeDTO> events = null;
-		try {
-			events = noticeService.getAllEvents(pagingSize, startRowIndex); // 공지사항 조회
-			model.addAttribute("events", events);
-		} catch (Exception e) {
-			e.printStackTrace();
-			model.addAttribute("error", "공지 목록 리스팅 실패");
-		}
-
-		model.addAttribute("currentPage", page);
-		model.addAttribute("totalPages", totalPages); // 총 페이지 수 추가
-		model.addAttribute("pagingSize", pagingSize);
-		model.addAttribute("totalPostCount", totalPostCount); // 총 게시글 수 추가
 
 		return "admin/pages/notices/event"; // JSP 파일 경로
 	}
+	
+	@GetMapping("/getEvents")
+	@ResponseBody
+	public Map<String, Object> getEvents(@RequestParam int pageNo) {
+		System.out.println("pageNo" + pageNo);
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		try {
+			data = noticeService.getAllEvents(new PagingInfoNoticeDTO(pageNo, 10, 5)); // 공지사항 조회
+			System.out.println(data);
+			
+	        // LocalDateTime 포맷팅
+	        List<NoticeDTO> events = (List<NoticeDTO>) data.get("list");
+	         for (NoticeDTO event : events) {
+	        	 System.out.println(event);
+	        	 
+	             // notice.getReg_date()가 LocalDateTime이라면
+	             String formattedDate = event.getReg_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	             event.setReg_date(null);
+	             event.setFormatted_reg_date(formattedDate);
+	          
+	             if (event.getEvent_start_date() != null) {
+	             String formattedStartDate = event.getEvent_start_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	             event.setEvent_start_date(null);
+	             event.setFormatted_event_start_date(formattedStartDate);
+	             }
+	             
+	             if (event.getEvent_end_date() != null) {
+	             String formattedEndDate = event.getEvent_end_date().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	             event.setEvent_end_date(null);
+	             event.setFormatted_event_end_date(formattedEndDate);
+	             }
+	             
+	         }
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return data; // JSP 파일 경로
+	}
+	
 
 	// 공지사항 작성 페이지 표시
 	@RequestMapping("/createNotice")
@@ -448,15 +471,15 @@ public class NoticeController {
 
 		try {
 			noticeService.addEvent(event); // 이벤트 저장
-			List<NoticeDTO> events = noticeService.getAllEvents(10, 1);
+//			List<NoticeDTO> events = noticeService.getAllEvents(10, 1);
 			System.out.println("-------- event --------" + event);
 			log.info("업로드 성공:", event);
-			redirectAttributes.addFlashAttribute("events", events);
+//			redirectAttributes.addFlashAttribute("events", events);
 			redirectAttributes.addFlashAttribute("message", "이벤트가 등록되었습니다.");
 			return "redirect:/admin/notices/event"; // 이벤트 목록 페이지로 리디렉션
 		} catch (Exception e) {
 			log.error("이벤트 저장 실패: ", e); // 에러의 상세 내용을
-			return "redirect:/admin/notices/createEvent";
+			return "redirect:/admin/notices/event";
 		}
 	}
 

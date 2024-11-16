@@ -16,7 +16,7 @@ public interface NoticeService {
 	Map<String, Object> getAllNotices(PagingInfoNoticeDTO pDto) throws Exception;
 
 	// 이벤트 목록 조회
-	List<NoticeDTO> getAllEvents(int pagingSize, int startRowIndex) throws Exception;
+	Map<String, Object> getAllEvents(PagingInfoNoticeDTO pDto) throws Exception;
 
 	// 공지사항 작성
 	void addNotice(NoticeVO notice) throws Exception;
@@ -83,6 +83,8 @@ public interface NoticeService {
 
 	// 페이지네이션
 	Map<String, Object> getNoticeList(PagingInfoNoticeDTO pagingInfoNoticeDTO) throws Exception;
+	// 페이지네이션
+	Map<String, Object> getEventList(PagingInfoNoticeDTO pagingInfoNoticeDTO) throws Exception;
 
 
 	

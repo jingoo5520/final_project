@@ -30,9 +30,11 @@ public class NoticeDTO {
     
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime event_start_date;
+    private String formatted_event_start_date;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime event_end_date;
+    private String formatted_event_end_date;
     
 	
     private String banner_image;

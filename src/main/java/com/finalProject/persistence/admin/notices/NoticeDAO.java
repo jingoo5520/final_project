@@ -86,6 +86,10 @@ public interface NoticeDAO {
 	int getTotalNoticeCnt() throws Exception;
 	List<NoticeDTO> selectNoticeList(PagingInfoNotice pi) throws Exception;
 
+	// 이벤트 페이지네이션
+	int getTotalEventCnt() throws Exception;
+	List<NoticeDTO> selectEventList(PagingInfoNotice pi) throws Exception;
+
 
 
 

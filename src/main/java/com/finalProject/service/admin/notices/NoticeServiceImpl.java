@@ -54,9 +54,29 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 
 	@Override
-	public List<NoticeDTO> getAllEvents(int pagingSize, int startRowIndex) throws Exception {
-		System.out.println(nDao.getAllEvents(pagingSize, startRowIndex));
-		return nDao.getAllEvents(pagingSize, startRowIndex);
+	public Map<String, Object> getAllEvents(PagingInfoNoticeDTO pDto) throws Exception {
+		log.info("EventServiceImpl!!!");
+
+		PagingInfoNotice pi = new PagingInfoNotice(pDto);
+
+			// setter 호출
+			pi.setTotalDataCnt(nDao.getTotalEventCnt());
+
+			pi.setTotalPageCnt();
+			pi.setStartRowIndex();
+
+			// 페이징 블럭
+			pi.setPageBlockNoCurPage();
+			pi.setStartPageNoCurBloack();
+			pi.setEndPageNoCurBlock();
+
+			Map<String, Object> result = new HashMap<String, Object>();
+			List<NoticeDTO> list = nDao.selectEventList(pi);
+
+			result.put("pi", pi);
+			result.put("list", list);
+
+			return result;
 	}
 
 	@Transactional
@@ -197,6 +217,30 @@ public class NoticeServiceImpl implements NoticeService {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		List<NoticeDTO> list = nDao.selectNoticeList(pi);
+
+		result.put("pi", pi);
+		result.put("list", list);
+
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> getEventList(PagingInfoNoticeDTO pagingInfoNoticeDTO) throws Exception {
+		PagingInfoNotice pi = new PagingInfoNotice(pagingInfoNoticeDTO);
+
+		// setter 호출
+		pi.setTotalDataCnt(nDao.getTotalEventCnt());
+
+		pi.setTotalPageCnt();
+		pi.setStartRowIndex();
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBloack();
+		pi.setEndPageNoCurBlock();
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<NoticeDTO> list = nDao.selectEventList(pi);
 
 		result.put("pi", pi);
 		result.put("list", list);

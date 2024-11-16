@@ -254,6 +254,16 @@ public class NoticeDAOImpl implements NoticeDAO {
 		return ses.selectList(ns + "selectNoticeList", pi);
 	}
 
+	@Override
+	public int getTotalEventCnt() throws Exception {
+		return ses.selectOne(ns + "selectEventCnt");
+	}
+
+	@Override
+	public List<NoticeDTO> selectEventList(PagingInfoNotice pi) throws Exception {
+		return ses.selectList(ns + "selectEventList", pi);
+	}
+
 
 
 //	@Override
