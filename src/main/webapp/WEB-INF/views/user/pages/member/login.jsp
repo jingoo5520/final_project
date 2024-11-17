@@ -178,10 +178,9 @@ uri="http://java.sun.com/jsp/jstl/fmt"%>
                   </a>
                 </p>
 
+				<!-- 비회원이 장바구니에서 결제하기 버튼 누르면  '비회원으로 결제하기' 링크 만드는 곳 -->
                 <span id="nonMemberFunction"></span>
-                <!-- working... -->
-                <!-- TODO : 모델이든 세션이든 정보 받아서 비회원이 장바구니에서 결제하기 버튼 누르면  '비회원으로 결제하기' 링크 만들어야 함-->
-                
+                                
               </div>
             </form>
           </div>
@@ -200,40 +199,13 @@ uri="http://java.sun.com/jsp/jstl/fmt"%>
     <script src="/resources/assets/user/js/tiny-slider.js"></script>
     <script src="/resources/assets/user/js/glightbox.min.js"></script>
     <script src="/resources/assets/user/js/main.js"></script>
-    <script>
-      //  window.addEventListener("load", function () {
-      //   let sentByOrderRequest = null;
-      //     $.ajax({
-      //         async: false,
-      //         type: "POST",
-      //         url: "/order/sessionState",
-      //         dataType: "json",
-      //         success: function (res) {
-      //           sentByOrderRequest = res.sentByOrderRequest;
-      //         },
-      //         error: function (request, status, error) {
-      //           console.log(
-      //             "code:" +
-      //               request.status +
-      //               "\n" +
-      //               "message:" +
-      //               request.responseText +
-      //               "\n" +
-      //               "error:" +
-      //               error
-      //           );
-      //         },
-      //     }); // ajax end
-      //  })
-        
-        
-        
+    <script>        
         const params = new URLSearchParams(window.location.search);
         console.log(params);
         console.log(params.get("goToOrder"));
         if (params.get("goToOrder") == "True") {
           let tags = `<p class="outer-link">
-					<a onclick="goToOrderPageOfNonMember()">비회원으로 주문결제 하기
+					<a href="#" onclick="goToOrderPageOfNonMember()">비회원으로 주문결제 하기
 				</a></p>`;
           $("#nonMemberFunction").after(tags);
         } else {
@@ -244,6 +216,10 @@ uri="http://java.sun.com/jsp/jstl/fmt"%>
         }
 
       function goToOrderPageOfNonMember() {
+    	  
+    	  
+    	  
+    	
         $.ajax({
           async: false,
           type: "POST",

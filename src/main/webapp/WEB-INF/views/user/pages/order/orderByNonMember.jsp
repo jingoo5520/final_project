@@ -188,6 +188,7 @@
 
 	<!-- End Account Register Area -->
 
+	<!-- TODO : 모달 예쁘게 바꾸기 -->
 	<!-- 모달 -->
 	<div id="modalcontainer">
 		<div class="modalBody">
@@ -212,7 +213,6 @@
 	<script src="/resources/assets/user/js/viewOrder.js"></script>
 	
 	<script>
-		// orderInfo는 전역변수
 		
 		// submitOrderCancel 재정의 (확인 버튼을 눌렀을 때 이벤트 핸들러)
 		function submitOrderCancel(cancelType) {
@@ -231,6 +231,14 @@
 			let accountBank = $("#account-bank").val()
 			let accountNumber = $("#account-number").val()
 			
+			
+			console.log("products : ")
+			console.log(products)
+			if (products.length <= 0) {
+				openModal("변경처리할 상품을 선택해주세요", "")
+				return false
+			}
+
 			$.ajax({
 				async: false,
 				type: 'POST',

@@ -2,6 +2,25 @@
 	var orderInfo = null
 
 	function showViewOrderPage(orderInfo) {
+		console.log("showViewOrderPage 함수 호출중")
+		
+		if (orderInfo.length <= 0) {
+			let tags = ''
+			tags += `<div class="d-flex justify-content-center align-items-center flex-column" style="height: 100%;">`
+			tags += `<div id="row align-items-center">
+						<img alt="주문내역 없음" src="/resources/assets/user/images/error/emptyCart.png" style="width: 100px;">
+			 		 </div>`
+			tags += `<div id="row align-items-center" style="margin-top: 10px;">`
+			tags += 	"<p><b>아직 주문 내역이 없습니다</b></p>"
+			tags += "</div>"
+
+			tags += `</div>` // class="d-flex justify-content-center align-items-center" end
+			$("#productsView").html(tags)
+			return
+		}
+		
+		
+		
 		let tags = ''
 		tags += '<div class="cart-list-head">'
 		tags += `
@@ -10,56 +29,72 @@
 					<div class="col-lg-1 col-md-1 col-12"></div>
 					<div class="col-lg-4 col-md-4 col-12"><p>주문이름</p></div>
 					<div class="col-lg-2 col-md-2 col-12"><p>주문일자/주문번호</p></div>
-					<div class="col-lg-2 col-md-2 col-12"><p>처리상태</p></div>
+					<div class="col-lg-2 col-md-2 col-12"><p>처리상태/결제수단</p></div>
 					<div class="col-lg-3 col-md-3 col-12"><p>변경/처리</p></div>
 				</div>
-			</div>`
-		
+			</div>` // class="cart-list-title" end
 		// orderInfo를 최근순으로 정렬
 		orderInfo.sort((a, b) => 
 				new Date(b.orderDate) - new Date(a.orderDate) 
 			);
 		
-			
 		for (orderJson of orderInfo) {
 			let orderDate = orderJson.orderDate
 			let orderId = orderJson.orderId
 			let orderStatus = orderJson.orderStatus
+			if (orderStatus == "결제대기") {
+				continue; // 결제대기 상태인 주문은 표시하지 않음
+			}
 			let products = orderJson.products
-			tags += `<div class="cart-single-list grid-container">`
-			tags += `<div class="row align-items-center">`
-			tags += `<div class="col-lg-1 col-md-1 col-12">`
-			tags += `<img src=${products[0].image_url} alt="#">` // TODO : alt image 삽입
-			tags += `</div>`
-			tags += `<div class="col-lg-4 col-md-4 col-12">`
-			if (products.length >= 2) {
-				tags += `<p>${products[0].product_name}외 \${products.length - 1}건</p>`
-			} else {
-				tags += `<p>${products[0].product_name}</p>`
+			let payMethod = orderJson.payMethod
+			if (payMethod == "TC") {
+				payMethod = "카드결제"
+			} else if (payMethod == "TA") {
+				payMethod = "계좌이체"
+			} else if (payMethod == "N") {
+				payMethod = "네이버페이"
+			} else if (payMethod == "K") {
+				payMethod = "카카오페이"
 			}
-			tags += `</div>`
-			tags += `<div class="col-lg-2 col-md-2 col-12">`
-			tags += `<p>${orderDate}</p>`
-			tags += `<p>${orderId}</p>`
-			tags += `</div>`
-			tags += `<div class="col-lg-2 col-md-2 col-12">`
-			tags += `<p>${orderStatus}</p>`
-			tags += `</div>`
-			tags += `<div class="col-lg-2 col-md-2 col-12">`
-			// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
-			if (orderStatus == "결제완료") {
-				tags += makeButtonTag("cancel", orderId)
-			} else if (orderStatus == "배송완료") {
-				tags += makeButtonTag("return", orderId)
-			} else {
-				tags += "<p></p>" // 아무것도 표시하지 않음
+			for (product of products.values()) {
+				tags += `<div class="cart-single-list grid-container">`
+				tags += `<div class="row align-items-center">`
+				tags += `<div class="col-lg-1 col-md-1 col-12">`
+				tags += `<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';">`
+				tags += `</div>`
+				tags += `<div class="col-lg-4 col-md-4 col-12">`
+				if (products.length >= 2) {
+					tags += `<p>${products['0'].product_name}외 ${products.length - 1}건</p>`
+				} else {
+					tags += `<p>${products['0'].product_name}</p>`
+				}
+				tags += `</div>`
+				tags += `<div class="col-lg-2 col-md-2 col-12">`
+				tags += `<p>${orderDate}</p>`
+				tags += `<p>${orderId}</p>`
+				tags += `</div>`
+				tags += `<div class="col-lg-2 col-md-2 col-12">`
+				tags += `<p>${orderStatus}</p>`
+				tags += `<p>${payMethod}</p>`
+				// working...
+				tags += `</div>`
+				tags += `<div class="col-lg-2 col-md-2 col-12">`
+				// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
+				if (orderStatus == "결제완료") {
+					tags += makeButtonTag("cancel", orderId)
+				} else if (orderStatus == "배송완료") {
+					tags += makeButtonTag("return", orderId)
+				} else {
+					tags += "<p></p>" // 아무것도 표시하지 않음
+				}
+				tags += `</div>`
+				tags += `</div>` // class="row align-items-center" end
+				tags += `</div>` // class="cart-single-list grid-container" end
 			}
-			tags += `</div>`
-			tags += `</div>` // class="row align-items-center" end
-			tags += `</div>` // class="cart-single-list grid-container" end
 		}
 		tags += '</div>' // class="cart-list-head" end
 		
+	
 		$("#productsView").html("")
 		$("#productsView").html(tags)
 		// 버튼에 이벤트 핸들러 부착
@@ -126,6 +161,7 @@
 	}
 
 	function onOrderCancelBtnClicked(orderJson, cancelType) {
+		console.log("onOrderCancelBtnClicked 함수 호출중")
 		let orderId = orderJson.orderId
 		console.log("orderJson in onOrderCancelBtnClicked : " + JSON.stringify(orderJson))
 		$("#productsView").html("")
@@ -153,7 +189,7 @@
 			tags += `
 				<div class="row align-items-center">
 					<div class="col-lg-1 col-md-1 col-12"><a href="">
-						<img src=${product.image_url} alt="#"></a>
+						<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';"></a>
 					</div>
 					<div class="col-lg-4 col-md-4 col-12">
 						<p>${product.product_name}</p>
@@ -239,6 +275,13 @@
 		let accountBank = $("#account-bank").val()
 		let accountNumber = $("#account-number").val()
 		
+		console.log("products : ")
+		console.log(products)
+		if (products.length <= 0) {
+			openModal("변경처리할 상품을 선택해주세요", "")
+			return false
+		}
+		
 		$.ajax({
 			async: false,
 			type: 'POST',
@@ -268,3 +311,15 @@
 	function cancelSubmit() {
 		showViewOrderPage(orderInfo)
 	}
+	
+/*	// 모달 열기
+	function openModal(title, text) {
+		$("#modalcontainer").css("display", "block");
+		$("#modalTitle").text(title);
+		$("#modalText").html(text);
+	}
+	
+	// 모달 닫기
+	function closeModal() {
+		$("#modalcontainer").css("display", "none");
+	} */
