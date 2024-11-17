@@ -267,6 +267,9 @@
 		})
 		
 		function setTotalEarnedPoint() {
+			if ("${orderMember}".trim().length <= 0) {
+				return 0
+			}
 			let memberLevelPoint = "${orderMember.level_point}";
 			
 			if (memberLevelPoint != "") {
