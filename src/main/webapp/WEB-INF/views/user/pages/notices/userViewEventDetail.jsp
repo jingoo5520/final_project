@@ -47,6 +47,7 @@
 	</div>
 	<!-- End Breadcrumbs -->
 
+<section class="product-grids section">
     <div class="layout-page">
         <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
             <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
@@ -66,7 +67,7 @@
 				            <p class="card-text">작성자: <c:out value="${event.admin_id}"/> | 
 				                <c:choose>
 							        <c:when test="${not empty event.event_start_date and not empty event.event_end_date}">
-							            이벤트 기간 : ${event.event_start_date} ~ ${event.event_end_date}
+							            이벤트 기간 : ${fn:replace(event.event_start_date, 'T', ' ')} ~ ${fn:replace(event.event_end_date, 'T', ' ')}
 							        </c:when>
 							        <c:otherwise>
 							            이벤트 기간 : 상시
@@ -89,6 +90,7 @@
             </div>
         </div>
     </div>
+    </section>
 
     <!-- Start Breadcrumbs -->
     <jsp:include page="../footer.jsp"></jsp:include>

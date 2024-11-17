@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.finalProject.model.BlackInfoDTO;
 import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
@@ -350,6 +351,12 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public void tumpMemberData(MemberDTO mDTO) throws Exception {
 		ses.insert(ns+"tumpMemberData", mDTO);
+	}
+
+	// 회원의 블랙정보 받기(로그인)
+	@Override
+	public BlackInfoDTO getMemberBlackInfo(String member_id) throws Exception {
+		return ses.selectOne(ns+"getMemberBlackInfo", member_id);
 	}
 
 }

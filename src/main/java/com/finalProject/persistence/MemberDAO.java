@@ -3,6 +3,7 @@ package com.finalProject.persistence;
 import java.util.List;
 import java.util.Map;
 
+import com.finalProject.model.BlackInfoDTO;
 import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
@@ -134,5 +135,8 @@ public interface MemberDAO {
 
 	// 회원의 포인트 사용내역 조회
 	List<PointDTO> selectUsedPointList(String memberId, int pageNo) throws Exception;
+
+	// 회원의 블랙정보 받기(로그인)
+	BlackInfoDTO getMemberBlackInfo(String member_id)throws Exception;
 	
 }

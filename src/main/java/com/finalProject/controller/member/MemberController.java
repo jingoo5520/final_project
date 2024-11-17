@@ -82,9 +82,21 @@ public class MemberController {
 	private PointService pService;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
-	public String viewLogin() {
+	public String viewLogin(HttpServletRequest request, HttpServletResponse response) {
+		String result = "/user/pages/member/login";
 		System.out.println("로그인 페이지로 이동");
-		return "/user/pages/member/login";
+		HttpSession ses = request.getSession();
+		System.out.println("로그인 상태 : " + ses.getAttribute("loginMember"));
+		if(ses.getAttribute("loginMember")!=null) { // 로그인 상태로 로그인페이지로 접근하려고 하면 인덱스로 되돌려보냄
+//			result = "/user/index";
+			try {
+				response.sendRedirect("/");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
@@ -244,6 +256,7 @@ public class MemberController {
 	@RequestMapping(value = "/logout")
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession ses = request.getSession();
+		ses.removeAttribute("blackReason");
 		ses.removeAttribute("loginMember");
 		ses.removeAttribute("rememberPath");
 		ses.removeAttribute("auth");
@@ -704,6 +717,7 @@ public class MemberController {
 		try {
 			// 회원 탈퇴 성공시
 			if (memberService.withDrawMember(member_id)) {
+				ses.removeAttribute("blackReason");
 				json = new ResponseData("success", "탈퇴 완료");
 				Cookie cookie = new Cookie("al", ""); // 쿠키객체 생성
 				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)
