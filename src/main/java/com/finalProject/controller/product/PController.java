@@ -190,7 +190,6 @@ public class PController {
 			Model model, HttpServletRequest request
 			) throws Exception {
 
-		try {
 	        // 상품 상세 정보 조회
 	        List<ProductDTO> products = service.getProductInfo(productNo);
 	        // 세부 상품 정보 조회
@@ -216,10 +215,6 @@ public class PController {
 	        model.addAttribute("products", products);
 	        model.addAttribute("product_content", product.getProduct_content());
 	        model.addAttribute("calculatedPrice", product.getCalculatedPrice());  // 계산된 가격 추가
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
         return "/user/pages/product/productDetail";
     }
 	
