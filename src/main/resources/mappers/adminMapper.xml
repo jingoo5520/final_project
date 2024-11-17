@@ -28,17 +28,18 @@
 		FROM members
 		GROUP BY gender;
 	</select>
-	
+
 	<!-- 레벨 별 회원 수 가져오기 -->
 	<select id="selectMembersByLevel" resultType="LevelCountDTO">
-		SELECT member_level,
+		SELECT
+		member_level,
 		COUNT(*) as count
 		FROM members
 		GROUP BY member_level;
 	</select>
-	
-	<!-- 가입자 수 가져오기  -->
-	<select id="selectMemberRegCnt" resultType="int">
+
+	<!-- 기간에 따른 가입자 수 가져오기 -->
+	<select id="selectRangedMemberRegCnt" resultType="int">
 		SELECT COUNT(*) as count
 		FROM members
 		<![CDATA[
@@ -46,5 +47,110 @@
 		and reg_date <= #{regDate_end} 
 		]]>
 	</select>
+
+	<!-- 특정 날 가입 수 가져오기 -->
+	<select id="selectMemberRegCnt" resultType="int">
+		SELECT COUNT(*) as
+		count
+		FROM members
+		where DATE(reg_date) = DATE(#{time})
+	</select>
+
+	<!-- 대기 상태의 문의 수 -->
+	<select id="selectWaitInquiryCnt" resultType="int">
+		select count(*)
+		from inquiries where inquiry_status = 'W'
+	</select>
+
+	<!-- 특정 날 판매 량 -->
+	<select id="selectDaySaleCnt" resultType="int">
+		SELECT
+		IFNULL(SUM(op.order_count), 0)
+		FROM payments p
+		JOIN orders o ON
+		p.order_id =
+		o.order_id
+		JOIN order_products op ON o.order_id =
+		op.order_id
+		WHERE
+		DATE(p.pay_date) = DATE(#{time})
+	</select>
+
+	<!-- 특정 날 매출 -->
+	<select id="selectDayRevenue" resultType="int">
+		SELECT
+		IFNULL(SUM(total_price), 0)
+		FROM payments
+		WHERE DATE(pay_date) =
+		DATE(#{time})
+	</select>
+
+	<!-- 카테고리별 총 판매 량 가져오기 -->
+	<select id="selectTotalSales" resultType="SaleCountDTO">
+		select
+		c.category_name,
+		sum(op.order_count) as count
+		from payments p
+		join orders o ON p.order_id
+		= o.order_id
+		join order_products op on o.order_id = op.order_id
+		join
+		products pr on op.product_no = pr.product_no
+		join categories c on
+		pr.product_category = c.category_no
+		group by pr.product_category
+	</select>
+
+	<!-- 특정 달의 판매량 가져오기 -->
+	<select id="selectSalesByMonth" resultType="SaleCountDTO">
+		select
+		c.category_name, sum(op.order_count) as count
+		from payments p
+		join
+		orders o ON p.order_id = o.order_id
+		join order_products op on
+		o.order_id = op.order_id
+		join products pr on op.product_no =
+		pr.product_no
+		join categories c on pr.product_category = c.category_no
+		WHERE DATE_FORMAT(p.pay_date, '%Y-%m') = #{selectedMonth}
+		group by
+		pr.product_category
+	</select>
+
+	<!-- 카테고리별 총 매출 가져오기 -->
+	<select id="selectTotalRevenues" resultType="RevenueDTO">
+		select
+		pr.product_category,c.category_name ,sum(p.total_price) as revenue
+		from payments p
+		join orders o ON p.order_id = o.order_id
+		join
+		order_products op on o.order_id = op.order_id
+		join products pr on
+		op.product_no = pr.product_no
+		join categories c on pr.product_category
+		= c.category_no
+		group by pr.product_category
+	</select>
+
+
+	<!-- 특정 달의 카테고리별 매출 가져오기 -->
+	<select id="selectRevenuesByMonth" resultType="RevenueDTO">
+		select
+		pr.product_category,c.category_name ,sum(p.total_price) as revenue
+		from payments p
+		join orders o ON p.order_id = o.order_id
+		join
+		order_products op on o.order_id = op.order_id
+		join products pr on
+		op.product_no = pr.product_no
+		join categories c on pr.product_category
+		= c.category_no
+		WHERE DATE_FORMAT(p.pay_date, '%Y-%m') = #{selectedMonth}
+		group by pr.product_category
+	</select>
+
+
+
 
 </mapper>

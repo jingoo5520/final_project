@@ -5,7 +5,8 @@ import com.finalProject.model.admin.notices.BannerVO;
 import java.util.List;
 
 public interface BannerDAO {
-    void insertBanner(BannerVO banner);
-    List<BannerVO> getBanners();
-    void updateSelectedBanner(String fileName);
+	/*
+	 * void insertBanner(BannerVO banner); List<BannerVO> getBanners(); void
+	 * updateSelectedBanner(String fileName);
+	 */
 }
