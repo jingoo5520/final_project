@@ -58,33 +58,43 @@
 		transition: all 0.4s ease;
 	}
 	
-	#modalcontainer {
-		display: none; /* 기본적으로 숨김 */
-		position: fixed;
-		z-index: 100;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		overflow: auto;
-		background-color: rgb(0, 0, 0);
-		background-color: rgba(0, 0, 0, 0.4); /* 배경 색상 */
-	}
-	
-	.modalBody {
-		background-color: #fff;
-		margin: 15% auto;
-		padding: 30px;
-		border: 1px solid #888;
-		width: 30%;
-	}
-	
 	#emptyOrderList {
 	    display: flex;
 	    justify-content: center; /* 수평 정렬 */
 	    align-items: center;    /* 수직 정렬 */
 	    height: 100%;
 	}
+	
+	<!-- 모달 디자인 -->
+	.modal-content .modal-header{
+		margin: 0;
+		height: 65px;
+		border: none !important;
+	}
+	
+	.modal-content .modal-body {
+		height: 100px;
+		border: none !important;
+		
+	}
+	
+	.modal-content .modal-body .modal-text {
+		height: 20px;
+		text-align: center;
+		font-weight: bold;
+		font-size: 16px;
+		color: rgb(34,34,34);
+		display: block;
+	}
+	
+	.modal-content .modal-footer {
+		height: 60px;
+		padding:0;
+		display: flex;
+		justify-content: space-between !important;
+		margin:0 !important;
+	}
+
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
@@ -164,15 +174,31 @@
 	</section>
 	<!-- End Product Grids -->
 
-	<!-- TODO : 모달 예쁘게 바꾸기 -->
 	<!-- 모달 -->
-	<div id="modalcontainer">
-		<div class="modalBody">
-			<span class="close" onclick="closeModal();">&times;</span>
-			<h2 id="modalTitle">제목</h2>
-			<p id="modalText">내용</p>
+	<div class="modal fade" id="alertModal" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+			
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+			
+				<!-- Modal body -->
+				<div class="modal-body">
+				<p class="modal-text">변경처리할 상품을 선택하십시오.</p>
+				</div>
+			
+				<!-- Modal footer 
+				<div class="modal-footer">
+				</div> -->
+			
+			</div>
 		</div>
 	</div>
+
+
+
 
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
 
@@ -198,14 +224,10 @@
 	
 	// 모달 열기
 	function openModal(title, text) {
-		$("#modalcontainer").css("display", "block");
+/* 		$("#modalcontainer").css("display", "block");
 		$("#modalTitle").text(title);
-		$("#modalText").html(text);
-	}
-	
-	// 모달 닫기
-	function closeModal() {
-		$("#modalcontainer").css("display", "none");
+		$("#modalText").html(text); */
+		$('#myModal').modal('show');
 	}
 	</script>
 </body>

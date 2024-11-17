@@ -243,14 +243,15 @@
 				let memberPoint = parseInt($.trim($("#memberPoint").text().replace(/,/g, "")));
 				let totalPrice = parseInt($.trim($(".totalPrice").eq(0).text().replace(" 원", "").replace(/,/g, ""))) - 2500;
 				
-				console.log(memberPoint);
-				console.log(totalPrice);
+				console.log("memberPoint : " + memberPoint);
+				console.log("totalPrice : " + totalPrice);
 	            if ($(this).is(':checked')) {
 	            	if (memberPoint > totalPrice) {
 				    	$('input[name="point"]').val(Math.floor(totalPrice / 100) * 100);
 				    } else {
-				    	$('input[name="point"]').val(memberPoint);
+				    	$('input[name="point"]').val(Math.floor(memberPoint / 100) * 100);
 				    }
+					
 	            } else {
 	            	$('input[name="point"]').val(0);
 	            }

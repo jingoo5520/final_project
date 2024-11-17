@@ -278,7 +278,8 @@
 		console.log("products : ")
 		console.log(products)
 		if (products.length <= 0) {
-			openModal("변경처리할 상품을 선택해주세요", "")
+			const alertModal = new bootstrap.Modal(document.getElementById("alertModal"));
+			alertModal.show()
 			return false
 		}
 		
@@ -311,15 +312,3 @@
 	function cancelSubmit() {
 		showViewOrderPage(orderInfo)
 	}
-	
-/*	// 모달 열기
-	function openModal(title, text) {
-		$("#modalcontainer").css("display", "block");
-		$("#modalTitle").text(title);
-		$("#modalText").html(text);
-	}
-	
-	// 모달 닫기
-	function closeModal() {
-		$("#modalcontainer").css("display", "none");
-	} */
