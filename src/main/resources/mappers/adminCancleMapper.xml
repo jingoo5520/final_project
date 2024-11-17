@@ -177,7 +177,7 @@
 		SELECT distinct
 		l.level_point FROM orders o JOIN members m ON
 		o.orderer_id = m.member_id JOIN levels l ON m.member_level =
-		l.level_no WHERE o.order_id = #{orderId}
+		l.level_no WHERE o.orderer_id = #{orderId}
 	</select>
 	<insert id="restractPoint">
 		insert into

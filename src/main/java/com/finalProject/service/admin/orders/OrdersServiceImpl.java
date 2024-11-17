@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -154,79 +152,80 @@ public class OrdersServiceImpl implements OrdersService {
 		System.out.println("Updated rows count: " + cancelUpdateResult);
 		cancelNoList = String.join(",", modifyCancelStatusDTO.getCancelList());
 		System.out.println("Cancel No List: " + cancelNoList);
-		if (cancelUpdateResult >= 1) {
-			map.put("paymentNo", modifyCancelStatusDTO.getPaymentNo());
-			map.put("cancelType", modifyCancelStatusDTO.getCancelType());
-			map.put("cancelNo", cancelNoList);
-			map.put("amount", modifyCancelStatusDTO.getAmount());
-			log.info("환불 테이블 데이터 삽입 변경");
-			oDAO.insertRefund(map);
+		try {
+			if (cancelUpdateResult >= 1) {
+				map.put("paymentNo", modifyCancelStatusDTO.getPaymentNo());
+				map.put("cancelType", modifyCancelStatusDTO.getCancelType());
+				map.put("cancelNo", cancelNoList);
+				map.put("amount", modifyCancelStatusDTO.getAmount());
+				log.info("환불 테이블 데이터 삽입 변경");
+				oDAO.insertRefund(map);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		log.info("캔슬번호로 오더아이디 구해오기");
 
 		orderId = oDAO.getOrderIdByCancelNo(cancelList);
-
+		AdminPayOrdererVO expectResult = oDAO.getExpectPayAmount(orderId);
 		log.info("비회원이 아닐경우 멤버 테이블에서 멤버아이디를 가져온다");
 		String findMemberId = oDAO.findMemberId(orderId);
 		log.info("가져오기 성공");
 		log.info(orderId);
 		log.info(findMemberId);
-		if (findMemberId != null && findMemberId != "") {
-			log.info("돌려줘야할 포인트가 0이 아닐시");
-			if (modifyCancelStatusDTO.getAssigned_point() != 0) {
+		try {
+			if (findMemberId != null && findMemberId != "") {
+				log.info("돌려줘야할 포인트가 0이 아닐시");
+				if (modifyCancelStatusDTO.getAssigned_point() != 0) {
 
-				AdminPayOrdererVO expectResult = oDAO.getExpectPayAmount(orderId);
-				log.info("" + expectResult.getTotal_price_expected());
-				log.info("" + modifyCancelStatusDTO.getAmount());
-				log.info("포인트 적립 내역에 사용한 포인트 넣기");
-				log.info(expectResult.getOrderer_id());
-				int result = oDAO.refundPoint((modifyCancelStatusDTO.getAssigned_point()),
-						expectResult.getOrderer_id());
-				if (result >= 1) {
-					log.info("멤버에게 포인트 돌려주기");
-					oDAO.returnMemberPoint(modifyCancelStatusDTO.getAssigned_point(), expectResult.getOrderer_id());
+					log.info("" + expectResult.getTotal_price_expected());
+					log.info("" + modifyCancelStatusDTO.getAmount());
+					log.info("포인트 적립 내역에 사용한 포인트 넣기");
+					log.info("" + modifyCancelStatusDTO.getAssigned_point());
+					int result = oDAO.refundPoint((modifyCancelStatusDTO.getAssigned_point()),
+							expectResult.getOrderer_id());
+					log.info(expectResult.getOrderer_id());
+					if (result >= 1) {
+						log.info("멤버에게 포인트 돌려주기");
+						oDAO.returnMemberPoint(modifyCancelStatusDTO.getAssigned_point(), expectResult.getOrderer_id());
 
-				} else {
-					throw new RuntimeException("포인트 반환 실패");
-				}
-				if (modifyCancelStatusDTO.getAmount() != 0) {
-					log.info("해당하는 회원의 level_point 를 가져오기");
-					float levelPoint = oDAO.memberLevelPoint(orderId);
-					log.info("" + levelPoint);
-					int stealPoint = (int) (modifyCancelStatusDTO.getAmount() * levelPoint);
-					log.info("" + stealPoint);
-					int minusStealPoint = stealPoint * -1;
-					log.info("포인트 적립내역 테이블에 데이터 삽입하기");
-					if (oDAO.restractPoint(findMemberId, minusStealPoint) >= 1) {
-						log.info("유저에게 포인트 빼앗기");
-						oDAO.restractPointMember(findMemberId, stealPoint);
+					} else {
+						throw new RuntimeException("포인트 반환 실패");
 					}
-				}
-				log.info("전체취소 if 문 시작");
-				if ((expectResult.getTotal_price_expected() - 2500) == modifyCancelStatusDTO.getAmount()) {
-					log.info("포인트 적립내역 테이블에 환불한 포인트 삽입");
-					int result2 = 0;
-					try {
-						System.out.println(expectResult.getOrderer_id());
-						result2 = oDAO.refundEarnedPoint(expectResult.getUse_point(), expectResult.getOrderer_id());
-
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					log.info("포인트 사용내역 테이블에 ");
-					if (result2 >= 1) {
-						log.info("멤버에게 포인트 환불하기");
-						oDAO.refundMemberUsePoint(expectResult.getUse_point(), expectResult.getOrderer_id());
-						log.info("쿠폰 사용 내역 삭제하기");
-						if (expectResult.getCoupon_no() <= 0) {
-							oDAO.deleteUseCoupon(expectResult.getCoupon_no());
+					if (modifyCancelStatusDTO.getAmount() != 0) {
+						log.info("해당하는 회원의 level_point 를 가져오기");
+						float levelPoint = oDAO.memberLevelPoint(findMemberId);
+						log.info("" + levelPoint);
+						int stealPoint = (int) (modifyCancelStatusDTO.getAmount() * levelPoint);
+						log.info("" + stealPoint);
+						int minusStealPoint = stealPoint * -1;
+						log.info("포인트 적립내역 테이블에 데이터 삽입하기");
+						if (oDAO.restractPoint(findMemberId, minusStealPoint) >= 1) {
+							log.info("유저에게 포인트 빼앗기");
+							oDAO.restractPointMember(findMemberId, stealPoint);
 						}
 					}
 				}
 			}
-		} else {
-			throw new RuntimeErrorException(null, "error");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		log.info("전체취소 if 문 시작");
+		try {
+			if ((expectResult.getTotal_price_expected() - 2500) == modifyCancelStatusDTO.getAmount()) {
+				log.info("쿠폰 사용 내역 삭제하기");
+				if (expectResult.getCoupon_no() <= 0) {
+					oDAO.deleteUseCoupon(expectResult.getCoupon_no());
+				}
+
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return true;
 	}
 

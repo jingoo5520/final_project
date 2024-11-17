@@ -245,7 +245,8 @@ console.log(selectedType);
 				function() {
 					var productId = $('#modalToggle2 .modal-title').text()
 							.split(': ')[1]; // 제목에서 상품 ID 추출
-					console.log(productId)
+					console.log(productId);
+					console.log($(this).val());
 					// Ajax 요청으로 삭제
 					$.ajax({
 						url : '/admin/productmanage/productDelete', // 삭제 요청을 보낼 URL
@@ -255,10 +256,21 @@ console.log(selectedType);
 							productId : productId
 						}, // 제품 ID 데이터 전송
 						success : function(response) {
-							$('#toastMessage').removeClass('hide').addClass('show');
-			            	$("#toastTitle").text("상품 삭제");
-			            	$("#toastBody").text("상품 삭제가 성공했습니다");
-			            	$('#modalToggle2').modal('hide');
+							 $('#toastTitle').text('성공!'); // 토스트 메시지 제목
+			                 $('#toastBody').text('상품 삭제가 성공적으로 처리되었습니다.'); // 토스트 메시지 내용
+			                 
+			                 // 토스트 메시지 표시
+			                 var toastElement = $('#toastMessage');
+			                 toastElement.removeClass('hide').addClass('show');
+							$("#modalToggle2").modal('hide'); // 모달이름
+							 setTimeout(function() {
+								 toastElement.hide();
+					            }, 2000);
+							 setTimeout(function() {
+								 location.reload();
+							  }, 1000);
+							 
+			            	
 						},
 						error : function(xhr, status, error) {
 							console.log('Error:', error);
@@ -342,9 +354,11 @@ console.log(selectedType);
 						 setTimeout(function() {
 							 toastElement.hide();
 				            }, 2000);
+						 setTimeout(function() {
+							 location.reload();
+						  }, 1000);
 		            },
 		            error: function(xhr, status, error) {
-		            	function showToast("쓰고 싶은 토스트 제목","쓰고 싶은 토스트 내용");
 		                console.error('Error:', error);
 		                showToast("실패 ㅠㅠ", "상품 수정이 실패하였습니다.") // 넣고싶은 문자
 		            }

@@ -377,6 +377,7 @@ function showToast(title, content) {
 				 error: function(xhr, status, error) {
 				   console.error(`Error: , `);
 				   console.error(xhr.responseText);
+				   showToast("상품 환불","실패하였습니다");
 				 }
 			});
 			return cancelResponse
@@ -404,6 +405,7 @@ function showToast(title, content) {
 					error: function(xhr, status, error) {
 						console.error(`Error: , `);
 						console.error(xhr.responseText);
+						showToast("상품 환불","실패하였습니다");
 					}
 				});
 				return JSON.parse(response)
@@ -430,6 +432,7 @@ function showToast(title, content) {
 					error: function(xhr, status, error) {
 						console.error(`Error: , `);
 						console.error(xhr.responseText);
+						showToast("상품 환불","실패하였습니다");
 					}
 				});
 				return JSON.parse(response)

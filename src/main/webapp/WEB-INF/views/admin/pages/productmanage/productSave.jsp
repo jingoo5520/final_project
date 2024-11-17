@@ -129,7 +129,7 @@
 									let discountAmount = document
 											.getElementById('discountAmountContainer').value
 											.trim();
-
+									console.log(discountType);
 									if (discountType === 'P') {
 										if (discountAmount === ''
 												|| isNaN(discountAmount)
@@ -142,6 +142,9 @@
 															'<span class="error-message" style="color: red;">입력 가능한 할인율(0-100%)을 입력해 주세요.</span>');
 											isValid = false;
 										}
+									}
+									if(discountType === 'N') {
+										$(discountAmount).val(0);
 									}
 									if ($('#dropdownValue').val().trim() === '') {
 										$('#productShow')
@@ -240,7 +243,7 @@
 														</td>
 														<td>
 															<div class="form-check d-flex justify-content-center">
-																<input class="form-check-input dc_type" type="radio" id="defaultCheck3" name="product_dc_type" value="N" onclick="toggleDiscountInput()" checked="checked">
+																<input class="form-check-input dc_type" type="radio" id="defaultCheck3" name="product_dc_type" value="N" onclick="toggleDiscountInput()">
 															</div>
 														</td>
 													</tr>

@@ -142,7 +142,7 @@
 </script>
 
 <script>
-/* 	let orderInfo = null
+ 	let orderInfo = null
 	
 	$(document).ready(function() {
 		orderInfo = loadOrderInfo()
@@ -208,7 +208,7 @@
 		}
 		tags += '</div>' // class="cart-list-head" end
 			
-/* 		for (orderJson of orderInfo) {
+ 		for (orderJson of orderInfo) {
 			let orderDate = orderJson.orderDate
 			let orderId = orderJson.orderId
 			let orderStatus = orderJson.orderStatus
@@ -262,7 +262,7 @@
 			})
 		})
 		
-	}
+
 
 	function makeButtonTag(cancelType, orderId) { // TODO : orderStatus에 따라 버튼의 이름 다르게 만들기
 		let buttonValue = null
@@ -453,9 +453,9 @@
 		})
 	}
 	
-	function cancelSubmit() {
+	 function cancelSubmit() {
 		showViewOrderPage(orderInfo)
-	} */
+	 }
 </script>
 
 
@@ -562,10 +562,10 @@
 	<script>
 	var orderInfo = null
 	
-	$(document).ready(function() {
+ /* 	$(document).ready(function() {
 		orderInfo = loadOrderInfo()
 		showViewOrderPage(orderInfo)
-	})
+	})  */
 	</script>
 </body>
 
