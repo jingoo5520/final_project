@@ -95,7 +95,7 @@
 						</div>
 						<!-- End Cart List Title -->
 						
-                <div id="noticeList" class="row">
+                <div id="noticeList" class="row cart-list-title">
                     <c:choose>
                         <c:when test="${not empty notices}">
                             <c:forEach var="notice" items="${notices}">
@@ -115,7 +115,7 @@
                                                     <p class="card-text">${notice.admin_id}</p>
                                                 </div>
                                                 <div class="col-lg-2 col-md-2 col-12">
-                                                    <p class="card-text">${notice.reg_date}</p>
+                                                   <p class="card-text regDate" data-reg-date="${notice.reg_date}"></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -185,5 +185,19 @@
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
 </body>
-
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    const dateElements = document.querySelectorAll(".regDate");
+    
+    dateElements.forEach(function(element) {
+        const originalDate = element.getAttribute("data-reg-date");
+        
+        if (originalDate) {
+            // 날짜만 추출
+            const formattedDate = originalDate.split("T")[0]; // 형식: "2024-11-14"
+            element.textContent = formattedDate;
+        }
+    });
+});
+</script>
 </html>

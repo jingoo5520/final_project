@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
+import com.finalProject.model.BlackInfoDTO;
 import com.finalProject.model.LoginDTO;
 import com.finalProject.service.member.MemberService;
 
@@ -32,7 +33,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			throws Exception {
 		System.out.println("Login preHandle 호출");
 		HttpSession ses = request.getSession();
-		System.out.println(ses.getAttribute("productInfos"));
 		boolean result = true;
 		LoginDTO loginDTO = null;
 		log.info("preHandle()");
@@ -90,48 +90,60 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		if (request.getMethod().toUpperCase().equals("POST")) {
 			Map<String, Object> model = modelAndView.getModel();
 			LoginDTO loginMember = (LoginDTO) model.get("loginMember");
+			System.out.println(loginMember);
 			if (loginMember != null) { // 로그인시도하는 member정보가 db에 있을 경우 로그인(세션생성)
-				ses.setAttribute("loginMember", loginMember);
-				System.out.println(loginMember.getMember_name() + "님 로그인");
-				Object autologin = model.get("autologin");
-				if (autologin != null) { // 자동로그인에 체크한 경우
-					String code = UUID.randomUUID().toString();
-					Cookie cookie = new Cookie("al", code); // 쿠키객체 생성
-					cookie.setMaxAge(60 * 60 * 24 * AUTOLOGIN_DATE); // 쿠키 유효기간 설정
-					cookie.setPath("/"); // 모든 경로에서 사용 가능
-					response.addCookie(cookie); // 만든 쿠키 저장
-					// db에 자동로그인 정보 update
-					memberService.setAutoLogin(loginMember.getMember_id(), code, AUTOLOGIN_DATE);
-				}
-				String rememberPath = ses.getAttribute("rememberPath") + "";
-				if (loginMember.getIs_admin().equals("1") || loginMember.getIs_admin().equals("9")) { // 관리자 아이디인 경우
-					System.out.println("관리자 로그인 확인");
-					response.sendRedirect("/admin");
-				} else {
-					if (!rememberPath.equals("null")) { // rememberPath가 있다면
-						if (rememberPath.contains("/order")) { // 주문 요청에서 왔다면
-							String productInfos = (String) ses.getAttribute("productInfos");
-							ses.removeAttribute("productInfos");
-							if (productInfos != null) {
-								request.setAttribute("productInfosAttribute", productInfos);
-								RequestDispatcher dispatcher = request.getRequestDispatcher("/order");
-								dispatcher.forward(request, response);
+				String member_status = loginMember.getMember_status();
+				if (member_status.equals("active")) { // 로그인 가능
+					ses.setAttribute("loginMember", loginMember);
+					System.out.println(loginMember.getMember_name() + "님 로그인");
+					Object autologin = model.get("autologin");
+					if (autologin != null) { // 자동로그인에 체크한 경우
+						String code = UUID.randomUUID().toString();
+						Cookie cookie = new Cookie("al", code); // 쿠키객체 생성
+						cookie.setMaxAge(60 * 60 * 24 * AUTOLOGIN_DATE); // 쿠키 유효기간 설정
+						cookie.setPath("/"); // 모든 경로에서 사용 가능
+						response.addCookie(cookie); // 만든 쿠키 저장
+						// db에 자동로그인 정보 update
+						memberService.setAutoLogin(loginMember.getMember_id(), code, AUTOLOGIN_DATE);
+					}
+					String rememberPath = ses.getAttribute("rememberPath") + "";
+					if (loginMember.getIs_admin().equals("1") || loginMember.getIs_admin().equals("9")) { // 관리자 아이디인 경우
+						System.out.println("관리자 로그인 확인");
+						response.sendRedirect("/admin");
+					} else {
+						if (!rememberPath.equals("null")) { // rememberPath가 있다면
+							if (rememberPath.contains("/order")) { // 주문 요청에서 왔다면
+								String productInfos = (String) ses.getAttribute("productInfos");
+								ses.removeAttribute("productInfos");
+								if (productInfos != null) {
+									request.setAttribute("productInfosAttribute", productInfos);
+									RequestDispatcher dispatcher = request.getRequestDispatcher("/order");
+									dispatcher.forward(request, response);
+								}
+							} else {
+								response.sendRedirect(rememberPath); // rememberPath로 보냄
+								System.out.println("rememberPath있음 : " + rememberPath);
 							}
 						} else {
-							response.sendRedirect(rememberPath); // rememberPath로 보냄
-							System.out.println("rememberPath있음 : " + rememberPath);
+							System.out.println("rememeberPath없음");
+							response.sendRedirect("/"); // 인덱스로 보냄
 						}
-					} else {
-						System.out.println("rememeberPath없음");
-						response.sendRedirect("/"); // 인덱스로 보냄
 					}
+				} else if (member_status.equals("black")) { // 블랙당한 회원
+					System.out.println("블랙처리된 회원입니다.");
+					BlackInfoDTO blackDTO = memberService.memberBlackInfo(loginMember.getMember_id());
+					ses.setAttribute("blackReason", blackDTO);
+					response.sendRedirect("/member/viewLogin/?status=black");
+				} else if (member_status.equals("withdrawn")) {
+					System.out.println("탈퇴한 회원입니다.");
+					response.sendRedirect("/member/viewLogin/?status=withdrawn");
 				}
 			} else {
 				System.out.println("아이디 또는 비밀번호가 일치하지 않습니다.");
 				response.sendRedirect("/member/viewLogin/?status=fail");
 			}
 		}
-		
+
 	}
 
 }
