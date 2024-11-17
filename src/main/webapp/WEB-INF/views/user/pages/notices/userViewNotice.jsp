@@ -139,10 +139,10 @@
         <!-- 이전 페이지 버튼 -->
         <c:choose>
             <c:when test="${pi.pageNo == 1}">
-                <li class="disabled"><a href="javascript:void(0)" onclick="return false;"><i class="lni lni-chevron-left"></i></a></li>
+                <li class="page-item prev disabled"><a class="page-link" href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
+                <li class="page-item prev"><a href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo - 1}, ${pi.viewDataCntPerPage})"><i class="lni lni-chevron-left"></i></a></li>
             </c:otherwise>
         </c:choose>
 
@@ -150,10 +150,10 @@
         <c:forEach var="i" begin="${pi.startPageNoCurBlock}" end="${pi.endPageNoCurBlock}">
             <c:choose>
                 <c:when test="${pi.pageNo == i}">
-                    <li class="active"><a href="javascript:void(0)">${i}</a></li>
+                    <li class="page-item active"><a class="page-link" href="javascript:void(0)" onclick="showEventList(${pi.pageNo}, ${pi.viewDataCntPerPage})">${i}</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="javascript:void(0)" onclick="showUserNoticeList(${i})">${i}</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${i}, ${pi.viewDataCntPerPage})">${i}</a></li>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
@@ -161,10 +161,10 @@
         <!-- 다음 페이지 버튼 -->
         <c:choose>
             <c:when test="${pi.pageNo == pi.totalPageCnt}">
-                <li class="disabled"><a href="javascript:void(0)" onclick="return false;"><i class="lni lni-chevron-right"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="javascript:void(0)" onclick="return false;"><i class="lni lni-chevron-right"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
+                <li class="page-item next"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo + 1}, ${pi.viewDataCntPerPage})"><i class="lni lni-chevron-right"></i></a></li>
             </c:otherwise>
         </c:choose>
     </ul>

@@ -145,7 +145,9 @@ function showUserEventList(pageNo, pagingSize) {
         url: "/event/getEvents",
         type: "GET",
         dataType : 'json',
-        data: { pageNo: pageNo },
+        data: {
+        	pageNo : pageNo
+        	},
         success: function(response) {
             // 이벤트 목록 업데이트
             console.log(response);

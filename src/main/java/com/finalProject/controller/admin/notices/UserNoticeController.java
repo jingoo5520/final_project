@@ -92,12 +92,13 @@ public class UserNoticeController {
 
     // 이벤트 목록 조회
     @GetMapping("/event")
-    public String showUserEventPage(Model model) {
+    public String showUserEventPage(@RequestParam(defaultValue = "1") int pageNo, Model model) {
     	Map<String, Object> data = new HashMap<String, Object>();
     	
 		try {
-			data = userNoticeService.getAllEvents(new PagingInfoNoticeDTO(1, 9, 5)); // 이벤트 조회
-		
+			data = userNoticeService.getAllEvents(new PagingInfoNoticeDTO(pageNo, 9, 5)); // 이벤트 조회
+			System.out.println("data" + data);
+			
 			model.addAttribute("events", data.get("list"));
 			model.addAttribute("pi", data.get("pi"));
 		
@@ -111,7 +112,7 @@ public class UserNoticeController {
     
 	@GetMapping("/event/getEvents")
 	@ResponseBody
-	public Map<String, Object> getEvents(@RequestParam int pageNo) {
+	public Map<String, Object> getAllEvents(@RequestParam int pageNo) {
 		System.out.println("pageNo" + pageNo);
 		Map<String, Object> data = new HashMap<String, Object>();
 		
