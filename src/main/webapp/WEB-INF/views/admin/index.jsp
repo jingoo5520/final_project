@@ -211,11 +211,11 @@
 	}
 	
 	function setSaleData(list){
-		drawSaleAndRevenueGragh(list, "sale");
+		drawSaleGragh(list);
 	}
 	
 	function setRevenueData(list){
-		drawSaleAndRevenueGragh(list, "revenue");
+		drawRevenueGragh(list);
 	}
 	
 	
@@ -391,7 +391,7 @@
 			},
 			success : function(data) {
 				console.log(data);
-				drawSaleAndRevenueGragh(data, "sale");
+				drawSaleGragh(data);
 
 			},
 			error : function(error) {
@@ -411,7 +411,7 @@
 			},
 			success : function(data) {
 				console.log(data);
-				drawSaleAndRevenueGragh(data, "revenue");
+				drawRevenueGragh(data);
 
 			},
 			error : function(error) {
@@ -421,48 +421,319 @@
 	}
 	
 	
-	// 판매량, 매출 그래프 그리기
-	function drawSaleAndRevenueGragh(list, type){
+	// 판매량 그래프 그리기
+	function drawSaleGragh(list){
 		let categories = [];
 		let series = [];
 		let chart;
-		let name;
 		
 		let totalSale = 0;
+		
+		list.forEach(function(item){
+			categories.push(item.category_name);
+			series.push(item.count);
+			totalSale += item.count;
+		});
+		
+		$("#totalSaleCnt").text(totalSale);
+		
+		const totalSaleChartEl = document.querySelector('#totalSaleChart'),
+	    totalSaleChartOptions = {
+	      series: [
+	        {
+	          name: "volume",
+	          data: series
+	        }
+	      ],
+	      chart: {
+	        height: 300,
+	        stacked: true,
+	        type: 'bar',
+	        toolbar: { show: false }
+	      },
+	      plotOptions: {
+	        bar: {
+	          horizontal: false,
+	          columnWidth: '33%',
+	          borderRadius: 12,
+	          startingShape: 'rounded',
+	          endingShape: 'rounded'
+	        }
+	      },
+	      colors: [config.colors.primary, config.colors.info],
+	      dataLabels: {
+	        enabled: false
+	      },
+	      stroke: {
+	        curve: 'smooth',
+	        width: 6,
+	        lineCap: 'round',
+	        colors: [cardColor]
+	      },
+	      legend: {
+	        show: true,
+	        horizontalAlign: 'left',
+	        position: 'top',
+	        markers: {
+	          height: 8,
+	          width: 8,
+	          radius: 12,
+	          offsetX: -3
+	        },
+	        labels: {
+	          colors: axisColor
+	        },
+	        itemMargin: {
+	          horizontal: 10
+	        }
+	      },
+	      grid: {
+	        borderColor: borderColor,
+	        padding: {
+	          top: 0,
+	          bottom: -8,
+	          left: 20,
+	          right: 20
+	        }
+	      },
+	      xaxis: {
+	        categories: categories,
+	        labels: {
+	          style: {
+	            fontSize: '13px',
+	            colors: axisColor
+	          }
+	        },
+	        axisTicks: {
+	          show: false
+	        },
+	        axisBorder: {
+	          show: false
+	        }
+	      },
+	      yaxis: {
+	        labels: {
+	          style: {
+	            fontSize: '13px',
+	            colors: axisColor
+	          }
+	        }
+	      },
+	      responsive: [
+	        {
+	          breakpoint: 1700,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '32%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1580,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '35%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1440,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '42%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1300,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '48%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1200,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '40%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1040,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 11,
+	                columnWidth: '48%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 991,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '30%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 840,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '35%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 768,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '28%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 640,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '32%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 576,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '37%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 480,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '45%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 420,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '52%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 380,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '60%'
+	              }
+	            }
+	          }
+	        }
+	      ],
+	      states: {
+	        hover: {
+	          filter: {
+	            type: 'none'
+	          }
+	        },
+	        active: {
+	          filter: {
+	            type: 'none'
+	          }
+	        }
+	      }
+	    };
+		  if (typeof totalSaleChartEl !== undefined && totalSaleChartEl !== null) {
+				if(isDrawedSaleGragh) {
+					
+			    	totalSaleChart.updateSeries([
+			    		{
+			    			name: "volume",
+			                data: series
+			    		}
+			    	]);
+			    	
+		    	 	totalSaleChart.updateOptions({
+		    	        xaxis: {
+		    	            categories: categories
+		    	        }
+		    	    });
+			    } else {
+			    	totalSaleChart = new ApexCharts(totalSaleChartEl, totalSaleChartOptions);
+			    	
+			    	totalSaleChart.render();
+			    	isDrawedSaleGragh = true;
+			    }	
+			}
+	}
+	
+	// 매출 그래프 그리기
+	function drawRevenueGragh(list){
+		let categories = [];
+		let series = [];
+		let chart;
+		
 		let totalRevenue = 0;
 		
-		if(type == "sale"){
-			chart = document.querySelector('#totalSaleChart');
-			name = "volume"
-			list.forEach(function(item){
-				categories.push(item.category_name);
-				series.push(item.count);
-				totalSale += item.count;
-			});
-			
-			$("#totalSaleCnt").text(totalSale);
-			
-		} else if(type == "revenue"){
-			chart = document.querySelector('#totalRevenueChart');
-			name = "amount"
-			list.forEach(function(item){
-				categories.push(item.category_name);
-				series.push(item.revenue);
-				totalRevenue += item.revenue;
-			});
-			
-			$("#totalRevenue").text(totalRevenue.toLocaleString());
-		}
+		list.forEach(function(item){
+			categories.push(item.category_name);
+			series.push(item.revenue);
+			totalRevenue += item.revenue;
+		});
+		
+		$("#totalRevenue").text(totalRevenue.toLocaleString());
 		
 		
-		
-		
-		
-		const totalRevenueChartEl = chart,
+		const totalRevenueChartEl = document.querySelector('#totalRevenueChart'),
 	    totalRevenueChartOptions = {
 	      series: [
 	        {
-	          name: name,
+	          name: "amount",
 	          data: series
 	        }
 	      ],
@@ -710,55 +981,25 @@
 	      }
 	    };
 	  if (typeof totalRevenueChartEl !== undefined && totalRevenueChartEl !== null) {
-		if(type == "sale"){
-			 if(isDrawedSaleGragh) {
-				 totalSaleChart.updateSeries([
-		    		{
-		    			name: "volume",
-		                data: series
-		    		}
-		    	]);
-		    	
-	    	 	totalSaleChart.updateOptions({
-	    	        xaxis: {
-	    	            categories: categories
-	    	        }
-	    	    });
-		    } else {
-		    	totalSaleChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
-		    	
-		    	totalSaleChart.render();
-		    	isDrawedSaleGragh = true;
-		    }	
-		} else if(type == "revenue") {
-			console.log("렌더링");
-			
-			if(isDrawedRevenueGragh) {
-				
-				console.log("재 렌더링");
-				
-		    	totalRevenueChart.updateSeries([
-		    		{
-		    			name: "revenue",
-		                data: series
-		    		}
-		    	]);
-		    	
-	    	 	totalRevenueChart.updateOptions({
-	    	        xaxis: {
-	    	            categories: categories
-	    	        }
-	    	    });
-		    } else {
-		    	
-		    	console.log("최초 렌더링");
-		    	
-		    	totalRevenueChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
-		    	
-		    	totalRevenueChart.render();
-		    	isDrawedRevenueGragh = true;
-		    }	
-		}
+		if(isDrawedRevenueGragh) {
+	    	totalRevenueChart.updateSeries([
+	    		{
+	    			name: "amount",
+	                data: series
+	    		}
+	    	]);
+	    	
+    	 	totalRevenueChart.updateOptions({
+    	        xaxis: {
+    	            categories: categories
+    	        }
+    	    });
+	    } else {
+	    	totalRevenueChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
+	    	
+	    	totalRevenueChart.render();
+	    	isDrawedRevenueGragh = true;
+	    }	
 	  }
 	}
 	
@@ -877,9 +1118,7 @@
 										</div>
 										<span class="fw-semibold d-block mb-1">Number of Members</span>
 										<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
-										<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
-
-										<span class="fw-semibold d-block mt-4">Register date range</span>
+										<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small> <span class="fw-semibold d-block mt-4">Register date range</span>
 										<div class="col align-items-center">
 											<div class="form-check-inline">
 												<input id="regDate_start" class="form-control regDate" type="date" value="" id="">

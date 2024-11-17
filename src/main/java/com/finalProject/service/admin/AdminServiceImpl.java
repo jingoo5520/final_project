@@ -35,7 +35,13 @@ public class AdminServiceImpl implements AdminService {
 		// 금일 가입자 수
 		int todayRegMemberCnt = aDao.selectMemberRegCnt(now);
 		int yesterdayRegMemberCnt = aDao.selectMemberRegCnt(yesterday);
-		float regGrowthRate = ((float) (todayRegMemberCnt - yesterdayRegMemberCnt)  / yesterdayRegMemberCnt) * 100; 
+		float regGrowthRate; 
+		
+		if(yesterdayRegMemberCnt == 0) {
+			regGrowthRate = 0;
+		} else {
+			regGrowthRate = ((float) (todayRegMemberCnt - yesterdayRegMemberCnt)  / yesterdayRegMemberCnt) * 100;
+		}
 		
 		// 처리되지 않은 문의 수
 		int waitInquiryCnt = aDao.selectWaitInquiryCnt();
@@ -43,16 +49,24 @@ public class AdminServiceImpl implements AdminService {
 		// 특정 날 판매 량
 		int daySaleCnt = aDao.selectDaySaleCnt(now);
 		int yesterDaySaleCnt = aDao.selectDaySaleCnt(yesterday);
-		float saleGrowthRate = ((float) (daySaleCnt - yesterDaySaleCnt)  / yesterDaySaleCnt) * 100; 
+		float saleGrowthRate;
 		
-		System.out.println(daySaleCnt);
-		System.out.println(yesterDaySaleCnt);
-		System.out.println(saleGrowthRate);
+		if(yesterDaySaleCnt == 0) {
+			saleGrowthRate = 0;
+		} else {
+			saleGrowthRate = ((float) (daySaleCnt - yesterDaySaleCnt)  / yesterDaySaleCnt) * 100;
+		}
 		
 		// 특정 날 판매 금액
 		int dayRevenue = aDao.selectDayRevenue(now);
 		int yesterDayRevenue = aDao.selectDayRevenue(yesterday);
-		float revenueGrowthRate = ((float) (dayRevenue - yesterDayRevenue)  / yesterDayRevenue) * 100;
+		float revenueGrowthRate;
+		
+		if(yesterDayRevenue == 0) {
+			revenueGrowthRate = 0;
+		} else {
+			revenueGrowthRate = ((float) (dayRevenue - yesterDayRevenue)  / yesterDayRevenue) * 100;
+		}
 		
 		// 멤버 총 수
 		int memberCnt = aDao.selectAllMemberCnt();
@@ -61,8 +75,13 @@ public class AdminServiceImpl implements AdminService {
 		int lastMonthMemberRegCnt  = aDao.selectLastMonthMemberRegCnt();
 		
 		// 지난 달 대비 증가율
-		float memberGrowthRate = ((float) lastMonthMemberRegCnt / memberCnt) * 100; 
-
+		float memberGrowthRate;
+		if(lastMonthMemberRegCnt == 0) {
+			memberGrowthRate = 0;
+		} else {
+			memberGrowthRate = ((float) lastMonthMemberRegCnt / memberCnt) * 100; 
+		}
+		
 		// 멤버 성별 회원 수 가져오기
 		List<GenderCountDTO> genderCountDTOList = aDao.selectMembersByGender();
 		List<LevelCountDTO> levelCountDTOList = aDao.selectMembersByLevel();
