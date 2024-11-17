@@ -55,8 +55,7 @@
 		<constructor-arg ref="sqlSessionFactory"></constructor-arg>
 	</bean>
 	<tx:annotation-driven />
-	<aop:aspectj-autoproxy>
-	</aop:aspectj-autoproxy>
+	
 
 
 	<!-- 트랜잭션 매니저 -->

@@ -15,7 +15,7 @@
 		where p.product_delete = 'N'
 		and p.product_show = 'N'
 		and i.image_type = 'M'
-		order by product_reg_date desc
+		order by p.product_reg_date desc
 		limit #{count}
 	</select>
 	

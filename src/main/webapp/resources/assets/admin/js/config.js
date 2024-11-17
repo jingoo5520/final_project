@@ -22,6 +22,10 @@ let config = {
     body: '#f4f5fb',
     headingColor: '#566a7f',
     axisColor: '#a1acb8',
-    borderColor: '#eceef1'
+    borderColor: '#eceef1',
+    bronzeColor: '#BB6B53',
+    silverColor: '#8F8297',
+    goldColor: '#C89D68',
+    diamondColor: '#D5D1FE'
   }
 };

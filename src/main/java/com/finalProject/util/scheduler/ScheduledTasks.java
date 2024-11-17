@@ -41,10 +41,10 @@ public class ScheduledTasks {
 		}
 	}
 
-	@Scheduled(cron = "0 0/30 * 1/1 * ?") // (매일 30분마다 동작)
-	public void test() {
-		updateMembersLevel();
-	}
+	/*
+	 * @Scheduled(cron = "0 0/30 * 1/1 * ?") // (매일 30분마다 동작) public void test() {
+	 * updateMembersLevel(); }
+	 */
 	
 //	@Scheduled(cron = "30 * * * * *") // 30초마다
 //	public void performTask() {
