@@ -84,7 +84,6 @@ public class PController {
 		model.addAttribute("sortOrder", sortOrder); // 정렬 기준 추가
 		model.addAttribute("category", category); // 카테고리 추가
 		model.addAttribute("totalProducts", totalProducts);
-//		System.out.println("all : " + totalProducts);
 
 		// 각 카테고리별 상품 개수 조회
 		int necklaceCount = service.getProductCountByCategory(196);
@@ -118,7 +117,6 @@ public class PController {
 			@RequestParam(value = "sortOrder", defaultValue = "new") String sortOrder, Model model,
 			HttpServletRequest request) throws Exception {
 
-//		System.out.println("카테고리 선택됨 : " + category);
 		sortOrder = sortOrder.trim();
 
 		List<ProductDTO> products = service.getProductsByCategoryAndPage(category, page, pageSize, sortOrder);
@@ -127,8 +125,6 @@ public class PController {
 		int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
 		int totalProductCount = service.getProductCount();
 
-//		System.out.println("전체 상품 수: " + totalProducts);
-//		System.out.println("Received sortOrder: '" + sortOrder + "'");
 
 		// 페이지 블록 설정
 		int pageBlockSize = 10;
