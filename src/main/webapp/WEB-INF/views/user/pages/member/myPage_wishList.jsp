@@ -68,115 +68,115 @@
 				<!-- / sideBar -->
 				<!-- contents -->
 				<div class="col-lg-9 col-12" id="modiInfoView">
-					<main class="right-pane">
-
-						<div class="tab-content" id="nav-tabContent">
-							<div class="tab-pane fade active show" id="nav-grid"
-								role="tabpanel" aria-labelledby="nav-grid-tab">
-								<div class="row">
-									<div class="col-12"></div>
-									<c:forEach var="product" items="${products}">
-										<c:set var="result" value="false" />
-										<c:forEach var="wishItem" items="${wishList }">
-											<c:if test="${wishItem == product.product_no}">
-												<c:set var="result" value="true" />
-											</c:if>
-										</c:forEach>
-
-										<c:if test="${wishList != null }">
-											<c:if test="${result == 'true' }">
-												<div class="col-lg-4 col-md-6 col-12">
-													<div class="single-product">
-														<div class="product-image" style="height: 300px;">
-
-															<a
-																href="/product/jewelry/detail?productNo=${product.product_no}">
-																<img
-																src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}"
-																alt="${product.product_name}"
-																style="height: 100%; object-fit: cover;">
-															</a>
-
-															<div class="button"
-																style="position: absolute; bottom: 10px; left: 90px;">
-																<!-- 찜목록에 있을 경우 하트 -->
-																<a onclick="toggleHeart(this, ${product.product_no})"
-																	class="btn"
-																	style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
-																	<i class="lni lni-heart-filled"></i>
-																</a>
-															</div>
-
-															<div class="button"
-																style="position: absolute; bottom: 10px; right: 140px;">
-																<a onclick="addCart(${product.product_no})" class="btn"
-																	style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
-																	<i class="lni lni-cart"></i>
-																</a>
-															</div>
-														</div>
-
-														<div class="product-info">
-															<!-- Category 출력 부분 -->
-
-															<span class="category"> ${product.category_name }
-															</span>
-
-															<h4 class="title">
-																<a
-																	href="/product/jewelry/detail?productNo=${product.product_no}"
-																	class="product-name">${product.product_name }</a>
-															</h4>
-															<div class="price">
-																<!--     dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
-																<c:if
-																	test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
-																	<span
-																		style="text-decoration: line-through; color: #999;">
-																		<fmt:formatNumber value="${product.product_price}"
-																			type="number" pattern="#,###" />원
-																	</span>
-																</c:if>
-
-																<!-- 할인율 (dc 타입이 P일 때만 표시) -->
-																<c:if
-																	test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
-																	<span class="sale-tag"
-																		style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-																		- <fmt:formatNumber value="${product.dc_rate * 100}"
-																			type="number" maxFractionDigits="0" />%
-																	</span>
-																</c:if>
-
-
-																<!--     최종 계산된 가격 표시 -->
-																<span> <fmt:formatNumber
-																		value="${product.calculatedPrice}" type="number"
-																		pattern="#,###" /> 원
-																</span>
-															</div>
-
-
-														</div>
-													</div>
-												</div>
-											</c:if>
+					<div class="tab-content" id="nav-tabContent">
+						<div class="tab-pane fade active show" id="nav-grid"
+							role="tabpanel" aria-labelledby="nav-grid-tab">
+							<div class="row">
+								<div class="col-12"></div>
+								<c:forEach var="product" items="${products}">
+									<c:set var="result" value="false" />
+									<c:forEach var="wishItem" items="${wishList }">
+										<c:if test="${wishItem == product.product_no}">
+											<c:set var="result" value="true" />
 										</c:if>
 									</c:forEach>
-									<!-- 찜한 상품이 없다면 -->
-									<c:if test="${fn:length(wishList) == 0}">
-										<div
-											style="background-color: #f0f0f0; text-align: center; color: #333; padding: 15px; border-radius: 5px;">
-											<br /> <img src="/resources/images/noWishs.PNG"
-												alt="No Results"
-												style="margin-top: 15px; width: auto; height: auto; max-width: 100%;" />
-										</div>
+
+									<c:if test="${wishList != null }">
+										<c:if test="${result == 'true' }">
+											<div class="col-lg-4 col-md-6 col-12">
+												<div class="single-product">
+													<div class="product-image" style="height: 300px;">
+
+														<a
+															href="/product/jewelry/detail?productNo=${product.product_no}">
+															<img
+															src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}"
+															alt="${product.product_name}"
+															style="height: 100%; object-fit: cover;">
+														</a>
+
+														<div class="button"
+															style="position: absolute; bottom: 10px; left: 90px;">
+															<!-- 찜목록에 있을 경우 하트 -->
+															<a onclick="toggleHeart(this, ${product.product_no})"
+																class="btn"
+																style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
+																<i class="lni lni-heart-filled"></i>
+															</a>
+														</div>
+
+														<div class="button"
+															style="position: absolute; bottom: 10px; right: 140px;">
+															<a onclick="addCart(${product.product_no})" class="btn"
+																style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
+																<i class="lni lni-cart"></i>
+															</a>
+														</div>
+													</div>
+
+													<div class="product-info">
+														<!-- Category 출력 부분 -->
+
+														<span class="category"> ${product.category_name } </span>
+
+														<h4 class="title">
+															<a
+																href="/product/jewelry/detail?productNo=${product.product_no}"
+																class="product-name">${product.product_name }</a>
+														</h4>
+														<div class="price">
+															<!--     dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
+															<c:if
+																test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
+																<span
+																	style="text-decoration: line-through; color: #999;">
+																	<fmt:formatNumber value="${product.product_price}"
+																		type="number" pattern="#,###" />원
+																</span>
+															</c:if>
+
+															<!-- 할인율 (dc 타입이 P일 때만 표시) -->
+															<c:if
+																test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
+																<span class="sale-tag"
+																	style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
+																	- <fmt:formatNumber value="${product.dc_rate * 100}"
+																		type="number" maxFractionDigits="0" />%
+																</span>
+															</c:if>
+
+
+															<!--     최종 계산된 가격 표시 -->
+															<span> <fmt:formatNumber
+																	value="${product.calculatedPrice}" type="number"
+																	pattern="#,###" /> 원
+															</span>
+														</div>
+
+
+													</div>
+												</div>
+											</div>
+										</c:if>
 									</c:if>
-								</div>
+								</c:forEach>
 							</div>
 						</div>
-
-					</main>
+					</div>
+					<!-- 찜한 상품이 없다면 -->
+					<c:if test="${fn:length(wishList) == 0}">
+						<div
+							style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 620px;">
+							<div style="text-align: center;">
+								<img alt=""
+									src="/resources/assets/user/images/error/emptyCart.png"
+									style="width: 100px;">
+							</div>
+							<div style="text-align: center; margin-top: 20px;">
+								<b>관심상품이 없습니다</b>
+							</div>
+						</div>
+					</c:if>
 				</div>
 				<!-- / contents -->
 
@@ -185,10 +185,10 @@
 	</section>
 
 	<jsp:include page="../footer.jsp"></jsp:include>
-	
+
 	<jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
-	
-	
+
+
 </body>
 <script type="text/javascript">
 function submitSortingForm() {

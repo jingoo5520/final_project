@@ -368,4 +368,11 @@
 		b where member_id = #{member_id}
 	</select>
 
+	<!-- 회원정보 수정후 로그인세션 업데이트 -->
+	<select id="updateLoginSession" resultType="LoginDTO">
+		select * from members
+		where
+		member_id = #{member_id}
+	</select>
+
 </mapper>

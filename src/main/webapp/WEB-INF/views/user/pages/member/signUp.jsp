@@ -26,7 +26,8 @@
 <link rel="stylesheet"
 	href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
+<link rel="shortcut icon" type="image/x-icon"
+	href="/resources/assets/user/images/logo/favicon.png" />
 
 </head>
 <style>
@@ -45,11 +46,13 @@
 }
 
 .modalBody {
+	border-radius: 30px;
 	background-color: #fff;
 	margin: 15% auto;
 	padding: 20px;
 	border: 1px solid #888;
-	width: 80%;
+	width: 700px;
+	background-color: #fff;
 }
 
 .close {
@@ -61,6 +64,15 @@
 
 .addressName {
 	display: none;
+}
+
+#modalTitle {
+	text-align: center;
+	margin: 20px;
+}
+
+#modalText {
+	margin: 50px 100px 50px 100px;
 }
 </style>
 
@@ -290,11 +302,12 @@
 	<div id="modalcontainer">
 		<div class="modalBody">
 			<span class="close" onclick="closeModal();">&times;</span>
+			<br>
 			<h2 id="modalTitle">제목</h2>
 			<p id="modalText">내용</p>
 		</div>
 	</div>
-	
+
 	<jsp:include page="memberModal.jsp"></jsp:include>
 
 	<!-- End Account Register Area -->
@@ -525,48 +538,48 @@
 		
 		if(idCheck!="true") {
 			result = false;
-			text += "<div>아이디</div>";
+			text += "&nbsp;[아이디]"
 		}
 		if(pwdCheck!="true") {
 			result = false;
-			text += "<div>비밀번호</div>";
+			text += "&nbsp;[비밀번호]";
 		}
 		if(pwd2Check!="true") {
 			result = false;
-			text += "<div>비밀번호 확인</div>";
+			text += "&nbsp;[비밀번호 확인]";
 		}
 		if(nameCheck!="true") {
 			result = false;
-			text += "<div>이름</div>";
+			text += "&nbsp;[이름]";
 		}
 		if(birthdayCheck!="true") {
 			result = false;
-			text += "<div>생일</div>";
+			text += "&nbsp;[생일]";
 		}
 		if(addressCheck!="true") {
 			result = false;
-			text += "<div>주소</div>";
+			text += "&nbsp;[주소]";
 		}
 		if(emailCheck!="true") {
 			result = false;
-			text += "<div>이메일</div>";
+			text += "&nbsp;[이메일]";
 		}
 		if(phoneCheck!="true") {
 			result = false;
-			text += "<div>휴대폰번호</div>";
+			text += "&nbsp;[휴대폰번호]";
 		}
 		if(check1Check!=true) {
 			result = false;
-			text += "<div>약관 동의</div>";
+			text += "&nbsp;[약관 동의]";
 		}
 		
 		if(emailAuthCheck!="true") {
 			result = false;
-			text += "<div>이메일 인증</div>";
+			text += "&nbsp;[이메일 인증]";
 		}
 		
 		if(!result) {
-			openModal("아래 항목들을 입력해야합니다.", text);
+			openModal("필수 항목을 입력해야합니다.", text);
 		}
 		
 		return result;

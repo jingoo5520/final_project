@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Inject
 	private MemberDAO memberDAO;
-	
+
 	@Inject
 	private PointDAO pDAO;
 
@@ -76,9 +78,19 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	// 마이 페이지 회원 정보 수정
+	@Transactional
 	@Override
-	public boolean updateMember(MemberDTO memberDTO) throws Exception {
-		return memberDAO.updateMember(memberDTO);
+	public boolean updateMember(MemberDTO memberDTO, String member_id, HttpServletRequest request) throws Exception {
+		boolean result = false;
+		HttpSession ses = request.getSession();
+		if (memberDAO.updateMember(memberDTO)) {
+			LoginDTO loginDTO = memberDAO.updateLoginSession(member_id);
+			if (loginDTO != null) {
+				ses.setAttribute("loginMember", loginDTO);
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	// 마이 페이지 비밀번호 변경
@@ -238,9 +250,9 @@ public class MemberServiceImpl implements MemberService {
 	// 최근 3개월 쿠폰 조회
 	@Override
 	public List<RecentCouponDTO> getRecentCouponList(String memberId) throws Exception {
-		
+
 		List<RecentCouponDTO> couponList = memberDAO.selectRecentCouponList(memberId);
-		
+
 		for (RecentCouponDTO coupon : couponList) {
 			coupon.setPay_date(coupon.getPay_date().substring(0, 10));
 			coupon.setExpire_date(coupon.getExpire_date().substring(0, 10));
@@ -250,19 +262,19 @@ public class MemberServiceImpl implements MemberService {
 
 	// 회원의 현재 보유한 포인트와 총 사용한 포인트 조회
 	@Override
-	public MemberPointDTO getMemberPoint(String memberId) throws Exception{
+	public MemberPointDTO getMemberPoint(String memberId) throws Exception {
 		return memberDAO.getMemberPoint(memberId);
 	}
-	
+
 	// 회원의 포인트 내역의 총 페이지 개수 반환
 	@Override
 	public int getPointPagingInfo(String pointType, String memberId) throws Exception {
 		int pointListCnt = memberDAO.getTotalPointList(pointType, memberId);
-		
-		if(pointListCnt % 10 == 0) {
+
+		if (pointListCnt % 10 == 0) {
 			return pointListCnt / 10;
 		} else {
-			return (pointListCnt / 10) + 1; 
+			return (pointListCnt / 10) + 1;
 		}
 	}
 
@@ -277,7 +289,7 @@ public class MemberServiceImpl implements MemberService {
 	public List<PointDTO> getUsedPointList(String memberId, int pageNo) throws Exception {
 		return memberDAO.selectUsedPointList(memberId, pageNo);
 	}
-	
+
 	// 회원 수 받기(스케쥴러)
 	@Override
 	public int getMemberCount() throws Exception {

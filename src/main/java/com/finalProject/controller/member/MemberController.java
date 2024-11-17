@@ -667,7 +667,7 @@ public class MemberController {
 
 		try {
 			// update가 정상적으로 됬다면
-			if (memberService.updateMember(memberDTO)) {
+			if (memberService.updateMember(memberDTO, member_id, request)) {
 				System.out.println("변경 완료");
 				json = new ResponseData("success", "변경 성공");
 			} else {
