@@ -50,10 +50,16 @@
 	axisColor = config.colors.axisColor;
 	borderColor = config.colors.borderColor;
 
+	let isDrawedSaleGragh = false;
+	let isDrawedRevenueGragh = false;
+	
+	let totalRevenueChart;
+	let totalSaleChart;
+	
+	
 	$(function() {
 		
 		$('#regDate_end').val(dateFormat(new Date()));
-		
 		
 		$.ajax({
 			url : '/admin/getStatisticData',
@@ -69,13 +75,50 @@
 			}
 		});
 		
+
+		
 	});
 
 	function setData(data) {
+		setOverView(data);
 		setNumberOfMembers(data.memberCnt, data.memberGrowthRate.toFixed(2));
 		setNumberOfMembersByGender(data.memberCnt, data.genderList);
 		setNumberOfMembersByLevel(data.memberCnt, data.levelList);
+		setSaleData(data.saleCountDTOList);
+		setRevenueData(data.revenueDTOList);
 	}
+	
+	// SetOverview
+	function setOverView(data){
+		
+		let regGrowthRate = data.regGrowthRate.toFixed(2);
+		let saleGrowthRate = data.saleGrowthRate.toFixed(2);
+		let revenueGrowthRate = data.revenueGrowthRate.toFixed(2);
+		
+		$("#todayRegMemberCnt").text(data.todayRegMemberCnt);
+		$("#daySaleCnt").text(data.daySaleCnt);
+		$("#dayRevenue").text(data.dayRevenue.toLocaleString());
+		$("#waitInquiryCnt").text(data.waitInquiryCnt);
+		
+		if(regGrowthRate >= 0){
+			$("#regGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${regGrowthRate}%</small>`);	
+		} else {
+			$("#regGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${regGrowthRate}%</small>`);
+		}
+		
+		if(saleGrowthRate >= 0){
+			$("#saleGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${saleGrowthRate}%</small>`);	
+		} else {
+			$("#saleGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${saleGrowthRate}%</small>`);
+		}
+		
+		if(revenueGrowthRate >= 0){
+			$("#revenueGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${revenueGrowthRate}%</small>`);	
+		} else {
+			$("#revenueGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${revenueGrowthRate}%</small>`);
+		}
+	}
+	
 	
 	// Number of Members
 	function setNumberOfMembers(memberCnt, memberGrowthRate){
@@ -89,21 +132,29 @@
 		drawNumberOfMembersGragh(memberCnt, genderList, "gender");
 		
 		let output = ``;
+		let icon = ``;
 		genderList.forEach(function(item){
 			let gender;
 			if(item.gender == 'M') {
 				gender = 'Male';
+				icon = `<span class="avatar-initial rounded bg-label-info">
+					<i class='bx bx-male-sign'></i>
+					</span>`;
 			} else if(item.gender == 'F'){
 				gender = 'Female';
+				icon = `<span class="avatar-initial rounded bg-label-danger">
+					<i class='bx bx-female-sign' ></i>
+				</span>`;
 			} else {
 				gender = 'None';
+				icon = `<span class="avatar-initial rounded bg-label-success">
+					<i class='bx bx-question-mark'></i>
+				</span>`;
 			}
 			
 			output += `<li class="d-flex mb-4 pb-1">
 							<div class="avatar flex-shrink-0 me-3">
-							<span class="avatar-initial rounded bg-label-success">
-								<i class="bx bx-closet"></i>
-							</span>
+							\${icon}
 						</div>
 						<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
 							<div class="me-2">
@@ -124,23 +175,26 @@
 		drawNumberOfMembersGragh(memberCnt, levelList, "level");
 		
 		let output = ``;
+		let imgSrc = ``;
 		levelList.forEach(function(item){
 			let level;
 			if(item.member_level == 1) {
 				level = 'Bronze';
+				imgSrc = 'bronze.png';
 			} else if(item.member_level == 2){
 				level = 'Silver';
+				imgSrc = 'silver.png';
 			} else if(item.member_level == 3){
 				level = 'Gold';
+				imgSrc = 'gold.png';
 			} else {
 				level = 'Diamond';
+				imgSrc = 'diamond.png';
 			}
 			
 			output += `<li class="d-flex mb-4 pb-1">
 							<div class="avatar flex-shrink-0 me-3">
-							<span class="avatar-initial rounded bg-label-success">
-								<i class="bx bx-closet"></i>
-							</span>
+								<img src="/resources/images/\${imgSrc}">
 						</div>
 						<div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
 							<div class="me-2">
@@ -156,11 +210,22 @@
 		$("#levelList").html(output);
 	}
 	
-	// Number of members by gender 그래프 그리기
+	function setSaleData(list){
+		drawSaleAndRevenueGragh(list, "sale");
+	}
+	
+	function setRevenueData(list){
+		drawSaleAndRevenueGragh(list, "revenue");
+	}
+	
+	
+	
+	// Number of members (gender, level) 그래프 그리기
 	function drawNumberOfMembersGragh(memberCnt, list, type) {
 		let chart;
 		let labels = [];
 		let series = [];
+		let colors = [];
 		
 		if(type == 'gender'){
 			chart = document.querySelector('#numberOfMembersByGenderChart');
@@ -168,7 +233,11 @@
 			list.forEach(function(item){
 				labels.push(item.gender);	
 				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
+				
 			});
+			
+			colors = [config.colors.info, config.colors.danger,
+				config.colors.success];
 		} else if(type == 'level'){
 			chart = document.querySelector('#numberOfMembersByLevelChart');
 			
@@ -176,6 +245,9 @@
 				labels.push(item.member_level);	
 				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
 			});
+			
+			colors = [config.colors.bronzeColor, config.colors.silverColor,
+				config.colors.goldColor, config.colors.diamondColor];
 		}
 		
 		
@@ -192,8 +264,7 @@
 			},
 			labels : labels,
 			series : series,
-			colors : [ config.colors.primary, config.colors.secondary,
-					config.colors.info, config.colors.success ],
+			colors : colors,
 			stroke : {
 				width : 5,
 				colors : cardColor
@@ -256,7 +327,7 @@
 	}
 	
 	// 가입 회원 수 조회
-	function getMemberRegCnt(){
+	function selectRangedMemberRegCnt(){
 		let regDate_start = $('#regDate_start').val();
 		let regDate_end = $('#regDate_end').val();
 		
@@ -277,7 +348,7 @@
 		console.log(regDate_end);
 		
 		$.ajax({
-			url : '/admin/getMemberRegCnt',
+			url : '/admin/selectRangedMemberRegCnt',
 			type : 'GET',
 			dataType : 'json',
 			data : {
@@ -309,14 +380,395 @@
 	    return date;
 	}
 	
+	// 특정 달의 판매량 가져오기
+	function getSalesByMonth(){
+		$.ajax({
+			url : '/admin/getSalesByMonth',
+			type : 'GET',
+			dataType : 'json',
+			data : {
+				"month" : $("#selectMonthOfSale").val()
+			},
+			success : function(data) {
+				console.log(data);
+				drawSaleAndRevenueGragh(data, "sale");
+
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+	
+	// 특정 달의 매출 가져오기
+	function getRevenueByMonth(){
+		$.ajax({
+			url : '/admin/getRevenuesByMonth',
+			type : 'GET',
+			dataType : 'json',
+			data : {
+				"month" : $("#selectMonthOfRevenue").val()
+			},
+			success : function(data) {
+				console.log(data);
+				drawSaleAndRevenueGragh(data, "revenue");
+
+			},
+			error : function(error) {
+				console.log(error);
+			}
+		});
+	}
+	
+	
+	// 판매량, 매출 그래프 그리기
+	function drawSaleAndRevenueGragh(list, type){
+		let categories = [];
+		let series = [];
+		let chart;
+		let name;
+		
+		let totalSale = 0;
+		let totalRevenue = 0;
+		
+		if(type == "sale"){
+			chart = document.querySelector('#totalSaleChart');
+			name = "volume"
+			list.forEach(function(item){
+				categories.push(item.category_name);
+				series.push(item.count);
+				totalSale += item.count;
+			});
+			
+			$("#totalSaleCnt").text(totalSale);
+			
+		} else if(type == "revenue"){
+			chart = document.querySelector('#totalRevenueChart');
+			name = "amount"
+			list.forEach(function(item){
+				categories.push(item.category_name);
+				series.push(item.revenue);
+				totalRevenue += item.revenue;
+			});
+			
+			$("#totalRevenue").text(totalRevenue.toLocaleString());
+		}
+		
+		
+		
+		
+		
+		const totalRevenueChartEl = chart,
+	    totalRevenueChartOptions = {
+	      series: [
+	        {
+	          name: name,
+	          data: series
+	        }
+	      ],
+	      chart: {
+	        height: 300,
+	        stacked: true,
+	        type: 'bar',
+	        toolbar: { show: false }
+	      },
+	      plotOptions: {
+	        bar: {
+	          horizontal: false,
+	          columnWidth: '33%',
+	          borderRadius: 12,
+	          startingShape: 'rounded',
+	          endingShape: 'rounded'
+	        }
+	      },
+	      colors: [config.colors.primary, config.colors.info],
+	      dataLabels: {
+	        enabled: false
+	      },
+	      stroke: {
+	        curve: 'smooth',
+	        width: 6,
+	        lineCap: 'round',
+	        colors: [cardColor]
+	      },
+	      legend: {
+	        show: true,
+	        horizontalAlign: 'left',
+	        position: 'top',
+	        markers: {
+	          height: 8,
+	          width: 8,
+	          radius: 12,
+	          offsetX: -3
+	        },
+	        labels: {
+	          colors: axisColor
+	        },
+	        itemMargin: {
+	          horizontal: 10
+	        }
+	      },
+	      grid: {
+	        borderColor: borderColor,
+	        padding: {
+	          top: 0,
+	          bottom: -8,
+	          left: 20,
+	          right: 20
+	        }
+	      },
+	      xaxis: {
+	        categories: categories,
+	        labels: {
+	          style: {
+	            fontSize: '13px',
+	            colors: axisColor
+	          }
+	        },
+	        axisTicks: {
+	          show: false
+	        },
+	        axisBorder: {
+	          show: false
+	        }
+	      },
+	      yaxis: {
+	        labels: {
+	          style: {
+	            fontSize: '13px',
+	            colors: axisColor
+	          }
+	        }
+	      },
+	      responsive: [
+	        {
+	          breakpoint: 1700,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '32%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1580,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '35%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1440,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '42%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1300,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '48%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1200,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '40%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 1040,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 11,
+	                columnWidth: '48%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 991,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '30%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 840,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '35%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 768,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '28%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 640,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '32%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 576,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '37%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 480,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '45%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 420,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '52%'
+	              }
+	            }
+	          }
+	        },
+	        {
+	          breakpoint: 380,
+	          options: {
+	            plotOptions: {
+	              bar: {
+	                borderRadius: 10,
+	                columnWidth: '60%'
+	              }
+	            }
+	          }
+	        }
+	      ],
+	      states: {
+	        hover: {
+	          filter: {
+	            type: 'none'
+	          }
+	        },
+	        active: {
+	          filter: {
+	            type: 'none'
+	          }
+	        }
+	      }
+	    };
+	  if (typeof totalRevenueChartEl !== undefined && totalRevenueChartEl !== null) {
+		if(type == "sale"){
+			 if(isDrawedSaleGragh) {
+				 totalSaleChart.updateSeries([
+		    		{
+		    			name: "volume",
+		                data: series
+		    		}
+		    	]);
+		    	
+	    	 	totalSaleChart.updateOptions({
+	    	        xaxis: {
+	    	            categories: categories
+	    	        }
+	    	    });
+		    } else {
+		    	totalSaleChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
+		    	
+		    	totalSaleChart.render();
+		    	isDrawedSaleGragh = true;
+		    }	
+		} else if(type == "revenue") {
+			console.log("렌더링");
+			
+			if(isDrawedRevenueGragh) {
+				
+				console.log("재 렌더링");
+				
+		    	totalRevenueChart.updateSeries([
+		    		{
+		    			name: "revenue",
+		                data: series
+		    		}
+		    	]);
+		    	
+	    	 	totalRevenueChart.updateOptions({
+	    	        xaxis: {
+	    	            categories: categories
+	    	        }
+	    	    });
+		    } else {
+		    	
+		    	console.log("최초 렌더링");
+		    	
+		    	totalRevenueChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
+		    	
+		    	totalRevenueChart.render();
+		    	isDrawedRevenueGragh = true;
+		    }	
+		}
+	  }
+	}
+	
 </script>
 </head>
 <style>
-
-	.card-body {
-		max-width: 100% !important; 
-	    overflow: hidden !important; 
-	}
+.card-body {
+	max-width: 100% !important;
+	overflow: hidden !important;
+}
 </style>
 
 
@@ -355,233 +807,205 @@
 
 					<div class="container-xxl flex-grow-1 container-p-y">
 						<!-- body  -->
-						<div class="col-lg-6 col-md-6 col-12 mb-4">
-							<div class="card">
-								<div class="card-body">
-									<div class="card-title d-flex align-items-start justify-content-between">
-										<div class="avatar flex-shrink-0">
-											<img src="/resources/assets/admin/img/icons/unicons/icon_members.png" alt="chart success" class="rounded">
-										</div>
-
-										<!-- <div class="dropdown">
-											<button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-												<i class="bx bx-dots-vertical-rounded"></i>
-											</button>
-											<div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3" style="">
-												<a class="dropdown-item" href="javascript:void(0);">View More</a> <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+						<div class="row">
+							<div class="col-lg-3 col-md-6 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/member_icon.png" alt="chart success" class="rounded">
 											</div>
-										</div> -->
+										</div>
+										<span class="fw-semibold d-block mb-1">Register members today </span>
+										<h3 id="todayRegMemberCnt" class="card-title mb-2"></h3>
+										<div id="regGrowthRate"></div>
 									</div>
-									<span class="fw-semibold d-block mb-1">Number of Members</span>
-									<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
-									<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
-
-									<span class="fw-semibold d-block mt-4">Register date range</span>
-									<div class="col align-items-center">
-										<div class="form-check-inline">
-											<input id="regDate_start" class="form-control regDate" type="date" value="" id="">
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-6 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded">
+											</div>
 										</div>
-										<div class="form-check-inline">
-											<span class="mx-2">-</span>
-										</div>
-										<div class="form-check-inline">
-											<input id="regDate_end" class="form-control regDate" type="date" value="" id="">
-										</div>
-										<button id="" type="button" class="btn btn-outline-primary" onclick="getMemberRegCnt()">확인</button>
+										<span class="fw-semibold d-block mb-1">Sale count today</span>
+										<h3 id="daySaleCnt" class="card-title mb-2"></h3>
+										<div id="saleGrowthRate"></div>
 									</div>
-
-									<span class="fw-semibold d-block mt-2 mb-1">Number of Registered Members</span>
-									<h3 id="memberRegCnt" class="card-title mb-2"></h3>
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-6 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded">
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">Revenue today</span>
+										<h3 id="dayRevenue" class="card-title mb-2"></h3>
+										<div id="revenueGrowthRate"></div>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-3 col-md-6 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/inquiry_icon.png" alt="chart success" class="rounded">
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">Wait Inquiries</span>
+										<h3 id="waitInquiryCnt" class="card-title mb-2"></h3>
+									</div>
 								</div>
 							</div>
 						</div>
 
-						<!-- Number of members by gender -->
-						<div class="col-md-6 col-lg-2 order-0 mb-4">
-							<div class="card">
-								<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
-									<div class="card-title mb-0">
-										<h5 class="m-0 me-2">Number of members by gender</h5>
+
+						<div class="row">
+							<div class="col-lg-6 col-md-12 col-12 mb-4">
+								<div class="card h-100">
+									<div class="card-body">
+										<div class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/members_icon.png" alt="chart success" class="rounded">
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">Number of Members</span>
+										<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
+										<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
+
+										<span class="fw-semibold d-block mt-4">Register date range</span>
+										<div class="col align-items-center">
+											<div class="form-check-inline">
+												<input id="regDate_start" class="form-control regDate" type="date" value="" id="">
+											</div>
+											<div class="form-check-inline">
+												<span class="mx-2">-</span>
+											</div>
+											<div class="form-check-inline">
+												<input id="regDate_end" class="form-control regDate" type="date" value="" id="">
+											</div>
+											<button id="" type="button" class="btn btn-outline-primary" onclick="selectRangedMemberRegCnt()">확인</button>
+										</div>
+
+										<span class="fw-semibold d-block mt-2 mb-1">Number of Registered Members</span>
+										<h3 id="memberRegCnt" class="card-title mb-2"></h3>
 									</div>
 								</div>
-								<div class="card-body">
-									<div class="d-flex justify-content-center align-items-center mb-3">
-										<!-- <div class="d-flex flex-column align-items-center gap-1">
+							</div>
+
+							<!-- Number of members by gender -->
+							<div class="col-12 col-md-6 col-lg-3 order-0 mb-4">
+								<div class="card">
+									<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+										<div class="card-title mb-0">
+											<h5 class="m-0 me-2">Number of members by gender</h5>
+										</div>
+									</div>
+									<div class="card-body">
+										<div class="d-flex justify-content-center align-items-center mb-3">
+											<!-- <div class="d-flex flex-column align-items-center gap-1">
 											<h2 id="memberTotalCnt2" class="mb-2"></h2>
 											<span>Total Members</span>
 										</div> -->
-										<div id="numberOfMembersByGenderChart"></div>
-									</div>
-									<ul id="genderList" class="p-0 m-0">
+											<div id="numberOfMembersByGenderChart"></div>
+										</div>
+										<ul id="genderList" class="p-0 m-0">
 
-									</ul>
+										</ul>
+									</div>
 								</div>
 							</div>
-						</div>
-						<!--/ Number of members by gender -->
+							<!--/ Number of members by gender -->
 
-						<!-- Number of members by level -->
-						<div class="col-md-6 col-lg-2 order-0 mb-4">
-							<div class="card">
-								<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
-									<div class="card-title mb-0">
-										<h5 class="m-0 me-2">Number of members by level</h5>
+							<!-- Number of members by level -->
+							<div class="col-12 col-md-6 col-lg-3 order-0 mb-4">
+								<div class="card h-100">
+									<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+										<div class="card-title mb-0">
+											<h5 class="m-0 me-2">Number of members by level</h5>
+										</div>
 									</div>
-								</div>
-								<div class="card-body">
-									<div class="d-flex justify-content-center align-items-center mb-3">
-										<!-- <div class="d-flex flex-column align-items-center gap-1">
+									<div class="card-body">
+										<div class="d-flex justify-content-center align-items-center mb-3">
+											<!-- <div class="d-flex flex-column align-items-center gap-1">
 											<h2 id="memberTotalCnt2" class="mb-2"></h2>
 											<span>Total Members</span>
 										</div> -->
-										<div id="numberOfMembersByLevelChart"></div>
-									</div>
-									<ul id="levelList" class="p-0 m-0">
+											<div id="numberOfMembersByLevelChart"></div>
+										</div>
+										<ul id="levelList" class="p-0 m-0">
 
-									</ul>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<!--/ Number of members by level -->
+						</div>
+						<div class="row">
+							<div class="col-12 col-lg-6 order-2 order-md-3 order-lg-2 mb-4">
+								<div class="card">
+									<div class="row row-bordered g-0">
+										<div class="col-md-12">
+											<div class="card-body">
+												<div class="card-title d-flex align-items-start justify-content-between">
+													<div class="avatar flex-shrink-0">
+														<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded">
+													</div>
+												</div>
+												<span class="fw-semibold d-block mb-1">Total Sales volume</span>
+												<h3 id="totalSaleCnt" class="card-title mb-2"></h3>
+
+												<span class="fw-semibold d-block mt-4">Select Month</span>
+												<div class="col align-items-center">
+													<div class="form-check-inline">
+														<input id="selectMonthOfSale" class="form-control regDate" type="month" value="" id="">
+													</div>
+													<button id="" type="button" class="btn btn-outline-primary" onclick="getSalesByMonth()">확인</button>
+												</div>
+											</div>
+											<!-- <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5> -->
+											<div id="totalSaleChart" class="px-2"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-lg-6 order-2 order-md-3 order-lg-2 mb-4">
+								<div class="card">
+									<div class="row row-bordered g-0">
+										<div class="col-md-12">
+											<div class="card-body">
+												<div class="card-title d-flex align-items-start justify-content-between">
+													<div class="avatar flex-shrink-0">
+														<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded">
+													</div>
+												</div>
+												<span class="fw-semibold d-block mb-1">Total Revenue</span>
+												<h3 id="totalRevenue" class="card-title mb-2"></h3>
+
+												<span class="fw-semibold d-block mt-4">Select Month</span>
+												<div class="col align-items-center">
+													<div class="form-check-inline">
+														<input id="selectMonthOfRevenue" class="form-control regDate" type="month" value="" id="">
+													</div>
+													<button id="" type="button" class="btn btn-outline-primary" onclick="getRevenueByMonth()">확인</button>
+												</div>
+											</div>
+											<!-- <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5> -->
+											<div id="totalRevenueChart" class="px-2"></div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
-						<!--/ Number of members by level -->
-
+						<!--/ body  -->
 					</div>
-
-
 				</div>
-				                    
-<!-- 				<div class="container-xxl flex-grow-1 container-p-y"> -->
-<!-- 				 Collapse -->
-<!-- 				  <h5>주문 수</h5> -->
-<!-- 				  <div class="row"> -->
-<!-- 				    <div class="col-12"> -->
-<!-- 				      <div class="card mb-4"> -->
-<!-- 				        <h5 class="card-header">주문 수 통계</h5> -->
-<!-- 				        <div class="card-body"> -->
-<!-- 				          <p class="card-text">원하는 옵션을 선택하여 주문 수 통계를 확인하세요.</p> -->
-				
-<!-- 				          Collapse 트리거 버튼들 -->
-<!-- 				          <p class="demo-inline-spacing"> -->
-<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#todayOrderCount" aria-expanded="false" aria-controls="todayOrderCount">오늘의 주문 수</button> -->
-<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#totalOrders" aria-expanded="false" aria-controls="totalOrders">이번 달 주문 수</button> -->
-<!-- 				          </p> -->
-				
-<!-- 				          Collapse 내용들 -->
-				
-<!-- 				          <div class="collapse" id="todayOrderCount"> -->
-<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
-<!-- 								<i class='bx bxs-wallet'> 오늘의 주문 수 : </i>&nbsp; -->
-<%-- 				                <h3 class="card-title mb-2" id="todayOrderCount">${todayOrderCount} 개</h3> --%>
-<!-- 				            </div> -->
-<!-- 				          </div> -->
-				          
-<!-- 				          <div class="collapse" id="totalOrders"> -->
-<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
-<!-- 				              <i class='bx bxs-wallet'> 이번 달 주문 수 : </i>&nbsp; -->
-<%-- 				              <h3 class="card-title mb-2" id="totalOrders">${totalOrders} 개</h3> --%>
-<!-- 				            </div> -->
-<!-- 				          </div> -->
-				
-<!-- 				        </div> -->
-<!-- 				      </div> -->
-<!-- 				    </div> -->
-<!-- 				  </div> -->
-<!-- 				</div> -->
-				
-<!-- 				<div class="container-xxl flex-grow-1 container-p-y"> -->
-<!-- 				 Collapse -->
-<!-- 				  <h5>취소 및 반품</h5> -->
-<!-- 				  <div class="row"> -->
-<!-- 				    <div class="col-12"> -->
-<!-- 				      <div class="card mb-4"> -->
-<!-- 				        <h5 class="card-header">취소 및 반품 통계</h5> -->
-<!-- 				        <div class="card-body"> -->
-<!-- 				          <p class="card-text">원하는 옵션을 선택하여 취소 및 반품 통계를 확인하세요.</p> -->
-				
-<!-- 				          Collapse 트리거 버튼들 -->
-<!-- 				          <p class="demo-inline-spacing"> -->
-<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#cancelRate" aria-expanded="false" aria-controls="cancelRate">이번 달 취소율</button> -->
-<!-- 				            <button class="btn btn-primary me-1" type="button" data-bs-toggle="collapse" data-bs-target="#returnRate" aria-expanded="false" aria-controls="returnRate">이번 달 반품율</button> -->
-<!-- 				          </p> -->
-				
-<!-- 				          Collapse 내용들 -->
-				
-<!-- 				          <div class="collapse" id="cancelRate"> -->
-<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
-<!-- 								<i class='bx bxs-wallet'> 이번 달 취소율 : </i>&nbsp; -->
-<%-- 				                <h3 class="card-title mb-2" id="cancelRate">${cancelRate} %</h3> --%>
-<!-- 				            </div> -->
-<!-- 				          </div> -->
-				          
-<!-- 				          <div class="collapse" id="returnRate"> -->
-<!-- 				            <div class="d-grid d-sm-flex p-3 border"> -->
-<!-- 				              <i class='bx bxs-wallet'> 이번 달 반품율 : </i>&nbsp; -->
-<%-- 				              <h3 class="card-title mb-2" id="returnRate">${returnRate} %</h3> --%>
-<!-- 				            </div> -->
-<!-- 				          </div> -->
-				
-<!-- 				        </div> -->
-<!-- 				      </div> -->
-<!-- 				    </div> -->
-<!-- 				  </div> -->
-<!-- 				</div> -->
-                    
-<!--                   </div> -->
-<!--                 </div> -->
-<!--                 Total Revenue -->
-<!--               </div> -->
-<!--               <div class="row"> -->
-<!-- 				<div class="col-12 col-lg-8 mb-4"> -->
-<!-- 				    <div class="card mx-0"> -->
-<!-- 				        <div class="row g-0"> -->
-<!-- 				            <div class="col-md-12"> -->
-<!-- 				                <h5 class="card-header m-0 me-2 pb-3">카테고리별 매출 통계</h5> -->
-<!-- 				                <div id="categoryChart" class="px-2"></div> -->
-<!-- 				            </div> -->
-<!-- 				        </div> -->
-<!-- 				    </div> -->
-<!-- 				</div> -->
-<!-- 				<div class="col-12 col-lg-8 mb-4"> -->
-<!-- 				    <div class="card mx-0"> -->
-<!-- 				        <div class="row g-0"> -->
-<!-- 				            <div class="col-md-12"> -->
-<!-- 				                <h5 class="card-header m-0 me-2 pb-3">가격대 별 통계</h5> -->
-<!-- 				                <div id="priceRangeChart" class="px-2"></div> -->
-<!-- 				            </div> -->
-<!-- 				        </div> -->
-<!-- 				    </div> -->
-<!-- 				</div> -->
-<!-- 				<div class="col-12 col-lg-8 mb-4"> -->
-<!-- 				    <div class="card mx-0"> -->
-<!-- 				        <div class="row g-0"> -->
-<!-- 				            <div class="col-md-12"> -->
-<!-- 				                <h5 class="card-header m-0 me-2 pb-3">회원 연령 별 주문 통계</h5> -->
-<!-- 				                <div id="ageGroupChart" class="px-2"></div> -->
-<!-- 				            </div> -->
-<!-- 				        </div> -->
-<!-- 				    </div> -->
-<!-- 				</div> -->
-<!--                 Order Statistics -->
-<!--                 <div class="col-12 col-md-12 col-lg-6 order-3 order-md-2"> -->
-<!--                   <div class="row"> -->
-<!-- 					<div class="col-12 mb-4"> -->
-<!--                       <div class="card"> -->
-<!--                         <div class="card-body"> -->
-<!--                           <div class="card-title d-flex align-items-start justify-content-between"> -->
-<!--                           </div> -->
-<!--                           <div class="col-md-12"> -->
-<!-- 	                          <span class="d-block mb-1">회원 성별 별 주문 통계</span> -->
-<!-- 	                          <div id="genderChart" class="px-2"></div> -->
-<!--                           </div> -->
-<!--                           <h3 class="card-title text-nowrap mb-2"></h3> -->
-<!--                         </div> -->
-<!--                       </div> -->
-<!--                     </div> -->
-<!--                    </div> -->
-<!--                   </div> -->
-<!--                 / Order Statistics -->
-<!--               </div> -->
-<!--             </div> -->
-<!-- 			</div> -->
 				<!-- / Content -->
 
 				<!-- Footer -->
@@ -630,7 +1054,7 @@
 	<script src="/resources/assets/admin/js/main.js"></script>
 
 	<!-- Page JS -->
-	<!-- <script src="/resources/assets/admin/js/dashboards-analytics.js"></script> -->
+	<script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
 
 	<!-- Place this tag in your head or just before your close body tag. -->
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
