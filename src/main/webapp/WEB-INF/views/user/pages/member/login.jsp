@@ -7,34 +7,6 @@
 <head>
 <meta charset="UTF-8" />
 <title>ELOLIA</title>
-<!-- ========================= CSS here ========================= -->
-<link rel="stylesheet"
-	href="/resources/assets/user/css/bootstrap.min.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/LineIcons.3.0.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/glightbox.min.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/main.css" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/favicon.png" />
-<style type="text/css">
-.kakao {
-	background-color: #fee500;
-}
-
-.naver {
-	
-}
-
-.failMsg {
-	color: red;
-	font-size: 15px;
-}
-</style>
-  <head>
-    <meta charset="UTF-8" />
-    <title>ELOLIA</title>
     <!-- ========================= CSS here ========================= -->
     <link
       rel="stylesheet"
@@ -71,9 +43,8 @@
 	  	max-width: 200px;
 	  }
     </style>
-
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -184,39 +155,8 @@
 									href="${pageContext.request.contextPath}/member/viewSignUp">회원가입
 									하기 </a>
 							</p>
-
                 <span id="nonMemberFunction"></span>
-                <!-- working... -->
-                <!-- TODO : 모델이든 세션이든 정보 받아서 비회원이 장바구니에서 결제하기 버튼 누르면  '비회원으로 결제하기' 링크 만들어야 함-->
-                <%--
-                <c:if test="${sessionScope.sentByOrderRequest eq null}">
-                  <p class="outer-link">
-                    <a
-                      href="${pageContext.request.contextPath}/orderByNonMemberPage"
-                    >
-                      비회원으로 주문조회 하기
-                    </a>
-                  </p>
-                </c:if>
 
-                <c:if test="${true}">
-                  <p class="outer-link">
-                    <a
-                      href="${pageContext.request.contextPath}/orderByNonMemberPage"
-                    >
-                      비회원으로 주문조회 하기
-                    </a>
-                  </p>
-                </c:if>
-                --%> <%--
-                <c:if test="${not empty sentByOrderRequest}">
-                  <p class="outer-link">
-                    <a onclick="goToOrderPageOfNonMember()">
-                      비회원으로 주문결제 하기
-                    </a>
-                  </p>
-                </c:if>
-                --%>
               </div>
             </form>
           </div>
@@ -237,7 +177,7 @@
     <script src="/resources/assets/user/js/glightbox.min.js"></script>
     <script src="/resources/assets/user/js/main.js"></script>
     <script>
-      window.addEventListener("load", function () {
+      window.addEventListener("load", function() {
         let sentByOrderRequest = null;
         $.ajax({
           async: false,
@@ -245,7 +185,7 @@
           url: "/order/sessionState",
           dataType: "json",
           success: function (res) {
-            sentByOrderRequest = res.sentByOrderRequest;
+            sentByOrderRequest = res.sentByOrderRequest; // 로그인 인터셉터 무한 루프 방지
           },
           error: function (request, status, error) {
             console.log(
@@ -259,8 +199,10 @@
                 error
             );
           },
-        });
+        }); // ajax end
+
         console.log("sentByOrderRequest : " + sentByOrderRequest);
+        
         const params = new URLSearchParams(window.location.search);
         console.log(params);
         console.log(params.get("goToOrder"));
@@ -275,12 +217,9 @@
 				</a></p>`;
           $("#nonMemberFunction").after(tags);
         }
+      }) // window.addEventListener end
 
       function goToOrderPageOfNonMember() {
-    	  
-    	  
-    	  
-    	
         $.ajax({
           async: false,
           type: "POST",
@@ -307,6 +246,7 @@
         });
         location.href = "${pageContext.request.contextPath}/order"; // GET 요청
       }
+
     </script>
 </body>
 </html>
