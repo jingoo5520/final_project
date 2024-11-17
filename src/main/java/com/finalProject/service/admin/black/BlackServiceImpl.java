@@ -34,10 +34,10 @@ public class BlackServiceImpl implements BlackService {
 		PagingInfo pi = new PagingInfo(dto);
 		pi.setTotalPostCnt(bDAO.getTotalPostCnt());
 
-		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
-		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+		pi.setTotalPageCnt(); // �쟾泥� �럹�씠吏� �닔 �꽭�똿
+		pi.setStartRowIndex(); // �쁽�옱 �럹�씠吏��뿉�꽌 蹂댁뿬二쇨린 �떆�옉�븷 湲��쓽 index踰덊샇
 
-		// 페이징 블럭
+		// �럹�씠吏� 釉붾윮
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
@@ -57,12 +57,13 @@ public class BlackServiceImpl implements BlackService {
 		mapperMap.put("reg_date_start", bm.getReg_date_start());
 		mapperMap.put("reg_date_end", bm.getReg_date_end());
 		mapperMap.put("isBlack", bm.getBlack());
+		System.out.println(bm.getBlack());
 		pi.setTotalPostCnt(bDAO.getSearchTotalPostCnt(mapperMap));
 
-		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
-		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+		pi.setTotalPageCnt(); // �쟾泥� �럹�씠吏� �닔 �꽭�똿
+		pi.setStartRowIndex(); // �쁽�옱 �럹�씠吏��뿉�꽌 蹂댁뿬二쇨린 �떆�옉�븷 湲��쓽 index踰덊샇
 
-		// 페이징 블럭
+		// �럹�씠吏� 釉붾윮
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
@@ -98,7 +99,7 @@ public class BlackServiceImpl implements BlackService {
 
 		List<String> list = map.get("MemberIdList");
 		System.out.println(list);
-		BlackInsertDTO dto = new BlackInsertDTO(list, "jingoo5520", "관리자 취소");
+		BlackInsertDTO dto = new BlackInsertDTO(list, "jingoo5520", "愿�由ъ옄 痍⑥냼");
 		if (updateCount >= 1) {
 
 			bDAO.insertBlackMembers(dto);
@@ -108,6 +109,23 @@ public class BlackServiceImpl implements BlackService {
 
 		}
 		return true;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public boolean blackCancelMember(String memberId) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		int result1 = 0;
+		if (memberId != null && memberId != "") {
+			result = bDAO.deleteBlackMember(memberId);
+			result1 = bDAO.blackCancelMember(memberId);
+		}
+		if (result >= 0 && result1 >= 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

@@ -94,11 +94,9 @@
 		JOIN
 		orders o ON c.order_id = o.order_id
 		JOIN
-		order_products op
-		ON c.order_product_no = op.orderproduct_no
+		order_products op ON c.order_product_no = op.orderproduct_no
 		JOIN
-		payments p ON c.order_id
-		= p.order_id
+		payments p ON c.order_id = p.order_id
 		<if test="list != null and list.size() > 0">
 			WHERE c.order_product_no IN
 			<foreach item="orderProductNo" collection="list" open="("
@@ -193,5 +191,53 @@
 		SELECT m.member_id from members m JOIN orders o ON
 		o.orderer_id = m.member_id WHERE order_id =
 		#{orderId}
+	</select>
+	<select id="getAllRefund" resultType="com.finalProject.model.admin.order.AdminRefundVO">
+		select * from refunds 
+		limit #{startRowIndex} , #{viewPostCntPerPage}
+	</select>
+	<select id="getCountAllRefund" resultType="int">
+		select count(*) from refunds;
+	</select>
+		<select id="getSearchRefundTotalPostCnt" resultType="int">
+		SELECT COUNT(*) from refunds
+		<where>
+			<if test="refund_type != null and refund_type.size() > 0">
+				and refund_type in
+				<foreach item="type" collection="refund_type" open="("
+					separator="," close=")">
+					#{type}
+				</foreach>
+			</if>
+			
+			<if
+				test="refund_start_date != null and refund_start_date != ''">
+				AND refund_receive_date &gt;= #{refund_start_date}
+			</if>
+			<if
+				test="refund_end_date != null and refund_end_date != ''">
+				AND refund_receive_date &lt;= #{refund_end_date}
+			</if>
+		</where>
+	</select>
+	<select id="getSearchRefundFilter" resultType="com.finalProject.model.admin.order.AdminRefundVO">
+		select * from refunds where 1=1
+		<if test="refund_type != null and refund_type.size() > 0">
+			and refund_type in
+			<foreach item="type" collection="refund_type" open="("
+				separator="," close=")">
+				#{type}
+			</foreach>
+		</if>
+		<if
+			test="refund_start_date != null and refund_start_date != ''">
+			AND refund_receive_date &gt;= #{refund_start_date}
+		</if>
+		<if
+			test="refund_end_date != null and refund_end_date != ''">
+			AND refund_receive_date &lt;= #{refund_end_date}
+		</if>
+		order by refund_no desc
+		limit #{startRowIndex},#{viewPostCntPerPage}
 	</select>
 </mapper>

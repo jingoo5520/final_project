@@ -61,4 +61,16 @@ public class BlackDAOImpl implements BlackDAO {
 		ses.insert(ns + "insertBlack", dto);
 	}
 
+	@Override
+	public int blackCancelMember(String memberId) {
+		// TODO Auto-generated method stub
+		return ses.update(ns + "updateBlackMember", memberId);
+	}
+
+	@Override
+	public int deleteBlackMember(String memberId) {
+		// TODO Auto-generated method stub
+		return ses.delete(ns + "deleteBlackMember", memberId);
+	}
+
 }

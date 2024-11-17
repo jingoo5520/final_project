@@ -100,16 +100,15 @@ function showToast(title, content) {
 		        $.each(data.CancelList, function(index, cancel) {
 	
 					let isDisabled = (cancel.cancel_status === '취소 완료' || cancel.cancel_status === '취소 철회') ? 'disabled' : '';
-		            const formattedDate = new Date(cancel.cancel_apply_date).toISOString().slice(0, 10);
-		            
+		          
 		            output += '<tr>' +
 		                
-		                '<td>' + cancel.cancel_no + '</td>' +
-		                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
+		                '<td>' + cancel.cancel_no + '</td>' +      
 		                '<td>' + cancel.order_product_no + '</td>' +
-		                '<td>' + formattedDate + '</td>' +
-		                '<td>' + cancel.cancel_complete_date + '</td>' +
-		                '<td>' + cancel.cancel_retract_date + '</td>' +
+		                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
+		                '<td>' + (cancel.cancel_apply_date ? new Date(cancel.cancel_apply_date).toLocaleString() : ' ') + '</td>' +
+		                '<td>' + (cancel.cancel_complete_date ? new Date(cancel.cancel_complete_date).toLocaleString() : ' ') + '</td>' +
+		                '<td>' + (cancel.cancel_retract_date ? new Date(cancel.cancel_retract_date).toLocaleString() : ' ') +'</td>' +
 		                '<td>' + cancel.cancel_type + '</td>' +
 		                '<td>' + cancel.cancel_status + '</td>' +			          
 		                '<td><div class="mt-3">' +
@@ -183,8 +182,8 @@ function showToast(title, content) {
 	                            cancelListContainer += 
 	                                '<tr>' +
 	                                    '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-	                                    '<td>' + e.order_id + '</td>' +
 	                                    '<td class="modalOrderProductNo">' + e.order_product_no + '</td>' +
+	                                    '<td>' + e.order_id + '</td>' +
 	                                    '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
 	                                    '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
 	                                    '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -251,8 +250,8 @@ function showToast(title, content) {
 		                            cancelListContainer += 
 		                                '<tr>' +
 		                                    '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-		                                    '<td>' + e.order_id + '</td>' +
 		                                    '<td class="modalOrderProductNo">' + e.order_product_no + '</td>' +
+		                                    '<td>' + e.order_id + '</td>' +
 		                                    '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
 		                                    '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
 		                                    '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -473,9 +472,9 @@ function showToast(title, content) {
 				            cancelList.forEach(function (e) {
 				                cancelListContainer += 
 				                    '<tr>' +
-				                        '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-				                        '<td>' + e.order_id + '</td>' +
+				                        '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +              
 				                        '<td class = "modalOrderProductNo">' + e.order_product_no + '</td>' +
+				                        '<td>' + e.order_id + '</td>' +
 				                        '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
 				                        '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
 				                        '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -610,8 +609,9 @@ function showToast(title, content) {
                 cancelListContainer += 
                     '<tr>' +
                         '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-                        '<td>' + e.order_id + '</td>' +
+                       
                         '<td class = "modalOrderProductNo">' + e.order_product_no + '</td>' +
+                        '<td>' + e.order_id + '</td>' +
                         '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
                         '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
                         '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -712,15 +712,16 @@ function showToast(title, content) {
 			        	
  						let isDisabled = (cancel.cancel_status === '취소 완료' || cancel.cancel_status === '취소 철회') ? 'disabled' : '';
 			            const formattedDate = new Date(cancel.cancel_apply_date).toISOString().slice(0, 10);
-			            
+			       
+			        
 			            output += '<tr>' +
 			             
 			                '<td>' + cancel.cancel_no + '</td>' +
-			                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
 			                '<td>' + cancel.order_product_no + '</td>' +
+			                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
 			                '<td>' + formattedDate + '</td>' +
-			                '<td>' + cancel.cancel_complete_date + '</td>' +
-			                '<td>' + cancel.cancel_retract_date + '</td>' +
+			                '<td>' + (cancel.cancel_complete_date ? new Date(cancel.cancel_complete_date).toLocaleString() : ' ') + '</td>' +
+			                '<td>' + (cancel.cancel_retract_date ? new Date(cancel.cancel_retract_date).toLocaleString() : ' ') +'</td>' +
 			                '<td>' + cancel.cancel_type + '</td>' +
 			                '<td>' + cancel.cancel_status + '</td>' +
 			                '<td>' + cancel.cancel_reason + '</td>' +
