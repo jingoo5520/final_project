@@ -7,34 +7,44 @@
 <head>
 <meta charset="UTF-8" />
 <title>ELOLIA</title>
-<!-- ========================= CSS here ========================= -->
-<link rel="stylesheet"
-	href="/resources/assets/user/css/bootstrap.min.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/LineIcons.3.0.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-<link rel="stylesheet"
-	href="/resources/assets/user/css/glightbox.min.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/main.css" />
-<link rel="shortcut icon" type="image/x-icon"
-	href="/resources/assets/user/images/logo/favicon.png" />
-<style type="text/css">
-.kakao {
-	background-color: #fee500;
-}
-
-.naver {
+    <!-- ========================= CSS here ========================= -->
+    <link
+      rel="stylesheet"
+      href="/resources/assets/user/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/resources/assets/user/css/LineIcons.3.0.css"
+    />
+    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+    <link
+      rel="stylesheet"
+      href="/resources/assets/user/css/glightbox.min.css"
+    />
+    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/resources/assets/user/images/logo/favicon.png"
+    />
+    <style type="text/css">
+      .kakao {
+        background-color: #fee500;
+      }
 	
-}
-
-.failMsg {
-	color: red;
-	font-size: 15px;
-}
-</style>
-
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	  .social-login .row div {
+	  	display: flex;
+	  	justify-content: center;
+	  }
+	  
+	  .social-login .row div img{
+	  	border-radius: 4px;
+	  	max-height: 50px;
+	  	max-width: 200px;
+	  }
+    </style>
+    <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -145,17 +155,15 @@
 									href="${pageContext.request.contextPath}/member/viewSignUp">회원가입
 									하기 </a>
 							</p>
+                <span id="nonMemberFunction"></span>
 
-							<span id="nonMemberFunction"></span>
-							<!-- working... -->
-							<!-- TODO : 모델이든 세션이든 정보 받아서 비회원이 장바구니에서 결제하기 버튼 누르면  '비회원으로 결제하기' 링크 만들어야 함-->
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- End Account Login Area -->
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Account Login Area -->
 
 	<jsp:include page="../footer.jsp"></jsp:include>
 
@@ -163,13 +171,13 @@
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
 	</a>
 
-	<!-- ========================= JS here ========================= -->
-	<script src="/resources/assets/user/js/bootstrap.min.js"></script>
-	<script src="/resources/assets/user/js/tiny-slider.js"></script>
-	<script src="/resources/assets/user/js/glightbox.min.js"></script>
-	<script src="/resources/assets/user/js/main.js"></script>
-	<script>
-      window.addEventListener("load", function () {
+    <!-- ========================= JS here ========================= -->
+    <script src="/resources/assets/user/js/bootstrap.min.js"></script>
+    <script src="/resources/assets/user/js/tiny-slider.js"></script>
+    <script src="/resources/assets/user/js/glightbox.min.js"></script>
+    <script src="/resources/assets/user/js/main.js"></script>
+    <script>
+      window.addEventListener("load", function() {
         let sentByOrderRequest = null;
         $.ajax({
           async: false,
@@ -177,7 +185,7 @@
           url: "/order/sessionState",
           dataType: "json",
           success: function (res) {
-            sentByOrderRequest = res.sentByOrderRequest;
+            sentByOrderRequest = res.sentByOrderRequest; // 로그인 인터셉터 무한 루프 방지
           },
           error: function (request, status, error) {
             console.log(
@@ -191,14 +199,16 @@
                 error
             );
           },
-        });
+        }); // ajax end
+
         console.log("sentByOrderRequest : " + sentByOrderRequest);
+        
         const params = new URLSearchParams(window.location.search);
         console.log(params);
         console.log(params.get("goToOrder"));
         if (params.get("goToOrder") == "True") {
           let tags = `<p class="outer-link">
-					<a onclick="goToOrderPageOfNonMember()">비회원으로 주문결제 하기
+					<a href="#" onclick="goToOrderPageOfNonMember()">비회원으로 주문결제 하기
 				</a></p>`;
           $("#nonMemberFunction").after(tags);
         } else {
@@ -207,13 +217,13 @@
 				</a></p>`;
           $("#nonMemberFunction").after(tags);
         }
-      });
+      }) // window.addEventListener end
 
       function goToOrderPageOfNonMember() {
         $.ajax({
           async: false,
           type: "POST",
-          url: "/order/session",
+          url: "/order/session/requestByNonMember",
           data: {
             requestByNonMember: "True",
           },
@@ -236,6 +246,7 @@
         });
         location.href = "${pageContext.request.contextPath}/order"; // GET 요청
       }
+
     </script>
 </body>
 </html>

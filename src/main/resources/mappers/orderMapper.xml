@@ -78,11 +78,23 @@
 			order_id, orderer_id, coupon_no,
 		    level_dc_rate, level_dc_amount, use_point, 
 		    withdraw_possible, order_delivery,
-		    order_status, order_request
+		    order_status, order_request,
+		    payment_module_type
 		) select #{orderId}, #{request.ordererId}, cp.coupon_no,
 			l.level_dc, 0, #{request.pointDC},
 			"Y", #{request.deliveryAddress},
-			1, #{request.deliveryRequest}
+			1, #{request.deliveryRequest},
+			case
+				when #{request.paymentType} = 'CARD'
+				then 'TC'
+				when #{request.paymentType} = 'TRANSFER'
+				then 'TA'
+				when #{request.paymentType} = 'NAVER_PAY'
+				then 'N'
+				when #{request.paymentType} = 'KAKAO_PAY'
+				then 'K'
+				else null
+			end
 			from members m
 			left join levels l on m.member_level = l.level_no <!-- members에 데이터가 있으면  -->
 			left join coupon_paid cp on cp.coupon_code = #{request.couponUse}
@@ -109,12 +121,20 @@
 		insert into orders (
 			order_id, orderer_id,
 		    withdraw_possible, order_delivery,
-		    order_status, order_request
-		) values (
-			#{orderId}, #{request.ordererId},
-			'Y', #{request.deliveryAddress},
-			1, #{request.deliveryRequest}
-		)
+		    payment_module_type
+		) select #{orderId}, #{request.ordererId}, 'Y',
+		#{request.deliveryAddress},
+		case
+			when #{request.paymentType} = 'CARD'
+			then 'TC'
+			when #{request.paymentType} = 'TRANSFER'
+			then 'TA'
+			when #{request.paymentType} = 'NAVER_PAY'
+			then 'N'
+			when #{request.paymentType} = 'KAKAO_PAY'
+			then 'K'
+			else null
+		end
 	</insert>
 	
 	<insert id="insertGuest">
@@ -362,10 +382,11 @@
 	    <result property="order_id" column="order_id" javaType="java.lang.String"/>
 	    <result property="order_date" column="order_date" javaType="java.sql.Timestamp"/>
 	    <result property="order_status" column="order_status" javaType="java.lang.String" />
+	    <result property="payment_module_type" column="payment_module_type" javaType="java.lang.String" />
 	</resultMap>
 	
 	<select id="selectOrderInfo" resultMap="OrderInfoMap">
-		select order_id, order_date, order_status from orders where order_id = #{orderId}
+		select order_id, order_date, order_status, payment_module_type from orders where order_id = #{orderId}
 	</select>
 	
 	<insert id="insertCancel">
