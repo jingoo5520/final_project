@@ -28,6 +28,8 @@
 		getearnedPointList(1);
 	});
 	
+	var totalPageNo = 0;
+	
 	function setEarnedPointList() {
 		getPagingInfo("earned");
 		getearnedPointList(1);
@@ -68,46 +70,51 @@
 	
 	function getPagingInfo(pointType) {
 		$.ajax({
-			async: false,
 			type: 'POST',
 			contentType: 'text/plain',
 			data: pointType, 
 			url: '/member/myPage/getPointPagingInfo',
 			dataType: 'json',
 	        success : function(response) {
-	        	makePaging(pointType, response.totalPageCount);
+	        	totalPageNo = response.totalPageCount;
+	        	makePaging(pointType, totalPageNo, 1);
 	        },
 	        error : function(response) {
 	        }
 		});
 	}
 	
-	function makePaging(pointType, totalPage) {
-		console.log(totalPage);
+	function makePaging(pointType, totalPage, pageNo) {
 		let output = "";
-		for (let i = 1; i < totalPage + 1; i++) {
-			if (i == 1) {
-				output += `<div id="\${pointType}_page_\${i}" class="pages active" onclick="get\${pointType}PointList(\${i})">\${i}</div>`;
+		
+		if (totalPage > 1) {
+			if (pageNo == 1) {
+				output = `<div id="\${pointType}_pageDown" class="pages disabled">이전</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_pageUp" class="pages active" onclick="get\${pointType}PointList(\${pageNo + 1})">다음</div>`;
+				$("#pagination").html(output);
+			} else if (pageNo == totalPage) {
+				output = `<div id="\${pointType}_pageDown" class="pages active" onclick="get\${pointType}PointList(\${pageNo - 1})">이전</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_pageUp" class="pages disabled">다음</div>`;
+				$("#pagination").html(output);
 			} else {
-				output += `<div id="\${pointType}_page_\${i}" class="pages" onclick="get\${pointType}PointList(\${i})">\${i}</div>`;
+				output = `<div id="\${pointType}_pageDown" class="pages active" onclick="get\${pointType}PointList(\${pageNo - 1})">이전</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_pageUp" class="pages active" onclick="get\${pointType}PointList(\${pageNo + 1})">다음</div>`;
+				$("#pagination").html(output);
 			}
+			
+		} else if (totalPage == 1) {
+			$("#pagination").html("");
 		}
-		$("#" + pointType + "Pagination").html(output);
+		
+		
 	}
 	
 	function getearnedPointList(pageNo) {
-		let pages = $(".pages");
-		
-		pages.each(function(index, page) {
-			$(page).removeClass('active');
-			
-			if ($(page).attr("id") == "earned_page_" + pageNo) {
-				$(page).addClass('active');
-			}
-		});
 		
 		$.ajax({
-			async: false,
 			type: 'POST',
 			data: { pageNo: pageNo },
 			url: '/member/myPage/getEarnedPointList',
@@ -118,18 +125,12 @@
 	        error : function(response) {
 	        }
 		});
+		
+		makePaging("earned", totalPageNo, pageNo);
+		
 	}
 	
 	function getusedPointList(pageNo) {
-		let pages = $(".pages");
-		
-		pages.each(function(index, page) {
-			$(page).removeClass('active');
-			
-			if ($(page).attr("id") == "used_page_" + pageNo) {
-				$(page).addClass('active');
-			}
-		});
 		
 		$.ajax({
 			async: false,
@@ -143,6 +144,8 @@
 	        error : function(response) {
 	        }
 		});
+		
+		makePaging("used", totalPageNo, pageNo);
 	}
 	
 	function makeEarnedPointList(pointList) {
@@ -182,6 +185,7 @@
 	.tab-content {
 		max-width: 800px;
 		margin-left: 50px;
+		height: 510px;
 	}
 
 	.pointFooter {
@@ -246,6 +250,10 @@
 		padding-top: 20px;
 	}
 	
+	.tab-pane {
+		height: 510px;
+	}
+	
 	.pointList {
 		background-color: #FFFFFF !important;
 	}
@@ -269,6 +277,11 @@
 		justify-content: center;
 		transition: background-color 0.3s;
 		border-radius: 4px;
+		user-select: none;
+	}
+	
+	.pages.disabled {
+		cursor: default;
 	}
 	
 	.pages.active {
@@ -327,7 +340,7 @@
 		color: #222222;
 		font-weight: bold;
 		padding: 8px 26px;
-		font-size: 18px;
+		font-size: 16px;
 		display:flex;
 		display: flex;
 		flex-direction: row;
@@ -336,7 +349,7 @@
 	}
 	
 	.earnedHead div:nth-of-type(2) {
-		margin-left: 20px;
+		margin-left: 40px;
 	}
 	
 	.earnedHead div:nth-of-type(3) {
@@ -417,9 +430,6 @@
 										</ul>
 									</div>
 								</div>
-								<div class="earnedPointList-footer">
-									<div class="pagination" id="earnedPagination"></div>
-								</div>
 							</div>
 							<div class="tab-pane fade" id="usedPointList" role="tabpanel" aria-labelledby="usedPointList-tab" tabindex="0">
 								<div class="pointInfoHead usedHead">
@@ -432,10 +442,10 @@
 										</ul>
 									</div>
 								</div>
-								<div class="usedPointList-footer">
-									<div class="pagination" id="usedPagination"></div>
-								</div>
 							</div>
+						</div>
+						<div class="earnedPointList-footer">
+							<div class="pagination" id="pagination"></div>
 						</div>
 						<div class="row pointFooter">
 							<div id="memberPoint" class="col-lg-6 col-md-6 col-12">보유 포인트 1000000</div>
