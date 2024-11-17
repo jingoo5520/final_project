@@ -130,17 +130,17 @@
 							                <input id = "notice_title" type="text" class="form-control" name="notice_title" placeholder="제목을 입력하세요" value="${notice.notice_title}" required />
 							            </div>
 							            <div class="input-group">
-							                <input id="admin_id" type="text" class="form-control" name="admin_id" placeholder="작성자를 입력하세요" value="${notice.admin_id}" required />
+							                <input id="admin_id" type="text" class="form-control" name="admin_id" placeholder="작성자를 입력하세요" value="${notice.admin_id}" required readonly/>
 							            </div>
 							            <div class="input-group">
 							            <div class="input-group-text">
 										    <input id="noticeType1" class="form-check-input mt-0" type="radio" name="notice_type" value="N" 
-										           checked required id="noticeType1" onchange="changeForm(this.value)"/>
+										           checked required id="noticeType1" onchange="changeForm(this.value)" />
 										    <label for="noticeType1">공지</label>
 										</div>
 										<div class="input-group-text">
 										    <input id="noticeType2" class="form-check-input mt-0" type="radio" name="notice_type" value="E" 
-										           required id="noticeType2" onchange="changeForm(this.value)"/>
+										           required id="noticeType2" onchange="changeForm(this.value)" disabled/>
 										    <label for="noticeType2">이벤트</label>
 							            </div>
 							            </div>

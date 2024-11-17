@@ -41,6 +41,7 @@
 <!-- 이벤트 조회 -->
     <select id="selectEventById" resultType="NoticeDTO">
 		select notice_no, notice_type, notice_title, notice_content, reg_date, admin_id,
+		banner_image,
 		thumbnail_image, event_start_date, event_end_date
 		from notices where notice_no = #{noticeNo}
 	</select>
@@ -53,11 +54,16 @@
 	</update>
 	
 <!-- 이벤트 수정 -->
-	<update id="updateEvent" parameterType="NoticeDTO">
-		update notices set notice_title = #{notice_title}, admin_id = #{admin_id},
-		notice_content = #{notice_content}, notice_type = #{notice_type},
-		event_start_date = #{event_start_date}, event_end_date = #{event_end_date},
-		banner_image = #{banner_image}, thumbnail_image = #{thumbnail_image}, url = #{url}
+	<update id="updateEvent">
+		update notices 
+		set 
+		notice_title = #{notice_title}, 
+		notice_content = #{notice_content}, 
+		notice_type = #{notice_type},
+		event_start_date = #{event_start_date}, 
+		event_end_date = #{event_end_date},
+		banner_image = #{banner_image}, 
+		thumbnail_image = #{thumbnail_image}
 		where notice_no = #{notice_no}
 	</update>
 	
@@ -78,12 +84,35 @@
 		select count(*) from notices
 		where is_delete='N' and notice_type = 'N'
     </select>
+	
+<!-- 총 글(데이터) 수 -->
+	<select id="selectNoticeCnt" resultType="int">
+		select count(*) from notices
+		where is_delete='N' and notice_type = 'N'
+    </select>
+	
 
 <!-- 페이지네이션이 적용된 공지 목록 조회 -->
-    <select id="getNoticesWithPagination" resultType="NoticeDTO">
+    <select id="selectNoticeList" resultType="NoticeDTO">
         SELECT notice_no, notice_title, admin_id, notice_type, reg_date
         FROM notices WHERE is_delete='N' AND notice_type = 'N' 
-        ORDER BY reg_date DESC LIMIT #{offset}, #{limit}
+        ORDER BY reg_date DESC 
+        LIMIT #{startRowIndex}, #{viewDataCntPerPage}
+    </select>
+    
+<!-- 총 글(데이터) 수 -->
+	<select id="selectEventCnt" resultType="int">
+		select count(*) from notices
+		where is_delete='N' and notice_type = 'E'
+    </select>
+	
+
+<!-- 페이지네이션이 적용된 공지 목록 조회 -->
+    <select id="selectEventList" resultType="NoticeDTO">
+        SELECT notice_no, notice_title, admin_id, notice_type, reg_date, event_start_date, event_end_date
+        FROM notices WHERE is_delete='N' AND notice_type = 'E' 
+        ORDER BY reg_date DESC 
+        LIMIT #{startRowIndex}, #{viewDataCntPerPage}
     </select>
     
     <!-- 페이지네이션 검색어 -->

@@ -57,6 +57,7 @@
 	</div>
 	<!-- End Breadcrumbs -->
 
+<section class="product-grids section">
 <div class="container mt-3">
   <div class="row">
     <c:choose>
@@ -126,6 +127,7 @@
 		 </div>
 		 </div>
             </div>
+            </section>
 
     <!-- Start Breadcrumbs -->
     <jsp:include page="../footer.jsp"></jsp:include>
