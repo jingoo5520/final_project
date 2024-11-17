@@ -26,7 +26,6 @@
 </head>
 <body>
     <jsp:include page="../header.jsp"></jsp:include>
-    
     <!-- Start Breadcrumbs -->
 	<div class="breadcrumbs">
 		<div class="container">
@@ -47,6 +46,7 @@
 		</div>
 	</div>
 	<!-- End Breadcrumbs -->
+    <section class="product-grids section">
 
 <div class="layout-page">
     <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
@@ -64,7 +64,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title">${notices.notice_title}</h5>
-                        <p class="card-text">작성자: <c:out value="${notices.admin_id}"/> | 작성일: <c:out value="${notices.reg_date}"/></p>
+                        <p class="card-text">작성자: <c:out value="${notices.admin_id}"/> | 작성일: <c:out value="${fn:replace(notices.reg_date, 'T', ' ')}"/></p>
                     </div>
                     <div class="card-body">
                         <p class="card-text">${notices.notice_content}</p>
@@ -81,6 +81,7 @@
         </div>
     </div>
 </div>
+</section>
 
 
     <!-- Start Breadcrumbs -->

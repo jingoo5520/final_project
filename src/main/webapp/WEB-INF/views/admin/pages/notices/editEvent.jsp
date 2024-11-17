@@ -130,11 +130,11 @@
               <input id="notice_title" type="text" class="form-control" name="notice_title" placeholder="제목을 입력하세요" value="${event.notice_title}" required />
             </div>
             <div class="input-group">
-              <input id="admin_id" type="text" class="form-control" name="admin_id" placeholder="작성자를 입력하세요" value="${event.admin_id}" required />
+              <input id="admin_id" type="text" class="form-control" name="admin_id" placeholder="작성자를 입력하세요" value="${event.admin_id}" required readonly/>
             </div>
             <div class="input-group">
               <div class="input-group-text">
-                <input id="noticeType1" class="form-check-input mt-0" type="radio" name="notice_type" value="N" required id="noticeType1" onchange="changeForm(this.value)" />
+                <input id="noticeType1" class="form-check-input mt-0" type="radio" name="notice_type" value="N" required id="noticeType1" onchange="changeForm(this.value)" disabled />
                 <label for="noticeType1">공지</label>
               </div>
               <div class="input-group-text">
@@ -171,7 +171,7 @@
 			</div>
 			<div class="mb-3">
 				<label for="thumbnail_image" class="form-label">썸네일 이미지 업로드</label>
-				<input type="file" class="form-control" id="thumbnailInput2" name="thumbnail_image" accept="image/*">
+				<input type="file" class="form-control" id="thumbnailInput2" name="thumbnail_image2" accept="image/*">
 			</div>
             </div>
 <!--           <form action="/updateThumbnail" method="post" enctype="multipart/form-data"> -->
@@ -455,7 +455,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
 
-            fetch('/admin/notices/updateThumbnail/' + noticeNo, {
+            /* fetch('/admin/notices/updateThumbnail/' + noticeNo, {
                 method: 'POST',
                 body: formData
             })
@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => {
                 console.error("Error:", error);
                 alert("오류 발생: " + error.message);
-            });
+            }); */
         };
     } else {
         console.error("Element not found: thumbnailInput2");
@@ -488,8 +488,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const bannerInput = document.getElementById("banner_image");
     const noticeNo = document.getElementById("notice_no").value;
 
+    
+    
     // 배너 파일 선택 시 이벤트 처리
     bannerInput.addEventListener("change", function(event) {
+    	
+    	console.log(event);
+    	
+    	
+    	
         const file = event.target.files[0];
         if (!file) {
             alert("파일을 선택하지 않았습니다.");
@@ -506,7 +513,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        // 배너 이미지 업로드 요청
+        /* // 배너 이미지 업로드 요청
         fetch('/admin/notices/updateBanner/' + noticeNo, {
             method: 'POST',
             body: formData
@@ -527,7 +534,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => {
             console.error("Error:", error);
             alert("오류 발생: " + error.message);
-        });
+        }); */
     });
 });
 

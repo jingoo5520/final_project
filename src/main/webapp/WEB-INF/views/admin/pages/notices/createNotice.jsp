@@ -131,14 +131,14 @@
                         <input type="text" class="form-control" name="noticeTitle" placeholder="제목을 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required/>
                       </div>
                       <div class="input-group">
-                        <input type="text" class="form-control" name="adminId" placeholder="작성자를 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required/>
+                        <input type="text" class="form-control" name="adminId" value="${adminId}" placeholder="작성자를 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required readonly/>
                       </div>
                       
                       <div class="input-group">
 				        <div class="input-group-text">
 				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="N" aria-label="공지" checked required id="noticeType1" onchange="changeForm(this.value)"/>공지</div>
 						<div class="input-group-text">
-				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" required id="noticeType2" onchange="changeForm(this.value)"/>이벤트</div>
+				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" required id="noticeType2" onchange="changeForm(this.value)" disabled/>이벤트</div>
 				      </div>
 
                       <div class="input-group" id="summerSize">
