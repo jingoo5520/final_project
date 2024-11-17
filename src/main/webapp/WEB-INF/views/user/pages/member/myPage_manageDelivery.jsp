@@ -81,7 +81,7 @@
 										<p>[\${postcode}] \${address} \${detailAddress}</p>
 									</div>
 									<div class="col-lg-1 col-md-1 col-12 modifyDelivery">
-										<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}&isMain=M'">수정</a></p>
+										<p><a onclick="window.location.href='/member/myPage/modifyDelivery?deliveryNo=\${item.delivery_no}&isMain=M'">수정</a></p>
 									</div>
 								</div>`;
 			} else {
@@ -94,7 +94,7 @@
 									<p>[\${postcode}] \${address} \${detailAddress}</p>
 								</div>
 								<div class="col-lg-1 col-md-1 col-12 modifyDelivery">
-									<p><a onclick="window.location.href='/member/mypage/modifyDelivery?deliveryNo=\${item.delivery_no}&isMain=S'">수정</a></p>
+									<p><a onclick="window.location.href='/member/myPage/modifyDelivery?deliveryNo=\${item.delivery_no}&isMain=S'">수정</a></p>
 								</div>
 								<div class="col-lg-1 col-md-1 col-12 deleteDelivery">
 									<p><a onclick="deleteDelivery(\${item.delivery_no});">삭제</a></p>
@@ -231,7 +231,7 @@
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
 						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li><a href="/member/myPage/viewOrder">myPage</a></li>
 						<li>배송지 관리</li>
 					</ul>
 				</div>
