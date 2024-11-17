@@ -18,24 +18,20 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/admin/notices/banner")
 public class BannerController {
 	
-	@Autowired
-	private BannerService bannerService;
-
-    @GetMapping("/select")
-    public String selectBannerPage(Model model) {
-        model.addAttribute("banners", bannerService.getAvailableBanners());
-        return "selectBanner";
-    }
-
-    @PostMapping("/upload")
-    public String uploadBanner(@RequestParam("bannerImage") MultipartFile file) {
-        bannerService.uploadBanner(file);
-        return "redirect:/admin/banner/select";
-    }
-
-    @PostMapping("/selectBanner")
-    public String selectBanner(@RequestParam("selectedBanner") String fileName) {
-        bannerService.setSelectedBanner(fileName);
-        return "redirect:/admin/banner/select";
-    }
+	/*
+	 * @Autowired private BannerService bannerService;
+	 * 
+	 * @GetMapping("/select") public String selectBannerPage(Model model) {
+	 * model.addAttribute("banners", bannerService.getAvailableBanners()); return
+	 * "selectBanner"; }
+	 * 
+	 * @PostMapping("/upload") public String
+	 * uploadBanner(@RequestParam("bannerImage") MultipartFile file) {
+	 * bannerService.uploadBanner(file); return "redirect:/admin/banner/select"; }
+	 * 
+	 * @PostMapping("/selectBanner") public String
+	 * selectBanner(@RequestParam("selectedBanner") String fileName) {
+	 * bannerService.setSelectedBanner(fileName); return
+	 * "redirect:/admin/banner/select"; }
+	 */
 }

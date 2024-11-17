@@ -70,13 +70,19 @@ public class OrderServiceImpl implements OrderService {
 			productDiscountCalculated.add(new ProductDiscountCalculatedDTO().builder()
 					.orderproduct_no(discountInfo.get(i).getOrderproduct_no()).build()); // orderProduct_no 설정
 			ProductDiscountDTO p = discountInfo.get(i);
-			expectedTotalPrice += (p.getProductPrice() * p.getOrderCount() *
-			// 총 % 할인 (쿠폰 할인 + 멤버 등급 할인 + 상품 자체 할인)
-					(1 - (p.getMultipliedDiscountByCoupon() + p.getMultipliedDiscountByMemberLevel()
-							+ p.getDiscountByItem())));
-			System.out.println(
-					"아이템의 % 할인 : " + p.getProductPrice() * p.getOrderCount() * (p.getMultipliedDiscountByCoupon()
-							+ p.getMultipliedDiscountByMemberLevel() + p.getDiscountByItem()));
+			System.out.println("이 아이템의 모든 할인 전 가격 : " + p.getProductPrice() * p.getOrderCount());
+			System.out.println("상품 자체 할인 적용후 가격 : " + p.getProductPrice() * p.getOrderCount() * (1 - p.getDiscountByItem()) );
+			System.out.println("아이템의 % 할인율(쿠폰) : " + p.getMultipliedDiscountByCoupon());
+			System.out.println("아이템의 % 할인율(멤버 레벨) : " + p.getMultipliedDiscountByMemberLevel());
+			System.out.println("아이템의 % 할인율(상품 자체 할인) : " + p.getDiscountByItem());
+			
+			// 최소 할인 단위는 10원이다.
+			int CpouponPercentDiscountOfItem = ((int) (p.getProductPrice() * p.getOrderCount() * p.getMultipliedDiscountByCoupon())) / 10 * 10;
+			int MemberPercentDiscountOfItem = ((int) (p.getProductPrice() * p.getOrderCount() * p.getMultipliedDiscountByMemberLevel())) / 10 * 10;
+			int ItemPercentDiscountOfItem = ((int) (p.getProductPrice() * p.getOrderCount() * p.getDiscountByItem())) / 10 * 10;
+			
+			expectedTotalPrice += (p.getProductPrice() * p.getOrderCount());
+			expectedTotalPrice -= (CpouponPercentDiscountOfItem + MemberPercentDiscountOfItem + ItemPercentDiscountOfItem);
 		}
 		// 절대값 할인 (쿠폰 할인 + 포인트 할인)
 		expectedTotalPrice -= (discountInfo.get(0).getSumDiscountByCoupon()
@@ -87,12 +93,21 @@ public class OrderServiceImpl implements OrderService {
 
 		// 가중치 계산
 		int denominator = 0;
-		for (ProductDiscountDTO p : discountInfo) {
-			denominator += (p.getProductPrice() * p.getOrderCount() * (1 - p.getDiscountByItem()));
-		} // 상품 자체 할인이 적용된 금액을 가중치의 분모로 활용
+		// 분모는 % 할인만 포함하므로 절대값 할인을 다시 더해준다.
+		denominator = expectedTotalPrice + (discountInfo.get(0).getSumDiscountByCoupon() + discountInfo.get(0).getSumDiscountByPoint());
+		
+		System.out.println("가중치 계산을 위한 분모 : " + denominator);
 		Iterator<ProductDiscountCalculatedDTO> iter = productDiscountCalculated.iterator();
 		for (ProductDiscountDTO p : discountInfo) {
-			double weight = (p.getProductPrice() * p.getOrderCount() * (1 - p.getDiscountByItem())) / denominator;
+			int numerator = 0;
+			numerator += p.getProductPrice() * p.getOrderCount();
+			// 최소 할인 단위는 10원이다.
+			int CpouponPercentDiscountOfItem = ((int) (p.getProductPrice() * p.getOrderCount() * p.getMultipliedDiscountByCoupon())) / 10 * 10;
+			int MemberPercentDiscountOfItem = ((int) (p.getProductPrice() * p.getOrderCount() * p.getMultipliedDiscountByMemberLevel())) / 10 * 10;
+			int ItemPercentDiscountOfItem = ((int) (p.getProductPrice() * p.getOrderCount() * p.getDiscountByItem())) / 10 * 10;
+			numerator -= (CpouponPercentDiscountOfItem + MemberPercentDiscountOfItem + ItemPercentDiscountOfItem);
+			double weight = (double) numerator / denominator;
+			System.out.println("분자 / 분모 = " + (p.getProductPrice() * p.getOrderCount() * (1 - p.getDiscountByItem())) + " / " + denominator + " = " + weight);
 			iter.next().setWeight(weight); // 가중치 설정
 		}
 
@@ -123,16 +138,18 @@ public class OrderServiceImpl implements OrderService {
 		for (int i = 0; i < request.getProductsInfo().size(); i++) {
 			if (i == 0) { // 리스트의 첫번째 요소이면
 				int remainedPrice = expectedTotalPrice;
-				int allocatedPrice = (int) Math
-						.round(productDiscountCalculated.get(i).getWeight() * expectedTotalPrice);
+				int allocatedPrice = 
+					((int) Math.round(productDiscountCalculated.get(i).getWeight() * expectedTotalPrice))
+					 / 10 * 10; // 최소 10원 단위
 				productDiscountCalculated.get(i).setRemainedPrice(remainedPrice - allocatedPrice);
 				productDiscountCalculated.get(i).setRefundPrice(allocatedPrice);
 				System.out.println("remainedPrice : " + remainedPrice);
 				System.out.println("allocatedPrice : " + allocatedPrice);
 			} else if (i != request.getProductsInfo().size() - 1) {
 				int remainedPrice = productDiscountCalculated.get(i - 1).getRemainedPrice();
-				int allocatedPrice = (int) Math
-						.round(productDiscountCalculated.get(i).getWeight() * expectedTotalPrice);
+				int allocatedPrice = 
+					((int) Math.round(productDiscountCalculated.get(i).getWeight() * expectedTotalPrice))
+					/ 10 * 10; // 최소 10원 단위
 				productDiscountCalculated.get(i).setRemainedPrice(remainedPrice - allocatedPrice);
 				productDiscountCalculated.get(i).setRefundPrice(allocatedPrice);
 				System.out.println("remainedPrice : " + remainedPrice);
@@ -172,10 +189,20 @@ public class OrderServiceImpl implements OrderService {
 		if (isMember == true) {
 			// 유저정보 업데이트 : 쿠폰 사용, 포인트 적립, 회원등급 수정
 			String couponCode = (String) session.getAttribute("couponCodeUsed");
+			System.out.println("###############makePayment##############");
+			System.out.println("orderId : " + orderId);
+			System.out.println("couponCode : " + couponCode);
+			
+			if (couponCode == null) {
+				couponCode = "";
+			}
 			// 쿠폰 사용
-			if (orderDAO.useCoupon(orderId, couponCode) != 1) {
-				throw new DataAccessException("쿠폰 사용 실패") {};
+			if (!("".equals(couponCode))) {
+				if (orderDAO.useCoupon(orderId, couponCode) != 1) {
+					throw new DataAccessException("쿠폰 사용 실패") {};
+				};
 			};
+
 			// 포인트 적립
 			if (orderDAO.updatePoint(orderId) != true) {
 				throw new DataAccessException("포인트 적립 실패") {
@@ -188,11 +215,6 @@ public class OrderServiceImpl implements OrderService {
 				};
 			}
 			;
-		}
-
-		if (orderDAO.insertPaymentInfo(orderId, amount, payModule, method) != true) {
-			throw new DataAccessException("결제 정보 생성 실패") {
-			};
 		}
 		
 		// 결제 내역 삽입
@@ -697,10 +719,11 @@ public class OrderServiceImpl implements OrderService {
 			dict.put("5", "배송중");
 			dict.put("6", "배송완료");
 			order.setOrderStatus(dict.get((String) orderInfo.get("order_status")));
+			order.setPayMethod((String) orderInfo.get("payment_module_type"));
 			List<OrderProductDTO> products = orderDAO.getProductList(orderId);
 			// System.out.println("products : " + products);
 			order.setProducts(products);
-			System.out.println("order : " + order);
+			System.out.println("order in getOrderListOfMember: " + order);
 			result.add(order);
 		}
 		return result;

@@ -16,23 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 public class BannerDAOImpl implements BannerDAO {
 
-    @Autowired
-    private SqlSession ses;
-
-    private String ns = "com.finalProject.mappers.bannerMapper.";
-
-    @Override
-    public void insertBanner(BannerVO banner) {
-        ses.insert(ns + "insertBanner", banner);
-    }
-
-    @Override
-    public List<BannerVO> getBanners() {
-        return ses.selectList(ns + "getBanners");
-    }
-
-    @Override
-    public void updateSelectedBanner(String fileName) {
-        ses.update(ns + "updateSelectedBanner", fileName);
-    }
+	/*
+	 * @Autowired private SqlSession ses;
+	 * 
+	 * private String ns = "com.finalProject.mappers.bannerMapper.";
+	 * 
+	 * @Override public void insertBanner(BannerVO banner) { ses.insert(ns +
+	 * "insertBanner", banner); }
+	 * 
+	 * @Override public List<BannerVO> getBanners() { return ses.selectList(ns +
+	 * "getBanners"); }
+	 * 
+	 * @Override public void updateSelectedBanner(String fileName) { ses.update(ns +
+	 * "updateSelectedBanner", fileName); }
+	 */
 }

@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.admin.coupon.CouponDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNew;
-import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
 import com.finalProject.model.admin.notices.PagingInfoDTO;
+import com.finalProject.model.admin.notices.PagingInfoNotice;
+import com.finalProject.model.admin.notices.PagingInfoNoticeDTO;
 import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 import com.finalProject.persistence.admin.notices.NoticeDAO;
 
@@ -21,42 +23,82 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class NoticeServiceImpl implements NoticeService {
-	
+
 	@Autowired
 	private NoticeDAO nDao;
 
 	@Override
-	public List<NoticeDTO> getAllNotices(int pagingSize, int startRowIndex) throws Exception {
+	public Map<String, Object> getAllNotices(PagingInfoNoticeDTO pDto) throws Exception {
 		log.info("NoticeServiceImpl!!!");
-		return nDao.getAllNotices(pagingSize, startRowIndex);
+
+		PagingInfoNotice pi = new PagingInfoNotice(pDto);
+
+		// setter 호출
+		pi.setTotalDataCnt(nDao.getTotalNoticeCnt());
+
+		pi.setTotalPageCnt();
+		pi.setStartRowIndex();
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBloack();
+		pi.setEndPageNoCurBlock();
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<NoticeDTO> list = nDao.selectNoticeList(pi);
+
+		result.put("pi", pi);
+		result.put("list", list);
+
+		return result;
 	}
 
 	@Override
-	public List<NoticeDTO> getAllEvents(int pagingSize, int startRowIndex) throws Exception {
-		System.out.println(nDao.getAllEvents(pagingSize, startRowIndex));
-		return nDao.getAllEvents(pagingSize, startRowIndex);
+	public Map<String, Object> getAllEvents(PagingInfoNoticeDTO pDto) throws Exception {
+		log.info("EventServiceImpl!!!");
+
+		PagingInfoNotice pi = new PagingInfoNotice(pDto);
+
+			// setter 호출
+			pi.setTotalDataCnt(nDao.getTotalEventCnt());
+
+			pi.setTotalPageCnt();
+			pi.setStartRowIndex();
+
+			// 페이징 블럭
+			pi.setPageBlockNoCurPage();
+			pi.setStartPageNoCurBloack();
+			pi.setEndPageNoCurBlock();
+
+			Map<String, Object> result = new HashMap<String, Object>();
+			List<NoticeDTO> list = nDao.selectEventList(pi);
+
+			result.put("pi", pi);
+			result.put("list", list);
+
+			return result;
 	}
 
 	@Transactional
 	@Override
 	public void addNotice(NoticeVO notice) throws Exception {
-	    try {
-	        nDao.addNotice(notice);
-	    } catch (Exception e) {
-	        log.error("공지사항 저장 실패: ", e);
-	        throw e; // 예외를 다시 던져서 트랜잭션이 롤백되도록 함
-	    }
+		try {
+			nDao.addNotice(notice);
+		} catch (Exception e) {
+			log.error("공지사항 저장 실패: ", e);
+			throw e; // 예외를 다시 던져서 트랜잭션이 롤백되도록 함
+		}
 	}
 
 	@Transactional
 	@Override
 	public void addEvent(NoticeDTO event) throws Exception {
-	    try {
-	        nDao.addEvent(event);
-	    } catch (Exception e) {
-	        log.error("이벤트 저장 실패: ", e);
-	        throw e; // 예외를 다시 던져서 트랜잭션이 롤백되도록 함
-	    }
+		try {
+			nDao.addEvent(event);
+		} catch (Exception e) {
+			log.error("이벤트 저장 실패: ", e);
+			throw e; // 예외를 다시 던져서 트랜잭션이 롤백되도록 함
+		}
 	}
 
 	@Override
@@ -94,17 +136,17 @@ public class NoticeServiceImpl implements NoticeService {
 		return nDao.getTotalPostCnt();
 	}
 
-	@Override
-	public List<NoticeDTO> getNoticesWithPagination(int startRowIndex, int viewPostCntPerPage) throws Exception {
-		return nDao.getNoticesWithPagination(startRowIndex, viewPostCntPerPage);
-	}
+//	@Override
+//	public List<NoticeDTO> getNoticesWithPagination(int startRowIndex, int viewPostCntPerPage) throws Exception {
+//		return nDao.getNoticesWithPagination(startRowIndex, viewPostCntPerPage);
+//	}
+//
+//	@Override
+//	public List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception {
+//		return nDao.getNotices(criteria, pagingInfoDTO);
+//	}
 
-	@Override
-	public List<NoticeDTO> getNotices(SearchCriteriaDTO criteria, PagingInfoDTO pagingInfoDTO) throws Exception {
-		return nDao.getNotices(criteria, pagingInfoDTO);
-	}
-
-	//	@Override
+	// @Override
 //	public void createEventImg(NoticeDTO noticeDTO) throws Exception{
 //		nDao.createEventImg(noticeDTO);
 //	}
@@ -134,11 +176,11 @@ public class NoticeServiceImpl implements NoticeService {
 	public void updateBannerPath(int noticeNo, String newBannerPath) throws Exception {
 		nDao.updateBannerPath(noticeNo, newBannerPath);
 	}
-	
+
 	@Override
 	public void updateThumbnailPath(int noticeNo, String newThumbnailPath) throws Exception {
 		nDao.updateThumbnailPath(noticeNo, newThumbnailPath);
-		
+
 	}
 
 	@Override
@@ -153,12 +195,58 @@ public class NoticeServiceImpl implements NoticeService {
 
 	@Override
 	public boolean updateNoticeUrl(NoticeVO notice) throws Exception {
-	    // DAO 호출 후 결과 반환
-	    boolean result = nDao.updateNoticeUrl(notice);
-	    return result;  // true 또는 false 반환
+		// DAO 호출 후 결과 반환
+		boolean result = nDao.updateNoticeUrl(notice);
+		return result; // true 또는 false 반환
 	}
 
+	@Override
+	public Map<String, Object> getNoticeList(PagingInfoNoticeDTO pagingInfoNoticeDTO) throws Exception {
+		PagingInfoNotice pi = new PagingInfoNotice(pagingInfoNoticeDTO);
 
+		// setter 호출
+		pi.setTotalDataCnt(nDao.getTotalNoticeCnt());
+
+		pi.setTotalPageCnt();
+		pi.setStartRowIndex();
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBloack();
+		pi.setEndPageNoCurBlock();
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<NoticeDTO> list = nDao.selectNoticeList(pi);
+
+		result.put("pi", pi);
+		result.put("list", list);
+
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> getEventList(PagingInfoNoticeDTO pagingInfoNoticeDTO) throws Exception {
+		PagingInfoNotice pi = new PagingInfoNotice(pagingInfoNoticeDTO);
+
+		// setter 호출
+		pi.setTotalDataCnt(nDao.getTotalEventCnt());
+
+		pi.setTotalPageCnt();
+		pi.setStartRowIndex();
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBloack();
+		pi.setEndPageNoCurBlock();
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<NoticeDTO> list = nDao.selectEventList(pi);
+
+		result.put("pi", pi);
+		result.put("list", list);
+
+		return result;
+	}
 
 //	@Override
 //	public int getTotalNoticeCount() throws Exception {
@@ -260,9 +348,5 @@ public class NoticeServiceImpl implements NoticeService {
 //		
 //		return pi;
 //	}
-
-
-	
-
 
 }

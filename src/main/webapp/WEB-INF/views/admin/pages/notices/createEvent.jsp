@@ -131,14 +131,14 @@
                         <input type="text" class="form-control" name="noticeTitle" placeholder="제목을 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required/>
                       </div>
                       <div class="input-group">
-                        <input type="text" class="form-control" name="adminId" placeholder="작성자를 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required/>
+                        <input type="text" class="form-control" name="adminId" placeholder="작성자를 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required readonly/>
                       </div>
                       
                       <div class="input-group">
 				        <div class="input-group-text">
 				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="N" aria-label="공지" required id="noticeType1" onchange="changeForm(this.value)"/>공지</div>
 						<div class="input-group-text">
-				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" checked required id="noticeType2" onchange="changeForm(this.value)"/>이벤트</div>
+				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" checked required id="noticeType2" onchange="changeForm(this.value)" disabled />이벤트</div>
 				      </div>
 					<div class="mb-3">
 					    <label for="eventStartDate" class="form-label">이벤트 시작 날짜</label>
@@ -148,7 +148,7 @@
 					    <label for="eventEndDate" class="form-label">이벤트 종료 날짜</label>
 					    <input type="datetime-local" class="form-control" id="eventEndDate" name="eventEndDate">
 					</div>
-                      <div class="input-group" id="summerSize">
+                      <div class="inpt-group" id="summerSize">u
                         <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요"></div>
                       </div>
                       <input type="hidden" name="noticeContent" id="eventContentInput" />

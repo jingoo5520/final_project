@@ -33,36 +33,65 @@
 			let totalPoints = 0;
 			let totalProductDcPrice = 0;
 			let totalEarnedPoint = 0;
+			let memberLevelPoint = "${orderMember.level_point}";
+			let memberLevelDc = "${orderMember.level_dc}";
 			
+			if (memberLevelPoint == "") {memberLevelPoint = "0"}
+			if (memberLevelDc == "") {memberLevelDc = "0"}
+			
+			console.log("==============뷰에 값 출력==================")
+			console.log(`totalPrices : \${totalPrices}`)
+			console.log(`totalOriginalPrices : \${totalOriginalPrices}`)
+			console.log(`totalCount : \${totalCount}`)
+			console.log(`totalPoints : \${totalPoints}`)
+			console.log(`totalProductDcPrice : \${totalProductDcPrice}`)
+			console.log(`totalEarnedPoint : \${totalEarnedPoint}`)
+			console.log("typeof memberLevelPoint : " + typeof memberLevelPoint)
+			console.log("typeof memberLevelDc : " + typeof memberLevelPoint)
+			console.log(`memberLevelPoint : \${memberLevelPoint}`)
+			console.log(`memberLevelDc : \${memberLevelDc}`)
+			console.log("==============뷰에 값 출력 종료=============")
+			
+			console.log(memberLevelDc);
 			$(".productPrice").each(function() {
 				let productPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
 				totalPrices += productPriceText;
+				console.log("totalPrices에 더해지는 값 :" + productPriceText)
 			});
 			
 			$(".originalPrice").each(function() {
 				let originalPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
 				totalOriginalPrices += originalPriceText;
+				console.log("totalOriginalPrices에 더해지는 값 :" + originalPriceText)
 			});
 
 			$(".dcPrice").each(function() {
 				let productDcPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
 				totalProductDcPrice += productDcPriceText;
+				console.log("totalProductDcPrice에 더해지는 값 :" + productDcPriceText)
 			});
 			
-			$(".earnedPoint").each(function() {
-				let earnedPointText = parseInt($.trim($(this).text().replace(" P", "").replace(/,/g, "")));
-				totalEarnedPoint += earnedPointText;
-			});
+			let levelDCPrice = Math.floor((totalOriginalPrices * parseFloat(memberLevelDc)) / 10) * 10;
+			console.log("=============levelDCPrice 계산하는 곳=============")
+			console.log("totalPrices : " + totalPrices)
+			console.log("memberLevelDc : " + memberLevelDc)
+			console.log("=============levelDCPrice 계산완료================")
 			
 			
 			$("#totalProductCount").text(totalCount + " 개");
 			$("#totalProductPrice").text(totalPrices.toLocaleString('ko-KR') + " 원");
-			
-			$("#totalEarnedPoints").text(totalEarnedPoint.toLocaleString('ko-KR') + " 원");
-			$("#totalDCPrices").text(totalProductDcPrice.toLocaleString('ko-KR') + " 원");
+			$("#totalDCPrices").text((totalProductDcPrice + levelDCPrice).toLocaleString('ko-KR') + " 원");
 			$("#totalOriginalPrices").text(totalOriginalPrices.toLocaleString('ko-KR') + " 원");
 			$(".totalProductCount").text(totalCount + " 개");
-			$(".totalPrice").text((totalPrices + 2500).toLocaleString('ko-KR') + " 원");
+			$(".totalPrice").text((totalPrices + 2500 - levelDCPrice).toLocaleString('ko-KR') + " 원");
+			console.log("=============totalPrice 계산하는 곳=============")
+			console.log("totalPrices : " + totalPrices)
+			console.log("totalProductDcPrice : " + totalProductDcPrice)
+			console.log("levelDCPrice : " + levelDCPrice)
+			console.log("배송료 : 2500")
+			console.log("=============totalPrice 계산 끝=================")
+			
+			setTotalEarnedPoint();
 			
 			// 쿠폰 리스트 호출
 			if ("${orderMember}" !== "") {
@@ -214,14 +243,15 @@
 				let memberPoint = parseInt($.trim($("#memberPoint").text().replace(/,/g, "")));
 				let totalPrice = parseInt($.trim($(".totalPrice").eq(0).text().replace(" 원", "").replace(/,/g, ""))) - 2500;
 				
-				console.log(memberPoint);
-				console.log(totalPrice);
+				console.log("memberPoint : " + memberPoint);
+				console.log("totalPrice : " + totalPrice);
 	            if ($(this).is(':checked')) {
 	            	if (memberPoint > totalPrice) {
 				    	$('input[name="point"]').val(Math.floor(totalPrice / 100) * 100);
 				    } else {
-				    	$('input[name="point"]').val(memberPoint);
+				    	$('input[name="point"]').val(Math.floor(memberPoint / 100) * 100);
 				    }
+					
 	            } else {
 	            	$('input[name="point"]').val(0);
 	            }
@@ -235,6 +265,27 @@
 			});
 			
 		})
+		
+		function setTotalEarnedPoint() {
+			if ("${orderMember}".trim().length <= 0) {
+				return 0
+			}
+			let memberLevelPoint = "${orderMember.level_point}";
+			
+			if (memberLevelPoint != "") {
+				let totalPrice = (parseInt($.trim($(".totalPrice").eq(0).text().replace(" 원", "").replace(/,/g, ""))))
+				totalEarnedPoint = parseFloat((memberLevelPoint) * (totalPrice - 2500));
+				console.log(totalEarnedPoint);
+				console.log("================총 적립예정 포인트 계산중================")
+				console.log("memberLevelPoint : " + memberLevelPoint)
+				console.log("totalPrice : " + totalPrice)
+				console.log("totalEarnedPoint : " + totalEarnedPoint)
+				console.log("================총 적립예정 포인트 계산완료================")
+			}
+			// 소수점 반올림
+			totalEarnedPoint = Math.round(parseFloat(totalEarnedPoint)) + ""
+			$("#totalEarnedPoints").text(totalEarnedPoint.toLocaleString('ko-KR') + " P");
+		}
 		
 		function showDeliveryList() {
 			document.getElementById('getMemeberAddress').checked = false;
@@ -267,6 +318,9 @@
 			$("#totalDCPrices").text((totalProductDcPrice + usePoint).toLocaleString('ko-KR') + " 원");
 			
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice + usePoint) + 2500).toLocaleString('ko-KR') + " 원");
+			
+			setTotalEarnedPoint();
+			
 			$('input[name="point"]').prop("readonly", true);
 			$("#allPointsUse").prop('disabled', true);
 			$('input[name="point"]').css('background-color', '#E6E6E6');
@@ -287,6 +341,8 @@
 			
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice - setPoint) + 2500).toLocaleString('ko-KR') + " 원");
 		
+			setTotalEarnedPoint();
+			
 			$('input[name="point"]').val(usePoint - setPoint);
 		}
 		
@@ -303,6 +359,9 @@
 			$("#totalDCPrices").text((totalProductDcPrice - usePoint).toLocaleString('ko-KR') + " 원");
 			
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice) + usePoint + 2500).toLocaleString('ko-KR') + " 원");
+			
+			setTotalEarnedPoint();
+			
 			$('input[name="point"]').prop("readonly", false);
 			$('input[name="point"]').css('background-color', '#FFFFFF');
 			
@@ -315,6 +374,7 @@
 		}
 		
 		function makeCouponListWithData(json) {
+			console.log("coupon Json : " + JSON.stringify(json))
 			let output = "";
 			let allCoupon = "";
 			let couponDCText = "";
@@ -394,6 +454,10 @@
 		function applyCouponByRate(couponCode, couponNo, couponName, dcRate) {
 			let originalPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			let couponDcPrice = originalPrice * parseFloat(dcRate);
+			// 10원 단위 맞추기
+			console.log("couponDCPrice in applyCouponByRate : " + couponDcPrice)
+			couponDcPrice = Math.floor((Math.floor(couponDcPrice) / 10)) * 10
+			console.log("couponDCPrice in applyCouponByRate : " + couponDcPrice)
 			
 			let output = `<h3>\${dcRate * 100} %</h3>
 						<div class='btn' onclick="resetCouponByRate('\${couponCode}', '\${couponNo}', '\${couponName}', '\${dcRate}');">취소</div>`;
@@ -490,6 +554,13 @@
 			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
 			$("#totalDCPrices").text((totalProductDcPrice + couponDcPrice).toLocaleString('ko-KR') + " 원");
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice + couponDcPrice) + 2500).toLocaleString('ko-KR') + " 원");
+			console.log("=============totalPrice 계산하는 곳=============")
+			console.log("totalOriginalProductPrice : " + totalOriginalProductPrice)
+			console.log("totalProductDcPrice : " + totalProductDcPrice)
+			console.log("couponDcPrice : " + couponDcPrice)
+			console.log("배송료 : 2500")
+			console.log("=============totalPrice 계산 끝=================")
+			setTotalEarnedPoint();
 			
 			let totalPrice = parseInt($.trim($(".totalPrice").text().replace(" 원", "").replace(/,/g, "")));
             let usePoint = parseInt($("#pointDC").text().replace(/,/g, ''), 10);
@@ -503,7 +574,15 @@
 			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
 			$("#totalDCPrices").text((totalProductDcPrice - couponDcPrice).toLocaleString('ko-KR') + " 원");
+			console.log("=============totalPrice 계산하는 곳=============")
+			console.log("totalOriginalProductPrice : " + totalOriginalProductPrice)
+			console.log("totalProductDcPrice : " + totalProductDcPrice)
+			console.log("couponDcPrice : " + couponDcPrice)
+			console.log("배송료 : 2500")
+			console.log("=============totalPrice 계산 끝=================")
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice) + couponDcPrice + 2500).toLocaleString('ko-KR') + " 원");
+			
+			setTotalEarnedPoint();
 		}
 		
 		function handleDeliveryOptionChange() {
@@ -1040,13 +1119,10 @@
 										<div class="col-lg-5 col-md-5 col-12">
 											<p>상품 / 수량 정보</p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 											<p>할인 금액</p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
-											<p>적립예정포인트</p>
-										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 											<p>결제금액</p>
 										</div>
 									</div>
@@ -1067,29 +1143,12 @@
 												<span>수량: <span class="product_quantity" id="${orderProduct.product_no }_quantity">${orderProduct.quantity }</span> 개</span>
 											</p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 											<p><span class="dcPrice">
 												<fmt:formatNumber value="${orderProduct.product_price * orderProduct.quantity * orderProduct.dc_rate }" type="number" pattern="#,###" /> 원
 											</span></p>
 										</div>
-										<div class="col-lg-2 col-md-2 col-12">
-										
-									<c:choose>
-									
-										<c:when test="${not empty orderMember }">
-											<p><span class="earnedPoint">
-												<fmt:formatNumber value="${Math.floor(orderProduct.product_price * orderProduct.quantity * orderMember.level_point / 10) * 10}" type="number" pattern="#,###" /> P
-											</span></p>
-										</c:when>
-										
-										<c:otherwise>
-												<p><span class="earnedPoint">0 P</span></p>
-										</c:otherwise>
-										
-									</c:choose>
-									
-										</div>
-										<div class="col-lg-2 col-md-2 col-12">
+										<div class="col-lg-3 col-md-3 col-12">
 										
 									<c:choose>
 									
@@ -1567,12 +1626,14 @@
 															<p>카드 결제</p>
 														</label>
 													</div>
+													<!--
 													<div class="single-payment-option">
 														<input type="radio" name="paymentMethod" id="paymentMethod-2" onclick="selectPaymentMethod('VIRTUAL_ACCOUNT')">
 														<label for="paymentMethod-2">
 															<p>무통장 입금</p>
 														</label>
 													</div>
+													-->
 													<div class="single-payment-option">
 														<input type="radio" name="paymentMethod" id="paymentMethod-3" onclick="selectPaymentMethod('TRANSFER')">
 														<label for="paymentMethod-3">
@@ -1789,6 +1850,18 @@
 			setTimeout(function(){
 				kakaopay.ref.location.href=url
 			}, 0);
+			
+	        // 팝업 창이 닫혔는지 주기적으로 확인
+	        const checkPopupClosed = setInterval(function() {
+	            if (kakaopay.ref.closed) {
+	                // 팝업 창이 닫혔을 때 배경을 원래대로 되돌리고 입력을 허용
+	                overlay.style.display = "none";
+	                $(".container").css("pointerEvents", "auto");
+	                clearInterval(checkPopupClosed);
+	                console.log("카카오페이 창이 닫혔습니다.");
+	            }
+	        }, 500); // 0.5초마다 팝업 상태 확인
+			
 		} else {
 			throw new Error("popup을 열 수 없습니다!(cannot open popup)");
 		}

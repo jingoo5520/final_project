@@ -47,11 +47,15 @@ $(document).ready(function() {
 	
 	$(".totalPrice").text(totalPrices.toLocaleString() + " 원");
 	
+	console.log("=========totalPoints에 더해지는 값==========")
 	$(".productPoint").each(function() {
 		let productPointText = parseInt($.trim($(this).text().replace(" P", "").replace(/,/g, "")));
 		totalPoints += productPointText;
+		console.log("productPointText : " + productPointText);
 	});
+	console.log("=========totalPoints에 더해지는 값 종료==========")
 	
+	totalPoints = Math.round(parseFloat(totalPoints)) + ""
 	$(".totalPoint").text(totalPoints.toLocaleString() + " P");
 	
 	var levelInfo = "${not empty levelInfo ? levelInfo : ''}";
@@ -65,7 +69,9 @@ $(document).ready(function() {
 	let levelDCPrice = 0;
 	
 	if (levelDC != 0) {
-		levelDCPrice = Math.floor(totalPrices * levelDC / 10) * 10;
+		levelDCPrice = totalPrices * levelDC;
+		// 최소단위 10원으로 변경
+		levelDCPrice =  Math.floor(levelDCPrice / 10) * 10
 	} else {
 		levelDCPrice = 0;
 	}
@@ -76,19 +82,31 @@ $(document).ready(function() {
 	
 	$(".cart-single-list").each(function() {
 		let currentElement = $(this);
-		
-		let discountedPrice = parseInt($.trim(currentElement.find(".productDCPrice").text().replace(" 원", "").replace(/,/g, "")));
-		
+		console.log('0. $(this)')
+		console.log($(this))
+		// let discountedPrice = parseInt($.trim(currentElement.find(".productDCPrice").text().replace(" 원", "").replace(/,/g, "")));
+		let discountedPrice = parseInt($.trim(currentElement.find(".hiddenDiscoutedPrice").text()))
 		let productPrice = parseInt($.trim(currentElement.find(".productPrice").text().replace(" 원", "").replace(/,/g, "")));
-		
+
 		if (discountedPrice != 0) {
 			productDCPrice += productPrice - discountedPrice;
 		}
+		// 최소단위 10원으로 변경
+		console.log('1. discountedPrice in \$(".cart-single-list") : ' + discountedPrice)
+		console.log('2. productPrice in \$(".cart-single-list") : ' + productPrice)
+		productDCPrice = Math.floor(productDCPrice / 10) * 10
+		console.log('3. productDCPrice in \$(".cart-single-list") : ' + productDCPrice)
 	});
 	
 	$(".dcProduct").text(productDCPrice.toLocaleString() + " 원");
 	
 	let totalPay = totalPrices - levelDCPrice - productDCPrice;
+	console.log("============totalPay 계산하기==============")
+	console.log(`totalPrices : \${totalPrices}`)
+	console.log(`levelDCPrice : \${levelDCPrice}`)
+	console.log(`productDCPrice : \${productDCPrice}`)
+	console.log(`totalPay : \${totalPay}`)
+	console.log("============totalPay 계산 끝 ==============")
 	
 	$(".totalPay").text(totalPay.toLocaleString() + " 원");
 	
@@ -607,7 +625,7 @@ input[type="checkbox"]:hover {
 										<c:if test="${not empty levelInfo }">
 											<div class="col-lg-2 col-md-2 col-12">
 												<p class="productPoint">
-													<fmt:formatNumber value="${Math.floor(item.product_price * item.product_count * levelInfo.level_point / 10) * 10}" type="number" pattern="#,###" />P
+													<fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate - levelInfo.level_dc) * levelInfo.level_point}" type="number" pattern="#,###" />P
 												</p>
 												<p class="product-des">
 													<span><em>등급:</em> ${levelInfo.level_name }</span> <span><em>포인트적립:</em>
@@ -626,16 +644,46 @@ input[type="checkbox"]:hover {
 													<fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원
 												</p>
 											</div>
-											<div class="col-lg-6 col-md-6 col-12">
-												<c:if test="${item.product_dc_type == 'P'}">
-													<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
-													<p class="product-des"><span><em>할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
-												</c:if>
-												<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
-													<p class="productDCPrice">0</p>
-												</c:if>
-											</div>
+											<c:if test="${empty levelInfo }">
+												<div class="col-lg-6 col-md-6 col-12">
+													<c:if test="${item.product_dc_type == 'P'}">
+														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
+														<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
+														<p class="product-des"><span><em>상품 할인율:</em> ${Math.round( (item.dc_rate) * 100) } %</span></p>
+														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count * (1 - item.dc_rate)} </span>
+													</c:if>
+													
+													<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
+														<p class="productDCPrice">0</p>
+														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count} </span>
+													</c:if>
+												</div>
+											</c:if>
+											<c:if test="${not empty levelInfo }">
+												<div class="col-lg-6 col-md-6 col-12">
+													<c:if test="${item.product_dc_type == 'P'}">
+														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
+														<p class="productDCPrice">
+															<span>
+																<fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate - levelInfo.level_dc)}" type="number" pattern="#,###" /> 원
+															</span>
+														</p>
+														<p class="product-des"><span><em>상품 할인율:</em> ${Math.round( (item.dc_rate) * 100) } %</span></p>
+														<p class="product-des"><span><em>회원등급 할인율:</em> ${Math.round( (levelInfo.level_dc) * 100) } %</span></p>
+														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count * (1 - item.dc_rate)} </span>
+													</c:if>
+													<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
+														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
+														<p class="productDCPrice">
+															<span>
+																<fmt:formatNumber value="${item.product_price * item.product_count * (1 - levelInfo.level_dc)}" type="number" pattern="#,###" /> 원
+															</span>
+														</p>
+														<p class="product-des"><span><em>회원등급 할인율:</em> ${Math.round( (levelInfo.level_dc) * 100) } %</span></p>
+														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count} </span>
+													</c:if>
+												</div>
+											</c:if>
 										</div>
 										<div class="col-lg-1 col-md-1 col-12">
 											<a class="remove-item" href="#"
@@ -695,10 +743,12 @@ input[type="checkbox"]:hover {
 												<c:if test="${item.product_dc_type == 'P'}">
 													<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
 													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
-													<p class="product-des"><span><em>할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
+													<p class="product-des"><span><em>상품 할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
+													<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count * (1 - item.dc_rate)} </span>
 												</c:if>
 												<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
 													<p class="productDCPrice">0</p>
+													<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count} </span>
 												</c:if>
 											</div>
 										</div>

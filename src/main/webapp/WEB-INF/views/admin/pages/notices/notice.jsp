@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
@@ -46,13 +46,13 @@
 </script>
 </head>
 
- <body>
-    <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
-        <!-- Menu -->
+<body>
+	<!-- Layout wrapper -->
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<!-- Menu -->
 
-        <!-- Menu -->
+			<!-- Menu -->
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
@@ -60,9 +60,9 @@
 
 			</jsp:include>
 
-		<!-- / Menu -->
+			<!-- / Menu -->
 
-        <!-- Layout container -->
+			<!-- Layout container -->
 
 			<div class="layout-page">
 				<!-- Navbar -->
@@ -84,152 +84,163 @@
 					<div class="container-xxl flex-grow-1 container-p-y">
 
 						<!-- body  -->
-				<!-- / Content -->
-               <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">공지 /</span> 공지사항 목록</h4>
+						<!-- / Content -->
+						<div class="container-xxl flex-grow-1 container-p-y">
+							<h4 class="fw-bold py-3 mb-4">
+								<span class="text-muted fw-light">공지 /</span> 공지사항 목록
+							</h4>
 
-              <div class="row">
-              <!-- Bordered Table -->
-              <div class="card">
-                <h5 class="card-header"></h5>
-                <div class="card-body">
-                  <div class="table-responsive text-nowrap">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>번호</th>
-                          <th>구분</th>
-                          <th>제목</th>
-                          <th>작성자</th>
-                          <th>작성일자</th>
-                          <th>관리</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-	                      <c:choose>
-	                        <c:when test="${not empty notices}">
-								<c:forEach var="notice" items="${notices}">
-								    <tr id="notice-row-${notice.notice_no}">
-								        <td>${notice.notice_no}</td>
-								        <td>${notice.notice_type}</td>
-								        <td><a href="viewNotice/${notice.notice_no}">${notice.notice_title}</a></td>
-								        <td>${notice.admin_id}</td>
-								        <td>${notice.reg_date}</td>
-								        <td>
-											<div>${notice.notice_content}</div>
-											<a class="btn rounded-pill btn-outline-warning" href="editNotice/${notice.notice_no}">수정</a>
-										    <a class="btn rounded-pill btn-outline-danger" onclick="confirmDelete(${notice.notice_no});">삭제</a>
-										</td>
-									</tr>
-								</c:forEach>
-	                        </c:when>
-	                        <c:otherwise>
-	                        	<tr>
-	                            	<td colspan="6">등록된 공지사항이 없습니다.</td>
-	                            </tr>
-							</c:otherwise>
-	                      </c:choose>
-                      </tbody>
-                    </table>
-                    
-		<!-- 페이지네이션 -->
-		<p>현재 페이지: ${currentPage != null ? currentPage : 'N/A'} / 총 페이지: ${totalPages != null ? totalPages : 'N/A'}</p>
-		<div class="pagination">
-		    <c:if test="${currentPage > 1}">
-		        <a href="?page=${currentPage - 1}">이전</a>
-		    </c:if>
-		    
-		    <c:if test="${totalPages > 0}">
-		        <c:forEach var="i" begin="1" end="${totalPages}">
-		            <c:choose>
-		                <c:when test="${i == currentPage}">
-		                    <span>${i}</span> <!-- 현재 페이지는 그냥 숫자 표시 -->
-		                </c:when>
-		                <c:otherwise>
-		                    <a href="?page=${i}">${i}</a>
-		                </c:otherwise>
-		            </c:choose>
-		        </c:forEach>
-		    </c:if>
-		
-		    <c:if test="${currentPage < totalPages}">
-		        <a href="?page=${currentPage + 1}">다음</a>
-		    </c:if>
-		</div>
-		
-<!-- 		<form method="get" action="/notices"> -->
-<!-- 		    <input type="text" name="searchWord" placeholder="검색어 입력"> -->
-<!-- 		    <select name="searchType"> -->
-<!-- 		        <option value="notice_title">제목</option> -->
-<!-- 		        <option value="admin_id">작성자</option> -->
-<!-- 		    </select> -->
-<!-- 		    <button type="submit">검색</button> -->
-<!-- 		</form> -->
-		
-		
-                    
-      <!-- 공지사항 작성 버튼 -->
-      <div class="text-end mt-3">
-        <a class="btn rounded-pill btn-outline-primary" href="/admin/notices/createNotice">공지사항 작성</a>
-                  </div>
-                </div>
-              </div>
- 
- 
-            </div>
-            <!-- / Content -->
+							<div class="row">
+								<!-- Bordered Table -->
+								<div class="card">
+									<h5 class="card-header"></h5>
+									<div class="card-body">
+										<div class="table-responsive text-nowrap">
+											<table class="table table-bordered">
+												<thead>
+													<tr>
+														<th>번호</th>
+														<th>구분</th>
+														<th>제목</th>
+														<th>작성자</th>
+														<th>작성일자</th>
+														<th>관리</th>
+													</tr>
+												</thead>
+												<tbody id="noticeTableBody" class="table-border-bottom-0">
+													<c:choose>
+														<c:when test="${not empty notices}">
+															<c:forEach var="notice" items="${notices}">
+																<tr id="notice-row-${notice.notice_no}">
+																	<td>${notice.notice_no}</td>
+																	<td>${notice.notice_type}</td>
+																	<td><a href="viewNotice/${notice.notice_no}">${notice.notice_title}</a></td>
+																	<td>${notice.admin_id}</td>
+																	<td>${notice.reg_date}</td>
+																	<td>
+																		<div>${notice.notice_content}</div> <a class="btn rounded-pill btn-outline-warning" href="editNotice/${notice.notice_no}">수정</a> <a class="btn rounded-pill btn-outline-danger" onclick="confirmDelete(${notice.notice_no});">삭제</a>
+																	</td>
+																</tr>
+															</c:forEach>
+														</c:when>
+														<c:otherwise>
+															<tr>
+																<td colspan="6">등록된 공지사항이 없습니다.</td>
+															</tr>
+														</c:otherwise>
+													</c:choose>
+												</tbody>
+											</table>
+
+											<!-- 공지사항 작성 버튼 -->
+											<div class="text-end mt-3">
+												<a class="btn rounded-pill btn-outline-primary" href="/admin/notices/createNotice">공지사항 작성</a>
+											</div>
+										</div>
+									</div>
+									<!-- 페이지 네이션 -->
+									<div class="mt-4">
+										<nav aria-label="Page navigation">
+											<ul class="pagination justify-content-center">
+												<!-- 이전 페이지 버튼 -->
+												<c:choose>
+													<c:when test="${pi.pageNo == 1}">
+														<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"> <i class="tf-icon bx bx-chevrons-left"></i>
+														</a></li>
+													</c:when>
+													<c:otherwise>
+														<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showNoticeList(${pi.pageNo - 1}, ${pi.viewDataCntPerPage})"> <i class="tf-icon bx bx-chevrons-left"></i>
+														</a></li>
+													</c:otherwise>
+												</c:choose>
+
+												<!-- 페이지 번호 출력 -->
+												<c:forEach var="i" begin="${pi.startPageNoCurBlock}" end="${pi.endPageNoCurBlock}">
+													<c:choose>
+														<c:when test="${pi.pageNo == i}">
+															<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showNoticeList(${pi.pageNo}, ${pi.viewDataCntPerPage})">${i}</a></li>
+														</c:when>
+														<c:otherwise>
+															<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showNoticeList(${i}, ${pi.viewDataCntPerPage})">${i}</a></li>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+
+												<!-- 다음 페이지 버튼 -->
+												<c:choose>
+													<c:when test="${pi.pageNo == pi.totalPageCnt}">
+														<li class="page-item disabled"><a class="page-link" href="javascript:void(0);"> <i class="tf-icon bx bx-chevrons-right"></i>
+														</a></li>
+													</c:when>
+													<c:otherwise>
+														<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showNoticeList(${pi.pageNo + 1}, ${pi.viewDataCntPerPage})"> <i class="tf-icon bx bx-chevrons-right"></i>
+														</a></li>
+													</c:otherwise>
+												</c:choose>
+
+											</ul>
+										</nav>
+									</div>
+									<!-- / 페이지 네이션 -->
 
 
-				<!-- Footer -->
-				<footer class="content-footer footer bg-footer-theme">
-					<div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-						<div class="mb-2 mb-md-0">
-							©
-							<script>
+								</div>
+								<!-- / Content -->
+
+
+								<!-- Footer -->
+								<footer class="content-footer footer bg-footer-theme">
+									<div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+										<div class="mb-2 mb-md-0">
+											©
+											<script>
 								document.write(new Date().getFullYear());
 							</script>
-							, made with ❤️ by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+											, made with ❤️ by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+										</div>
+										<div>
+											<a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a> <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a> <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-4">Documentation</a> <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank" class="footer-link me-4">Support</a>
+										</div>
+									</div>
+								</footer>
+								<!-- / Footer -->
+
+								<div class="content-backdrop fade"></div>
+							</div>
+							<!-- Content wrapper -->
 						</div>
-						<div>
-							<a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a> <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a> <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-4">Documentation</a> <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank" class="footer-link me-4">Support</a>
-						</div>
+						<!-- / Layout page -->
 					</div>
-				</footer>
-				<!-- / Footer -->
-
-				<div class="content-backdrop fade"></div>
+				</div>
 			</div>
-			<!-- Content wrapper -->
 		</div>
-		<!-- / Layout page -->
 	</div>
-
 	<!-- Overlay -->
 	<div class="layout-overlay layout-menu-toggle"></div>
 	<!-- / Layout wrapper -->
-              
 
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-    <script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
-    <script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
-    <script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-    <script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <script src="/resources/assets/admin/vendor/js/menu.js"></script>
-    <!-- endbuild -->
+	<!-- Core JS -->
+	<!-- build:js assets/vendor/js/core.js -->
+	<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
+	<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
+	<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
+	<script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <!-- Vendors JS -->
-    <script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
+	<script src="/resources/assets/admin/vendor/js/menu.js"></script>
+	<!-- endbuild -->
 
-    <!-- Main JS -->
-    <script src="/resources/assets/admin/js/main.js"></script>
+	<!-- Vendors JS -->
+	<script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
 
-    <!-- Page JS -->
-    <script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
+	<!-- Main JS -->
+	<script src="/resources/assets/admin/js/main.js"></script>
 
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+	<!-- Page JS -->
+	<script src="/resources/assets/admin/js/dashboards-analytics.js"></script>
+
+	<!-- Place this tag in your head or just before your close body tag. -->
+	<script async defer src="https://buttons.github.io/buttons.js"></script>
 	<script type="text/javascript">
 	
 	
@@ -254,7 +265,91 @@
 	        }
 	    });
 	}
+
+	function showNoticeList(pageNo, pagingSize) {
+// 		if (pageNo <= 0) pageNo = 1; 
+		$.ajax({
+	        url: '/admin/notices/getNotices',
+	        type: 'GET',
+	        dataType : 'json',
+	        data: {
+	            pageNo: pageNo
+	        },
+	        success: function(response) {
+	        	console.log(response);
+	        	
+	            // 공지사항 목록 업데이트
+	            let tableRows = '';
+	            $.each(response.list, function(index, notice) {
+	                tableRows += '<tr id="notice-row-' + notice.notice_no + '">' +
+	                          '<td>' + notice.notice_no + '</td>' +
+	                          '<td>' + notice.notice_type + '</td>' +
+	                          '<td><a href="viewNotice/' + notice.notice_no + '">' + notice.notice_title + '</a></td>' +
+	                          '<td>' + notice.admin_id + '</td>' +
+	                          '<td>' + notice.formatted_reg_date + '</td>' +
+	                          '<td>' +
+	                          '<a class="btn rounded-pill btn-outline-warning" href="editNotice/' + notice.notice_no + '">수정</a>' +
+	                          '<a class="btn rounded-pill btn-outline-danger" onclick="confirmDelete(' + notice.notice_no + ');">삭제</a>' +
+	                          '</td>' +
+	                          '</tr>';
+	            });
+	            console.log(response.list[0]);
+	            console.log(tableRows);
+	            
+	            $("#noticeTableBody").html(tableRows);
+	            // 페이지네이션 업데이트
+	            updatePagination(response.pi);
+	        },
+	        error: function() {
+	            alert('공지사항 목록을 불러오는 데 실패했습니다.');
+	        }
+	    });
+	}
+
+	function updatePagination(pi) {
+	    // 페이지네이션 업데이트 처리 (응답에 따른 페이지 버튼 생성)
+	    let pagination = '';
+	    
+	    if (pi.pageNo > 1) {
+	        pagination += '<li class="page-item prev">' + 
+	        '<a class="page-link" href="javascript:void(0);" onclick="showNoticeList(' + (pi.pageNo - 1) + ',' + pi.viewDataCntPerPage + ')">' +
+	        '<i class="tf-icon bx bx-chevrons-left"></i>' +
+	        '</a></li>';
+	    } else {
+	        pagination += '<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>';
+	    }
+	    
+	    for (let i = pi.startPageNoCurBlock; i <= pi.endPageNoCurBlock; i++) {
+	        if (pi.pageNo === i) {
+	            pagination += '<li class="page-item active">' + 
+	            '<a class="page-link" href="javascript:void(0);" onclick="showNoticeList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
+	            '</a></li>';
+	        } else {
+	            pagination += '<li class="page-item">' + 
+	            '<a class="page-link" href="javascript:void(0);" onclick="showNoticeList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
+	            '</a></li>';
+	        }
+	    }
+	    
+	    if (pi.pageNo < pi.totalPageCnt) {
+	        pagination += '<li class="page-item next">' + '<a class="page-link" href="javascript:void(0);" onclick="showNoticeList(' + (pi.pageNo + 1) + ',' + pi.viewDataCntPerPage + ')"><i class="tf-icon bx bx-chevrons-right"></i></a></li>';
+	    } else {
+	        pagination += '<li class="page-item next disabled">' +
+	        '<a class="page-link" href="javascript:void(0);">' + 
+	        '<i class="tf-icon bx bx-chevrons-right"></i>' + 
+	        '</a></li>';
+	    }
+	    
+	    console.log(pi.pageNo);
+	    console.log(pi.startPageNoCurBlock);
+	    console.log(pi.endPageNoCurBlock);
+	    console.log(pi.totalPageCnt);
+	    
+	    $(".pagination").html(pagination);
+	}
+
+
 	</script>
-  </body>
+</body>
 
 </html>

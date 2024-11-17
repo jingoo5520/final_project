@@ -19,7 +19,6 @@ import org.springframework.web.util.WebUtils;
 
 import com.finalProject.model.LoginDTO;
 import com.finalProject.model.admin.homepage.BannerDTO;
-import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.service.admin.notices.NoticeService;
 import com.finalProject.service.home.HomeService;
 import com.finalProject.service.member.MemberService;
@@ -32,7 +31,7 @@ public class HomeController {
 
 	@Autowired
 	NoticeService noticeService;
-	
+
 	// 메인 배너 이미지 설정
 //    @GetMapping("/")
 //    public String homePage(Model model) {
@@ -59,7 +58,7 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String homePage(Model model, HttpServletResponse response, HttpServletRequest request) {
-		
+
 		HttpSession ses = request.getSession();
 		ses.removeAttribute("rememberPath");
 		LoginDTO loginMember = (LoginDTO) ses.getAttribute("loginMember");
