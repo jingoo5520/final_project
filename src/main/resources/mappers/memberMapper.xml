@@ -200,11 +200,13 @@
 		left join coupon_used u
 		on u.coupon_code = p.coupon_code and
 		u.member_id = #{memberId}
-		where (p.member = #{memberId} or p.member =
-		'all')
-		and #{currentTime} &gt;= p.pay_date and #{currentTime} &lt;
-		p.expire_date
+		join members m
+		on m.member_id = #{memberId} 
+		where (p.member = #{memberId} or p.member = 'all')
+		and #{currentTime} &gt;= p.pay_date 
+		and #{currentTime} &lt; p.expire_date
 		and u.coupon_code is null
+		and p.pay_date &gt;= m.reg_date
 	</select>
 
 	<!-- naver_id로 회원 조회(네이버 로그인) -->
@@ -254,28 +256,27 @@
 		u.coupon_code = p.coupon_code
 		where u.member_id = #{memberId}
 	</select>
-
-	<select id="selectRecentCouponList"
-		resultType="com.finalProject.model.RecentCouponDTO">
-		select c.coupon_name,
-		c.coupon_dc_type,
-		c.coupon_dc_amount,
-		c.coupon_dc_rate,
-		p.member,
-		p.pay_date,
-		p.expire_date,
-		u.use_date
-		from
-		coupons c
-		inner join coupon_paid p
-		on c.coupon_no = p.coupon_no and
-		p.pay_date > DATE_SUB(NOW(), INTERVAL 3
-		MONTH)
-		left join coupon_used u
-		on p.coupon_code = u.coupon_code and u.member_id =
-		#{memberId}
-		where
-		p.member = 'All' or p.member = #{memberId}
+	
+	<select id="selectRecentCouponList" resultType="com.finalProject.model.RecentCouponDTO">
+		select c.coupon_name, 
+			   c.coupon_dc_type, 
+			   c.coupon_dc_amount, 
+			   c.coupon_dc_rate, 
+			   p.member, 
+			   p.pay_date, 
+			   p.expire_date, 
+			   u.use_date 
+			   from coupons c 
+			   inner join coupon_paid p 
+			   on c.coupon_no = p.coupon_no 
+			   and p.pay_date &gt; DATE_SUB(NOW(), INTERVAL 3 MONTH) 
+			   left join coupon_used u 
+			   on p.coupon_code = u.coupon_code 
+			   and u.member_id = #{memberId} 
+			   inner join members m
+			   on m.member_id = #{memberId}
+			   where (p.member = 'All' or p.member = #{memberId}) 
+			   and p.pay_date &gt;= m.reg_date 
 	</select>
 
 	<select id="selectMemberPoint"
@@ -337,7 +338,7 @@
 		INNER JOIN
 		orders o ON o.order_id = p.order_id
 		WHERE o.orderer_id = #{member_id}
-		AND p.pay_date > DATE_SUB(NOW(), INTERVAL 12 MONTH)
+		AND p.pay_date &gt; DATE_SUB(NOW(), INTERVAL 12 MONTH)
 	</select>
 
 	<!-- 회원 등급 업데이트 -->
