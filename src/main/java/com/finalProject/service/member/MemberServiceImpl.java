@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.finalProject.model.BlackInfoDTO;
 import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
 import com.finalProject.model.LoginDTO;
@@ -306,6 +307,12 @@ public class MemberServiceImpl implements MemberService {
 	public void tumpMemberData(MemberDTO mDTO) throws Exception {
 		memberDAO.tumpMemberData(mDTO);
 		pDAO.insertPointPlus(mDTO.getMember_id(), 2);
+	}
+
+	// 회원의 블랙정보 받기(로그인)
+	@Override
+	public BlackInfoDTO memberBlackInfo(String member_id) throws Exception {
+		return memberDAO.getMemberBlackInfo(member_id);
 	}
 
 }
