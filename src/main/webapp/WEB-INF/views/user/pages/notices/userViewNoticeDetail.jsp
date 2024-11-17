@@ -76,7 +76,7 @@
             </c:if>
 
             <c:if test="${empty notices}">
-                <p>공지사항을 찾을 수 없습니다.</p>
+                <p>현재 조회 가능한 공지사항이 없습니다.</p>
             </c:if>
         </div>
     </div>

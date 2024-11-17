@@ -8,14 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.finalProject.model.admin.coupon.CouponDTO;
-import com.finalProject.model.admin.coupon.PagingInfoNew;
-import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeVO;
-import com.finalProject.model.admin.notices.PagingInfoDTO;
+import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.PagingInfoNotice;
 import com.finalProject.model.admin.notices.PagingInfoNoticeDTO;
-import com.finalProject.model.admin.notices.SearchCriteriaDTO;
 import com.finalProject.persistence.admin.notices.NoticeDAO;
 
 import lombok.extern.slf4j.Slf4j;
