@@ -18,6 +18,10 @@
 	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
 <style>
+.authTitle {
+	margin-bottom: 20px;
+	font-size: 18px;
+}
 </style>
 </head>
 
@@ -64,17 +68,21 @@
 
 								<c:if test="${empty sessionScope.auth}">
 									<form class="row" action="/member/auth" method="post">
-										<div class="col-sm-12">
+										<div class="col-sm-3"></div>
+										<div class="col-sm-6">
 											<div class="form-group">
-												<h2 class="text-center" style="margin-bottom: 20px">비밀번호
-													인증</h2>
-												<input type="password" class="form-control" id="pwd"
-													name="pwd">
-												<div class="button">
-													<button class="btn" type="submit">확인</button>
+												<div class="authBox">
+													<h2 class="text-center authTitle">비밀번호
+														인증</h2>
+													<input type="password" class="form-control" id="pwd"
+														name="pwd">
+													<div class="button">
+														<button class="btn" type="submit">확인</button>
+													</div>
 												</div>
 											</div>
 										</div>
+										<div class="col-sm-3"></div>
 									</form>
 								</c:if>
 								<c:if test="${not empty sessionScope.auth}">

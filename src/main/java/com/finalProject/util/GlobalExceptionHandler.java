@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = "com.finalProject.controller.admin")
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
@@ -14,6 +14,7 @@ public class GlobalExceptionHandler {
 		ModelAndView mav = new ModelAndView();
 
 		mav.addObject("errorMessage", ex.getMessage());
+		mav.addObject("buttonMesage" , "돌아가기");
 		mav.setViewName("admin/error");
 		return mav;
 	}

@@ -14,7 +14,6 @@
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
@@ -27,6 +26,13 @@
 	width: 30px;
 	border-radius: 10px;
 }
+
+.top-end {
+	display:flex !important;
+	justify-content: center !important;
+	align-items: center;
+}
+
 </style>
 </head>
 <body>
@@ -36,13 +42,13 @@
 		<div class="topbar">
 			<div class="container" id="test">
 				<div class="row align-items-center">
-					<div class="col-lg-4 col-md-4 col-12">
+					<div class="col-lg-2 col-md-2 col-12">
 						<div class="top-left"></div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-12">
+					<div class="col-lg-2 col-md-2 col-12">
 						<div class="top-middle"></div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-12">
+					<div class="col-lg-8 col-md-8 col-12">
 						<div class="top-end">
 							<!-- 로그인 안됬을 때 -->
 							<c:if test="${empty sessionScope.loginMember }">
@@ -50,26 +56,30 @@
 									<i class="lni lni-user"></i> 로그인하세요.
 								</div>
 								<ul class="user-login">
-									<li><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
-									<li><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
-									<li><a href="/serviceCenter/inquiries">고객센터</a></li>
+									<li><a
+										href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+									<li><a
+										href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
+									<li><a href="/serviceCenter/notice">고객센터</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->
 							<c:if test="${not empty sessionScope.loginMember }">
 								<div class="user">
 									<c:if test="${sessionScope.loginMember.member_level == 1}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/bronze.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/bronze.png"></a>
 									</c:if>
 									<c:if test="${sessionScope.loginMember.member_level == 2}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/silver.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/silver.png"></a>
 									</c:if>
 									<c:if test="${sessionScope.loginMember.member_level == 3}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/gold.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/gold.png"></a>
 									</c:if>
 									<c:if test="${sessionScope.loginMember.member_level == 4}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/dia.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/diamond.png"></a>
 									</c:if>
+								</div>
+								<div style="color:#FFFFFF;">
 									${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">

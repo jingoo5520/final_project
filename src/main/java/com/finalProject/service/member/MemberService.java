@@ -3,6 +3,8 @@ package com.finalProject.service.member;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.finalProject.model.BlackInfoDTO;
 import com.finalProject.model.DeliveryDTO;
 import com.finalProject.model.DeliveryVO;
@@ -38,7 +40,7 @@ public interface MemberService {
 	MemberDTO getMember(String member_id)throws Exception;
 
 	// 마이 페이지 회원 정보 수정
-	boolean updateMember(MemberDTO memberDTO)throws Exception;
+	boolean updateMember(MemberDTO memberDTO, String member_id, HttpServletRequest request)throws Exception;
 
 	// 마이 페이지 비밀번호 변경
 	boolean updateMemberPwd(Map<String, String> map)throws Exception;
