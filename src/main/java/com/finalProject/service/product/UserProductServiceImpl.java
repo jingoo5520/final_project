@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ProductDetailReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 import com.finalProject.persistence.product.UserProductDAO;
 
@@ -73,14 +74,18 @@ public class UserProductServiceImpl implements UserProductService {
 	}
 
 	@Override
-	public List<ReviewDetailDTO> getReviewDetail(int productNo) throws Exception {
-	    return pDao.selectReview(productNo);
+	public List<ProductDetailReviewDTO> getReviewDetail(int productNo, int offset, int limit) throws Exception {
+	    try {
+	        return pDao.selectReview(productNo, offset, limit);
+	    } catch (Exception e) {
+	        throw new Exception("리뷰 데이터를 가져오는 중 오류 발생: " + e.getMessage());
+	    }
 	}
 
-	@Override
-	public List<String> getReviewImgs(int productNo) throws Exception {
-	    return pDao.selectReviewImg(productNo);
-	}
+//	@Override
+//	public List<String> getReviewImgs(int productNo) throws Exception {
+//	    return pDao.selectReviewImg(productNo);
+//	}
 
 	@Override
 	public int countReview(int productNo) throws Exception {
