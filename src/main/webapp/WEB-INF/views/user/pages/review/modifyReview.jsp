@@ -38,7 +38,7 @@
                     existFileList = data; // 서버에서 받아온 파일 리스트를 existFileList에 저장
                     showFiles(); // 파일 리스트 화면에 표시
                     showExistFileList();
-                    console.log("받아온 data : ", data);
+//                     console.log("받아온 data : ", data);
 
                 },
                 error: function(error) {
@@ -54,8 +54,8 @@
 			// 중복 이름 거르기
 			$.each(this.files, function(index, file){
 				if (!imageTypes.includes(file.type)) {
-		            console.log("이미지 파일이 아닙니다", file.name);
-		            console.log(file.type);
+// 		            console.log("이미지 파일이 아닙니다", file.name);
+// 		            console.log(file.type);
 		            return; 
 		        }
 				
@@ -71,8 +71,8 @@
 					fileList.push(file);
 				}
 			});
-			console.log(fileList);
-			console.log(existFileList);
+// 			console.log(fileList);
+// 			console.log(existFileList);
 			showFiles();
 		});
         
@@ -82,7 +82,7 @@
                 let selectedValue = $(this).data("value");
                 $("#reviewScore").val(selectedValue); // 선택한 별점 값을 숨겨진 input에 설정
 
-                console.log("선택한 별점 값:", selectedValue); // 콘솔에 별점 값 출력
+//                 console.log("선택한 별점 값:", selectedValue); // 콘솔에 별점 값 출력
                 // 선택한 별점까지 스타일 적용
                 $(".star").each(function() {
                     let starValue = $(this).data("value");
@@ -102,15 +102,15 @@
 			
 			for(let i = 0; i < fileList.length; i++){
 				if(fileList[i].name == parentLi.text().trim()){
-					console.log(fileList[i] + "삭제완료");		
+// 					console.log(fileList[i] + "삭제완료");		
 					fileList.splice(i, 1);
 					parentLi.remove();
 					break;
 				}
 			}
 			
-			console.log(fileList);
-			console.log(existFileList);
+// 			console.log(fileList);
+// 			console.log(existFileList);
 			showFiles();
 		})
 		
@@ -120,7 +120,7 @@
 			
 			for(let i = 0; i < existFileList.length; i++){
 				if(existFileList[i] == parentLi.text().trim()){
-					console.log(existFileList[i] + "삭제완료");	
+// 					console.log(existFileList[i] + "삭제완료");	
 					removedFileList.push(existFileList[i]);
 					existFileList.splice(i, 1);
 					parentLi.remove();
@@ -128,8 +128,8 @@
 				}
 			}
 			
-			console.log("ex: " + existFileList);
-			console.log("rm: " + removedFileList);
+// 			console.log("ex: " + existFileList);
+// 			console.log("rm: " + removedFileList);
 			showExistFileList();
 		})
 		
@@ -184,7 +184,7 @@
 		}
 		
 		for(const x of formData) {
-			console.log(x);
+// 			console.log(x);
 		};
 		
 		$.ajax({
@@ -195,7 +195,7 @@
 	        contentType: false, 
 			data : formData,
 			success : function(data) {
-				console.log(data);
+// 				console.log(data);
 				location.href = "/review/reviewDetail?reviewNo=${param.reviewNo}";
 				
 			},

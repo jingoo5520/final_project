@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -7,20 +6,20 @@
 <html class="no-js" lang="zxx">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>ELOLIA</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	
-    <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
-    <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
+<meta charset="utf-8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<title>ELOLIA</title>
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- ========================= CSS here ========================= -->
+<link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+<link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
 </head>
 <script type="text/javascript">
@@ -59,7 +58,7 @@
             },
             dataType: "json",
             success: function (data) {
-                console.log(data); // 서버 응답 확인
+//                 console.log(data); // 서버 응답 확인
             },
             error: function () {
                 console.error("AJAX 요청 실패");
@@ -105,14 +104,14 @@
 			type: 'POST',
 			dataType: 'json',
 			success: function(data) {
-				console.log(data);
+// 				console.log(data);
 				if (data !== undefined) {
 					$('.cart-items .total-items').text(data);
 				}
 			},
 			error: function(data) {
 				console.error("장바구니 개수 업데이트 실패");
-				console.log(data);
+// 				console.log(data);
 			},
 			complete: function(data) {
 			}
@@ -135,9 +134,10 @@
 <style>
 .active {
 	font-weight: bold;
-	color: #9D968F !important; /* 강조 색상 */ 
+	color: #9D968F !important; /* 강조 색상 */
 	text-decoration: underline;
 }
+
 .product-name {
 	display: -webkit-box;
 	-webkit-line-clamp: 2; /* 최대 줄 수를 2로 설정 */
@@ -146,6 +146,7 @@
 	text-overflow: ellipsis; /* 글자가 넘치는 경우 ... 표시 */
 	white-space: normal;
 }
+
 .stars {
 	display: flex;
 	justify-content: right;
@@ -155,27 +156,26 @@
 .stars i {
 	color: #ffa000;
 }
+
 .product-image {
-    position: relative;
-    padding-top: 100%; /* 정사각형 비율 (원하는 비율로 조정 가능) */
-    overflow: hidden;
+	position: relative;
+	padding-top: 100%; /* 정사각형 비율 (원하는 비율로 조정 가능) */
+	overflow: hidden;
 }
 
 .product-image img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
-
 </style>
 <body>
 	<jsp:include page="../header.jsp">
 		<jsp:param name="categoryName" value="${products[0].category_name}" />
 	</jsp:include>
-
 
 	<!-- Preloader -->
 	<div class="preloader">
@@ -225,10 +225,7 @@
 						<div class="single-widget search">
 							<h3>찾으실 상품을 검색해주세요.</h3>
 							<form action="/product/jewelry/result" method="get">
-								<input type="hidden" name="category" value="${category}">
-								<input type="text" name="search" placeholder="Search Here..."
-									value="${search != null ? search : ''}"> <input
-									type="hidden" name="sortOrder" value="${sortOrder}">
+								<input type="hidden" name="category" value="${category}"> <input type="text" name="search" placeholder="Search Here..." value="${search != null ? search : ''}"> <input type="hidden" name="sortOrder" value="${sortOrder}">
 								<button type="submit">
 									<i class="lni lni-search-alt"></i>
 								</button>
@@ -236,19 +233,19 @@
 						</div>
 						<!-- End Single Widget -->
 						<!-- Start Single Widget -->
-<div class="single-widget">
-	<ul class="list">
-		<li><a href="/product/jewelry?category=196" class="category-link">NACKLACE <span>(${necklaceCount})</span></a></li>
-		<li><a href="/product/jewelry?category=195" class="category-link">EARRING <span>(${earringCount})</span></a></li>
-		<li><a href="/product/jewelry?category=203" class="category-link">PIERCING <span>(${piercingCount})</span></a></li>
-		<li><a href="/product/jewelry?category=197" class="category-link">BANGLE <span>(${bangleCount})</span></a></li>
-		<li><a href="/product/jewelry?category=201" class="category-link">ANKLET <span>(${ankletCount})</span></a></li>
-		<li><a href="/product/jewelry?category=198" class="category-link">RING <span>(${ringCount})</span></a></li>
-		<li><a href="/product/jewelry?category=200" class="category-link">COUPLING <span>(${couplingCount})</span></a></li>
-		<li><a href="/product/jewelry?category=202" class="category-link">PENDANT <span>(${pendantCount})</span></a></li>
-		<li><a href="/product/jewelry?category=204" class="category-link">기타 <span>(${otherCount})</span></a></li>
-	</ul>
-</div>
+						<div class="single-widget">
+							<ul class="list">
+								<li><a href="/product/jewelry?category=196" class="category-link">NACKLACE <span>(${necklaceCount})</span></a></li>
+								<li><a href="/product/jewelry?category=195" class="category-link">EARRING <span>(${earringCount})</span></a></li>
+								<li><a href="/product/jewelry?category=203" class="category-link">PIERCING <span>(${piercingCount})</span></a></li>
+								<li><a href="/product/jewelry?category=197" class="category-link">BANGLE <span>(${bangleCount})</span></a></li>
+								<li><a href="/product/jewelry?category=201" class="category-link">ANKLET <span>(${ankletCount})</span></a></li>
+								<li><a href="/product/jewelry?category=198" class="category-link">RING <span>(${ringCount})</span></a></li>
+								<li><a href="/product/jewelry?category=200" class="category-link">COUPLING <span>(${couplingCount})</span></a></li>
+								<li><a href="/product/jewelry?category=202" class="category-link">PENDANT <span>(${pendantCount})</span></a></li>
+								<li><a href="/product/jewelry?category=204" class="category-link">기타 <span>(${otherCount})</span></a></li>
+							</ul>
+						</div>
 						<!-- End Single Widget -->
 					</div>
 					<!-- End Product Sidebar -->
@@ -262,20 +259,13 @@
 									<div class="product-sorting">
 										<!-- 정렬 기준 유지 -->
 										<form id="sortingForm" action="" method="get">
-											<label for="sorting">Sort by:</label> <select
-												class="form-control" id="sorting" name="sortOrder"
-												onchange="submitSortingForm()">
+											<label for="sorting">Sort by:</label> <select class="form-control" id="sorting" name="sortOrder" onchange="submitSortingForm()">
 												<option value="new" ${sortOrder=='new' ? 'selected' : '' }>신상품순</option>
-												<option value="popular"
-													${sortOrder=='popular' ? 'selected' : '' }>인기상품순</option>
-												<option value="lowPrice"
-													${sortOrder=='lowPrice' ? 'selected' : '' }>낮은가격순</option>
-												<option value="highPrice"
-													${sortOrder=='highPrice' ? 'selected' : '' }>높은가격순</option>
-											</select> <input type="hidden" name="category" value="${category}" />
-											<input type="hidden" name="search" value="${search}" /> <input
-												type="hidden" name="page" value="${currentPage}" /> <input
-												type="hidden" name="pageSize" value="${pageSize}" />
+												<option value="popular" ${sortOrder=='popular' ? 'selected' : '' }>인기상품순</option>
+												<option value="lowPrice" ${sortOrder=='lowPrice' ? 'selected' : '' }>낮은가격순</option>
+												<option value="highPrice" ${sortOrder=='highPrice' ? 'selected' : '' }>높은가격순</option>
+												<option value="manyReview" ${sortOrder=='manyReview' ? 'selected' : '' }>리뷰많은순</option>
+											</select> <input type="hidden" name="category" value="${category}" /> <input type="hidden" name="search" value="${search}" /> <input type="hidden" name="page" value="${currentPage}" /> <input type="hidden" name="pageSize" value="${pageSize}" />
 										</form>
 									</div>
 								</div>
@@ -294,30 +284,27 @@
 								<c:otherwise>
                                     ${totalProductCount}
                                 </c:otherwise>
-                            </c:choose>
-                        </div>
-                        <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <c:if test="${noResult}">
-                                            <div style="background-color: #f0f0f0; text-align: center; color: #333; padding: 15px; border-radius: 5px;">
-                                                <span>검색 결과가... 앙 없어띠 다시 한 번 검색해봐 ~ </span><br />
-                                                <img src="/resources/images/noResult.jpeg" alt="No Results" style="margin-top: 15px; width: auto; height: auto; max-width: 100%;" />
-                                            </div>
-                                        </c:if>
-                                    </div>
-                                    <c:forEach var="product" items="${products}">
-                                        <div class="col-lg-4 col-md-6 col-12">
-                                            <div class="single-product">
-                                                <div class="product-image" >
-                                                
-                                                    <a href="/product/jewelry/detail?productNo=${product.product_no}" >
-                                                        <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;"   >
-                                                    </a>
+							</c:choose>
+						</div>
+						<div class="tab-content" id="nav-tabContent">
+							<div class="tab-pane fade active show" id="nav-grid" role="tabpanel" aria-labelledby="nav-grid-tab">
+								<div class="row">
+									<div class="col-12">
+										<c:if test="${noResult}">
+											<div style="background-color: #f0f0f0; text-align: center; color: #333; padding: 15px; border-radius: 5px;">
+												<span>검색 결과가... 앙 없어띠 다시 한 번 검색해봐 ~ </span><br /> <img src="/resources/images/noResult.jpeg" alt="No Results" style="margin-top: 15px; width: auto; height: auto; max-width: 100%;" />
+											</div>
+										</c:if>
+									</div>
+									<c:forEach var="product" items="${products}">
+										<div class="col-lg-4 col-md-6 col-12">
+											<div class="single-product">
+												<div class="product-image">
 
-													<div class="button"
-														style="position: absolute; bottom: 10px; left: 90px;">
+													<a href="/product/jewelry/detail?productNo=${product.product_no}"> <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
+													</a>
+
+													<div class="button" style="position: absolute; bottom: 10px; left: 90px;">
 														<c:set var="result" value="false" />
 														<c:forEach var="wishItem" items="${wishList }">
 															<c:if test="${wishItem == product.product_no}">
@@ -327,93 +314,70 @@
 														<c:if test="${wishList != null }">
 															<c:if test="${result == 'true' }">
 																<!-- 찜목록에 있을 경우 하트 -->
-																<a onclick="toggleHeart(this, ${product.product_no})"
-																	class="btn"
-																	style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
-																	<i class="lni lni-heart-filled"></i>
+																<a onclick="toggleHeart(this, ${product.product_no})" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-heart-filled"></i>
 																</a>
 															</c:if>
 															<c:if test="${result == 'false' }">
 																<!-- 찜목록에 없을 경우 빈하트 -->
-																<a onclick="toggleHeart(this, ${product.product_no})"
-																	class="btn"
-																	style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
-																	<i class="lni lni-heart"></i>
+																<a onclick="toggleHeart(this, ${product.product_no})" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-heart"></i>
 																</a>
 															</c:if>
 														</c:if>
 														<c:if test="${wishList == null }">
-															<a href="${pageContext.request.contextPath}/member/viewLogin"
-																class="btn"
-																style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
-																<i class="lni lni-heart"></i>
+															<a href="${pageContext.request.contextPath}/member/viewLogin" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-heart"></i>
 															</a>
 														</c:if>
 													</div>
 
-													<div class="button"
-														style="position: absolute; bottom: 10px; right: 140px;">
-														<a onclick="addCart(${product.product_no})" class="btn"
-															style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;">
-															<i class="lni lni-cart"></i>
+													<div class="button" style="position: absolute; bottom: 10px; right: 140px;">
+														<a onclick="addCart(${product.product_no})" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-cart"></i>
 														</a>
 													</div>
 												</div>
 
 												<div class="product-info">
-													<!-- Category 출력 부분 -->
 													<div class="row scoreDiv">
-														<span class="category col-md-6 col-lg-6 col-12"> ${product.category_name } </span>
-						                                <c:if test="${not empty product.average_score and product.average_score != 0.0}">
+														<span class="category col-md-6 col-lg-6 col-12">${product.category_name}</span>
+														<c:if test="${product.review_count > 0}">
 															<div class="starScore col-md-6 col-lg-6 col-12">
 																<ul class="stars">
 																	<c:forEach var="index" begin="1" end="5">
-																		<c:if test="${index <= product.average_score }">
-											                                <li><i class="lni lni-star-filled"></i></li>
-											                            </c:if>
-											                            <c:if test="${index > product.average_score }">
-											                            	<li><i class="lni lni-star"></i></li>
-											                            </c:if>
-									                                </c:forEach>
-								                                	<li><i>${product.average_score }</i></li>
-									                            </ul>
+																		<c:if test="${index <= product.average_score}">
+																			<li><i class="lni lni-star-filled"></i></li>
+																		</c:if>
+																		<c:if test="${index > product.average_score}">
+																			<li><i class="lni lni-star"></i></li>
+																		</c:if>
+																	</c:forEach>
+																	<li><i><fmt:formatNumber value="${product.average_score}" type="number" maxFractionDigits="2" /></i></li>
+																</ul>
 															</div>
-						                                </c:if>
+														</c:if>
 													</div>
 
+
 													<h4 class="title">
-														<a
-															href="/product/jewelry/detail?productNo=${product.product_no}"
-															class="product-name">${product.product_name }</a>
+														<a href="/product/jewelry/detail?productNo=${product.product_no}" class="product-name">${product.product_name }</a>
 													</h4>
 													<div class="price">
 														<!--     dc 타입 확인하고 P이면 계산 전 가격 출력 (취소선 적용) -->
-														<c:if
-															test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
-															<span style="text-decoration: line-through; color: #999;">
-																<fmt:formatNumber value="${product.product_price}"
-																	type="number" pattern="#,###" />원
+														<c:if test="${product.product_dc_type == 'P' && product.product_price != product.calculatedPrice}">
+															<span style="text-decoration: line-through; color: #999;"> <fmt:formatNumber value="${product.product_price}" type="number" pattern="#,###" />원
 															</span>
 														</c:if>
 
 														<!-- 할인율 (dc 타입이 P일 때만 표시) -->
-														<c:if
-															test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
-															<span class="sale-tag"
-																style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;">
-																- <fmt:formatNumber value="${product.dc_rate * 100}"
-																	type="number" maxFractionDigits="0" />%
+														<c:if test="${product.product_dc_type == 'P' && product.dc_rate > 0}">
+															<span class="sale-tag" style="color: #FF4D4D; font-size: 1.2em; font-weight: bold; text-decoration: none;"> - <fmt:formatNumber value="${product.dc_rate * 100}" type="number" maxFractionDigits="0" />%
 															</span>
 														</c:if>
 
 
 														<!--     최종 계산된 가격 표시 -->
-														<span> <fmt:formatNumber
-																value="${product.calculatedPrice}" type="number"
-																pattern="#,###" /> 원
+														<span> <fmt:formatNumber value="${product.calculatedPrice}" type="number" pattern="#,###" /> 원
 														</span>
 													</div>
-														
+
 												</div>
 											</div>
 											<!-- End Single Product -->
@@ -427,8 +391,7 @@
 										<div class="pagination left">
 											<ul class="pagination-list">
 												<c:if test="${hasPrevBlock}">
-													<li><a
-														href="<c:choose>
+													<li><a href="<c:choose>
 						                                    <c:when test='${not empty search}'>
 						                                        /product/jewelry/result?search=${search}&page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
 						                                        <c:if test='${category != null}'> &category=${category}</c:if>
@@ -437,8 +400,7 @@
 						                                        /product/jewelry?page=${startPage - 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
 						                                        <c:if test='${category != null}'> &category=${category}</c:if>
 						                                    </c:otherwise>
-						                                </c:choose>">
-															<i class="lni lni-chevron-left"></i> 이전
+						                                </c:choose>"> <i class="lni lni-chevron-left"></i> 이전
 													</a></li>
 												</c:if>
 
@@ -448,8 +410,7 @@
 															<li class="active"><a href="">${i}</a></li>
 														</c:when>
 														<c:otherwise>
-															<li><a
-																href="<c:choose>
+															<li><a href="<c:choose>
                                             <c:when test='${not empty search}'>
                                                 /product/jewelry/result?search=${search}&page=${i}&pageSize=${pageSize}&sortOrder=${sortOrder}
                                                 <c:if test='${category != null}'> &category=${category}</c:if>
@@ -458,15 +419,13 @@
                                                 /product/jewelry?page=${i}&pageSize=${pageSize}&sortOrder=${sortOrder}
                                                 <c:if test='${category != null}'> &category=${category}</c:if>
                                             </c:otherwise>
-                                         </c:choose>">${i}</a>
-															</li>
+                                         </c:choose>">${i}</a></li>
 														</c:otherwise>
 													</c:choose>
 												</c:forEach>
 
 												<c:if test="${hasNextBlock}">
-													<li><a
-														href="<c:choose>
+													<li><a href="<c:choose>
 						                                    <c:when test='${not empty search}'>
 						                                        /product/jewelry/result?search=${search}&page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
 						                                        <c:if test='${category != null}'> &category=${category}</c:if>
@@ -475,8 +434,7 @@
 						                                        /product/jewelry?page=${endPage + 1}&pageSize=${pageSize}&sortOrder=${sortOrder}
 						                                        <c:if test='${category != null}'> &category=${category}</c:if>
 						                                    </c:otherwise>
-						                                 </c:choose>">
-															다음 <i class="lni lni-chevron-right"></i>
+						                                 </c:choose>"> 다음 <i class="lni lni-chevron-right"></i>
 													</a></li>
 												</c:if>
 											</ul>
@@ -487,8 +445,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="tab-pane show active fade" id="nav-list"
-						role="tabpanel" aria-labelledby="nav-list-tab">
+					<div class="tab-pane show active fade" id="nav-list" role="tabpanel" aria-labelledby="nav-list-tab">
 						<div class="row"></div>
 					</div>
 				</div>
@@ -497,10 +454,10 @@
 	</section>
 	<!-- End Product Grids -->
 
-    <jsp:include page="../footer.jsp"></jsp:include>
-    
-    <jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
-    
+	<jsp:include page="../footer.jsp"></jsp:include>
+
+	<jsp:include page="../cart/cartAddModal.jsp"></jsp:include>
+
 	<!-- ========================= scroll-top ========================= -->
 	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
 	</a>

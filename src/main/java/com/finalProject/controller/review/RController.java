@@ -70,11 +70,11 @@ public class RController {
 	        
 //	        System.out.println("C이거 뜨면 로그인 된거임");
 //	        System.out.println(writableReviews);
-	        System.out.println("C로그인된 회원 ID: " + loginMember.getMember_id());
-	        System.out.println("C총 작성 가능한 리뷰 개수: " + totalWritableReviews);
+//	        System.out.println("C로그인된 회원 ID: " + loginMember.getMember_id());
+//	        System.out.println("C총 작성 가능한 리뷰 개수: " + totalWritableReviews);
 
 	    } else {
-	        System.out.println("로그인 정보 없음");
+//	        System.out.println("로그인 정보 없음");
 	        return "redirect:/member/viewLogin"; // 로그인 정보가 없을 경우 로그인페이지
 	    }
 	    
@@ -114,9 +114,9 @@ public class RController {
 	        
 //	        System.out.println("가능 충 데이터 : " + writtenReviews);
 //	        System.out.println("C로그인된 회원 ID: " + loginMember.getMember_id());
-	        System.out.println("C총 작성한 리뷰 개수: " + totalWrittenReviews);
+//	        System.out.println("C총 작성한 리뷰 개수: " + totalWrittenReviews);
 	    } else {
-	        System.out.println("로그인 정보 없음");
+//	        System.out.println("로그인 정보 없음");
 	        return "redirect:/member/viewLogin"; // 로그인 정보가 없을 경우 로그인페이지
 	    }
 	    
@@ -186,7 +186,7 @@ public class RController {
         // 리뷰 이미지 리스트 가져오기
 		List<String> reviewImages = service.getReviewImages(reviewNo);
         
-        System.out.println(reviewDetail);
+//        System.out.println(reviewDetail);
         
         if (loginMember == null) {
         	return "redirect:/member/viewLogin"; // 로그인 정보가 없을 경우 로그인 페이지로 리다이렉트
@@ -263,10 +263,10 @@ public class RController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("관리자 답글이 있는 리뷰는 수정할 수 없습니다.");
         }
 
-        System.out.println("files: " + files);
-	    System.out.println("existFiles: " + existFiles);
-	    System.out.println("removedFiles: " + removedFiles);
-        
+//        System.out.println("files: " + files);
+//	    System.out.println("existFiles: " + existFiles);
+//	    System.out.println("removedFiles: " + removedFiles);
+//        
         
         
         try {

@@ -72,7 +72,6 @@
 						</a>
 					</div>
 
-
 				</nav>
 
 				<!-- / Navbar -->
@@ -108,7 +107,7 @@
                           <th>관리</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody id="eventTableBody" class="table-border-bottom-0">
 	                      <c:choose>
 	                        <c:when test="${not empty events}">
 								<c:forEach var="event" items="${events}">
@@ -139,33 +138,6 @@
 										    </c:choose>
 										</td>
 
-<!-- 										배너 이미지 업로드 폼 -->
-<!-- 										<td> -->
-<%-- 										    <form id="uploadBannerForm_${event.notice_no}"> --%>
-<%-- 										        <input type="hidden" name="notice_no" value="${event.notice_no}"> <!-- 숨겨진 입력 필드 추가 --> --%>
-<%-- 										        <input type="file" id="bannerInput_${event.notice_no}" name="banner" accept="image/*"> --%>
-<%-- 										        <img id="bannerPreview_${event.notice_no}" style="display:none;" alt="배너 미리보기"> --%>
-<!-- 										        <button type="submit">배너 업로드</button> -->
-<!-- 										    </form> -->
-<!-- 										</td> -->
-										
-<!-- 										썸네일 이미지 업로드 폼 -->
-<!-- 										<td> -->
-<%-- 										    <form id="uploadThumbnailForm_${event.notice_no}"> --%>
-<%-- 										        <input type="hidden" name="notice_no" value="${event.notice_no}"> <!-- 숨겨진 입력 필드 추가 --> --%>
-<%-- 										        <input type="file" id="thumbnailInput_${event.notice_no}" name="thumbnail" accept="image/*"> --%>
-<%-- 										        <img id="thumbnailPreview_${event.notice_no}" style="display:none;" alt="썸네일 미리보기"> --%>
-<!-- 										        <button type="submit">썸네일 업로드</button> -->
-<!-- 										    </form> -->
-<!-- 										</td> -->
-
-
-<!-- 										    <td><input type="file" name="file" id="bannerFileInput" onclick="uploadBanner()"></td> -->
-<!-- 										    <td><input type="file" name="file" id="thumbnailFileInput" onclick="uploadThumnail()"></td> -->
-<%-- 								        <td><img src="C:/spring/temp/${notice.banner_image}" alt="배너 이미지" width="100"></td> --%>
-<%--                                         <td><img src="C:/spring/temp/${notice.thumbnail_image}" alt="썸네일 이미지" width="50"></td> --%>
-<%--                                         <td><a href="${notice.url}" target="_blank">링크</a></td> --%>
-								        
 								        <td>
 											<div>${event.notice_content}</div>
 											<a class="btn rounded-pill btn-outline-warning" href="editEvent/${event.notice_no}">수정</a>
@@ -183,38 +155,56 @@
                       </tbody>
                     </table>
                     
-		<!-- 페이지네이션 -->
-		<p>현재 페이지: ${currentPage != null ? currentPage : 'N/A'} / 총 페이지: ${totalPages != null ? totalPages : 'N/A'}</p>
-		<div class="pagination">
-		    <c:if test="${currentPage > 1}">
-		        <a href="?page=${currentPage - 1}">이전</a>
-		    </c:if>
-		    
-		    <c:if test="${totalPages > 0}">
-		        <c:forEach var="i" begin="1" end="${totalPages}">
-		            <c:choose>
-		                <c:when test="${i == currentPage}">
-		                    <span>${i}</span> <!-- 현재 페이지는 그냥 숫자 표시 -->
-		                </c:when>
-		                <c:otherwise>
-		                    <a href="?page=${i}">${i}</a>
-		                </c:otherwise>
-		            </c:choose>
-		        </c:forEach>
-		    </c:if>
-		
-		    <c:if test="${currentPage < totalPages}">
-		        <a href="?page=${currentPage + 1}">다음</a>
-		    </c:if>
-		</div>
-                    
       <!-- 이벤트 작성 버튼 -->
       <div class="text-end mt-3">
         <a class="btn rounded-pill btn-outline-primary" href="/admin/notices/createEvent">이벤트 작성</a>
                   </div>
                 </div>
               </div>
- 
+									<!-- 페이지 네이션 -->
+									<div class="mt-4">
+										<nav aria-label="Page navigation">
+											<ul class="pagination justify-content-center">
+												<!-- 이전 페이지 버튼 -->
+												<c:choose>
+													<c:when test="${pi.pageNo == 1}">
+														<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"> <i class="tf-icon bx bx-chevrons-left"></i>
+														</a></li>
+													</c:when>
+													<c:otherwise>
+														<li class="page-item prev"><a class="page-link" href="javascript:void(0);" onclick="showEventList(${pi.pageNo - 1}, ${pi.viewDataCntPerPage})"> <i class="tf-icon bx bx-chevrons-left"></i>
+														</a></li>
+													</c:otherwise>
+												</c:choose>
+
+												<!-- 페이지 번호 출력 -->
+												<c:forEach var="i" begin="${pi.startPageNoCurBlock}" end="${pi.endPageNoCurBlock}">
+													<c:choose>
+														<c:when test="${pi.pageNo == i}">
+															<li class="page-item active"><a class="page-link" href="javascript:void(0);" onclick="showEventList(${pi.pageNo}, ${pi.viewDataCntPerPage})">${i}</a></li>
+														</c:when>
+														<c:otherwise>
+															<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="showEventList(${i}, ${pi.viewDataCntPerPage})">${i}</a></li>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+
+												<!-- 다음 페이지 버튼 -->
+												<c:choose>
+													<c:when test="${pi.pageNo == pi.totalPageCnt}">
+														<li class="page-item disabled"><a class="page-link" href="javascript:void(0);"> <i class="tf-icon bx bx-chevrons-right"></i>
+														</a></li>
+													</c:when>
+													<c:otherwise>
+														<li class="page-item next"><a class="page-link" href="javascript:void(0);" onclick="showEventList(${pi.pageNo + 1}, ${pi.viewDataCntPerPage})"> <i class="tf-icon bx bx-chevrons-right"></i>
+														</a></li>
+													</c:otherwise>
+												</c:choose>
+
+											</ul>
+										</nav>
+									</div>
+									<!-- / 페이지 네이션 -->
  
             </div>
             <!-- / Content -->
@@ -243,6 +233,10 @@
 		</div>
 		<!-- / Layout page -->
 	</div>
+	            </div>
+            </div>
+            </div>
+            </div>
 
 	<!-- Overlay -->
 	<div class="layout-overlay layout-menu-toggle"></div>
@@ -375,6 +369,91 @@
             reader.readAsDataURL(file);
         }
     }
+    
+	function showEventList(pageNo, pagingSize) {
+// 		if (pageNo <= 0) pageNo = 1; 
+		$.ajax({
+	        url: '/admin/notices/getEvents',
+	        type: 'GET',
+	        dataType : 'json',
+	        data: {
+	            pageNo: pageNo
+	        },
+	        success: function(response) {
+	        	console.log(response);
+	        	
+	            // 이벤트 목록 업데이트
+	            let tableRows = '';
+	            $.each(response.list, function(index, event) {
+	                tableRows += '<tr id="event-row-' + event.notice_no + '">' +
+	                          '<td>' + event.notice_no + '</td>' +
+	                          '<td>' + event.notice_type + '</td>' +
+	                          '<td><a href="viewEvent/' + event.notice_no + '">' + event.notice_title + '</a></td>' +
+	                          '<td>' + event.admin_id + '</td>' +
+	                          '<td>' + event.formatted_reg_date + '</td>' +
+	                          '<td>' + event.formatted_event_start_date + '</td>' +
+	                          '<td>' + event.formatted_event_end_date + '</td>' +
+	                          '<td>' +
+	                          '<a class="btn rounded-pill btn-outline-warning" href="editEvent/' + event.notice_no + '">수정</a>' +
+	                          '<a class="btn rounded-pill btn-outline-danger" onclick="confirmDelete(' + event.notice_no + ');">삭제</a>' +
+	                          '</td>' +
+	                          '</tr>';
+	            });
+	            console.log(response.list[0]);
+	            console.log(tableRows);
+	            
+	            $("#eventTableBody").html(tableRows);
+	            // 페이지네이션 업데이트
+	            updatePagination(response.pi);
+	        },
+	        error: function() {
+	            alert('이벤트 목록을 불러오는 데 실패했습니다.');
+	        }
+	    });
+	}
+
+	function updatePagination(pi) {
+	    // 페이지네이션 업데이트 처리 (응답에 따른 페이지 버튼 생성)
+	    let pagination = '';
+	    
+	    if (pi.pageNo > 1) {
+	        pagination += '<li class="page-item prev">' + 
+	        '<a class="page-link" href="javascript:void(0);" onclick="showEventList(' + (pi.pageNo - 1) + ',' + pi.viewDataCntPerPage + ')">' +
+	        '<i class="tf-icon bx bx-chevrons-left"></i>' +
+	        '</a></li>';
+	    } else {
+	        pagination += '<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>';
+	    }
+	    
+	    for (let i = pi.startPageNoCurBlock; i <= pi.endPageNoCurBlock; i++) {
+	        if (pi.pageNo === i) {
+	            pagination += '<li class="page-item active">' + 
+	            '<a class="page-link" href="javascript:void(0);" onclick="showEventList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
+	            '</a></li>';
+	        } else {
+	            pagination += '<li class="page-item">' + 
+	            '<a class="page-link" href="javascript:void(0);" onclick="showEventList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
+	            '</a></li>';
+	        }
+	    }
+	    
+	    if (pi.pageNo < pi.totalPageCnt) {
+	        pagination += '<li class="page-item next">' + '<a class="page-link" href="javascript:void(0);" onclick="showEventList(' + (pi.pageNo + 1) + ',' + pi.viewDataCntPerPage + ')"><i class="tf-icon bx bx-chevrons-right"></i></a></li>';
+	    } else {
+	        pagination += '<li class="page-item next disabled">' +
+	        '<a class="page-link" href="javascript:void(0);">' + 
+	        '<i class="tf-icon bx bx-chevrons-right"></i>' + 
+	        '</a></li>';
+	    }
+	    
+	    console.log(pi.pageNo);
+	    console.log(pi.startPageNoCurBlock);
+	    console.log(pi.endPageNoCurBlock);
+	    console.log(pi.totalPageCnt);
+	    
+	    $(".pagination").html(pagination);
+	}
+    
 </script>
 
   </body>

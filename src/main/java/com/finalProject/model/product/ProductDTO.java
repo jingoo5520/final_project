@@ -34,6 +34,7 @@ public class ProductDTO {
     private String product_show;
     private String image_url;
     private String image_type;
+    private int review_count;
     
     private String category_name;
     
