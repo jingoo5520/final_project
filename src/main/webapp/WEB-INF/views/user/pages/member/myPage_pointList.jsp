@@ -90,17 +90,17 @@
 		if (totalPage > 1) {
 			if (pageNo == 1) {
 				output = `<div id="\${pointType}_pageDown" class="pages disabled">이전</div>`;
-				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo} / \${totalPage}</div>`;
 				output += `<div id="\${pointType}_pageUp" class="pages active" onclick="get\${pointType}PointList(\${pageNo + 1})">다음</div>`;
 				$("#pagination").html(output);
 			} else if (pageNo == totalPage) {
 				output = `<div id="\${pointType}_pageDown" class="pages active" onclick="get\${pointType}PointList(\${pageNo - 1})">이전</div>`;
-				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo} / \${totalPage}</div>`;
 				output += `<div id="\${pointType}_pageUp" class="pages disabled">다음</div>`;
 				$("#pagination").html(output);
 			} else {
 				output = `<div id="\${pointType}_pageDown" class="pages active" onclick="get\${pointType}PointList(\${pageNo - 1})">이전</div>`;
-				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo} / \${totalPage}</div>`;
 				output += `<div id="\${pointType}_pageUp" class="pages active" onclick="get\${pointType}PointList(\${pageNo + 1})">다음</div>`;
 				$("#pagination").html(output);
 			}
@@ -180,7 +180,9 @@
 </head>
 
 <style>
-	
+	#earned_page,#used_page {
+		width: 60px;
+	}
 
 	.tab-content {
 		max-width: 800px;

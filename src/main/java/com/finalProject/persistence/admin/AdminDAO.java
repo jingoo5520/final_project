@@ -58,4 +58,6 @@ public interface AdminDAO {
 	// 특정 달의 취소금액 가져오기 추가
 	List<CancelCountDTO> selectTotalByMonth(List<Integer> list);
 
+	List<CancelCountDTO> selectTotalCancelCnt();
+
 }

@@ -8,13 +8,13 @@
 <html class="no-js" lang="zxx">
 
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="x-ua-compatible" content="ie=edge" />
-<title>Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.</title>
-<meta name="description" content="" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/favicon.svg" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>ELOLIA</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
@@ -224,23 +224,40 @@
             },
             error: function() {},
             complete: function(data) {
-                if (data.status == 200) {
-                    // 모달을 보여주기
-                    $('#myModal').modal('show');
-
-                    // 확인 버튼 클릭 시 장바구니 페이지로 이동
-                    $('#goCart').off('click').on('click', function() {
-                        location.href = "/cart";
-                    });
-
-                    $('#keepProduct').off('click').on('click', function() {
-                        location.reload();
-                    });
-                } else if (data.responseText == 401) {
-                    alert("잘못된 접근입니다.");
-                }
-            }
+				if (data.status == 200) {
+					$('#myModal').modal('show');
+					
+					// 헤더의 장바구니 수량 최신화
+					cartCountUpdate();
+					
+					// 확인 버튼 클릭 시 장바구니 페이지로 이동
+					$('#goCart').off('click').on('click', function() {
+						location.href = "/cart";
+					});
+					
+					$('#keepProduct').off('click').on('click', function() {
+						$('#myModal').modal('hide');
+					});
+				}
+			}
         });
+    }
+    
+    function cartCountUpdate() {
+		$.ajax({
+			url: '/cartCountUpdate',
+			type: 'POST',
+			dataType: 'json',
+			success: function(data) {
+				if (data !== undefined) {
+					$('.cart-items .total-items').text(data);
+				}
+			},
+			error: function(data) {
+			},
+			complete: function(data) {
+			}
+		});
     }
 
     function toggleHeart(element, product_no) {

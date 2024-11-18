@@ -2,10 +2,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
-
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
@@ -43,116 +41,106 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="/resources/assets/admin/js/config.js"></script>
 <script>
-	let cardColor, headingColor, axisColor, shadeColor, borderColor;
+            let cardColor, headingColor, axisColor, shadeColor, borderColor;
 
-	cardColor = config.colors.white;
-	headingColor = config.colors.headingColor;
-	axisColor = config.colors.axisColor;
-	borderColor = config.colors.borderColor;
+            cardColor = config.colors.white;
+            headingColor = config.colors.headingColor;
+            axisColor = config.colors.axisColor;
+            borderColor = config.colors.borderColor;
 
-	let isDrawedSaleGragh = false;
-	let isDrawedRevenueGragh = false;
-	
-	let totalRevenueChart;
-	let totalSaleChart;
-	
-	
-	$(function() {
-		
-		$('#regDate_end').val(dateFormat(new Date()));
-		
-		$.ajax({
-			url : '/admin/getStatisticData',
-			type : 'GET',
-			dataType : 'json',
-			success : function(data) {
-				console.log(data);
+            let totalRevenueChart;
+            let totalSaleAndCancelChart;
 
-				setData(data);
-			},
-			error : function(error) {
-				console.log(error);
-			}
-		});
-		
+            $(function () {
+                $("#regDate_end").val(dateFormat(new Date()));
 
-		
-	});
+                $.ajax({
+                    url: "/admin/getStatisticData",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
 
-	function setData(data) {
-		setOverView(data);
-		setNumberOfMembers(data.memberCnt, data.memberGrowthRate.toFixed(2));
-		setNumberOfMembersByGender(data.memberCnt, data.genderList);
-		setNumberOfMembersByLevel(data.memberCnt, data.levelList);
-		setSaleData(data.saleCountDTOList);
-		setRevenueData(data.revenueDTOList);
-	}
-	
-	// SetOverview
-	function setOverView(data){
-		
-		let regGrowthRate = data.regGrowthRate.toFixed(2);
-		let saleGrowthRate = data.saleGrowthRate.toFixed(2);
-		let revenueGrowthRate = data.revenueGrowthRate.toFixed(2);
-		
-		$("#todayRegMemberCnt").text(data.todayRegMemberCnt);
-		$("#daySaleCnt").text(data.daySaleCnt);
-		$("#dayRevenue").text(data.dayRevenue.toLocaleString());
-		$("#waitInquiryCnt").text(data.waitInquiryCnt);
-		
-		if(regGrowthRate >= 0){
-			$("#regGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${regGrowthRate}%</small>`);	
-		} else {
-			$("#regGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${regGrowthRate}%</small>`);
-		}
-		
-		if(saleGrowthRate >= 0){
-			$("#saleGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${saleGrowthRate}%</small>`);	
-		} else {
-			$("#saleGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${saleGrowthRate}%</small>`);
-		}
-		
-		if(revenueGrowthRate >= 0){
-			$("#revenueGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${revenueGrowthRate}%</small>`);	
-		} else {
-			$("#revenueGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${revenueGrowthRate}%</small>`);
-		}
-	}
-	
-	
-	// Number of Members
-	function setNumberOfMembers(memberCnt, memberGrowthRate){
-		$("#memberTotalCnt").text(memberCnt);
-		$("#memberGrowthRate").text(memberGrowthRate);
-		$("#memberRegCnt").text(memberCnt);
-	}
-	
-	// Number of members by gender
-	function setNumberOfMembersByGender(memberCnt, genderList){
-		drawNumberOfMembersGragh(memberCnt, genderList, "gender");
-		
-		let output = ``;
-		let icon = ``;
-		genderList.forEach(function(item){
-			let gender;
-			if(item.gender == 'M') {
-				gender = 'Male';
-				icon = `<span class="avatar-initial rounded bg-label-info">
+                        setData(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            });
+
+            function setData(data) {
+                setOverView(data);
+                setNumberOfMembers(data.memberCnt, data.memberGrowthRate.toFixed(2));
+                setNumberOfMembersByGender(data.memberCnt, data.genderList);
+                setNumberOfMembersByLevel(data.memberCnt, data.levelList);
+                setSaleData(data.saleCountDTOList, data.cancelCountDToList);
+                setRevenueData(data.revenueDTOList);
+            }
+
+            // SetOverview
+            function setOverView(data) {
+                let regGrowthRate = data.regGrowthRate.toFixed(2);
+                let saleGrowthRate = data.saleGrowthRate.toFixed(2);
+                let revenueGrowthRate = data.revenueGrowthRate.toFixed(2);
+
+                $("#todayRegMemberCnt").text(data.todayRegMemberCnt);
+                $("#daySaleCnt").text(data.daySaleCnt);
+                $("#dayRevenue").text(data.dayRevenue.toLocaleString());
+                $("#waitInquiryCnt").text(data.waitInquiryCnt);
+
+                if (regGrowthRate >= 0) {
+                    $("#regGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${regGrowthRate}%</small>`);
+                } else {
+                    $("#regGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${regGrowthRate}%</small>`);
+                }
+
+                if (saleGrowthRate >= 0) {
+                    $("#saleGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${saleGrowthRate}%</small>`);
+                } else {
+                    $("#saleGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${saleGrowthRate}%</small>`);
+                }
+
+                if (revenueGrowthRate >= 0) {
+                    $("#revenueGrowthRate").html(`<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i>\${revenueGrowthRate}%</small>`);
+                } else {
+                    $("#revenueGrowthRate").html(`<small class="text-danger fw-semibold"><i class="bx bx-down-arrow-alt"></i>\${revenueGrowthRate}%</small>`);
+                }
+            }
+
+            // Number of Members
+            function setNumberOfMembers(memberCnt, memberGrowthRate) {
+                $("#memberTotalCnt").text(memberCnt);
+                $("#memberGrowthRate").text(memberGrowthRate);
+                $("#memberRegCnt").text(memberCnt);
+            }
+
+            // Number of members by gender
+            function setNumberOfMembersByGender(memberCnt, genderList) {
+                drawNumberOfMembersGragh(memberCnt, genderList, "gender");
+
+                let output = ``;
+                let icon = ``;
+                genderList.forEach(function (item) {
+                    let gender;
+                    if (item.gender == "M") {
+                        gender = "Male";
+                        icon = `<span class="avatar-initial rounded bg-label-info">
 					<i class='bx bx-male-sign'></i>
 					</span>`;
-			} else if(item.gender == 'F'){
-				gender = 'Female';
-				icon = `<span class="avatar-initial rounded bg-label-danger">
+                    } else if (item.gender == "F") {
+                        gender = "Female";
+                        icon = `<span class="avatar-initial rounded bg-label-danger">
 					<i class='bx bx-female-sign' ></i>
 				</span>`;
-			} else {
-				gender = 'None';
-				icon = `<span class="avatar-initial rounded bg-label-success">
+                    } else {
+                        gender = "None";
+                        icon = `<span class="avatar-initial rounded bg-label-success">
 					<i class='bx bx-question-mark'></i>
 				</span>`;
-			}
-			
-			output += `<li class="d-flex mb-4 pb-1">
+                    }
+
+                    output += `<li class="d-flex mb-4 pb-1">
 							<div class="avatar flex-shrink-0 me-3">
 							\${icon}
 						</div>
@@ -164,35 +152,35 @@
 								<small class="fw-semibold">\${item.count}</small>
 							</div>
 						</div>
-					</li>`
-		});
-		
-		$("#genderList").html(output);
-	}
-	
-	// Number of members by level
-	function setNumberOfMembersByLevel(memberCnt, levelList){
-		drawNumberOfMembersGragh(memberCnt, levelList, "level");
-		
-		let output = ``;
-		let imgSrc = ``;
-		levelList.forEach(function(item){
-			let level;
-			if(item.member_level == 1) {
-				level = 'Bronze';
-				imgSrc = 'bronze.png';
-			} else if(item.member_level == 2){
-				level = 'Silver';
-				imgSrc = 'silver.png';
-			} else if(item.member_level == 3){
-				level = 'Gold';
-				imgSrc = 'gold.png';
-			} else {
-				level = 'Diamond';
-				imgSrc = 'diamond.png';
-			}
-			
-			output += `<li class="d-flex mb-4 pb-1">
+					</li>`;
+                });
+
+                $("#genderList").html(output);
+            }
+
+            // Number of members by level
+            function setNumberOfMembersByLevel(memberCnt, levelList) {
+                drawNumberOfMembersGragh(memberCnt, levelList, "level");
+
+                let output = ``;
+                let imgSrc = ``;
+                levelList.forEach(function (item) {
+                    let level;
+                    if (item.member_level == 1) {
+                        level = "Bronze";
+                        imgSrc = "bronze.png";
+                    } else if (item.member_level == 2) {
+                        level = "Silver";
+                        imgSrc = "silver.png";
+                    } else if (item.member_level == 3) {
+                        level = "Gold";
+                        imgSrc = "gold.png";
+                    } else {
+                        level = "Diamond";
+                        imgSrc = "diamond.png";
+                    }
+
+                    output += `<li class="d-flex mb-4 pb-1">
 							<div class="avatar flex-shrink-0 me-3">
 								<img src="/resources/images/\${imgSrc}">
 						</div>
@@ -204,707 +192,625 @@
 								<small class="fw-semibold">\${item.count}</small>
 							</div>
 						</div>
-					</li>`
-		});
-		
-		$("#levelList").html(output);
-	}
-	
-	function setSaleData(list){
-		drawSaleAndRevenueGragh(list, "sale");
-	}
-	
-	function setRevenueData(list){
-		drawSaleAndRevenueGragh(list, "revenue");
-	}
-	
-	
-	
-	// Number of members (gender, level) 그래프 그리기
-	function drawNumberOfMembersGragh(memberCnt, list, type) {
-		let chart;
-		let labels = [];
-		let series = [];
-		let colors = [];
-		
-		if(type == 'gender'){
-			chart = document.querySelector('#numberOfMembersByGenderChart');
-			
-			list.forEach(function(item){
-				labels.push(item.gender);	
-				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
-				
-			});
-			
-			colors = [config.colors.info, config.colors.danger,
-				config.colors.success];
-		} else if(type == 'level'){
-			chart = document.querySelector('#numberOfMembersByLevelChart');
-			
-			list.forEach(function(item){
-				labels.push(item.member_level);	
-				series.push(parseFloat((item.count / memberCnt * 100).toFixed(2)));
-			});
-			
-			colors = [config.colors.bronzeColor, config.colors.silverColor,
-				config.colors.goldColor, config.colors.diamondColor];
-		}
-		
-		
-		console.log(labels);
-		console.log(series);
-			
-		console.log(chart);
-		
-		const chartOrderStatistics = chart, orderChartConfig = {
-			chart : {
-				height : 165,
-				width : 130,
-				type : 'donut'
-			},
-			labels : labels,
-			series : series,
-			colors : colors,
-			stroke : {
-				width : 5,
-				colors : cardColor
-			},
-			dataLabels : {
-				enabled : false,
-				formatter : function(val, opt) {
-					return parseInt(val) + '%';
-				}
-			},
-			legend : {
-				show : false
-			},
-			grid : {
-				padding : {
-					top : 0,
-					bottom : 0,
-					right : 15
-				}
-			},
-			plotOptions : {
-				pie : {
-					donut : {
-						size : '75%',
-						labels : {
-							show : true,
-							value : {
-								fontSize : '1.5rem',
-								fontFamily : 'Public Sans',
-								color : headingColor,
-								offsetY : -15,
-								formatter : function(val) {
-									return parseInt(val) + '%';
-								}
-							},
-							name : {
-								offsetY : 20,
-								fontFamily : 'Public Sans'
-							},
-							total : {
-								show : true,
-								fontSize : '0.8125rem',
-								color : axisColor,
-								label : 'select',
-								formatter : function(w) {
-									return '0%';
-								}
-							}
-						}
-					}
-				}
-			}
-		};
-		if (typeof chartOrderStatistics !== undefined
-				&& chartOrderStatistics !== null) {
-			const statisticsChart = new ApexCharts(chartOrderStatistics,
-					orderChartConfig);
-			statisticsChart.render();
-		}
-	}
-	
-	// 가입 회원 수 조회
-	function selectRangedMemberRegCnt(){
-		let regDate_start = $('#regDate_start').val();
-		let regDate_end = $('#regDate_end').val();
-		
-		if(regDate_start == ''){
-			regDate_start = "1900-01-01 00:00:00";
-		} else {
-			regDate_start += " 00:00:00";
-		}
-		
-		if(regDate_end == ''){
-			regDate_end = dateFormat(new Date());
-			regDate_end += " 23:59:59"; 
-		} else {
-			regDate_end += " 23:59:59";
-		}
-		
-		console.log(regDate_start);
-		console.log(regDate_end);
-		
-		$.ajax({
-			url : '/admin/selectRangedMemberRegCnt',
-			type : 'GET',
-			dataType : 'json',
-			data : {
-				"regDate_start" : regDate_start,
-				"regDate_end" : regDate_end 
-			},
-			success : function(data) {
-				console.log(data);
-				
-				$("#memberRegCnt").html(data);
+					</li>`;
+                });
 
-			},
-			error : function(error) {
-				console.log(error);
-			}
-		});
-	}
-	
-	// 타임스탬프 to date
-	function dateFormat(timestamp){
-		let date = new Date(timestamp);
-		
-		let year = date.getFullYear();
-		let month = String(date.getMonth() + 1).padStart(2, '0'); 
-		let day = String(date.getDate()).padStart(2, '0'); 
+                $("#levelList").html(output);
+            }
 
-	    date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
-	    
-	    return date;
-	}
-	
-	// 특정 달의 판매량 가져오기
-	function getSalesByMonth(){
-		$.ajax({
-			url : '/admin/getSalesByMonth',
-			type : 'GET',
-			dataType : 'json',
-			data : {
-				"month" : $("#selectMonthOfSale").val()
-			},
-			success : function(data) {
-				console.log(data);
-				drawSaleAndRevenueGragh2(data.sales, "sale",data.cancels);
-			},
-			error : function(error) {
-				console.log(error);
-			}
-		});
-	}
-	
-	// 특정 달의 매출 가져오기
-	function getRevenueByMonth(){
-		$.ajax({
-			url : '/admin/getRevenuesByMonth',
-			type : 'GET',
-			dataType : 'json',
-			data : {
-				"month" : $("#selectMonthOfRevenue").val()
-			},
-			success : function(data) {
-				console.log(data);
-				drawSaleAndRevenueGragh(data, "revenue");
+            function setSaleData(saleList, cancelList) {
+            	drawSaleAndCancelGragh(saleList, cancelList);
+            }
 
-			},
-			error : function(error) {
-				console.log(error);
-			}
-		});
-	}
-	
-	
-	// 판매량, 매출 그래프 그리기
-	function drawSaleAndRevenueGragh(list, type){
-		let categories = [];
-		let series = [];
-		let chart;
-		let name;
-		
-		let totalSale = 0;
-		let totalRevenue = 0;
-		
-		if(type == "sale"){
-			chart = document.querySelector('#totalSaleChart');
-			name = "volume"
-			list.forEach(function(item){
-				categories.push(item.category_name);
-				series.push(item.count);
-				totalSale += item.count;
-			});
-			
-			$("#totalSaleCnt").text(totalSale);
-			
-		} else if(type == "revenue"){
-			chart = document.querySelector('#totalRevenueChart');
-			name = "amount"
-			list.forEach(function(item){
-				categories.push(item.category_name);
-				series.push(item.revenue);
-				totalRevenue += item.revenue;
-			});
-			
-			$("#totalRevenue").text(totalRevenue.toLocaleString());
-		}
-		
-		
-		
-		
-		
-		const totalRevenueChartEl = chart,
-	    totalRevenueChartOptions = {
-	      series: [
-	        {
-	          name: name,
-	          data: series
-	        }
-	      ],
-	      chart: {
-	        height: 300,
-	        stacked: true,
-	        type: 'bar',
-	        toolbar: { show: false }
-	      },
-	      plotOptions: {
-	        bar: {
-	          horizontal: false,
-	          columnWidth: '33%',
-	          borderRadius: 12,
-	          startingShape: 'rounded',
-	          endingShape: 'rounded'
-	        }
-	      },
-	      colors: [config.colors.primary, config.colors.info],
-	      dataLabels: {
-	        enabled: false
-	      },
-	      stroke: {
-	        curve: 'smooth',
-	        width: 6,
-	        lineCap: 'round',
-	        colors: [cardColor]
-	      },
-	      legend: {
-	        show: true,
-	        horizontalAlign: 'left',
-	        position: 'top',
-	        markers: {
-	          height: 8,
-	          width: 8,
-	          radius: 12,
-	          offsetX: -3
-	        },
-	        labels: {
-	          colors: axisColor
-	        },
-	        itemMargin: {
-	          horizontal: 10
-	        }
-	      },
-	      grid: {
-	        borderColor: borderColor,
-	        padding: {
-	          top: 0,
-	          bottom: -8,
-	          left: 20,
-	          right: 20
-	        }
-	      },
-	      xaxis: {
-	        categories: categories,
-	        labels: {
-	          style: {
-	            fontSize: '13px',
-	            colors: axisColor
-	          }
-	        },
-	        axisTicks: {
-	          show: false
-	        },
-	        axisBorder: {
-	          show: false
-	        }
-	      },
-	      yaxis: {
-	        labels: {
-	          style: {
-	            fontSize: '13px',
-	            colors: axisColor
-	          }
-	        }
-	      },
-	      responsive: [
-	        {
-	          breakpoint: 1700,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '32%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 1580,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '35%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 1440,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '42%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 1300,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '48%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 1200,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '40%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 1040,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 11,
-	                columnWidth: '48%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 991,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '30%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 840,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '35%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 768,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '28%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 640,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '32%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 576,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '37%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 480,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '45%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 420,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '52%'
-	              }
-	            }
-	          }
-	        },
-	        {
-	          breakpoint: 380,
-	          options: {
-	            plotOptions: {
-	              bar: {
-	                borderRadius: 10,
-	                columnWidth: '60%'
-	              }
-	            }
-	          }
-	        }
-	      ],
-	      states: {
-	        hover: {
-	          filter: {
-	            type: 'none'
-	          }
-	        },
-	        active: {
-	          filter: {
-	            type: 'none'
-	          }
-	        }
-	      }
-	    };
-	  if (typeof totalRevenueChartEl !== undefined && totalRevenueChartEl !== null) {
-		if(type == "sale"){
-			 if(isDrawedSaleGragh) {
-				 totalSaleChart.updateSeries([
-		    		{
-		    			name: "volume",
-		                data: series
-		    		}
-		    	]);
-		    	
-	    	 	totalSaleChart.updateOptions({
-	    	        xaxis: {
-	    	            categories: categories
-	    	        }
-	    	    });
-		    } else {
-		    	totalSaleChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
-		    	
-		    	totalSaleChart.render();
-		    	isDrawedSaleGragh = true;
-		    }	
-		} else if(type == "revenue") {
-			console.log("렌더링");
-			
-			if(isDrawedRevenueGragh) {
-				
-				console.log("재 렌더링");
-				
-		    	totalRevenueChart.updateSeries([
-		    		{
-		    			name: "revenue",
-		                data: series
-		    		}
-		    	]);
-		    	
-	    	 	totalRevenueChart.updateOptions({
-	    	        xaxis: {
-	    	            categories: categories
-	    	        }
-	    	    });
-		    } else {
-		    	
-		    	console.log("최초 렌더링");
-		    	
-		    	totalRevenueChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
-		    	
-		    	totalRevenueChart.render();
-		    	isDrawedRevenueGragh = true;
-		    }	
-		}
-	  }
-	}
-	function drawSaleAndRevenueGragh2(saleList, saleType, cancelList) {
-	    let categories = [];
-	    let saleSeries = [];
-	    let cancelSeries = [];
-	    let chart;
-	    let totalSale = 0;
-	    let totalCancel = 0;
+            function setRevenueData(list) {
+                drawRevenueGragh(list);
+                console.log(list);
+            }
 
-	    // 판매량 데이터 처리
-	    if (saleType === "sale") {
-	        chart = document.querySelector('#totalSaleChart'); // 차트 요소
-	        saleList.forEach(function(item) {
-	            categories.push(item.category_name);
-	            saleSeries.push(item.count);
-	            totalSale += item.count;
-	        });
-	        $("#totalSaleCnt").text(totalSale);
-	    }
+            // Number of members (gender, level) 그래프 그리기
+            function drawNumberOfMembersGragh(memberCnt, list, type) {
+                let chart;
+                let labels = [];
+                let series = [];
+                let colors = [];
 
-	    // 취소량 데이터 처리
-	    cancelList.forEach(function(item) {
-	        cancelSeries.push(item.count);
-	        totalCancel += item.count;
-	    });
-	    $("#totalCancelCnt").text(totalCancel.toLocaleString());
+                if (type == "gender") {
+                    chart = document.querySelector("#numberOfMembersByGenderChart");
 
-	    const totalChartEl = chart;
-	    const totalChartOptions = {
-	        series: [
-	            {
-	                name: "Sale Volume",
-	                data: saleSeries
-	            },
-	            {
-	                name: "Cancel Volume",
-	                data: cancelSeries
-	            }
-	        ],
-	        chart: {
-	            height: 300,
-	            stacked: false,  // stacked를 false로 설정하여 나란히 표시되게 함
-	            type: 'bar',
-	            toolbar: { show: false }
-	        },
-	        plotOptions: {
-	            bar: {
-	                horizontal: false,
-	                columnWidth: '45%', // 각 막대의 너비를 조정하여 나란히 보이게 함
-	                borderRadius: 12,
-	                startingShape: 'rounded',
-	                endingShape: 'rounded'
-	            }
-	        },
-	        colors: ['#007bff', '#dc3545'],  // 파란색(판매량)과 빨간색(취소량) 설정
-	        dataLabels: {
-	            enabled: false
-	        },
-	        stroke: {
-	            curve: 'smooth',
-	            width: 6,
-	            lineCap: 'round',
-	            colors: ['#007bff', '#dc3545']
-	        },
-	        legend: {
-	            show: true,
-	            horizontalAlign: 'left',
-	            position: 'top',
-	            markers: {
-	                height: 8,
-	                width: 8,
-	                radius: 12,
-	                offsetX: -3
-	            },
-	            labels: {
-	                colors: '#6c757d'
-	            },
-	            itemMargin: {
-	                horizontal: 10
-	            }
-	        },
-	        grid: {
-	            borderColor: '#e0e0e0',
-	            padding: {
-	                top: 0,
-	                bottom: -8,
-	                left: 20,
-	                right: 20
-	            }
-	        },
-	        xaxis: {
-	            categories: categories,
-	            labels: {
-	                style: {
-	                    fontSize: '13px',
-	                    colors: '#6c757d'
-	                }
-	            },
-	            axisTicks: {
-	                show: false
-	            },
-	            axisBorder: {
-	                show: false
-	            }
-	        },
-	        yaxis: {
-	            labels: {
-	                style: {
-	                    fontSize: '13px',
-	                    colors: '#6c757d'
-	                }
-	            }
-	        }
-	    };
+                    list.forEach(function (item) {
+                        labels.push(item.gender);
+                        series.push(parseFloat(((item.count / memberCnt) * 100).toFixed(2)));
+                    });
 
-	    // 차트 업데이트 혹은 최초 렌더링 처리
-	    if (typeof totalChartEl !== undefined && totalChartEl !== null) {
-	        // 이미 차트가 그려졌다면 업데이트
-	        if (isDrawedSaleGragh) {
-	            totalSaleChart.updateSeries([
-	                {
-	                    name: "Sale Volume",
-	                    data: saleSeries
-	                },
-	                {
-	                    name: "Cancel Volume",
-	                    data: cancelSeries
-	                }
-	            ]);
-	            totalSaleChart.updateOptions({
-	                xaxis: {
-	                    categories: categories
-	                }
-	            });
-	        } else {
-	            // 차트가 처음 생성되는 경우
-	            totalSaleChart = new ApexCharts(totalChartEl, totalChartOptions);
-	            totalSaleChart.render();
-	            isDrawedSaleGragh = true;
-	        }
-	    }
-	}
+                    colors = [config.colors.info, config.colors.danger, config.colors.success];
+                } else if (type == "level") {
+                    chart = document.querySelector("#numberOfMembersByLevelChart");
 
+                    list.forEach(function (item) {
+                        labels.push(item.member_level);
+                        series.push(parseFloat(((item.count / memberCnt) * 100).toFixed(2)));
+                    });
 
+                    colors = [config.colors.bronzeColor, config.colors.silverColor, config.colors.goldColor, config.colors.diamondColor];
+                }
 
-</script>
+                console.log(labels);
+                console.log(series);
+
+                console.log(chart);
+
+                const chartOrderStatistics = chart,
+                    orderChartConfig = {
+                        chart: {
+                            height: 165,
+                            width: 130,
+                            type: "donut",
+                        },
+                        labels: labels,
+                        series: series,
+                        colors: colors,
+                        stroke: {
+                            width: 5,
+                            colors: cardColor,
+                        },
+                        dataLabels: {
+                            enabled: false,
+                            formatter: function (val, opt) {
+                                return parseInt(val) + "%";
+                            },
+                        },
+                        legend: {
+                            show: false,
+                        },
+                        grid: {
+                            padding: {
+                                top: 0,
+                                bottom: 0,
+                                right: 15,
+                            },
+                        },
+                        plotOptions: {
+                            pie: {
+                                donut: {
+                                    size: "75%",
+                                    labels: {
+                                        show: true,
+                                        value: {
+                                            fontSize: "1.5rem",
+                                            fontFamily: "Public Sans",
+                                            color: headingColor,
+                                            offsetY: -15,
+                                            formatter: function (val) {
+                                                return parseInt(val) + "%";
+                                            },
+                                        },
+                                        name: {
+                                            offsetY: 20,
+                                            fontFamily: "Public Sans",
+                                        },
+                                        total: {
+                                            show: true,
+                                            fontSize: "0.8125rem",
+                                            color: axisColor,
+                                            label: "select",
+                                            formatter: function (w) {
+                                                return "0%";
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    };
+                if (typeof chartOrderStatistics !== undefined && chartOrderStatistics !== null) {
+                    const statisticsChart = new ApexCharts(chartOrderStatistics, orderChartConfig);
+                    statisticsChart.render();
+                }
+            }
+
+            // 가입 회원 수 조회
+            function selectRangedMemberRegCnt() {
+                let regDate_start = $("#regDate_start").val();
+                let regDate_end = $("#regDate_end").val();
+
+                if (regDate_start == "") {
+                    regDate_start = "1900-01-01 00:00:00";
+                } else {
+                    regDate_start += " 00:00:00";
+                }
+
+                if (regDate_end == "") {
+                    regDate_end = dateFormat(new Date());
+                    regDate_end += " 23:59:59";
+                } else {
+                    regDate_end += " 23:59:59";
+                }
+
+                $.ajax({
+                    url: "/admin/selectRangedMemberRegCnt",
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        regDate_start: regDate_start,
+                        regDate_end: regDate_end,
+                    },
+                    success: function (data) {
+                        console.log(data);
+
+                        $("#memberRegCnt").html(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            }
+
+            // 타임스탬프 to date
+            function dateFormat(timestamp) {
+                let date = new Date(timestamp);
+
+                let year = date.getFullYear();
+                let month = String(date.getMonth() + 1).padStart(2, "0");
+                let day = String(date.getDate()).padStart(2, "0");
+
+                date = `\${year}-\${month}-\${day}`; // YYYY-MM-DD 형식으로 반환
+
+                return date;
+            }
+
+            // 특정 달의 판매량 가져오기
+            function getSalesByMonth() {
+                $.ajax({
+                    url: "/admin/getSalesByMonth",
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        month: $("#selectMonthOfSale").val(),
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        // drawSaleGragh(data);
+                        drawSaleAndCancelGragh(data.sales, data.cancels);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            }
+
+            // 특정 달의 매출 가져오기
+            function getRevenueByMonth() {
+                $.ajax({
+                    url: "/admin/getRevenuesByMonth",
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        month: $("#selectMonthOfRevenue").val(),
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        drawRevenueGragh(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                });
+            }
+
+            // 매출 그래프 그리기
+            function drawRevenueGragh(list) {
+                let categories = [];
+                let series = [];
+                let chart;
+
+                let totalRevenue = 0;
+
+                list.forEach(function (item) {
+                    categories.push(item.category_name);
+                    series.push(item.revenue);
+                    totalRevenue += item.revenue;
+                });
+
+                $("#totalRevenue").text(totalRevenue.toLocaleString());
+
+                const totalRevenueChartEl = document.querySelector("#totalRevenueChart"),
+                    totalRevenueChartOptions = {
+                        series: [
+                            {
+                                name: "amount",
+                                data: series,
+                            },
+                        ],
+                        chart: {
+                            height: 300,
+                            stacked: false,
+                            type: "bar",
+                            toolbar: { show: false },
+                        },
+                        plotOptions: {
+                            bar: {
+                                horizontal: false,
+                                columnWidth: "33%",
+                                borderRadius: 12,
+                                startingShape: "rounded",
+                                endingShape: "rounded",
+                            },
+                        },
+                        colors: [config.colors.primary, config.colors.info],
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        stroke: {
+                            curve: "smooth",
+                            width: 6,
+                            lineCap: "round",
+                            colors: cardColor,
+                        },
+                        legend: {
+                            show: true,
+                            horizontalAlign: "left",
+                            position: "top",
+                            markers: {
+                                height: 8,
+                                width: 8,
+                                radius: 12,
+                                offsetX: -3,
+                            },
+                            labels: {
+                                colors: axisColor,
+                            },
+                            itemMargin: {
+                                horizontal: 10,
+                            },
+                        },
+                        grid: {
+                            borderColor: borderColor,
+                            padding: {
+                                top: 0,
+                                bottom: -8,
+                                left: 20,
+                                right: 20,
+                            },
+                        },
+                        xaxis: {
+                            categories: categories,
+                            labels: {
+                                style: {
+                                    fontSize: "13px",
+                                    colors: axisColor,
+                                },
+                            },
+                            axisTicks: {
+                                show: false,
+                            },
+                            axisBorder: {
+                                show: false,
+                            },
+                        },
+                        yaxis: {
+                            labels: {
+                                style: {
+                                    fontSize: "13px",
+                                    colors: axisColor,
+                                },
+                            },
+                        },
+                        responsive: [
+                            {
+                                breakpoint: 1700,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "32%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 1580,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "35%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 1440,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "42%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 1300,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "48%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 1200,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "40%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 1040,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 11,
+                                            columnWidth: "48%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 991,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "30%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 840,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "35%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 768,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "28%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 640,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "32%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 576,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "37%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 480,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "45%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 420,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "52%",
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                breakpoint: 380,
+                                options: {
+                                    plotOptions: {
+                                        bar: {
+                                            borderRadius: 10,
+                                            columnWidth: "60%",
+                                        },
+                                    },
+                                },
+                            },
+                        ],
+                        states: {
+                            hover: {
+                                filter: {
+                                    type: "none",
+                                },
+                            },
+                            active: {
+                                filter: {
+                                    type: "none",
+                                },
+                            },
+                        },
+                    };
+
+                if (totalRevenueChart) {
+                    console.log("업데이트");
+                    console.log(series);
+                    totalRevenueChart.destroy();
+                }
+                totalRevenueChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
+
+                totalRevenueChart.render();
+               
+            }
+            
+            function drawSaleAndCancelGragh (saleList, cancelList) {
+                let categories = [];
+                let cancelCategories = [];
+                let saleSeries = [];
+                let cancelSeries = [];
+                let chart;
+                let totalSale = 0;
+                let totalCancel = 0;
+
+                saleList.forEach(function (item) {
+                    categories.push(item.category_name);
+                    saleSeries.push(item.count);
+                    totalSale += item.count;
+                });
+                $("#totalSaleCnt").text(totalSale);
+                
+                // 취소량 데이터 처리
+                 const cancelMap = new Map();
+    cancelList.forEach(function (item) {
+        cancelMap.set(item.category_name, item.count);
+        totalCancel += item.count;
+    });
+
+    // Sale 카테고리와 비교하여 취소 데이터 추가
+    categories.forEach(function (category) {
+        if (cancelMap.has(category)) {
+            cancelSeries.push(-1 * cancelMap.get(category)); // 취소량 반영 (음수 처리)
+        } else {
+            cancelSeries.push(0); // 없는 경우 0 추가
+        }
+    });
+                
+                
+                console.log(cancelSeries);
+                console.log(totalCancel);
+                $("#totalCancelCnt").text(totalCancel.toLocaleString());
+
+                const totalRevenueChartEl = document.querySelector("#totalSaleChart"),
+                totalRevenueChartOptions = {
+                	series: [
+                        {
+                            name: "Sale Volume",
+                            data: saleSeries,
+                        },
+                        {
+                            name: "Cancel Volume",
+                            data: cancelSeries,
+                        },
+                    ],
+                    chart: {
+                        height: 300,
+                        stacked: true, // stacked를 false로 설정하여 나란히 표시되게 함
+                        type: "bar",
+                        toolbar: { show: false },
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: "50%",
+                            borderRadius: 12,
+                            startingShape: "rounded",
+                            endingShape: "rounded",
+                        },
+                    },
+                    colors: [config.colors.primary, config.colors.info],
+                    dataLabels: {
+                        enabled: false,
+                    },
+                    stroke: {
+                        curve: "smooth",
+                        width: 6,
+                        lineCap: "round",
+                        colors: [cardColor],
+                    },
+                    legend: {
+                        show: true,
+                        horizontalAlign: "left",
+                        position: "top",
+                        markers: {
+                            height: 8,
+                            width: 8,
+                            radius: 12,
+                            offsetX: -3,
+                        },
+                        labels: {
+                            colors: "#6c757d",
+                        },
+                        itemMargin: {
+                            horizontal: 10,
+                        },
+                    },
+                    grid: {
+                        borderColor: "#e0e0e0",
+                        padding: {
+                            top: 0,
+                            bottom: -8,
+                            left: 20,
+                            right: 20,
+                        },
+                    },
+                    xaxis: {
+                        categories: categories,
+                        labels: {
+                            style: {
+                                fontSize: "13px",
+                                colors: "#6c757d",
+                            },
+                        },
+                       	axisTicks: {
+                            show: false,
+                        },
+                        axisBorder: {
+                            show: false,
+                        },
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                fontSize: "13px",
+                                colors: "#6c757d",
+                            },
+                        },
+                    },
+                };
+                
+                if(totalSaleAndCancelChart) {
+        			console.log("업데이트");
+        			
+        			totalSaleAndCancelChart.destroy();
+        	    }
+                
+                totalSaleAndCancelChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
+                totalSaleAndCancelChart.render();
+            }
+        </script>
 </head>
 <style>
 .card-body {
@@ -913,19 +819,14 @@
 }
 </style>
 
-
 <body>
 	<!-- Layout wrapper -->
 	<div class="layout-wrapper layout-content-navbar">
 		<div class="layout-container">
-
-
 			<!-- Menu -->
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
-
 				<jsp:param name="pageName" value="dashboard" />
-
 			</jsp:include>
 
 			<!-- / Menu -->
@@ -939,7 +840,6 @@
 						<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
-
 				</nav>
 				<!-- / Navbar -->
 
@@ -955,7 +855,7 @@
 									<div class="card-body">
 										<div class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/member_icon.png" alt="chart success" class="rounded">
+												<img src="/resources/assets/admin/img/icons/member_icon.png" alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Register members today </span>
@@ -969,7 +869,7 @@
 									<div class="card-body">
 										<div class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded">
+												<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Sale count today</span>
@@ -983,7 +883,7 @@
 									<div class="card-body">
 										<div class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded">
+												<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Revenue today</span>
@@ -997,7 +897,7 @@
 									<div class="card-body">
 										<div class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/inquiry_icon.png" alt="chart success" class="rounded">
+												<img src="/resources/assets/admin/img/icons/inquiry_icon.png" alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Wait Inquiries</span>
@@ -1007,30 +907,28 @@
 							</div>
 						</div>
 
-
 						<div class="row">
 							<div class="col-lg-6 col-md-12 col-12 mb-4">
 								<div class="card h-100">
 									<div class="card-body">
 										<div class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/members_icon.png" alt="chart success" class="rounded">
+												<img src="/resources/assets/admin/img/icons/members_icon.png" alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Number of Members</span>
 										<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
 										<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
-
 										<span class="fw-semibold d-block mt-4">Register date range</span>
 										<div class="col align-items-center">
 											<div class="form-check-inline">
-												<input id="regDate_start" class="form-control regDate" type="date" value="" id="">
+												<input id="regDate_start" class="form-control regDate" type="date" value="" id="" />
 											</div>
 											<div class="form-check-inline">
 												<span class="mx-2">-</span>
 											</div>
 											<div class="form-check-inline">
-												<input id="regDate_end" class="form-control regDate" type="date" value="" id="">
+												<input id="regDate_end" class="form-control regDate" type="date" value="" id="" />
 											</div>
 											<button id="" type="button" class="btn btn-outline-primary" onclick="selectRangedMemberRegCnt()">확인</button>
 										</div>
@@ -1057,9 +955,7 @@
 										</div> -->
 											<div id="numberOfMembersByGenderChart"></div>
 										</div>
-										<ul id="genderList" class="p-0 m-0">
-
-										</ul>
+										<ul id="genderList" class="p-0 m-0"></ul>
 									</div>
 								</div>
 							</div>
@@ -1081,9 +977,7 @@
 										</div> -->
 											<div id="numberOfMembersByLevelChart"></div>
 										</div>
-										<ul id="levelList" class="p-0 m-0">
-
-										</ul>
+										<ul id="levelList" class="p-0 m-0"></ul>
 									</div>
 								</div>
 							</div>
@@ -1097,7 +991,7 @@
 											<div class="card-body">
 												<div class="card-title d-flex align-items-start justify-content-between">
 													<div class="avatar flex-shrink-0">
-														<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded">
+														<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded" />
 													</div>
 												</div>
 												<span class="fw-semibold d-block mb-1">Total Sales volume</span>
@@ -1107,7 +1001,7 @@
 												<span class="fw-semibold d-block mt-4">Select Month</span>
 												<div class="col align-items-center">
 													<div class="form-check-inline">
-														<input id="selectMonthOfSale" class="form-control regDate" type="month" value="" id="">
+														<input id="selectMonthOfSale" class="form-control regDate" type="month" value="" id="" />
 													</div>
 													<button id="" type="button" class="btn btn-outline-primary" onclick="getSalesByMonth()">확인</button>
 												</div>
@@ -1125,7 +1019,7 @@
 											<div class="card-body">
 												<div class="card-title d-flex align-items-start justify-content-between">
 													<div class="avatar flex-shrink-0">
-														<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded">
+														<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded" />
 													</div>
 												</div>
 												<span class="fw-semibold d-block mb-1">Total Revenue</span>
@@ -1134,7 +1028,7 @@
 												<span class="fw-semibold d-block mt-4">Select Month</span>
 												<div class="col align-items-center">
 													<div class="form-check-inline">
-														<input id="selectMonthOfRevenue" class="form-control regDate" type="month" value="" id="">
+														<input id="selectMonthOfRevenue" class="form-control regDate" type="month" value="" id="" />
 													</div>
 													<button id="" type="button" class="btn btn-outline-primary" onclick="getRevenueByMonth()">확인</button>
 												</div>
@@ -1157,8 +1051,8 @@
 						<div class="mb-2 mb-md-0">
 							©
 							<script>
-								document.write(new Date().getFullYear());
-							</script>
+                                    document.write(new Date().getFullYear());
+                                </script>
 							, made with ❤️ by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
 						</div>
 						<div>
@@ -1178,7 +1072,6 @@
 	<!-- Overlay -->
 	<div class="layout-overlay layout-menu-toggle"></div>
 	<!-- / Layout wrapper -->
-
 
 	<!-- Core JS -->
 	<!-- build:js assets/vendor/js/core.js -->
@@ -1202,6 +1095,4 @@
 	<!-- Place this tag in your head or just before your close body tag. -->
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
-
-
 </html>

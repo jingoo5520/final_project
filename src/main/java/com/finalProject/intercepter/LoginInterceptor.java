@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.finalProject.model.BlackInfoDTO;
@@ -86,6 +87,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		System.out.println("Login postHandle 호출");
 
 		HttpSession ses = request.getSession();
+		String rememberPath = ses.getAttribute("rememberPath") + "";
 
 		if (request.getMethod().toUpperCase().equals("POST")) {
 			Map<String, Object> model = modelAndView.getModel();
@@ -96,6 +98,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				if (member_status.equals("active")) { // 로그인 가능
 					ses.setAttribute("loginMember", loginMember);
 					System.out.println(loginMember.getMember_name() + "님 로그인");
+					
 					Object autologin = model.get("autologin");
 					if (autologin != null) { // 자동로그인에 체크한 경우
 						String code = UUID.randomUUID().toString();
@@ -106,12 +109,16 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 						// db에 자동로그인 정보 update
 						memberService.setAutoLogin(loginMember.getMember_id(), code, AUTOLOGIN_DATE);
 					}
-					String rememberPath = ses.getAttribute("rememberPath") + "";
 					if (loginMember.getIs_admin().equals("1") || loginMember.getIs_admin().equals("9")) { // 관리자 아이디인 경우
 						System.out.println("관리자 로그인 확인");
 						response.sendRedirect("/admin");
 					} else {
 						if (!rememberPath.equals("null")) { // rememberPath가 있다면
+							if (rememberPath.contains("간편가입")) {
+								ses.setAttribute("rememberPath", "/");
+								ses.setAttribute("simpleSignUp", "SNS 아이디로 로그인 되었습니다.");
+								response.sendRedirect("/");
+							}
 							if (rememberPath.contains("/order")) { // 주문 요청에서 왔다면
 								String productInfos = (String) ses.getAttribute("productInfos");
 								ses.removeAttribute("productInfos");
