@@ -29,11 +29,11 @@
 		if (successMessage) {
 			$(".preloader").hide();
 			$("#deliveryModal").modal("show");
-			$("#deliveryModal .modal-text").text(successMessage);
+			$("#deliveryModal .modal-text").html(successMessage);
 			
 			setTimeout(function() {
 			$('#deliveryModal').modal('hide');
-			}, 750);
+			}, 1500);
 		}
 		
 	});
@@ -52,6 +52,7 @@
 			dataType: 'json',
 	        success : function(response) {
 	        	makeDeliveryList(response.deliveryList, response.memberInfo);
+	        	console.log(response.deliveryList);
 	        },
 	        error : function(response) {
 	        }
@@ -63,6 +64,14 @@
 		let mainDelivery = "";
 		let output = "";
 		let deliveryListCount = deliveryList.length;
+		
+		if (deliveryListCount == 0) {
+			$(".addDeliveryArea").html(`
+					<div class="button">
+						<a class="btn" href="/member/myPage/addDeliveryPage?main=main">기본 배송지 등록</a>
+					</div>
+					`);
+		}
 		
 		$("#countDeliveries").text(deliveryListCount);
 		

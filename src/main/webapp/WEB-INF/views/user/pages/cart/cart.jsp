@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
 
@@ -47,15 +48,12 @@ $(document).ready(function() {
 	
 	$(".totalPrice").text(totalPrices.toLocaleString() + " 원");
 	
-	console.log("=========totalPoints에 더해지는 값==========")
 	$(".productPoint").each(function() {
 		let productPointText = parseInt($.trim($(this).text().replace(" P", "").replace(/,/g, "")));
 		totalPoints += productPointText;
-		console.log("productPointText : " + productPointText);
 	});
-	console.log("=========totalPoints에 더해지는 값 종료==========")
 	
-	totalPoints = Math.round(parseFloat(totalPoints)) + ""
+	totalPoints = Math.round(parseFloat(totalPoints));
 	$(".totalPoint").text(totalPoints.toLocaleString() + " P");
 	
 	var levelInfo = "${not empty levelInfo ? levelInfo : ''}";
@@ -82,9 +80,6 @@ $(document).ready(function() {
 	
 	$(".cart-single-list").each(function() {
 		let currentElement = $(this);
-		console.log('0. $(this)')
-		console.log($(this))
-		// let discountedPrice = parseInt($.trim(currentElement.find(".productDCPrice").text().replace(" 원", "").replace(/,/g, "")));
 		let discountedPrice = parseInt($.trim(currentElement.find(".hiddenDiscoutedPrice").text()))
 		let productPrice = parseInt($.trim(currentElement.find(".productPrice").text().replace(" 원", "").replace(/,/g, "")));
 
@@ -92,26 +87,14 @@ $(document).ready(function() {
 			productDCPrice += productPrice - discountedPrice;
 		}
 		// 최소단위 10원으로 변경
-		console.log('1. discountedPrice in \$(".cart-single-list") : ' + discountedPrice)
-		console.log('2. productPrice in \$(".cart-single-list") : ' + productPrice)
 		productDCPrice = Math.floor(productDCPrice / 10) * 10
-		console.log('3. productDCPrice in \$(".cart-single-list") : ' + productDCPrice)
 	});
 	
 	$(".dcProduct").text(productDCPrice.toLocaleString() + " 원");
 	
 	let totalPay = totalPrices - levelDCPrice - productDCPrice;
-	console.log("============totalPay 계산하기==============")
-	console.log(`totalPrices : \${totalPrices}`)
-	console.log(`levelDCPrice : \${levelDCPrice}`)
-	console.log(`productDCPrice : \${productDCPrice}`)
-	console.log(`totalPay : \${totalPay}`)
-	console.log("============totalPay 계산 끝 ==============")
 	
 	$(".totalPay").text(totalPay.toLocaleString() + " 원");
-	
-	
-	
 	
 	const checkedCount = $('input[type="checkbox"].checkProduct').length;
     $(".checkedProductCount").text(checkedCount + "개");
@@ -176,7 +159,7 @@ function countDown(productNo) {
 	let quantity = parseInt($("#"+productNo + "_quantity").text());
 	
 	if (quantity <= 1) {
-		showCartModal("최소수량 1개 이하로 내릴 수 없습니다.");
+		showCartModal("최소수량 1개 이하로 <br/> 내릴 수 없습니다.");
 	} else {
 		$("#"+productNo + "_quantity").text(quantity - 1);
 	} 
@@ -204,7 +187,7 @@ function applyQuantity(productNo) {
 		        if (data == "success") {
 		            location.reload();
 		        } else if (data == "fail"){
-		            showCartModal('수정에 실패했습니다. 다시 시도해주세요.');
+		            showCartModal('수정에 실패했습니다. <br/> 다시 시도해주세요.');
 		        }
 		    },
 		    error: function() {
@@ -217,7 +200,7 @@ function applyQuantity(productNo) {
 		            location.reload();
 		        } else if (data.responseText == 400){
 		            // 수정 실패 시 에러 메시지 표시
-		            showCartModal('수정에 실패했습니다. 다시 시도해주세요.');
+		            showCartModal('수정에 실패했습니다. <br/> 다시 시도해주세요.');
 		        }
 		    }
 		});
@@ -250,7 +233,7 @@ function deleteCart(productNo) {
 	        	$("#deleteCartModal").modal("hide");
 	            location.reload();
 	        } else if (xhr.status == 400) {
-	            showCartModal('상품 삭제에 실패했습니다. 다시 시도해주세요.');
+	            showCartModal('상품 삭제에 실패했습니다. <br/> 다시 시도해주세요.');
 	        }
 	    }
 	});
@@ -286,7 +269,7 @@ function deleteCheckedCart() {
             	$("#deleteCartModal").modal("hide");
                 location.reload();
             } else if (data.responseText == 400) {
-                showCartModal('상품 삭제에 실패했습니다. 다시 시도해주세요.');
+                showCartModal('상품 삭제에 실패했습니다. <br/> 다시 시도해주세요.');
             }
         }
     });
@@ -318,11 +301,11 @@ function checkedOrder() {
 
 function showCartModal(message) {
 	$("#cartModal").modal("show");
-	$("#cartModal .modal-text").text(message);
+	$("#cartModal .modal-text").html(message);
 	
 	setTimeout(function() {
 		$('#cartModal').modal('hide');
-	}, 1000);
+	}, 1500);
 }
 
 </script>
@@ -599,9 +582,22 @@ input[type="checkbox"]:hover {
 									</div>
 									<div class="row align-items-center">
 										<div class="col-lg-1 col-md-1 col-12">
-											<a
-												href="/product/jewelry/detail?productNo=${item.product_no }"><img
-												src="${empty item.image_url ? '/resources/images/noP_image.png' : item.image_url}" alt="${item.product_name }"></a>
+											<a href="/product/jewelry/detail?productNo=${item.product_no }">
+										<c:choose>
+											<c:when test="${empty item.image_url}">
+												<img src="/resources/images/noP_image.png" alt="${item.product_name }" onerror="this.src='/resources/images/noP_image.png';">
+											</c:when>
+											<c:otherwise>
+												<c:if test="${fn:contains(item.image_url, 'Main')}">
+													<img src="/resources/product/${item.image_url}" alt="${item.product_name }" onerror="this.src='/resources/images/noP_image.png';">
+												</c:if>
+												<c:if test="${fn:contains(item.image_url, 'https')}">
+													<img src="${item.image_url}" alt="${item.product_name }" onerror="this.src='/resources/images/noP_image.png';">
+												</c:if>
+											</c:otherwise>
+										</c:choose>
+										
+											</a>
 										</div>
 										<div class="col-lg-3 col-md-3 col-12">
 											<h5 class="product-name">
@@ -705,9 +701,23 @@ input[type="checkbox"]:hover {
 									</div>
 									<div class="row align-items-center">
 										<div class="col-lg-1 col-md-1 col-12">
-											<a
-												href="/product/jewelry/detail?productNo=${item.product_no }"><img
-												src="${empty item.image_url ? '/resources/images/noP_image.png' : item.image_url}" alt="${item.product_name }"></a>
+											<a href="/product/jewelry/detail?productNo=${item.product_no }">
+											
+										<c:choose>
+											<c:when test="${empty item.image_url}">
+												<img src="/resources/images/noP_image.png" alt="${item.product_name }" onerror="this.src='/resources/images/noP_image.png';">
+											</c:when>
+											<c:otherwise>
+												<c:if test="${fn:contains(item.image_url, 'Main')}">
+													<img src="/resources/product/${item.image_url}" alt="${item.product_name }" onerror="this.src='/resources/images/noP_image.png';">
+												</c:if>
+												<c:if test="${fn:contains(item.image_url, 'https')}">
+													<img src="${item.image_url}" alt="${item.product_name }" onerror="this.src='/resources/images/noP_image.png';">
+												</c:if>
+											</c:otherwise>
+										</c:choose>
+										
+											</a>
 										</div>
 										<div class="col-lg-3 col-md-2 col-12">
 											<h5 class="product-name">
