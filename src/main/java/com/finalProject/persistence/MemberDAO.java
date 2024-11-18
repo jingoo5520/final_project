@@ -138,5 +138,8 @@ public interface MemberDAO {
 
 	// 회원의 블랙정보 받기(로그인)
 	BlackInfoDTO getMemberBlackInfo(String member_id)throws Exception;
+
+	// 회원정보 수정호 로그인세션 갱신(회원정보 받기)
+	LoginDTO updateLoginSession(String member_id);
 	
 }

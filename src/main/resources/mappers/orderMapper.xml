@@ -178,7 +178,7 @@
 			o.use_point as sumDiscountByPoint, <!-- 비회원의 경우는 0임 -->
 			case 
 				when #{isMember} then (
-						select level_point 
+						select level_dc 
 						from levels l
 						join members m on m.member_level = l.level_no
 						where m.member_id = #{memberId}
@@ -291,7 +291,7 @@
 		set m.member_point = 
 			m.member_point + 
 			(
-				(select total_price_expected from orders where order_id = #{orderId})
+				((select total_price_expected from orders where order_id = #{orderId}) - 2500)
 				* (select level_point from levels where level_no = m.member_level)
 			)
 		where m.member_id = (select orderer_id from orders where order_id = #{orderId})

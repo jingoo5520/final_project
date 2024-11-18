@@ -359,4 +359,9 @@ public class MemberDAOImpl implements MemberDAO {
 		return ses.selectOne(ns+"getMemberBlackInfo", member_id);
 	}
 
+	@Override
+	public LoginDTO updateLoginSession(String member_id) {
+		return ses.selectOne(ns+"updateLoginSession", member_id);
+	}
+
 }

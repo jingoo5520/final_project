@@ -30,11 +30,11 @@ $(document).ready(function() {
 
 function showDeliveryModal(message) {
 	$("#deliveryModal").modal("show");
-	$("#deliveryModal .modal-text").text(message);
+	$("#deliveryModal .modal-text").html(message);
 	
 	setTimeout(function() {
 		$('#deliveryModal').modal('hide');
-	}, 750);
+	}, 1500);
 }
 
 function getDeliveryInfo(deliveryNo) {

@@ -104,14 +104,11 @@
 			type: 'POST',
 			dataType: 'json',
 			success: function(data) {
-// 				console.log(data);
 				if (data !== undefined) {
 					$('.cart-items .total-items').text(data);
 				}
 			},
 			error: function(data) {
-				console.error("장바구니 개수 업데이트 실패");
-// 				console.log(data);
 			},
 			complete: function(data) {
 			}
