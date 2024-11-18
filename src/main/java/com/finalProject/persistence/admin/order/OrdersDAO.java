@@ -51,4 +51,12 @@ public interface OrdersDAO {
 
 	String findMemberId(String orderId);
 
+	List<AdminCancleVO> getAllRefund(Map<String, Integer> pageMap);
+
+	int getTotalRefund();
+
+	int getSearchRefundTotalPostCnt(Map<String, Object> resultMap);
+
+	List<AdminCancleVO> getSearchRefundFilter(Map<String, Object> resultMap);
+
 }

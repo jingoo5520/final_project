@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.finalProject.model.admin.order.AdminCancleVO;
 import com.finalProject.model.admin.order.AdminGetCancel;
 import com.finalProject.model.admin.order.AdminPaymentVO;
+import com.finalProject.model.admin.order.AdminSearchRefundDTO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
 import com.finalProject.model.admin.order.ModifyCancelStatusDTO;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
@@ -56,8 +57,25 @@ public class MemberOrderController {
 	}
 
 	@RequestMapping("refund")
-	public String RefundView(Model model) {
+	public String RefundView(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+			@RequestParam(value = "pagingSize", defaultValue = "10") int PagingSize) {
+		adminPagingInfoDTO dto = adminPagingInfoDTO.builder().pageNo(pageNo).pagingSize(PagingSize).build();
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<AdminCancleVO> list = new ArrayList<>();
+		try {
+			map = os.getAllrefund(dto);
+			if (map.size() <= 1) {
+				return "admin/pages/ordermanage/cancel?status=fail";
+			}
 
+			model.addAttribute("refundList", map.get("refundList"));
+			System.out.println(map.get("PagingInfo"));
+			System.out.println(map.get("refundList"));
+			model.addAttribute("PagingInfo", map.get("PagingInfo"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "admin/pages/ordermanage/refund";
 	}
 
@@ -129,6 +147,7 @@ public class MemberOrderController {
 		System.out.println("취소 번호" + modifyCancelStatusDTO.getCancelList().toString());
 		System.out.println("취소 타입 " + modifyCancelStatusDTO.getCancelType());
 		System.out.println("결제 번호 " + modifyCancelStatusDTO.getPaymentNo());
+		modifyCancelStatusDTO.getAssigned_point();
 		try {
 			result = os.modifyCancelStatus(modifyCancelStatusDTO);
 		} catch (Exception e) {
@@ -200,6 +219,24 @@ public class MemberOrderController {
 
 		public void setResponseCode(String errorCode) {
 			this.errorCode = errorCode;
+		}
+	}
+
+	@RequestMapping("searchRefundFilter")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> SearchRefundFilter(@RequestBody AdminSearchRefundDTO searchDto) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		adminPagingInfoDTO pagingDto = adminPagingInfoDTO.builder().pageNo(searchDto.getPageNo())
+				.pagingSize(searchDto.getPagingSize()).build();
+		System.out.println(searchDto.toString());
+		try {
+			returnMap = os.getSearchRefundFilter(searchDto, pagingDto);
+			return ResponseEntity.ok(returnMap);
+		} catch (Exception e) {
+			returnMap.put("fail", "fail");
+			System.err.println("Error: " + e.getMessage());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(returnMap);
 		}
 	}
 }

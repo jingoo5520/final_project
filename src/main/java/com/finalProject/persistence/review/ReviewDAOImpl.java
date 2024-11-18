@@ -33,7 +33,7 @@ public class ReviewDAOImpl implements ReviewDAO {
 	    param.put("member_id", member_id);
 	    param.put("pagingInfo", pagingInfo);
 	    
-	    System.out.println("DAO에 전달된 파라미터: " + param);
+//	    System.out.println("DAO에 전달된 파라미터: " + param);
 		
 		return ses.selectList(ns + "selectWritableReviews", param);
 	}
