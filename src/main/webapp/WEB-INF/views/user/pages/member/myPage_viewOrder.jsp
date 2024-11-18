@@ -174,7 +174,8 @@
 				</jsp:include>
 				<!-- / sideBar -->
 
-				<div class="col-lg-9 col-12" id="productsView"></div>
+				<div class="col-lg-9 col-12" id="productsView">
+				</div>
 
 				<!--/ End Shopping Cart -->
 			</div>
