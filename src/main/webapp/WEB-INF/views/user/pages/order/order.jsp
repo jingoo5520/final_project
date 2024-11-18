@@ -248,8 +248,10 @@
 	            if ($(this).is(':checked')) {
 	            	if (memberPoint > totalPrice) {
 				    	$('input[name="point"]').val(Math.floor(totalPrice / 100) * 100);
+	            		// $('input[name="point"]').val(totalPrice);
 				    } else {
 				    	$('input[name="point"]').val(Math.floor(memberPoint / 100) * 100);
+				    	// $('input[name="point"]').val(memberPoint);
 				    }
 					
 	            } else {
@@ -296,6 +298,7 @@
 		    $("#postcodeNew").val("");
 		    $("#addressNew").val("");
 		    $("#detailAddressNew").val("");
+		    $("#deliveryAddressHidden").val("");
 		}
 		
 		function showInputNewAddress() {
@@ -305,6 +308,7 @@
 		    $("#detailAddressList").val("");
 		    $("#deliveryName").val("");
 		    $("#savedDeliveryName").val("");
+		    $("#deliveryAddressHidden").val("");
 		}
 		
 		function pointUse() {
@@ -1356,17 +1360,17 @@
 							</c:when>
 							<c:otherwise>
 								<section class="checkout-steps-form-content collapse show" id="collapsefive" aria-labelledby="headingfive">
-								<!--====== 배송지 정보 헤더 (비회원) ======-->
+								<!--====== 배송지 정보 헤더 (배송지 없을 경우) ======-->
 									<nav>
 										<div class="nav nav-tabs" id="nav-tab" role="tablist">
 											<button class="nav-link active" id="nav-addressInput-tab" data-bs-toggle="tab" data-bs-target="#nav-addressInput" type="button" role="tab" aria-controls="nav-addressInput" aria-selected="false" disabled>신규입력</button>
 										</div>
 									</nav>
-								<!--====== 배송지 정보 헤더 끝 (비회원) ======-->
+								<!--====== 배송지 정보 헤더 끝 (배송지 없을 경우) ======-->
 								
-								<!--====== 배송지 정보 (비회원) ======-->
+								<!--====== 배송지 정보 (배송지 없을 경우) ======-->
 									<div class="col-md-6">
-									<!--====== 배송지 주소 입력 (비회원) ======-->
+									<!--====== 배송지 주소 입력 (배송지 없을 경우) ======-->
 										<div class="tab-content" id="nav-tabContent">
 											<div class="tab-pane fade show active" id="nav-addressInput" role="tabpanel" aria-labelledby="nav-addressInput-tab" tabindex="0">
 												<div class="single-form form-default">
@@ -1379,11 +1383,11 @@
 										            <div class="form-input form addressForm">
 										                <h5 class="ordererHeader">주소</h5>
 										                <div class="addressSearchArea">
-										                    <input class="postNumber" type="text" id="postcodeNew" placeholder="우편번호">
+										                    <input class="postNumber" type="text" id="postcodeNew" placeholder="우편번호" readonly>
 										                    <input class="searchPost" type="button" onclick="sample6_execDaumPostcode('New')" value="검색"><br>
 										                </div>
-										                <input type="text" id="addressNew" placeholder="주소"><br>
-										                <input type="text" id="detailAddressNew" placeholder="상세주소">
+										                <input type="text" id="addressNew" placeholder="주소" readonly><br>
+										                <input type="text" id="detailAddressNew" placeholder="상세주소" readonly>
 										            </div>
 										            <div class="form-check">
 										                <div id="saveDeliveryDiv">
@@ -1404,9 +1408,9 @@
 										        </div>
 											</div>
 										</div>
-									<!--====== 배송지 주소 입력 끝 (비회원) ======-->
+									<!--====== 배송지 주소 입력 끝 (배송지 없을 경우) ======-->
 									
-									<!--====== 배송요청사항 입력 (비회원) ======-->
+									<!--====== 배송요청사항 입력 (배송지 없을 경우) ======-->
 										<div class="single-form form-default">
 											<div class="form-input form">
 												<label>배송 요청사항</label>
@@ -1422,12 +1426,12 @@
 												<input class="deliveryRequest" type="text" name="deliveryRequest" style="display: none;">
 											</div>
 										</div>
-									<!--====== 배송요청사항 입력 끝(비회원) ======-->
+									<!--====== 배송요청사항 입력 끝(배송지 없을 경우) ======-->
 									<input type="hidden" id="deliveryName" value="none">
 									<input type="hidden" name="saveDeliveryType" id="saveDeliveryType" value="none">
 									<input type="hidden" name="delivery_address" id="deliveryAddressHidden">
 									</div>
-								<!--====== 배송지 정보 끝(비회원) ======-->
+								<!--====== 배송지 정보 끝(배송지 없을 경우) ======-->
 									
 								</section>
 							</c:otherwise>

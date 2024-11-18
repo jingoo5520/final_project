@@ -178,7 +178,7 @@
 			o.use_point as sumDiscountByPoint, <!-- 비회원의 경우는 0임 -->
 			case 
 				when #{isMember} then (
-						select level_point 
+						select level_dc 
 						from levels l
 						join members m on m.member_level = l.level_no
 						where m.member_id = #{memberId}
