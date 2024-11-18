@@ -1,97 +1,80 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-
-<!-- =========================================================
-* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
-==============================================================
-
-* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
-* Created by: ThemeSelection
-* License: You must have a valid license purchased in order to legally use the theme for your project.
-* Copyright ThemeSelection (https://themeselection.com)
-
-=========================================================
- -->
-<!-- beautify ignore:start -->
-<html lang="en" class="light-style" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('/resources/images/error.jpg') no-repeat center center/cover;
+            position: relative;
+        }
 
-<title>Error - Pages | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* 어두운 투명 오버레이 */
+            z-index: 1;
+        }
 
-<meta name="description" content="" />
+        .error-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+        }
 
-<!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+        .error-message {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
 
-<!-- Icons. Uncomment required icon fonts -->
-<link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
 
-<!-- Core CSS -->
-<link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
-<link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
-<link rel="stylesheet" href="../assets/css/demo.css" />
-
-<!-- Vendors CSS -->
-<link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-
-<!-- Page CSS -->
-<!-- Page -->
-<link rel="stylesheet" href="../assets/vendor/css/pages/page-misc.css" />
-<!-- Helpers -->
-<script src="../assets/vendor/js/helpers.js"></script>
-
-<!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-<!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-<script src="../assets/js/config.js"></script>
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
-
+<script>
+function goBack() {
+    // 이전 페이지로 이동
+    window.history.back();
+}
+</script>
 <body>
-	<!-- Content -->
-
-	<!-- Error -->
-	<div class="container-xxl container-p-y">
-		<div class="misc-wrapper">
-			<h2 class="mb-2 mx-2">Page Not Found :(</h2>
-			<p class="mb-4 mx-2">Oops! 😖 The requested URL was not found on this server.</p>
-			<a href="index.html" class="btn btn-primary">Back to home</a>
-			<div class="mt-3">
-				<img src="../assets/img/illustrations/page-misc-error-light.png" alt="page-misc-error-light" width="500" class="img-fluid" data-app-dark-img="illustrations/page-misc-error-dark.png" data-app-light-img="illustrations/page-misc-error-light.png" />
-			</div>
-		</div>
-	</div>
-	<!-- /Error -->
-
-	<!-- / Content -->
-
-	<div class="buy-now">
-		<a href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/" target="_blank" class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
-	</div>
-
-	<!-- Core JS -->
-	<!-- build:js assets/vendor/js/core.js -->
-	<script src="../assets/vendor/libs/jquery/jquery.js"></script>
-	<script src="../assets/vendor/libs/popper/popper.js"></script>
-	<script src="../assets/vendor/js/bootstrap.js"></script>
-	<script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-
-	<script src="../assets/vendor/js/menu.js"></script>
-	<!-- endbuild -->
-
-	<!-- Vendors JS -->
-
-	<!-- Main JS -->
-	<script src="../assets/js/main.js"></script>
-
-	<!-- Page JS -->
-
-	<!-- Place this tag in your head or just before your close body tag. -->
-	<script async defer src="https://buttons.github.io/buttons.js"></script>
+    <div class="overlay"></div>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <h2 class="error-message">${errorMessage != null ? errorMessage : "알수없는 오류가 발생했어요"}</h2>
+        <p>미안해요, 페이지가 존재하지 않거나 에러가 발생했어요</p>
+        <a href="javascript:void(0);" onclick="goBack();" class="btn">원래있던 페이지로 돌아가기</a>
+    </div>
 </body>
 </html>

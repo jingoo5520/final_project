@@ -21,80 +21,78 @@
 
 <!-- 커스텀 스타일 -->
 <style>
-	.btn {
-		width: 100%;
-	}
-	
-	.form-group input.text-input:focus {
-		border-color: #A8A691;
-	}
+.btn {
+	width: 100%;
+}
 
-	.form-group input.text-input {
-		width: 100%;
-		padding: 15px 20px;
-		border-radius: 4px;
-		border: 1px solid #e6e2f5;
-		transition: all 0.4s ease;
-		margin-bottom: 1rem;
-	}
+.form-group input.text-input:focus {
+	border-color: #A8A691;
+}
 
-	.form-group textarea:focus {
-  		border-color: #A8A691;
-		resize: none;
-	}
-	
-	.form-group textarea {
-		height: 180px;
-		width: 100%;
-		border: 1px solid #e6e2f5;
-		padding: 15px 20px;
-		color: #333;
-		resize: none;
-		font-weight: 400;
-		resize: vertical;
-		border-radius: 4px;
-		background-color: #fff;
-		-webkit-transition: all 0.4s ease;
-		transition: all 0.4s ease;
-	}
-	
-	#emptyOrderList {
-	    display: flex;
-	    justify-content: center; /* 수평 정렬 */
-	    align-items: center;    /* 수직 정렬 */
-	    height: 100%;
-	}
-	
-	<!-- 모달 디자인 -->
-	.modal-content .modal-header{
-		margin: 0;
-		height: 65px;
-		border: none !important;
-	}
-	
-	.modal-content .modal-body {
-		height: 100px;
-		border: none !important;
-		
-	}
-	
-	.modal-content .modal-body .modal-text {
-		height: 20px;
-		text-align: center;
-		font-weight: bold;
-		font-size: 16px;
-		color: rgb(34,34,34);
-		display: block;
-	}
-	
-	.modal-content .modal-footer {
-		height: 60px;
-		padding:0;
-		display: flex;
-		justify-content: space-between !important;
-		margin:0 !important;
-	}
+.form-group input.text-input {
+	width: 100%;
+	padding: 15px 20px;
+	border-radius: 4px;
+	border: 1px solid #e6e2f5;
+	transition: all 0.4s ease;
+	margin-bottom: 1rem;
+}
 
+.form-group textarea:focus {
+	border-color: #A8A691;
+	resize: none;
+}
+
+.form-group textarea {
+	height: 180px;
+	width: 100%;
+	border: 1px solid #e6e2f5;
+	padding: 15px 20px;
+	color: #333;
+	resize: none;
+	font-weight: 400;
+	resize: vertical;
+	border-radius: 4px;
+	background-color: #fff;
+	-webkit-transition: all 0.4s ease;
+	transition: all 0.4s ease;
+}
+
+#emptyOrderList {
+	display: flex;
+	justify-content: center; /* 수평 정렬 */
+	align-items: center; /* 수직 정렬 */
+	height: 100%;
+}
+
+<!--
+모달 디자인 -->.modal-content .modal-header {
+	margin: 0;
+	height: 65px;
+	border: none !important;
+}
+
+.modal-content .modal-body {
+	height: 100px;
+	border: none !important;
+}
+
+.modal-content .modal-body .modal-text {
+	height: 20px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+	color: rgb(34, 34, 34);
+	display: block;
+}
+
+.modal-content .modal-footer {
+	height: 60px;
+	padding: 0;
+	display: flex;
+	justify-content: space-between !important;
+	margin: 0 !important;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
@@ -126,8 +124,7 @@
 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
-				<span></span>
-				<span></span>
+				<span></span> <span></span>
 			</div>
 		</div>
 	</div>
@@ -146,8 +143,14 @@
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li>
+							<a href="/">
+								<i class="lni lni-home"></i> Home
+							</a>
+						</li>
+						<li>
+							<a href="/member/myPage/viewOrder">MyPage</a>
+						</li>
 						<li>주문 / 배송 조회</li>
 					</ul>
 				</div>
@@ -165,9 +168,8 @@
 				</jsp:include>
 				<!-- / sideBar -->
 
-				<div class="col-lg-9 col-12" id="productsView">
-				</div>
-				
+				<div class="col-lg-9 col-12" id="productsView"></div>
+
 				<!--/ End Shopping Cart -->
 			</div>
 		</div>
@@ -178,21 +180,21 @@
 	<div class="modal fade" id="alertModal" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
-			
+
 				<!-- Modal Header -->
 				<div class="modal-header">
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
-			
+
 				<!-- Modal body -->
 				<div class="modal-body">
-				<p class="modal-text">변경처리할 상품을 선택하십시오.</p>
+					<p class="modal-text">변경처리할 상품을 선택하십시오.</p>
 				</div>
-			
+
 				<!-- Modal footer 
 				<div class="modal-footer">
 				</div> -->
-			
+
 			</div>
 		</div>
 	</div>
@@ -203,7 +205,8 @@
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
-	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
+	<a href="#" class="scroll-top">
+		<i class="lni lni-chevron-up"></i>
 	</a>
 
 	<!-- ========================= JS here ========================= -->
@@ -211,24 +214,24 @@
 	<script src="/resources/assets/user/js/tiny-slider.js"></script>
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
-	
+
 	<script src="/resources/assets/user/js/viewOrder.js"></script>
-	
+
 	<script>
-	var orderInfo = null
-	
-	$(document).ready(function() {
-		orderInfo = loadOrderInfo()
-		showViewOrderPage(orderInfo)
-	})
-	
-	// 모달 열기
-	function openModal(title, text) {
-/* 		$("#modalcontainer").css("display", "block");
-		$("#modalTitle").text(title);
-		$("#modalText").html(text); */
-		$('#myModal').modal('show');
-	}
+		var orderInfo = null
+
+		$(document).ready(function() {
+			orderInfo = loadOrderInfo()
+			showViewOrderPage(orderInfo)
+		})
+
+		// 모달 열기
+		function openModal(title, text) {
+			/* 		$("#modalcontainer").css("display", "block");
+			 $("#modalTitle").text(title);
+			 $("#modalText").html(text); */
+			$('#myModal').modal('show');
+		}
 	</script>
 </body>
 
