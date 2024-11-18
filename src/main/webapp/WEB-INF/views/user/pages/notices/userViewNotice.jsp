@@ -96,11 +96,12 @@
 						<!-- End Cart List Title -->
 						
                 <div id="noticeList" class="row cart-list-title">
+                <tbody id="noticeTableBody">
                     <c:choose>
                         <c:when test="${not empty notices}">
                             <c:forEach var="notice" items="${notices}">
                                 <div class="col-lg-12 col-md-12 col-12 mb-4">
-                                    <div class="card border-primary">
+                                    <div id="notice-row-" class="card border-primary">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-lg-2 col-md-2 col-12">
@@ -131,36 +132,39 @@
                             </div>
                         </c:otherwise>
                     </c:choose>
+                    </tbody>
                 </div>
-                    
-<div class="pagination center">
+           <div class="pagination center">
     <ul class="pagination-list d-flex justify-content-center">
+        <!-- 이전 페이지 버튼 -->
         <c:choose>
-            <c:when test="${inquiryData.pi.pageNo == 1}">
-                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
+            <c:when test="${pi.pageNo == 1}">
+                <li class="page-item prev disabled"><a class="page-link" href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
+                <li class="page-item prev"><a href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo - 1}, ${pi.viewDataCntPerPage})"><i class="lni lni-chevron-left"></i></a></li>
             </c:otherwise>
         </c:choose>
 
-        <c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
+        <!-- 페이지 번호 출력 -->
+        <c:forEach var="i" begin="${pi.startPageNoCurBlock}" end="${pi.endPageNoCurBlock}">
             <c:choose>
-                <c:when test="${inquiryData.pi.pageNo == i}">
-                    <li class="active"><a href="javascript:void(0)">${i}</a></li>
+                <c:when test="${pi.pageNo == i}">
+                    <li class="page-item active"><a class="page-link" href="javascript:void(0)" onclick="showEventList(${pi.pageNo}, ${pi.viewDataCntPerPage})">${i}</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="javascript:void(0)" onclick="showInquiryList(${i})">${i}</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${i}, ${pi.viewDataCntPerPage})">${i}</a></li>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
 
+        <!-- 다음 페이지 버튼 -->
         <c:choose>
-            <c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
-                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
+            <c:when test="${pi.pageNo == pi.totalPageCnt}">
+                <li class="page-item disabled"><a class="page-link" href="javascript:void(0)" onclick="return false;"><i class="lni lni-chevron-right"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
+                <li class="page-item next"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo + 1}, ${pi.viewDataCntPerPage})"><i class="lni lni-chevron-right"></i></a></li>
             </c:otherwise>
         </c:choose>
     </ul>
@@ -199,5 +203,82 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+function showUserNoticeList(pageNo, pagingSize){
+	$.ajax({
+        url: '/serviceCenter/notice/getNotices',
+        type: 'GET',
+        dataType : 'json',
+        data: {
+            pageNo: pageNo
+        },
+        success: function(response) {
+        	console.log(response);
+        	
+            // 공지사항 목록 업데이트
+            let tableRows = '';
+            $.each(response.list, function(index, notice) {
+                tableRows += '<div id="notice-row-' + notice.notice_no + '">' +
+                          '<div>' + notice.notice_no + '</div>' +
+                          '<div><a href="/serviceCenter/noticeDetail/' + notice.notice_no + '">' + notice.notice_title + '</a></div>' +
+                          '<div>' + notice.admin_id + '</div>' +
+                          '<div>' + notice.formatted_reg_date + '</div>' +
+                          '</div>';
+            });
+            console.log(response.list[0]);
+            console.log(tableRows);
+            
+            $("#noticeTableBody").html(tableRows);
+            // 페이지네이션 업데이트
+            updatePagination(response.pi);
+        },
+        error: function() {
+            alert('공지사항 목록을 불러오는 데 실패했습니다.');
+        }
+    });
+}
+
+function updatePagination(pi) {
+    // 페이지네이션 업데이트 처리 (응답에 따른 페이지 버튼 생성)
+    let pagination = '';
+    
+    if (pi.pageNo > 1) {
+        pagination += '<li class="page-item prev">' + 
+        '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + (pi.pageNo - 1) + ',' + pi.viewDataCntPerPage + ')">' +
+        '<i class="tf-icon bx bx-chevrons-left"></i>' +
+        '</a></li>';
+    } else {
+        pagination += '<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>';
+    }
+    
+    for (let i = pi.startPageNoCurBlock; i <= pi.endPageNoCurBlock; i++) {
+        if (pi.pageNo === i) {
+            pagination += '<li class="page-item active">' + 
+            '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
+            '</a></li>';
+        } else {
+            pagination += '<li class="page-item">' + 
+            '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
+            '</a></li>';
+        }
+    }
+    
+    if (pi.pageNo < pi.totalPageCnt) {
+        pagination += '<li class="page-item next">' + '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + (pi.pageNo + 1) + ',' + pi.viewDataCntPerPage + ')"><i class="tf-icon bx bx-chevrons-right"></i></a></li>';
+    } else {
+        pagination += '<li class="page-item next disabled">' +
+        '<a class="page-link" href="javascript:void(0);">' + 
+        '<i class="tf-icon bx bx-chevrons-right"></i>' + 
+        '</a></li>';
+    }
+    
+    console.log(pi.pageNo);
+    console.log(pi.startPageNoCurBlock);
+    console.log(pi.endPageNoCurBlock);
+    console.log(pi.totalPageCnt);
+    
+    $(".pagination").html(pagination);
+}
+
 </script>
 </html>
