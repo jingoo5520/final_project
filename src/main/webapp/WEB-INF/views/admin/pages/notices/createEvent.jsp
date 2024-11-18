@@ -136,9 +136,9 @@
                       
                       <div class="input-group">
 				        <div class="input-group-text">
-				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="N" aria-label="공지" required id="noticeType1" onchange="changeForm(this.value)"/>공지</div>
+				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="N" aria-label="공지" required id="noticeType1" onchange="changeForm(this.value)" disabled/>공지</div>
 						<div class="input-group-text">
-				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" checked required id="noticeType2" onchange="changeForm(this.value)" disabled />이벤트</div>
+				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" checked required id="noticeType2" onchange="changeForm(this.value)"/>이벤트</div>
 				      </div>
 					<div class="mb-3">
 					    <label for="eventStartDate" class="form-label">이벤트 시작 날짜</label>

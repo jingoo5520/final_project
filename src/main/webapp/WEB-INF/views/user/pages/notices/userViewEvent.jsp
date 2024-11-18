@@ -59,8 +59,7 @@
 
 <section class="product-grids section">
 <div class="container mt-3">
-  <div class="row">
-  <tbody id="eventTableBody">
+  <div id="eventTableBody" class="row">
     <c:choose>
       <c:when test="${not empty events}">
         <c:forEach var="event" items="${events}">
@@ -88,37 +87,36 @@
   		</div>
       </c:otherwise>
     </c:choose>
-  </tbody>
 </div>
 <div class="pagination center">
     <ul class="pagination-list d-flex justify-content-center">
     <!-- 이전 페이지 버튼 -->
         <c:choose>
             <c:when test="${pi.pageNo == 1}">
-                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
+                <li class="page-item prev disabled"><a class="page-link" href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showUserEventList(${pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
+                <li class="page-item prev"><a class="page-link" href="javascript:void(0)" onclick="showUserEventList(${pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
             </c:otherwise>
         </c:choose>
 <!-- 페이지 번호 출력 -->
         <c:forEach var="i" begin="${pi.startPageNoCurBlock}" end="${pi.endPageNoCurBlock}">
             <c:choose>
                 <c:when test="${pi.pageNo == i}">
-                    <li class="active"><a href="javascript:void(0)">${i}</a></li>
+                    <li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li><a href="javascript:void(0)" onclick="showUserEventList(${i})">${i}</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="showUserEventList(${i})">${i}</a></li>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
 <!-- 다음 페이지 버튼 -->
         <c:choose>
             <c:when test="${pi.pageNo == pi.totalPageCnt}">
-                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li><a href="javascript:void(0)" onclick="showUserEventList(${pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
+                <li class="page-item next"><a class="page-link" href="javascript:void(0)" onclick="showUserEventList(${pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
             </c:otherwise>
         </c:choose>
     </ul>
@@ -154,26 +152,25 @@ function showUserEventList(pageNo, pagingSize) {
             
             let eventList = '';
             $.each(response.list, function(index, event){
+            console.log(`\${event.notice_no}`);
+            console.log(`\${event.thumbnail_image}`);
                 let imgSrc = event.thumbnail_image 
-                ? `${event.thumbnail_image}` 
+                ? `\${event.thumbnail_image}` 
                 : "/resources/images/noP_image.png";  // 기본 이미지
                 // 이벤트 카드 HTML 구성
                 eventList += `
-                    <div id="eventList-row-${event.notice_no}" class="col-md-4 mb-4">
+                    <div id="eventList-row-\${event.notice_no}" class="col-md-4 mb-4">
                         <div class="card" style="width: 400px;">
-                            <a href="/eventDetail/${event.notice_no}">
-                                <img class="card-img-top" src="${event.thumbnail_image}" alt="${event.notice_title} 이미지">
+                            <a href="/eventDetail/\${event.notice_no}">
+                                <img class="card-img-top" src="\${event.thumbnail_image}" alt="\${event.notice_title} 이미지">
                             </a>
-                            <div class="card-body">
-                                <h5 class="card-title">${event.notice_title}</h5>
-                                <p class="card-text">${event.notice_description || "설명이 없습니다."}</p>
-                            </div>
                         </div>
                     </div>
                 `;
             });
             console.log(response.list[0]);
             console.log(eventList);
+            console.log(response.pi);
             
             $("#eventTableBody").html(eventList);
             // 페이지네이션 업데이트
@@ -186,6 +183,7 @@ function showUserEventList(pageNo, pagingSize) {
 }
 
 function updatePagination(pi) {
+	console.log(pi);
     // 페이지네이션 업데이트 처리
 	let pagination = '';
 	
@@ -208,15 +206,17 @@ function updatePagination(pi) {
 	
 	// 페이지 번호
 	for (let i = pi.startPageNoCurBlock; i <= pi.endPageNoCurBlock; i++) {
+		console.log(pi.pageNo === i);
+		console.log(`\${i}`);
 	    if (pi.pageNo === i) {
 	        pagination += `
 	            <li class="page-item active">
-	                <a class="page-link" href="javascript:void(0);">${i}</a>
+	                <a class="page-link" href="javascript:void(0);">\${i}</a>
 	            </li>`;
 	    } else {
 	        pagination += `
 	            <li class="page-item">
-	                <a class="page-link" href="javascript:void(0);" onclick="showUserEventList('${i}', '${pi.viewDataCntPerPage}')">${i}</a>
+	                <a class="page-link" href="javascript:void(0);" onclick="showUserEventList(\${i}, '${pi.viewDataCntPerPage}')">\${i}</a>
 	            </li>`;
 	    }
 	}
@@ -243,6 +243,7 @@ function updatePagination(pi) {
     console.log(pi.totalPageCnt);
     
     // 페이지네이션 HTML을 .pagination에 삽입
+    console.log(pagination);
     $(".pagination-list").html(pagination);
 }
 

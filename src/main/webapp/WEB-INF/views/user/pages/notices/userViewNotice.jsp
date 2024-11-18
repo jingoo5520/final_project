@@ -95,13 +95,12 @@
 						</div>
 						<!-- End Cart List Title -->
 						
-                <div id="noticeList" class="row cart-list-title">
-                <tbody id="noticeTableBody">
+                <div id="noticeTableBody" class="row cart-list-title">
                     <c:choose>
                         <c:when test="${not empty notices}">
                             <c:forEach var="notice" items="${notices}">
                                 <div class="col-lg-12 col-md-12 col-12 mb-4">
-                                    <div id="notice-row-" class="card border-primary">
+                                    <div id="notice-row-${notice.notice_no}" class="card border-primary">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-lg-2 col-md-2 col-12">
@@ -132,39 +131,36 @@
                             </div>
                         </c:otherwise>
                     </c:choose>
-                    </tbody>
                 </div>
-           <div class="pagination center">
+<div class="pagination center">
     <ul class="pagination-list d-flex justify-content-center">
-        <!-- 이전 페이지 버튼 -->
+    <!-- 이전 페이지 버튼 -->
         <c:choose>
             <c:when test="${pi.pageNo == 1}">
                 <li class="page-item prev disabled"><a class="page-link" href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li class="page-item prev"><a href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo - 1}, ${pi.viewDataCntPerPage})"><i class="lni lni-chevron-left"></i></a></li>
+                <li class="page-item prev"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
             </c:otherwise>
         </c:choose>
-
-        <!-- 페이지 번호 출력 -->
+<!-- 페이지 번호 출력 -->
         <c:forEach var="i" begin="${pi.startPageNoCurBlock}" end="${pi.endPageNoCurBlock}">
             <c:choose>
                 <c:when test="${pi.pageNo == i}">
-                    <li class="page-item active"><a class="page-link" href="javascript:void(0)" onclick="showEventList(${pi.pageNo}, ${pi.viewDataCntPerPage})">${i}</a></li>
+                    <li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${i}, ${pi.viewDataCntPerPage})">${i}</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${i})">${i}</a></li>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
-
-        <!-- 다음 페이지 버튼 -->
+<!-- 다음 페이지 버튼 -->
         <c:choose>
             <c:when test="${pi.pageNo == pi.totalPageCnt}">
-                <li class="page-item disabled"><a class="page-link" href="javascript:void(0)" onclick="return false;"><i class="lni lni-chevron-right"></i></a></li>
+                <li class="page-item disabled"><a class="page-link" href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
             </c:when>
             <c:otherwise>
-                <li class="page-item next"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo + 1}, ${pi.viewDataCntPerPage})"><i class="lni lni-chevron-right"></i></a></li>
+                <li class="page-item next"><a class="page-link" href="javascript:void(0)" onclick="showUserNoticeList(${pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
             </c:otherwise>
         </c:choose>
     </ul>
@@ -216,16 +212,38 @@ function showUserNoticeList(pageNo, pagingSize){
         	console.log(response);
         	
             // 공지사항 목록 업데이트
-            let tableRows = '';
-            $.each(response.list, function(index, notice) {
-                tableRows += '<div id="notice-row-' + notice.notice_no + '">' +
-                          '<div>' + notice.notice_no + '</div>' +
-                          '<div><a href="/serviceCenter/noticeDetail/' + notice.notice_no + '">' + notice.notice_title + '</a></div>' +
-                          '<div>' + notice.admin_id + '</div>' +
-                          '<div>' + notice.formatted_reg_date + '</div>' +
-                          '</div>';
-            });
-            console.log(response.list[0]);
+			let tableRows = '';
+			$.each(response.list, function(index, notice) {
+				console.log(response.list);
+        	console.log(`\${notice.notice_no}`);
+        	console.log(`\${notice.notice_title}`);
+        	console.log(`\${notice.admin_id}`);
+        	console.log(`\${notice.formatted_reg_date}`);
+        	console.log(`notice-row-\${notice.notice_no}`);
+            tableRows += `
+                <div id="notice-row-\${notice.notice_no}" class="card border-primary mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-2 col-md-2 col-12">
+                                <p class="card-text">\${notice.notice_no}</p>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <h5 class="card-title">
+                                    <a href="/serviceCenter/noticeDetail/\${notice.notice_no}" class="text-primary">\${notice.notice_title}</a>
+                                </h5>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-12">
+                                <p class="card-text">\${notice.admin_id}</p>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-12">
+                                <p class="card-text regDate">\${notice.formatted_reg_date}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+//             console.log(response.list[0]);
             console.log(tableRows);
             
             $("#noticeTableBody").html(tableRows);
@@ -239,45 +257,67 @@ function showUserNoticeList(pageNo, pagingSize){
 }
 
 function updatePagination(pi) {
+	console.log(pi);
     // 페이지네이션 업데이트 처리 (응답에 따른 페이지 버튼 생성)
     let pagination = '';
     
-    if (pi.pageNo > 1) {
-        pagination += '<li class="page-item prev">' + 
-        '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + (pi.pageNo - 1) + ',' + pi.viewDataCntPerPage + ')">' +
-        '<i class="tf-icon bx bx-chevrons-left"></i>' +
-        '</a></li>';
-    } else {
-        pagination += '<li class="page-item prev disabled"><a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a></li>';
-    }
-    
-    for (let i = pi.startPageNoCurBlock; i <= pi.endPageNoCurBlock; i++) {
-        if (pi.pageNo === i) {
-            pagination += '<li class="page-item active">' + 
-            '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
-            '</a></li>';
-        } else {
-            pagination += '<li class="page-item">' + 
-            '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + i + ',' + pi.viewDataCntPerPage + ')">' + i +
-            '</a></li>';
-        }
-    }
-    
-    if (pi.pageNo < pi.totalPageCnt) {
-        pagination += '<li class="page-item next">' + '<a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(' + (pi.pageNo + 1) + ',' + pi.viewDataCntPerPage + ')"><i class="tf-icon bx bx-chevrons-right"></i></a></li>';
-    } else {
-        pagination += '<li class="page-item next disabled">' +
-        '<a class="page-link" href="javascript:void(0);">' + 
-        '<i class="tf-icon bx bx-chevrons-right"></i>' + 
-        '</a></li>';
-    }
+	// 이전 버튼
+	if (pi.pageNo > 1) {
+	    pagination += `
+	        <li class="page-item prev">
+	            <a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList('${pi.pageNo - 1}', '${pi.viewDataCntPerPage}')">
+	                <i class="lni lni-chevron-left"></i>
+	            </a>
+	        </li>`;
+	} else {
+	    pagination += `
+	        <li class="page-item prev disabled">
+	            <a class="page-link" href="javascript:void(0);">
+	                <i class="lni lni-chevron-left"></i>
+	            </a>
+	        </li>`;
+	}
+	
+	// 페이지 번호
+	for (let i = pi.startPageNoCurBlock; i <= pi.endPageNoCurBlock; i++) {
+		console.log(pi.pageNo === i);
+		console.log(`\${i}`);
+	    if (pi.pageNo === i) {
+	        pagination += `
+	            <li class="page-item active">
+	                <a class="page-link" href="javascript:void(0);">\${i}</a>
+	            </li>`;
+	    } else {
+	        pagination += `
+	            <li class="page-item">
+	                <a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList(\${i}, '${pi.viewDataCntPerPage}')">\${i}</a>
+	            </li>`;
+	    }
+	}
+	
+	// 다음 버튼
+	if (pi.pageNo < pi.totalPageCnt) {
+	    pagination += `
+	        <li class="page-item next">
+	            <a class="page-link" href="javascript:void(0);" onclick="showUserNoticeList('${pi.pageNo + 1}', '${pi.viewDataCntPerPage}')">
+	                <i class="lni lni-chevron-right"></i>
+	            </a>
+	        </li>`;
+	} else {
+	    pagination += `
+	        <li class="page-item next disabled">
+	            <a class="page-link" href="javascript:void(0);">
+	                <i class="lni lni-chevron-right"></i>
+	            </a>
+	        </li>`;
+	}
     
     console.log(pi.pageNo);
     console.log(pi.startPageNoCurBlock);
     console.log(pi.endPageNoCurBlock);
     console.log(pi.totalPageCnt);
-    
-    $(".pagination").html(pagination);
+    console.log(pagination);
+    $(".pagination-list").html(pagination);
 }
 
 </script>
