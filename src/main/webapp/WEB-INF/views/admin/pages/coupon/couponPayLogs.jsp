@@ -70,7 +70,7 @@
 	
 				$.each(data.list, function(index, log) {
 					let payDate = dateFormat(log.pay_date);
-					let expireDate = dateFormat(log.pay_date);
+					let expireDate = dateFormat(log.expire_date);
 
 					listOutput += '<tr>' 
 							+ '<td>' + log.coupon_paid_no + '</td>'
