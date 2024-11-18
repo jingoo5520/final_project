@@ -149,6 +149,8 @@ function showUserEventList(pageNo, pagingSize) {
         success: function(response) {
             // 이벤트 목록 업데이트
             console.log(response);
+            console.log(event.thumbnail_image);
+            console.log(`\${event.thumbnail_image}`);
             
             let eventList = '';
             $.each(response.list, function(index, event){

@@ -229,7 +229,7 @@ function showUserNoticeList(pageNo, pagingSize){
                             </div>
                             <div class="col-lg-6 col-md-6 col-12">
                                 <h5 class="card-title">
-                                    <a href="/serviceCenter/noticeDetail/\${notice.notice_no}" class="text-primary">\${notice.notice_title}</a>
+                                    <a href="/serviceCenter/noticeDetail/\${notice.notice_no}">\${notice.notice_title}</a>
                                 </h5>
                             </div>
                             <div class="col-lg-2 col-md-2 col-12">
