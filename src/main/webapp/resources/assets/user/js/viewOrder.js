@@ -46,6 +46,8 @@
 				continue; // 결제대기 상태인 주문은 표시하지 않음
 			}
 			let products = orderJson.products
+			// console.log(products)
+			if (products.length <= 0) {continue}
 			let payMethod = orderJson.payMethod
 			if (payMethod == "TC") {
 				payMethod = "카드결제"
@@ -56,41 +58,40 @@
 			} else if (payMethod == "K") {
 				payMethod = "카카오페이"
 			}
-			for (product of products.values()) {
-				tags += `<div class="cart-single-list grid-container">`
-				tags += `<div class="row align-items-center">`
-				tags += `<div class="col-lg-1 col-md-1 col-12">`
-				tags += `<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';">`
-				tags += `</div>`
-				tags += `<div class="col-lg-4 col-md-4 col-12">`
-				if (products.length >= 2) {
-					tags += `<p>${products['0'].product_name}외 ${products.length - 1}건</p>`
-				} else {
-					tags += `<p>${products['0'].product_name}</p>`
-				}
-				tags += `</div>`
-				tags += `<div class="col-lg-2 col-md-2 col-12">`
-				tags += `<p>${orderDate}</p>`
-				tags += `<p>${orderId}</p>`
-				tags += `</div>`
-				tags += `<div class="col-lg-2 col-md-2 col-12">`
-				tags += `<p>${orderStatus}</p>`
-				tags += `<p>${payMethod}</p>`
-				// working...
-				tags += `</div>`
-				tags += `<div class="col-lg-2 col-md-2 col-12">`
-				// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
-				if (orderStatus == "결제완료") {
-					tags += makeButtonTag("cancel", orderId)
-				} else if (orderStatus == "배송완료") {
-					tags += makeButtonTag("return", orderId)
-				} else {
-					tags += "<p></p>" // 아무것도 표시하지 않음
-				}
-				tags += `</div>`
-				tags += `</div>` // class="row align-items-center" end
-				tags += `</div>` // class="cart-single-list grid-container" end
+			// console.log("products의 첫번째 요소 : " + JSON.stringify(products['0']))
+			tags += `<div class="cart-single-list grid-container">`
+			tags += `<div class="row align-items-center">`
+			tags += `<div class="col-lg-1 col-md-1 col-12">`
+			tags += `<img src="${products[0]['image_url']}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';">`
+			tags += `</div>`
+			tags += `<div class="col-lg-4 col-md-4 col-12">`
+			if (products.length >= 2) {
+				tags += `<p>${products[0]['product_name']}외 ${products.length - 1}건</p>`
+			} else {
+				tags += `<p>${products[0]['product_name']}</p>`
 			}
+			tags += `</div>`
+			tags += `<div class="col-lg-2 col-md-2 col-12">`
+			tags += `<p>${orderDate}</p>`
+			tags += `<p>${orderId}</p>`
+			tags += `</div>`
+			tags += `<div class="col-lg-2 col-md-2 col-12">`
+			tags += `<p>${orderStatus}</p>`
+			tags += `<p>${payMethod}</p>`
+			// working...
+			tags += `</div>`
+			tags += `<div class="col-lg-2 col-md-2 col-12">`
+			// orderStatus는 "결제대기", "결제완료", "상품준비중", "배송준비중", "배송중", "배송완료" 중 하나이다
+			if (orderStatus == "결제완료") {
+				tags += makeButtonTag("cancel", orderId)
+			} else if (orderStatus == "배송완료") {
+				tags += makeButtonTag("return", orderId)
+			} else {
+				tags += "<p></p>" // 아무것도 표시하지 않음
+			}
+			tags += `</div>`
+			tags += `</div>` // class="row align-items-center" end
+			tags += `</div>` // class="cart-single-list grid-container" end
 		}
 		tags += '</div>' // class="cart-list-head" end
 		
@@ -164,15 +165,25 @@
 		console.log("onOrderCancelBtnClicked 함수 호출중")
 		let orderId = orderJson.orderId
 		console.log("orderJson in onOrderCancelBtnClicked : " + JSON.stringify(orderJson))
+		let requestAvaliable = false
+		requestAvaliable = (
+			Array.from(orderJson.products.values()).filter( p =>
+				!(p.cancel_status == "환불취소" || p.cancel_status == "환불완료")
+			).length >= 1 // 환불취소나 환불완료가 아닌(=고객이 신청해야 하는 상품의 개수를 구한다.
+		)
+		
 		$("#productsView").html("")
 		tags = ""
 		tags += `<div class="card">`
 		tags += `<div class="card-body row">`
-		tags += `<div class="title col-12">`
-		tags += (cancelType == "cancel" ? `<h3>주문 취소 신청</h3>` :  `<h3>반품/환불 신청</h3>`)
-		tags += `</div>` // class="title col-12" end
+		let title = ""
+		title += "<div class='title col-12'><h3>"
+		title += (cancelType == "cancel" ? "주문 취소" : "반품/환불 취소")
+		title += " "
+		title += (requestAvaliable == true ? "신청" : "확인")
+		title += "</h3></div>" // class="title col-12" end
+		tags += title
 		tags += `<p>주문번호 : ${orderId}</p>`
-
 		tags += `
 		<div class="cart-list-title col-12">
 			<div class="row align-items-center">
@@ -183,7 +194,6 @@
 			</div>
 		</div>`
 		
-		// working...
 		for (product of orderJson.products) {
 			tags += `<div class="cart-single-list col-12">`
 			tags += `
@@ -220,35 +230,45 @@
 			tags += `</div>`
 		} // for_end
 
-		tags += `<p>신청사유</p>`
+		requestFormTags = ""
+		requestFormTags += `<p>신청사유 <span id="charCount">( 0 / 255자 )</span></p>`
 
-		tags += `<div class="form-group col-12">`
-		tags += `<textarea id="cancel-reason"></textarea>` // TODO : 255자 이상 안들어가게 막아줘야 함
-		tags += `</div>` // textarea end
+		requestFormTags += `<div class="form-group col-12">`
+		requestFormTags += `<textarea id="cancel-reason"></textarea>` // TODO : 255자 이상 안들어가게 막아줘야 함
+		requestFormTags += `</div>` // textarea end
 
-		tags += `<p>계좌 정보</p>`
-		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
-		tags += `<input class="text-input" type="text" placeholder="예금주" id="account-owner"></input>`
-		tags += `</div>`
-		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
-		tags += `<input class="text-input" type="text" placeholder="은행" id="account-bank"></input>`
-		tags += `</div>`
-		tags += `<div class="form-group col-lg-6 col-md-6 col-12">`
-		tags += `<input class="text-input" type="text" placeholder="계좌번호" id="account-number"></input>`
-		tags += `</div>`
-		tags += "<p></p>"
+		requestFormTags += `<p>계좌 정보</p>`
+		requestFormTags += `<div class="form-group col-lg-6 col-md-6 col-12">`
+		requestFormTags += `<input class="text-input account-info" type="text" placeholder="예금주" id="account-owner"></input>`
+		requestFormTags += `</div>`
+		requestFormTags += `<div class="form-group col-lg-6 col-md-6 col-12">`
+		requestFormTags += `<input class="text-input account-info" type="text" placeholder="은행" id="account-bank"></input>`
+		requestFormTags += `</div>`
+		requestFormTags += `<div class="form-group col-lg-6 col-md-6 col-12">`
+		requestFormTags += `<input class="text-input account-info" type="text" placeholder="계좌번호" id="account-number"></input>`
+		requestFormTags += `</div>`
+		requestFormTags += "<p></p>"
 
-		tags += `<div class="col-lg-6 col-md-6 col-12 button">`
-		tags += `<button class="btn" onclick="submitOrderCancel(\'${cancelType}\')">확인</button>`
-		tags += `</div>`
-		tags += `<div class="col-lg-6 col-md-6 col-12 button">`
-		tags += `<button class="btn" onclick="cancelSubmit()">취소</button>`
-		tags += `</div>`
-
+		requestFormTags += `<div class="col-lg-6 col-md-6 col-12 button">`
+		requestFormTags += `<button class="btn" onclick="submitOrderCancel(\'${cancelType}\')">확인</button>`
+		requestFormTags += `</div>`
+		requestFormTags += `<div class="col-lg-6 col-md-6 col-12 button">`
+		requestFormTags += `<button class="btn" onclick="cancelSubmit()">취소</button>`
+		requestFormTags += `</div>`
+		
+		if (requestAvaliable == true) {
+			tags += requestFormTags
+		} else {
+			tags += `<div class="col-lg-6 col-md-6 col-12 button mx-auto">`
+			tags += `<button class="btn" onclick="cancelSubmit()">확인</button>`
+			tags += `</div>`
+		}
+		
 		tags += `</div>` // class="card-body row" end
 		tags += `</div>` // class="card" end
 		tags += `<div style="display:none;" id="order-id">${orderId}</div>`
 		$("#productsView").html(tags)
+		addEventListenerToCharCountSpan("cancel-reason")
 	} // function end
 	
 	function showInfoForCheckbox(elt) {
@@ -277,11 +297,30 @@
 		
 		console.log("products : ")
 		console.log(products)
+		const alertModal = new bootstrap.Modal(document.getElementById("alertModal"));
 		if (products.length <= 0) {
-			const alertModal = new bootstrap.Modal(document.getElementById("alertModal"));
+			$("#alertModal").find(".modal-text").html("변경처리할 상품을 선택하십시오.")
 			alertModal.show()
 			return false
 		}
+		if ($("#charCount").hasClass("exceeded")) {
+			console.log("신청사유를 255자 이하로 입력해주세요.")
+			$("#alertModal").find(".modal-text").html("신청사유를 255자 이하로 입력해주세요.")
+			alertModal.show()
+			return false
+		}
+	    let emptyInputs = [];
+	    $('.account-info').each(function() {
+	        if ($(this).val().trim() === '') {
+	            emptyInputs.push(this);
+	        }
+	    });
+	    if (emptyInputs.length >= 1) {
+	    	console.log("신청사유를 255자 이하로 입력해주세요.")
+	    	$("#alertModal").find(".modal-text").html("계좌정보를 입력해주세요.")
+			alertModal.show()
+			return false
+	    }
 		
 		$.ajax({
 			async: false,
@@ -311,4 +350,23 @@
 	
 	function cancelSubmit() {
 		showViewOrderPage(orderInfo)
+	}
+
+
+	function addEventListenerToCharCountSpan(targetElementId) {
+		const targetElement = document.getElementById(targetElementId)
+		const charCount = document.getElementById('charCount')
+		const maxChars = 255;
+		targetElement.addEventListener(
+			'input', function() {
+			const currentLength = targetElement.value.length;
+			charCount.textContent = `( ${currentLength} / ${maxChars}자 )`;
+			
+			// 글자수 초과 시 클래스 변경
+			if (currentLength > maxChars) {
+				charCount.classList.add('exceeded');
+			} else {
+				charCount.classList.remove('exceeded');
+			}
+		})
 	}

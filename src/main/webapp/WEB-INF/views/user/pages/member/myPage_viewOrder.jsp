@@ -24,7 +24,7 @@
 	.btn {
 		width: 100%;
 	}
-	
+
 	.form-group input.text-input:focus {
 		border-color: #A8A691;
 	}
@@ -94,6 +94,10 @@
 		justify-content: space-between !important;
 		margin:0 !important;
 	}
+	
+	.exceeded {
+		color: red;
+	}
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -126,8 +130,7 @@
 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
-				<span></span>
-				<span></span>
+				<span></span> <span></span>
 			</div>
 		</div>
 	</div>
@@ -146,8 +149,14 @@
 				</div>
 				<div class="col-lg-6 col-md-6 col-12">
 					<ul class="breadcrumb-nav">
-						<li><a href="/"><i class="lni lni-home"></i> Home</a></li>
-						<li><a href="/member/myPage/viewOrder">MyPage</a></li>
+						<li>
+							<a href="/">
+								<i class="lni lni-home"></i> Home
+							</a>
+						</li>
+						<li>
+							<a href="/member/myPage/viewOrder">MyPage</a>
+						</li>
 						<li>주문 / 배송 조회</li>
 					</ul>
 				</div>
@@ -167,7 +176,7 @@
 
 				<div class="col-lg-9 col-12" id="productsView">
 				</div>
-				
+
 				<!--/ End Shopping Cart -->
 			</div>
 		</div>
@@ -178,21 +187,21 @@
 	<div class="modal fade" id="alertModal" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
-			
+
 				<!-- Modal Header -->
 				<div class="modal-header">
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
-			
+
 				<!-- Modal body -->
 				<div class="modal-body">
 				<p class="modal-text">변경처리할 상품을 선택하십시오.</p>
 				</div>
-			
+
 				<!-- Modal footer 
 				<div class="modal-footer">
 				</div> -->
-			
+
 			</div>
 		</div>
 	</div>
@@ -203,7 +212,8 @@
 	<jsp:include page="/WEB-INF/views/user/pages/footer.jsp"></jsp:include>
 
 	<!-- ========================= scroll-top ========================= -->
-	<a href="#" class="scroll-top"> <i class="lni lni-chevron-up"></i>
+	<a href="#" class="scroll-top">
+		<i class="lni lni-chevron-up"></i>
 	</a>
 
 	<!-- ========================= JS here ========================= -->
@@ -211,24 +221,24 @@
 	<script src="/resources/assets/user/js/tiny-slider.js"></script>
 	<script src="/resources/assets/user/js/glightbox.min.js"></script>
 	<script src="/resources/assets/user/js/main.js"></script>
-	
+
 	<script src="/resources/assets/user/js/viewOrder.js"></script>
-	
+
 	<script>
-	var orderInfo = null
-	
-	$(document).ready(function() {
-		orderInfo = loadOrderInfo()
-		showViewOrderPage(orderInfo)
-	})
-	
-	// 모달 열기
-	function openModal(title, text) {
-/* 		$("#modalcontainer").css("display", "block");
-		$("#modalTitle").text(title);
-		$("#modalText").html(text); */
-		$('#myModal').modal('show');
-	}
+		var orderInfo = null
+
+		$(document).ready(function() {
+			orderInfo = loadOrderInfo()
+			showViewOrderPage(orderInfo)
+		})
+
+		// 모달 열기
+		function openModal(title, text) {
+			/* 		$("#modalcontainer").css("display", "block");
+			 $("#modalTitle").text(title);
+			 $("#modalText").html(text); */
+			$('#myModal').modal('show');
+		}
 	</script>
 </body>
 

@@ -407,7 +407,7 @@
 	            updatePagination(response.pi);
 	        },
 	        error: function() {
-	            alert('공지사항 목록을 불러오는 데 실패했습니다.');
+	            alert('이벤트 목록을 불러오는 데 실패했습니다.');
 	        }
 	    });
 	}

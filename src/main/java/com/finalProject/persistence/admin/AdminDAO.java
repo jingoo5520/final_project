@@ -3,6 +3,7 @@ package com.finalProject.persistence.admin;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.finalProject.model.admin.CancelCountDTO;
 import com.finalProject.model.admin.GenderCountDTO;
 import com.finalProject.model.admin.LevelCountDTO;
 import com.finalProject.model.admin.RevenueDTO;
@@ -48,5 +49,15 @@ public interface AdminDAO {
 
 	// 특정 달의 매출 가져오기
 	List<RevenueDTO> selectRevenuesByMonth(String selectedMonth) throws Exception;
+
+	List<String> CategoryCancelByDate(String selectedMonth);
+
+	// 특정 달의 취소량 가져오기 추가
+	List<CancelCountDTO> selectTotalCancel();
+
+	// 특정 달의 취소금액 가져오기 추가
+	List<CancelCountDTO> selectTotalByMonth(List<Integer> list);
+
+	List<CancelCountDTO> selectTotalCancelCnt();
 
 }

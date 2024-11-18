@@ -249,8 +249,10 @@
 	            if ($(this).is(':checked')) {
 	            	if (memberPoint > totalPrice) {
 				    	$('input[name="point"]').val(Math.floor(totalPrice / 100) * 100);
+	            		// $('input[name="point"]').val(totalPrice);
 				    } else {
 				    	$('input[name="point"]').val(Math.floor(memberPoint / 100) * 100);
+				    	// $('input[name="point"]').val(memberPoint);
 				    }
 					
 	            } else {

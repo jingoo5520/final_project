@@ -5,9 +5,10 @@
 <mapper namespace="com.finalProject.mappers.userNoticeMapper">
 
     <!-- 공지사항 목록 조회 -->
-    <select id="getNotices" resultType="NoticeDTO">
-        SELECT notice_no, notice_type, notice_title, notice_content, reg_date, admin_id
-		FROM notices WHERE notice_type = 'N' ORDER BY reg_date DESC;
+    <select id="getNotices" parameterType="map" resultType="NoticeDTO">
+        select notice_no, notice_title, admin_id, notice_type, reg_date
+		from notices where is_delete='N' and notice_type = 'N' order by reg_date desc
+		LIMIT #{startRowIndex}, #{pagingSize}
     </select>
     
     <!-- 공지사항 상세 페이지 조회 -->
@@ -18,9 +19,10 @@
     </select>
 
     <!-- 이벤트 목록 조회 -->
-    <select id="getEvents" resultType="NoticeDTO">
-        SELECT notice_no, notice_type, notice_title, notice_content, reg_date, admin_id
-		FROM notices WHERE notice_type = 'E' ORDER BY reg_date DESC;
+    <select id="getEvents" parameterType="map" resultType="NoticeDTO">
+        select notice_no, notice_title, admin_id, notice_type, reg_date, event_start_date, event_end_date, thumbnail_image
+        from notices where is_delete='N' and notice_type = 'E' order by reg_date desc
+        LIMIT #{startRowIndex}, #{pagingSize}
     </select>
     
     <!-- 이벤트 상세 페이지 조회 -->
@@ -45,9 +47,39 @@
 
 <!-- 이벤트 목록 조회 -->
 	<select id="getAllEvents" parameterType="map" resultType="NoticeDTO">
-        select notice_no, notice_title, admin_id, notice_type, reg_date, thumbnail_image
+        select notice_no, notice_title, admin_id, notice_type, reg_date, event_start_date, event_end_date, thumbnail_image
         from notices where is_delete='N' and notice_type = 'E' order by reg_date desc
         LIMIT #{startRowIndex}, #{pagingSize}
+    </select>
+    
+<!-- 총 글(데이터) 수 -->
+	<select id="selectNoticeCnt" resultType="int">
+		select count(*) from notices
+		where is_delete='N' and notice_type = 'N'
+    </select>
+	
+
+<!-- 페이지네이션이 적용된 공지 목록 조회 -->
+    <select id="selectNoticeList" resultType="NoticeDTO">
+        SELECT notice_no, notice_title, admin_id, notice_type, reg_date
+        FROM notices WHERE is_delete='N' AND notice_type = 'N' 
+        ORDER BY reg_date DESC 
+        LIMIT #{startRowIndex}, #{viewDataCntPerPage}
+    </select>
+    
+<!-- 총 글(데이터) 수 -->
+	<select id="selectEventCnt" resultType="int">
+		select count(*) from notices
+		where is_delete='N' and notice_type = 'E'
+    </select>
+	
+
+<!-- 페이지네이션이 적용된 이벤트 목록 조회 -->
+    <select id="selectEventList" resultType="NoticeDTO">
+        SELECT notice_no, notice_title, admin_id, notice_type, reg_date, event_start_date, event_end_date, thumbnail_image
+        FROM notices WHERE is_delete='N' AND notice_type = 'E' 
+        ORDER BY reg_date DESC 
+        LIMIT #{startRowIndex}, #{viewDataCntPerPage}
     </select>
     
 </mapper>

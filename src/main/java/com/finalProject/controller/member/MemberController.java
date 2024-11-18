@@ -173,6 +173,7 @@ public class MemberController {
 	// 회원가입 처리
 	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
 	public String signUp(MemberDTO memberDTO, RedirectAttributes rttr,
+			HttpServletRequest request,
 			@RequestParam(value = "basicAddress", required = false) String basicAddress,
 			@RequestParam(value = "addressName", required = false) String addressName) {
 		System.out.println("회원가입 요청");
@@ -218,6 +219,9 @@ public class MemberController {
 						e.printStackTrace();
 					}
 				}
+				String contextPath = request.getContextPath();
+				rttr.addFlashAttribute("modalTitle", "회원가입이 완료되었습니다.");
+				rttr.addFlashAttribute("modalText","<div class='modalLink'><a href='" + contextPath + "/member/viewLogin'>로그인 하러가기</a></div>");
 				result = "redirect:/";
 			} else {
 				System.out.println("insert실패");
@@ -666,7 +670,7 @@ public class MemberController {
 
 		try {
 			// update가 정상적으로 됬다면
-			if (memberService.updateMember(memberDTO)) {
+			if (memberService.updateMember(memberDTO, member_id, request)) {
 				System.out.println("변경 완료");
 				json = new ResponseData("success", "변경 성공");
 			} else {
@@ -972,8 +976,9 @@ public class MemberController {
 
 	// 카카오 회원가입(간편가입)
 	@PostMapping(value = "/kakao/signUp")
-	public String kakaoSignUp(MemberDTO memberDTO, Model model) {
+	public String kakaoSignUp(MemberDTO memberDTO, Model model,HttpServletRequest request) {
 		System.out.println(memberDTO);
+		HttpSession ses = request.getSession();
 		// 우편번호/주소/상세주소
 		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
 		try {
@@ -985,6 +990,7 @@ public class MemberController {
 				LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에
 																		// 조회한다.
 				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장
+				ses.setAttribute("rememberPath", "간편가입");
 			} else {
 				System.out.println("잘못된 접근(가입에 필요한 데이터 부족");
 			}
@@ -992,7 +998,7 @@ public class MemberController {
 			e.printStackTrace();
 		}
 
-		return "/user/index";
+		return "/user/index?";
 	}
 
 	// 네이버 로그인(인가코드 api)
@@ -1035,7 +1041,9 @@ public class MemberController {
 	@PostMapping(value = "/naver/signUp")
 	public String naverSignUp(MemberDTO memberDTO, Model model,
 			@RequestParam(value = "basicAddress", required = false) String basicAddress,
-			@RequestParam(value = "addressName", required = false) String addressName) {
+			@RequestParam(value = "addressName", required = false) String addressName,
+			HttpServletRequest request) {
+		HttpSession ses = request.getSession();
 		System.out.println(memberDTO);
 		// 우편번호/주소/상세주소
 		memberDTO.setAddress(memberDTO.getZipCode() + "/" + memberDTO.getAddress() + "/" + memberDTO.getAddress2());
@@ -1047,6 +1055,7 @@ public class MemberController {
 				loginDTO.setMember_pwd(memberDTO.getMember_pwd());
 				LoginDTO loginMember = memberService.login(loginDTO); // 입력한 member_id, member_pwd를 loginDTO로 받아서 db에
 				model.addAttribute("loginMember", loginMember); // 모델객체에 로그인 정보 저장 // 조회한다.
+				ses.setAttribute("rememberPath", "간편가입");
 				if (basicAddress != null) { // 기본주소 설정
 					try {
 						memberService.saveAdddress(memberDTO, addressName);
@@ -1132,6 +1141,14 @@ public class MemberController {
 		model.addAttribute("otherCount", otherCount);
 
 		return "/user/pages/member/myPage_wishList"; // jsp 페이지로 반환
+	}
+	
+	// 간편가입시 출력되는 모달 세션데이터 삭제
+	@RequestMapping(value = "/removeSession")
+	public void removeSession(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession ses = request.getSession();
+		ses.removeAttribute("simpleSignUp");
+		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 	}
 
 }

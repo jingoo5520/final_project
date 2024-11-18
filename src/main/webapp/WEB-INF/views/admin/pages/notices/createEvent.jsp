@@ -131,7 +131,7 @@
                         <input type="text" class="form-control" name="noticeTitle" placeholder="제목을 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required/>
                       </div>
                       <div class="input-group">
-                        <input type="text" class="form-control" name="adminId" placeholder="작성자를 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required readonly/>
+                        <input type="text" class="form-control" name="adminId" value="${adminId}" placeholder="작성자를 입력하세요" aria-label="Username" aria-describedby="basic-addon11" required readonly/>
                       </div>
                       
                       <div class="input-group">
