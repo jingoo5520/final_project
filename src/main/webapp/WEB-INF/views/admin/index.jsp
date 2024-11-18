@@ -216,6 +216,7 @@
 	
 	function setRevenueData(list){
 		drawRevenueGragh(list);
+		console.log(list);
 	}
 	
 	
@@ -728,7 +729,6 @@
 		
 		$("#totalRevenue").text(totalRevenue.toLocaleString());
 		
-		
 		const totalRevenueChartEl = document.querySelector('#totalRevenueChart'),
 	    totalRevenueChartOptions = {
 	      series: [
@@ -980,8 +980,22 @@
 	        }
 	      }
 	    };
-	  if (typeof totalRevenueChartEl !== undefined && totalRevenueChartEl !== null) {
-		if(isDrawedRevenueGragh) {
+		
+		if(totalRevenueChart) {
+			console.log("업데이트");
+			console.log(series);
+			totalRevenueChart.destroy();
+	    } 
+	    totalRevenueChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
+	    	
+	    totalRevenueChart.render();
+	    	
+	    
+		
+		
+		/* if(totalRevenueChart) {
+			console.log("업데이트");
+			console.log(series);
 	    	totalRevenueChart.updateSeries([
 	    		{
 	    			name: "amount",
@@ -998,9 +1012,8 @@
 	    	totalRevenueChart = new ApexCharts(totalRevenueChartEl, totalRevenueChartOptions);
 	    	
 	    	totalRevenueChart.render();
-	    	isDrawedRevenueGragh = true;
-	    }	
-	  }
+	    	// isDrawedRevenueGragh = true;
+	    } */
 	}
 	
 </script>

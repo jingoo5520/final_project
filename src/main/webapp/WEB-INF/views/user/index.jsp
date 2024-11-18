@@ -110,8 +110,8 @@
 				<c:forEach var="banner" items="${subBannerList}">
 					<div class="col-md-6 col-12">
 						<!-- Start Single Category -->
-						<div class="single-category" style="height: 350px">
-							<img src="${banner.thumbnail_image}" width="100%" height="100%" style="object-fit: cover;">
+						<div class="single-category" style="width: 100%; height: 350px">
+							<img src="${banner.thumbnail_image}" style="width:100% !important; height:100%; object-fit: cover;">
 						</div>
 						<!-- End Single Category -->
 					</div>
