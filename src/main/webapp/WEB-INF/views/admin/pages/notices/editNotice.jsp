@@ -86,7 +86,7 @@
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="editNotice" value="editNotice" />
+				<jsp:param name="pageName" value="notice" />
 
 			</jsp:include>
 
@@ -309,7 +309,7 @@
                 contentType: false,
                 processData: false,
                 success: function(fileName) {
-                    let imageUrl = '/resources/inquiryImages/' + fileName;
+                    let imageUrl = '/resources/eventImages/' + fileName;
                     $('#summernote').summernote('insertImage', imageUrl);
                     console.log('업로드 성공:', fileName);
                 },

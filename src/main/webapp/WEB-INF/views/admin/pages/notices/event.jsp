@@ -56,7 +56,7 @@
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="event" value="event" />
+				<jsp:param name="pageName" value="event" />
 
 			</jsp:include>
 
