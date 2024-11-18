@@ -32,7 +32,7 @@
         <div class="layout-container">
 			<!-- Menu -->
             <jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
-                <jsp:param name="viewEvent" value="viewEvent" />
+                <jsp:param name="pageName" value="event" />
             </jsp:include>
 		<!-- / Menu -->
 

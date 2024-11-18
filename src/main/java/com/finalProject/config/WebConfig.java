@@ -26,8 +26,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 배너 및 썸네일 이미지 리소스 핸들러
-        registry.addResourceHandler("/resources/inquiryImages/**")
-                .addResourceLocations("file:///C:/spring/temp/resources/inquiryImages/");
+        registry.addResourceHandler("/resources/eventImages/**")
+                .addResourceLocations("file:///C:/spring/temp/resources/eventImages/");
     }
 
 	@Override

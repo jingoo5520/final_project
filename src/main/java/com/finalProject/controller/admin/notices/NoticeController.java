@@ -68,7 +68,7 @@ public class NoticeController {
 	private List<NoticeDTO> cachedNotices;
 	private List<NoticeDTO> cachedEvents;
 
-	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
 //    private static final String UPLOAD_DIR = "C:/spring/temp/";
 
@@ -281,7 +281,7 @@ public class NoticeController {
 //		return "admin/pages/notices/event";
 //	}
 
-	private String saveFile(MultipartFile file, String prefix, HttpServletRequest request) throws IOException {
+	private String saveFile(MultipartFile file, String prefix, HttpServletRequest request) {
 		String realPath = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
 
 		// 파일이 비어있는 경우
@@ -307,6 +307,8 @@ public class NoticeController {
 		// 파일 저장
 		try (InputStream inputStream = file.getInputStream()) {
 			Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		// 저장된 파일의 경로 반환
@@ -436,6 +438,7 @@ public class NoticeController {
 			event.setEvent_start_date(startDateTime); // LocalDateTime으로 설정
 			event.setEvent_end_date(endDateTime); // LocalDateTime으로 설정
 		} catch (DateTimeParseException e) {
+			e.printStackTrace();
 			redirectAttributes.addAttribute("error", "날짜 형식이 올바르지 않습니다.");
 			return "redirect:/admin/notices/createEvent";
 		}
