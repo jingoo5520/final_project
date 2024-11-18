@@ -51,7 +51,6 @@ i.fas, i.far {
 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
-				<span></span> <span></span>
 			</div>
 		</div>
 	</div>
@@ -85,7 +84,7 @@ i.fas, i.far {
 			<div class="row">
 
 				<jsp:include page="/WEB-INF/views/user/pages/myPageSideBar.jsp">
-					<jsp:param name="pageName" value="manageDelivery" />
+					<jsp:param name="pageName" value="writableReview" />
 				</jsp:include>
 
 				<div class="col-lg-9 col-12">

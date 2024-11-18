@@ -311,7 +311,7 @@
                 <!-- sideBar -->
                 <jsp:include page="/WEB-INF/views/user/pages/serviceCenterSideBar.jsp">
 
-                    <jsp:param name="pageName" value="inquiries" />
+                    <jsp:param name="pageName" value="writableReview" />
 
                 </jsp:include>
                 <!-- / sideBar -->

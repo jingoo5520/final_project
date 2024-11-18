@@ -117,19 +117,6 @@
 			}
 		});
 	}
-	
-	document.addEventListener("DOMContentLoaded", function() {
-		// 현재 URL
-		const currentUrl = window.location.href;
-
-		// 모든 카테고리 링크에 대해 검사
-		document.querySelectorAll(".category-link").forEach(function(link) {
-			if (currentUrl === link.href) {
-				// URL이 일치할 경우 active 클래스를 추가
-				link.classList.add("active");
-			}
-		});
-	});
 </script>
 <style>
 .active {
@@ -254,15 +241,15 @@
 						<!-- Start Single Widget -->
 						<div class="single-widget">
 							<ul class="list">
-								<li><a href="/product/jewelry?category=196" class="category-link">NACKLACE <span>(${necklaceCount})</span></a></li>
-								<li><a href="/product/jewelry?category=195" class="category-link">EARRING <span>(${earringCount})</span></a></li>
-								<li><a href="/product/jewelry?category=203" class="category-link">PIERCING <span>(${piercingCount})</span></a></li>
-								<li><a href="/product/jewelry?category=197" class="category-link">BANGLE <span>(${bangleCount})</span></a></li>
-								<li><a href="/product/jewelry?category=201" class="category-link">ANKLET <span>(${ankletCount})</span></a></li>
-								<li><a href="/product/jewelry?category=198" class="category-link">RING <span>(${ringCount})</span></a></li>
-								<li><a href="/product/jewelry?category=200" class="category-link">COUPLING <span>(${couplingCount})</span></a></li>
-								<li><a href="/product/jewelry?category=202" class="category-link">PENDANT <span>(${pendantCount})</span></a></li>
-								<li><a href="/product/jewelry?category=204" class="category-link">기타 <span>(${otherCount})</span></a></li>
+								<li><a href="/product/jewelry?category=196" class="category-link ${param.category == '196' ? 'active' : ''}">NACKLACE <span>(${necklaceCount})</span></a></li>
+								<li><a href="/product/jewelry?category=195" class="category-link ${param.category == '195' ? 'active' : ''}">EARRING <span>(${earringCount})</span></a></li>
+								<li><a href="/product/jewelry?category=203" class="category-link ${param.category == '203' ? 'active' : ''}">PIERCING <span>(${piercingCount})</span></a></li>
+								<li><a href="/product/jewelry?category=197" class="category-link ${param.category == '197' ? 'active' : ''}">BANGLE <span>(${bangleCount})</span></a></li>
+								<li><a href="/product/jewelry?category=201" class="category-link ${param.category == '201' ? 'active' : ''}">ANKLET <span>(${ankletCount})</span></a></li>
+								<li><a href="/product/jewelry?category=198" class="category-link ${param.category == '198' ? 'active' : ''}">RING <span>(${ringCount})</span></a></li>
+								<li><a href="/product/jewelry?category=200" class="category-link ${param.category == '200' ? 'active' : ''}">COUPLING <span>(${couplingCount})</span></a></li>
+								<li><a href="/product/jewelry?category=202" class="category-link ${param.category == '202' ? 'active' : ''}">PENDANT <span>(${pendantCount})</span></a></li>
+								<li><a href="/product/jewelry?category=204" class="category-link ${param.category == '204' ? 'active' : ''}">기타 <span>(${otherCount})</span></a></li>
 							</ul>
 						</div>
 						<!-- End Single Widget -->

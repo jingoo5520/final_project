@@ -66,7 +66,7 @@
     function showReview(reviews) {
         let reviewHtml = "";
 
-//         console.log(reviews);
+        console.log(reviews);
         reviewHtml = `<div id ="reviewInfo"> 리뷰 <div/>`;
 
         if (reviews.length === 0) {
@@ -78,14 +78,23 @@
                 let reviewDate = new Date(review.register_date);
                 let formattedDate = `\${reviewDate.getFullYear()}-\${reviewDate.getMonth() + 1}-\${reviewDate.getDate()} \${reviewDate.getHours()}시 \${reviewDate.getMinutes()}분 \${reviewDate.getSeconds()}초`;
 
+                if (review.review_ref == null) {
+                	
                 reviewHtml += `
                 <div class="single-review row col-lg-12 col-12" style="padding: 20px !important">
+                `
+                } else {
+                    reviewHtml += `
+                 <div class="single-review row col-lg-12 col-12 reply">
+                        `
+                }
+                
+                reviewHtml += `
                     <div class="col-lg-1 col-12">
                         <img src="/resources/images/nobody.png">
                     </div>
                     <div class="review-info col-lg-11 col-12">
-                        <div>
-            `;
+                        <div>`;
 
                 // 리뷰 이미지가 있는 경우에만 추가
                 const reviewImgs = review.reviewImgs 
@@ -110,15 +119,20 @@
                         <ul class="stars">
             `;
 
-                // 별점 표시
-                for (let j = 1; j <= 5; j++) {
-                    if (j <= review.review_score) {
-                        reviewHtml += `<li><i class="lni lni-star-filled"></i></li>`;
-                    } else {
-                        reviewHtml += `<li><i class="lni lni-star"></i></li>`;
-                    }
-                }
-
+				 console.log(review.review_ref);
+ 				if (review.review_ref == null) {
+					// 별점 표시
+	                for (let j = 1; j <= 5; j++) {
+	                    if (j <= review.review_score) {
+	                        reviewHtml += `<li><i class="lni lni-star-filled"></i></li>`;
+	                    } else {
+	                        reviewHtml += `<li><i class="lni lni-star"></i></li>`;
+	                    }
+	                }
+				}    
+            
+            
+                
                 reviewHtml += `
                         </ul>
                         <p>\${review.review_content}</p>
@@ -344,6 +358,16 @@
 .single-review img {
 	position: inherit !important;
 	border-radius: 25% !important;
+}
+
+.single-review {
+    margin-bottom: 0px !important;
+}
+
+.reply {
+	padding-top: 0px !important; 
+	padding-bottom: 20px !important;
+	padding-right: 20px !important;
 }
 </style>
 
