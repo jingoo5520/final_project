@@ -30,6 +30,9 @@
 			and member_status = 'active'
 
 		</if>
+		<if test="isBlack == 'Yes' ">
+			and member_status = 'black'
+		</if>
 		<if test="gender_list != null and gender_list.size() > 0">
 			and (
 			<foreach item="gender" collection="gender_list"
@@ -51,18 +54,12 @@
 		<if test="member_name != null and member_name != ''">
 			and member_name LIKE CONCAT('%', #{member_name}, '%')
 		</if>
-		<if test="birthday_start != null and birthday_start != ''">
-			and
-			reg_date &gt; #{birthday_start}
-		</if>
-		<if test="birthday_end != null and birthday_end != ''">
-			and reg_date &lt; #{birthday_end}
-		</if>
+		
 		<if test="reg_date_start != null and reg_date_start != ''">
-			and reg_date &lt; #{reg_date_start}
+			and reg_date &gt; #{reg_date_start}
 		</if>
 		<if test="reg_date_end != null and reg_date_end != ''">
-			and reg_date &gt; #{reg_date_end}
+			and reg_date &lt; #{reg_date_end}
 		</if>
 	</select>
 	<select id="getSearchMember"
@@ -77,6 +74,9 @@
 		<if test="isBlack == 'No' ">
 			and member_status = 'active'
 		</if>
+		<if test="isBlack == 'Yes' ">
+			and member_status = 'black'
+		</if>
 		<if test="gender_list != null and gender_list.size() > 0">
 			and (
 			<foreach item="gender" collection="gender_list"
@@ -98,18 +98,12 @@
 		<if test="member_name != null and member_name != ''">
 			and member_name LIKE CONCAT('%', #{member_name}, '%')
 		</if>
-		<if test="birthday_start != null and birthday_start != ''">
-			and
-			reg_date &gt; #{birthday_start}
-		</if>
-		<if test="birthday_end != null and birthday_end != ''">
-			and reg_date &lt; #{birthday_end}
-		</if>
+		
 		<if test="reg_date_start != null and reg_date_start != ''">
-			and reg_date &lt; #{reg_date_start}
+			and reg_date &gt; #{reg_date_start}
 		</if>
 		<if test="reg_date_end != null and reg_date_end != ''">
-			and reg_date &gt; #{reg_date_end}
+			and reg_date &lt; #{reg_date_end}
 		</if>
 		order by member_status asc ,reg_date desc
 		limit #{startRowIndex},
@@ -129,4 +123,12 @@
 			values(#{member},#{blackReason},#{loginMember})
 		</foreach>
 	</insert>
+	
+	<delete id="deleteBlackMember">
+		delete from blacks where member_id = #{memberId}
+	</delete>
+	
+	<update id="updateBlackMember">
+		update members set member_status = 'active' where member_id = #{memberId}
+	</update>
 </mapper>

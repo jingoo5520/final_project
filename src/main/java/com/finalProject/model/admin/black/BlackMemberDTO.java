@@ -19,8 +19,6 @@ public class BlackMemberDTO {
 	private String member_id;
 	private String black;
 	private String member_name;
-	private String birthday_start;
-	private String birthday_end;
 	private String reg_date_start;
 	private String reg_date_end;
 	private int pageNo;

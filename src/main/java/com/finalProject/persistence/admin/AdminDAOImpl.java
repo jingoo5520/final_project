@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.finalProject.model.admin.CancelCountDTO;
 import com.finalProject.model.admin.GenderCountDTO;
 import com.finalProject.model.admin.LevelCountDTO;
 import com.finalProject.model.admin.RevenueDTO;
@@ -22,7 +23,7 @@ public class AdminDAOImpl implements AdminDAO {
 	private SqlSession ses;
 
 	private static String ns = "com.finalProject.mappers.adminMapper.";
-	
+
 	@Override
 	public int selectAllMemberCnt() throws Exception {
 		return ses.selectOne(ns + "selectAllMemberCnt");
@@ -35,13 +36,13 @@ public class AdminDAOImpl implements AdminDAO {
 
 	@Override
 	public List<GenderCountDTO> selectMembersByGender() throws Exception {
-		return ses.selectList(ns + "selectMembersByGender"); 
+		return ses.selectList(ns + "selectMembersByGender");
 	}
 
 	@Override
 	public List<LevelCountDTO> selectMembersByLevel() throws Exception {
 		System.out.println(ses.selectList(ns + "selectMembersByLevel"));
-		
+
 		return ses.selectList(ns + "selectMembersByLevel");
 	}
 
@@ -57,7 +58,7 @@ public class AdminDAOImpl implements AdminDAO {
 
 	@Override
 	public int selectDaySaleCnt(Timestamp time) throws Exception {
-		
+
 		return ses.selectOne(ns + "selectDaySaleCnt", time);
 	}
 
@@ -69,10 +70,10 @@ public class AdminDAOImpl implements AdminDAO {
 	@Override
 	public int selectRangedMemberRegCnt(Timestamp regDate_start, Timestamp regDate_end) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
-		
+
 		params.put("regDate_start", regDate_start);
 		params.put("regDate_end", regDate_end);
-		
+
 		return ses.selectOne(ns + "selectRangedMemberRegCnt", params);
 	}
 
@@ -94,5 +95,25 @@ public class AdminDAOImpl implements AdminDAO {
 	@Override
 	public List<RevenueDTO> selectRevenuesByMonth(String selectedMonth) throws Exception {
 		return ses.selectList(ns + "selectRevenuesByMonth", selectedMonth);
+	}
+
+	// 추가
+	@Override
+	public List<CancelCountDTO> selectTotalCancel() {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns + "selectCancelByMonth");
+	}
+
+	// 추가
+	@Override
+	public List<CancelCountDTO> selectTotalByMonth(List<Integer> list) {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns + "selectCancelSales", list);
+	}
+
+	@Override
+	public List<String> CategoryCancelByDate(String selectedMonth) {
+
+		return ses.selectList(ns + "CategoryCancelByDateCnt", selectedMonth);
 	}
 }

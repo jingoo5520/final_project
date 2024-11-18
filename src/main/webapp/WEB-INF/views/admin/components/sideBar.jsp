@@ -30,11 +30,10 @@ h3 {
 				<ul class="menu-sub">
 					<li class="menu-item <%="adminmemberview".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/memberView" class="menu-link">
 							<div data-i18n="memberblack">회원 블랙</div>
-					</a></li>
-					<li class="menu-item  <%="adminmemberlevel".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/memberView/level" class="menu-link">
-							<div data-i18n="memberlevel">회원 레벨</div>
-					</a></li>
-				</ul></li>
+						</a>
+					</li>
+				</ul>
+			</li>
 
 			<li class="menu-item <%="adminordercancelview".equals(request.getParameter("pageName"))
 		|| "adminorderrefundview".equals(request.getParameter("pageName")) ? "active open" : ""%>"><a href="javascript:void(0);" class="menu-link menu-toggle"> <i class="menu-icon tf-icons bx bx-dock-top"></i>
@@ -43,11 +42,15 @@ h3 {
 				<ul class="menu-sub">
 					<li class="menu-item <%="adminordercancelview".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/order/cancel" class="menu-link">
 							<div data-i18n="orders">주문</div>
-					</a></li>
-					<li class="menu-item <%="adminorderrefundview".equals(request.getParameter("pageName")) ? "active" : ""%>"><a href="/admin/order/refund" class="menu-link">
-							<div data-i18n="">temp</div>
-					</a></li>
-				</ul></li>
+						</a>
+					</li>
+					<li class="menu-item <%="adminorderrefundview".equals(request.getParameter("pageName")) ? "active" : ""%>">
+						<a href="/admin/order/refund" class="menu-link">
+							<div data-i18n="">환불 내역</div>
+						</a>
+					</li>
+				</ul>
+			</li>
 
 			<li class="menu-item <%="productSave".equals(request.getParameter("pageName")) || "productView".equals(request.getParameter("pageName"))
 				? "active open"

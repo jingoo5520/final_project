@@ -45,6 +45,7 @@ public class MemberBlackController {
 	@ResponseBody
 	public Map<String, Object> SearchMember(@RequestBody BlackMemberDTO bm) {
 		Map<String, Object> map = new HashMap<String, Object>();
+
 		System.out.println(bm.getBlack());
 		try {
 			map = bs.getSearchMember(bm);
@@ -73,5 +74,21 @@ public class MemberBlackController {
 			return new ResponseEntity<String>("faule", HttpStatus.BAD_REQUEST);
 		}
 
+	}
+
+	@RequestMapping(value = "/cancelBlack", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<String> blackCancelMember(@RequestBody Map<String, Object> memberJsonId) {
+		String memberId = (String) memberJsonId.get("member_id");
+		try {
+			if (bs.blackCancelMember(memberId)) {
+				return new ResponseEntity<String>("Success", HttpStatus.OK);
+			} else {
+				return new ResponseEntity<String>("faule", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("fail", HttpStatus.BAD_REQUEST);
+		}
 	}
 }
