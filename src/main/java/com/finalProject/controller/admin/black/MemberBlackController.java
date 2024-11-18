@@ -45,6 +45,7 @@ public class MemberBlackController {
 	@ResponseBody
 	public Map<String, Object> SearchMember(@RequestBody BlackMemberDTO bm) {
 		Map<String, Object> map = new HashMap<String, Object>();
+
 		System.out.println(bm.getBlack());
 		try {
 			map = bs.getSearchMember(bm);

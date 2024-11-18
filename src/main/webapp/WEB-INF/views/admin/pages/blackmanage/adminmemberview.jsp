@@ -3,50 +3,36 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr"
-	data-theme="theme-default" data-assets-path="/resources/assets/admin/"
-	data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
 <head>
 
 <meta charset="utf-8" />
-<meta name="viewport"
-	content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-<title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin
-	Template - Pro</title>
+<title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
 
 <meta name="description" content="" />
 
 <!-- Favicon -->
-<link rel="icon" type="image/x-icon"
-	href="/resources/assets/admin/img/favicon/favicon.ico" />
+<link rel="icon" type="image/x-icon" href="/resources/assets/admin/img/favicon/favicon.ico" />
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-	href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-	rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
 
 <!-- Icons. Uncomment required icon fonts -->
-<link rel="stylesheet"
-	href="/resources/assets/admin/vendor/fonts/boxicons.css" />
+<link rel="stylesheet" href="/resources/assets/admin/vendor/fonts/boxicons.css" />
 
 <!-- Core CSS -->
-<link rel="stylesheet"
-	href="/resources/assets/admin/vendor/css/core.css"
-	class="template-customizer-core-css" />
-<link rel="stylesheet"
-	href="/resources/assets/admin/vendor/css/theme-default.css"
-	class="template-customizer-theme-css" />
+<link rel="stylesheet" href="/resources/assets/admin/vendor/css/core.css" class="template-customizer-core-css" />
+<link rel="stylesheet" href="/resources/assets/admin/vendor/css/theme-default.css" class="template-customizer-theme-css" />
 <link rel="stylesheet" href="/resources/assets/admin/css/demo.css" />
 
 <!-- Vendors CSS -->
-<link rel="stylesheet"
-	href="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+<link rel="stylesheet" href="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
-<link rel="stylesheet"
-	href="/resources/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
+<link rel="stylesheet" href="/resources/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
 
 <!-- Page CSS -->
 
@@ -208,10 +194,11 @@ $(function () {
 	var memberId = $('input[name="member_id"]').val();
 	var member_name = $('input[name="member_name"]').val();
 	var isBlack = $('input[name="isBlack"]:checked').val();
-	var birthdayStart = $('input[name="birthday_start"]').val();
-	var birthdayEnd = $('input[name="birthday_end"]').val();
 	var regDateStart = $('input[name="reg_date_start"]').val();
 	var regDateEnd = $('input[name="reg_date_end"]').val();
+	if(regDateEnd != "" && regDateEnd != null) {
+		regDateEnd += " 23:59:59";
+		}
 	
 	$.ajax({
 		url : '/admin/memberView/searchMembers' ,	
@@ -223,8 +210,7 @@ $(function () {
 			black : isBlack, 
 			member_id : memberId,
 			member_name : member_name ,
-			birthday_start : birthdayStart,
-			birthday_end : birthdayEnd,
+		
 			reg_date_start : regDateStart,
 			reg_date_end : regDateEnd,
 			pageNo : pageNo ,
@@ -233,7 +219,7 @@ $(function () {
 			success: function(data) {
 		
 			        let output = "";
-			    
+			        let cancelBlackButtonHtml = "";
 
 			        $.each(data.MemberList, function(index, member) {
 			        	 let checkBoxHtml = '';
@@ -291,11 +277,11 @@ function showMemberList(pageNumber) {
 	var memberId = $('input[name="member_id"]').val();
 	var member_name = $('input[name="member_name"]').val();
 	var isBlack = $('input[name="isBlack"]:checked').val();
-	var birthdayStart = $('input[name="birthday_start"]').val();
-	var birthdayEnd = $('input[name="birthday_end"]').val();
+	
 	var regDateStart = $('input[name="reg_date_start"]').val();
 	var regDateEnd = $('input[name="reg_date_end"]').val();
 	pageNo = pageNumber;
+
 	$.ajax({
 		url : '/admin/memberView/searchMembers' ,	
 		type : 'POST' ,
@@ -306,8 +292,7 @@ function showMemberList(pageNumber) {
 			member_id : memberId,
 			member_name : member_name ,
 			black : isBlack, 
-			birthday_start : birthdayStart,
-			birthday_end : birthdayEnd,
+		
 			reg_date_start : regDateStart,
 			reg_date_end : regDateEnd,
 			pageNo : pageNo ,
@@ -315,13 +300,14 @@ function showMemberList(pageNumber) {
 		}) ,
 			success: function(data) {
 				   let output = "";
+				   let cancelBlackButtonHtml = "";
 			        $.each(data.MemberList, function(index, member) {
 			       	 let checkBoxHtml = '';
 		                if (member.member_status != 'black') {
 		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" \${checkedMemberIdList.includes(member.member_id) ? "checked" : ""}/>`;
 		                } else {
 		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" disabled/>`; // 블랙 멤버는 체크박스를 비활성화
-		                    cancelBlackButtonHtml = `
+		                  cancelBlackButtonHtml = `
 		                        <button class="btn btn-outline-danger cancel_black"
 		                            onclick="openBlackCancelModal('\${member.member_id}')" 
 		                            data-bs-toggle="modal" 
@@ -375,13 +361,10 @@ function showMemberList(pageNumber) {
 
 			<div class="layout-page">
 				<!-- Navbar -->
-				<nav
-					class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-					id="layout-navbar">
-					<div
-						class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-						<a class="nav-item nav-link px-0 me-xl-4"
-							href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
+				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+					<div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+						<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+							<i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
 				</nav>
@@ -395,140 +378,86 @@ function showMemberList(pageNumber) {
 						<!-- body  -->
 						<div class="card accordion-item active">
 							<h2 class="accordion-header" id="headingOne">
-								<button type="button" class="accordion-button collapsed"
-									data-bs-toggle="collapse" data-bs-target="#accordionOne"
-									aria-expanded="false" aria-controls="accordionOne">
+								<button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordionOne" aria-expanded="false" aria-controls="accordionOne">
 									<h5>필터</h5>
 								</button>
 							</h2>
 
-							<div id="accordionOne" class="accordion-collapse collapse"
-								data-bs-parent="#accordionExample">
+							<div id="accordionOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 								<div class="accordion-body">
 
 									<div class="row mb-3">
-										<label class="col-sm-2 col-form-label"
-											for="basic-default-name">성별</label>
+										<label class="col-sm-2 col-form-label" for="basic-default-name">성별</label>
 										<div class="col-sm-10 d-flex align-items-center">
 											<div class="form-check-inline">
-												<input name="genders" class="form-check-input"
-													type="checkbox" value="N" id="gender_none" checked /> <label
-													class="form-check-label" for="gender_none"> None </label>
+												<input name="genders" class="form-check-input" type="checkbox" value="N" id="gender_none" checked /> <label class="form-check-label" for="gender_none"> None </label>
 											</div>
 											<div class="form-check-inline">
-												<input name="genders" class="form-check-input"
-													type="checkbox" value="M" id="gender_male" checked /> <label
-													class="form-check-label" for="gender_male"> Male </label>
+												<input name="genders" class="form-check-input" type="checkbox" value="M" id="gender_male" checked /> <label class="form-check-label" for="gender_male"> Male </label>
 											</div>
 											<div class="form-check-inline">
-												<input name="genders" class="form-check-input"
-													type="checkbox" value="F" id="gender_feMale" checked /> <label
-													class="form-check-label" for="gender_feMale">
-													Female </label>
+												<input name="genders" class="form-check-input" type="checkbox" value="F" id="gender_feMale" checked /> <label class="form-check-label" for="gender_feMale"> Female </label>
 											</div>
 										</div>
 									</div>
 									<div class="row mb-3">
-										<label class="col-sm-2 col-form-label"
-											for="basic-default-name">등급</label>
+										<label class="col-sm-2 col-form-label" for="basic-default-name">등급</label>
 										<div class="col-sm-10 d-flex align-items-center">
 											<div class="form-check-inline">
-												<input name="levels" class="form-check-input"
-													type="checkbox" value="1" id="level_bronze" checked /> <label
-													class="form-check-label" for="level_bronze"> Bronze
-												</label>
+												<input name="levels" class="form-check-input" type="checkbox" value="1" id="level_bronze" checked /> <label class="form-check-label" for="level_bronze"> Bronze </label>
 											</div>
 											<div class="form-check-inline">
-												<input name="levels" class="form-check-input"
-													type="checkbox" value="2" id="level_silver" checked /> <label
-													class="form-check-label" for="level_silver"> Silver
-												</label>
+												<input name="levels" class="form-check-input" type="checkbox" value="2" id="level_silver" checked /> <label class="form-check-label" for="level_silver"> Silver </label>
 											</div>
 											<div class="form-check-inline">
-												<input name="levels" class="form-check-input"
-													type="checkbox" value="3" id="level_gold" checked /> <label
-													class="form-check-label" for="level_gold"> Gold </label>
+												<input name="levels" class="form-check-input" type="checkbox" value="3" id="level_gold" checked /> <label class="form-check-label" for="level_gold"> Gold </label>
 											</div>
 											<div class="form-check-inline">
-												<input name="levels" class="form-check-input"
-													type="checkbox" value="4" id="level_diamond" checked /> <label
-													class="form-check-label" for="level_diamond">
-													Diamond </label>
+												<input name="levels" class="form-check-input" type="checkbox" value="4" id="level_diamond" checked /> <label class="form-check-label" for="level_diamond"> Diamond </label>
 											</div>
 										</div>
 									</div>
 									<div class="row mb-3">
-										<label class="col-sm-2 col-form-label"
-											for="basic-default-black">블랙 조회 여부</label>
+										<label class="col-sm-2 col-form-label" for="basic-default-black">블랙 조회 여부</label>
 										<div class="col-sm-10 d-flex align-items-center">
 											<div class="form-check-inline">
-												<input name="isBlack" class="form-check-input" type="radio"
-													value="Yes" id="black" /> <label class="form-check-label"
-													for="level_bronze"> Y </label>
+												<input name="isBlack" class="form-check-input" type="radio" value="Yes" id="black" /> <label class="form-check-label" for="level_bronze"> Y </label>
 											</div>
 											<div class="form-check-inline">
-												<input name="isBlack" class="form-check-input" type="radio"
-													value="No" id="noneblacks" checked /> <label
-													class="form-check-label" for="level_silver"> N </label>
+												<input name="isBlack" class="form-check-input" type="radio" value="No" id="noneblacks" checked /> <label class="form-check-label" for="level_silver"> N </label>
 											</div>
 										</div>
 									</div>
 									<div class="row mb-3">
-										<label class="col-sm-2 col-form-label" for="member_id">회원
-											ID</label>
+										<label class="col-sm-2 col-form-label" for="member_id">회원 ID</label>
 										<div class="col-sm-10">
-											<input type="text" name="member_id" id=""
-												class="form-control" placeholder="member_id" aria-label=""
-												aria-describedby="" />
+											<input type="text" name="member_id" id="" class="form-control" placeholder="member_id" aria-label="" aria-describedby="" />
 										</div>
 									</div>
 									<div class="row mb-3">
-										<label class="col-sm-2 col-form-label" for="member_name">회원
-											이름</label>
+										<label class="col-sm-2 col-form-label" for="member_name">회원 이름</label>
 										<div class="col-sm-10">
-											<input type="text" name="member_name" id=""
-												class="form-control" placeholder="member_name" aria-label=""
-												aria-describedby="" />
+											<input type="text" name="member_name" id="" class="form-control" placeholder="member_name" aria-label="" aria-describedby="" />
 										</div>
 									</div>
+									
 									<div class="row mb-3">
-										<label class="col-sm-2 col-form-label"
-											for="basic-default-name">생년월일</label>
+										<label class="col-sm-2 col-form-label" for="basic-default-name">가입일</label>
 										<div class="col-sm-10 d-flex align-items-center">
 											<div class="form-check-inline">
-												<input name="birthday_start" class="form-control"
-													type="date" value=id="html5-date-input" >
+												<input name="reg_date_start" class="form-control" type="date" value="" id="html5-date-input">
 											</div>
 											<div class="form-check-inline">
 												<span class="mx-2">-</span>
 											</div>
 											<div class="form-check-inline">
-												<input name="birthday_end" class="form-control" type="date"
-													value="" id="html5-date-input">
-											</div>
-										</div>
-									</div>
-									<div class="row mb-3">
-										<label class="col-sm-2 col-form-label"
-											for="basic-default-name">가입일</label>
-										<div class="col-sm-10 d-flex align-items-center">
-											<div class="form-check-inline">
-												<input name="reg_date_start" class="form-control"
-													type="date" value="" id="html5-date-input">
-											</div>
-											<div class="form-check-inline">
-												<span class="mx-2">-</span>
-											</div>
-											<div class="form-check-inline">
-												<input name="reg_date_end" class="form-control" type="date"
-													value="" id="html5-date-input">
+												<input name="reg_date_end" class="form-control" type="date" value="" id="html5-date-input">
 											</div>
 										</div>
 									</div>
 									<div class="row justify-content-end">
 										<div class="col-sm-10">
-											<button type="button" class="btn btn-primary"
-												id="searchMember">Search</button>
+											<button type="button" class="btn btn-primary" id="searchMember">Search</button>
 										</div>
 									</div>
 
@@ -556,18 +485,14 @@ function showMemberList(pageNumber) {
 									<tbody id="memberTableBody" class="table-border-bottom-0">
 										<c:forEach var="member" items="${memberList}">
 											<tr>
-												<td><input name="checkMember"
-													class="form-check-input memberCheckBox" type="checkbox"
-													value="${member.member_id}"
-													<c:if test="${fn:contains(checkedMemberIdList , member.member_id)}">checked</c:if> /></td>
+												<td><input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="${member.member_id}" <c:if test="${fn:contains(checkedMemberIdList , member.member_id)}">checked</c:if> /></td>
 												<td>${member.member_id}</td>
 												<td>${member.member_name}</td>
 												<td>${member.phone_number}</td>
 												<td>${member.birthday}</td>
 												<td>${member.gender}</td>
 												<td>${member.member_level}</td>
-												<td><fmt:formatDate value="${member.reg_date}"
-														pattern="yyyy-MM-dd" /></td>
+												<td><fmt:formatDate value="${member.reg_date}" pattern="yyyy-MM-dd" /></td>
 
 											</tr>
 										</c:forEach>
@@ -582,30 +507,31 @@ function showMemberList(pageNumber) {
 									<ul class="pagination justify-content-center">
 										<c:choose>
 											<c:when test="${PagingInfo.pageNo == 1}">
-												<li class="page-item prev disabled"><a
-													class="page-link" href="javascript:void(0);"> <i
-														class="tf-icon bx bx-chevrons-left"></i>
-												</a></li>
+												<li class="page-item prev disabled">
+													<a class="page-link" href="javascript:void(0);">
+														<i class="tf-icon bx bx-chevrons-left"></i>
+													</a>
+												</li>
 											</c:when>
 											<c:otherwise>
-												<li class="page-item prev"><a class="page-link"
-													href="javascript:void(0);"> <i
-														class="tf-icon bx bx-chevrons-left"></i>
-												</a></li>
+												<li class="page-item prev">
+													<a class="page-link" href="javascript:void(0);">
+														<i class="tf-icon bx bx-chevrons-left"></i>
+													</a>
+												</li>
 											</c:otherwise>
 										</c:choose>
 
-										<c:forEach var="i" begin="${PagingInfo.startPageNoCurBlock}"
-											end="${PagingInfo.endPageNoCurBlock}">
+										<c:forEach var="i" begin="${PagingInfo.startPageNoCurBlock}" end="${PagingInfo.endPageNoCurBlock}">
 											<c:choose>
 												<c:when test="${PagingInfo.pageNo == i}">
-													<li class="page-item active"><a class="page-link"
-														href="javascript:void(0);"
-														onclick="showMemberList(${PagingInfo.pageNo})">${i}</a></li>
+													<li class="page-item active">
+														<a class="page-link" href="javascript:void(0);" onclick="showMemberList(${PagingInfo.pageNo})">${i}</a>
+													</li>
 												</c:when>
 												<c:otherwise>
-													<li class="page-item"><a class="page-link"
-														href="javascript:void(0);" onclick="showMemberList(${i})">${i}</a>
+													<li class="page-item">
+														<a class="page-link" href="javascript:void(0);" onclick="showMemberList(${i})">${i}</a>
 													</li>
 												</c:otherwise>
 											</c:choose>
@@ -613,18 +539,19 @@ function showMemberList(pageNumber) {
 										</c:forEach>
 
 										<c:choose>
-											<c:when
-												test="${PagingInfo.pageNo == PagingInfo.totalPageCnt}">
-												<li class="page-item disabled"><a class="page-link"
-													href="javascript:void(0);"> <i
-														class="tf-icon bx bx-chevrons-right"></i>
-												</a></li>
+											<c:when test="${PagingInfo.pageNo == PagingInfo.totalPageCnt}">
+												<li class="page-item disabled">
+													<a class="page-link" href="javascript:void(0);">
+														<i class="tf-icon bx bx-chevrons-right"></i>
+													</a>
+												</li>
 											</c:when>
 											<c:otherwise>
-												<li class="page-item next"><a class="page-link"
-													href="javascript:void(0);"> <i
-														class="tf-icon bx bx-chevrons-right"></i>
-												</a></li>
+												<li class="page-item next">
+													<a class="page-link" href="javascript:void(0);">
+														<i class="tf-icon bx bx-chevrons-right"></i>
+													</a>
+												</li>
 											</c:otherwise>
 										</c:choose>
 
@@ -632,9 +559,7 @@ function showMemberList(pageNumber) {
 								</nav>
 							</div>
 							<div align="center" class="mb-3">
-								<button id="blackMember" type="button"
-									class="btn btn-outline-danger mt-3" data-bs-toggle="modal"
-									data-bs-target="#blackMemberModal">선택한 회원 블랙</button>
+								<button id="blackMember" type="button" class="btn btn-outline-danger mt-3" data-bs-toggle="modal" data-bs-target="#blackMemberModal">선택한 회원 블랙</button>
 							</div>
 						</div>
 
@@ -649,15 +574,12 @@ function showMemberList(pageNumber) {
 					 -->
 
 
-					<div class="modal fade" id="blackMemberModal"
-						aria-labelledby="modalToggleLabel" tabindex="-1"
-						style="display: none;" aria-hidden="true">
+					<div class="modal fade" id="blackMemberModal" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none;" aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered">
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="modalToggleLabel">회원 블랙</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"
-										aria-label="Close"></button>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 								</div>
 
 								<div class="modal-body">
@@ -675,24 +597,22 @@ function showMemberList(pageNumber) {
 							</div>
 						</div>
 					</div>
-					<div class="modal fade" id="blackCancelModal" tabindex="-1"
-						aria-labelledby="blackCancelModalLabel" aria-hidden="true">
+					<div class="modal fade" id="blackCancelModal" tabindex="-1" aria-labelledby="blackCancelModalLabel" aria-hidden="true">
 						<div class="modal-dialog">
 							<div class="modal-content">
 								<div class="modal-header">
 									<h5 class="modal-title" id="blackCancelModalLabel">블랙 취소</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"
-										aria-label="Close"></button>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 								</div>
 								<div class="modal-body">
 									<p>해당 회원의 블랙 상태를 취소하시겠습니까?</p>
-									<p>회원 ID: <span id="modalMemberId"></span></p>
+									<p>
+										회원 ID: <span id="modalMemberId"></span>
+									</p>
 								</div>
 								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-bs-dismiss="modal">취소</button>
-									<button type="button" class="btn btn-danger"
-										id="confirmCancelBlack">확인</button>
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+									<button type="button" class="btn btn-danger" id="confirmCancelBlack">확인</button>
 								</div>
 							</div>
 						</div>
@@ -701,40 +621,31 @@ function showMemberList(pageNumber) {
 				<!-- / Content -->
 				<!-- Footer -->
 				<footer class="content-footer footer bg-footer-theme">
-					<div
-						class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+					<div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
 						<div class="mb-2 mb-md-0">
 							©
 							<script>
 					document.write(new Date().getFullYear());
 				</script>
-							, made with ❤️ by <a href="https://themeselection.com"
-								target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+							, made with ❤️ by
+							<a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
 						</div>
 						<div>
-							<a href="https://themeselection.com/license/"
-								class="footer-link me-4" target="_blank">License</a> <a
-								href="https://themeselection.com/" target="_blank"
-								class="footer-link me-4">More Themes</a> <a
-								href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-								target="_blank" class="footer-link me-4">Documentation</a> <a
-								href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-								target="_blank" class="footer-link me-4">Support</a>
+							<a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
+							<a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
+							<a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-4">Documentation</a>
+							<a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank" class="footer-link me-4">Support</a>
 						</div>
 					</div>
 				</footer>
 			</div>
 		</div>
-		<div
-			class="bs-toast toast toast-placement-ex m-2 fade bg-secondary top-0 end-0 hide"
-			role="alert" aria-live="assertive" aria-atomic="true"
-			data-delay="2000" id="toastMessage">
+		<div class="bs-toast toast toast-placement-ex m-2 fade bg-secondary top-0 end-0 hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000" id="toastMessage">
 			<div class="toast-header">
 				<i class="bx bx-bell me-2"></i>
 				<div class="me-auto fw-semibold" id="toastTitle"></div>
 				<small></small>
-				<button type="button" class="btn-close" data-bs-dismiss="toast"
-					aria-label="Close"></button>
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
 			</div>
 			<div class="toast-body" id="toastBody"></div>
 		</div>
@@ -744,15 +655,13 @@ function showMemberList(pageNumber) {
 		<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
 		<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
 		<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-		<script
-			src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+		<script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
 		<script src="/resources/assets/admin/vendor/js/menu.js"></script>
 		<!-- endbuild -->
 
 		<!-- Vendors JS -->
-		<script
-			src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
+		<script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
 
 		<!-- Main JS -->
 		<script src="/resources/assets/admin/js/main.js"></script>

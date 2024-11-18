@@ -52,8 +52,7 @@ public class BlackServiceImpl implements BlackService {
 		mapperMap.put("level_list", bm.getLevel_list());
 		mapperMap.put("member_id", bm.getMember_id());
 		mapperMap.put("member_name", bm.getMember_name());
-		mapperMap.put("birthday_start", bm.getBirthday_start());
-		mapperMap.put("birthday_end", bm.getBirthday_end());
+
 		mapperMap.put("reg_date_start", bm.getReg_date_start());
 		mapperMap.put("reg_date_end", bm.getReg_date_end());
 		mapperMap.put("isBlack", bm.getBlack());
@@ -79,8 +78,7 @@ public class BlackServiceImpl implements BlackService {
 		mapperMap.put("level_list", bm.getLevel_list());
 		mapperMap.put("member_id", bm.getMember_id());
 		mapperMap.put("member_name", bm.getMember_name());
-		mapperMap.put("birthday_start", bm.getBirthday_start());
-		mapperMap.put("birthday_end", bm.getBirthday_end());
+
 		mapperMap.put("reg_date_start", bm.getReg_date_start());
 		mapperMap.put("reg_date_end", bm.getReg_date_end());
 		mapperMap.put("isBlack", (String) bm.getBlack());

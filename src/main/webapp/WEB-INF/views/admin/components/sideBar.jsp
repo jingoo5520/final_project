@@ -83,11 +83,7 @@
 							<div data-i18n="memberblack">회원 블랙</div>
 						</a>
 					</li>
-					<li class="menu-item  <%="adminmemberlevel".equals(request.getParameter("pageName")) ? "active" : ""%>">
-						<a href="/admin/memberView/level"class="menu-link">
-							<div data-i18n="memberlevel">회원 레벨</div>
-						</a>
-					</li>
+					
 				</ul>
 			</li>
 

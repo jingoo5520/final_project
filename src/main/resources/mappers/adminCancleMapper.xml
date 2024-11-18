@@ -168,7 +168,7 @@
 		#{usePoint} where member_id =#{member_id}
 	</update>
 	<delete id="deleteUseCoupon">
-		DELETE FROM coupon_used WHERE coupon_no =
+		DELETE FROM coupon_used WHERE coupon_use_no =
 		#{coupon_no}
 	</delete>
 	<select id="memberLevelPoint" resultType="float">

@@ -313,10 +313,10 @@
 												<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="productShow">공개 상태 여부</button>
 												<ul class="dropdown-menu">
 													<li>
-														<button class="dropdown-item" type="button" value="yes" onclick="selectOption('Y', 'Yes')">Yes</button>
+														<button class="dropdown-item" type="button" value="yes" onclick="selectOption('N', 'Yes')">Yes</button>
 													</li>
 													<li>
-														<button class="dropdown-item" type="button" value="no" onclick="selectOption('N', 'no')">no</button>
+														<button class="dropdown-item" type="button" value="no" onclick="selectOption('Y', 'no')">no</button>
 													</li>
 												</ul>
 							
