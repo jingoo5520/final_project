@@ -453,10 +453,15 @@ public class MemberController {
 	
 	// 마이페이지 (배송지 추가)
 	@RequestMapping(value = "/myPage/addDeliveryPage")
-	public String myPage_addDelivery(HttpServletRequest request, HttpSession session, Model model) {
+	public String myPage_addDelivery(@RequestParam(value="main", required=false) String main, HttpServletRequest request, HttpSession session, Model model) {
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		model.addAttribute("memberInfo", loginMember);
+		
+		if (main != null) {
+			model.addAttribute("setMain", main);
+		}
+		
 		return "/user/pages/member/myPage_addDelivery";
 	}
 	

@@ -291,7 +291,7 @@
 		set m.member_point = 
 			m.member_point + 
 			(
-				(select total_price_expected from orders where order_id = #{orderId})
+				((select total_price_expected from orders where order_id = #{orderId}) - 2500)
 				* (select level_point from levels where level_no = m.member_level)
 			)
 		where m.member_id = (select orderer_id from orders where order_id = #{orderId})

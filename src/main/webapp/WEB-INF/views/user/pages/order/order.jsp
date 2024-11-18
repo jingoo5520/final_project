@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
 
@@ -67,7 +68,7 @@
 
 			$(".dcPrice").each(function() {
 				let productDcPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
-				totalProductDcPrice += productDcPriceText;
+				totalProductDcPrice += (Math.floor(productDcPriceText / 10) * 10);
 				console.log("totalProductDcPrice에 더해지는 값 :" + productDcPriceText)
 			});
 			
@@ -223,7 +224,7 @@
 			    }
 
 			    if (Number(inputVal) > totalPrice) {
-			        showOrderModal('포인트는 총 상품 금액을 초과할 수 없습니다.');
+			        showOrderModal('포인트는 <br/> 총 결제 금액을 초과할 수 없습니다.');
 			        inputVal = Math.floor(totalPrice / 100) * 100;
 			    }
 			    
@@ -285,7 +286,7 @@
 				console.log("================총 적립예정 포인트 계산완료================")
 			}
 			// 소수점 반올림
-			totalEarnedPoint = Math.round(parseFloat(totalEarnedPoint)) + ""
+			totalEarnedPoint = Math.round(parseFloat(totalEarnedPoint));
 			$("#totalEarnedPoints").text(totalEarnedPoint.toLocaleString('ko-KR') + " P");
 		}
 		
@@ -486,6 +487,15 @@
 		
 		function applyCouponByAmount(couponCode, couponNo, couponName, dcAmount) {
 			let couponDcPrice = parseInt(dcAmount);
+			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
+			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
+			
+			if (couponDcPrice > (totalOriginalProductPrice - totalProductDcPrice)) {
+				$("#couponModal").modal('hide');
+				showOrderModal('쿠폰 할인금액은 <br/> 총 결제 금액을 초과할 수 없습니다.');
+				return;
+			}
+			
 			let output = `<h3>\${dcAmount} 원</h3>
 						<div class='btn' onclick="resetCouponByAmount('\${couponCode}', '\${couponNo}', '\${couponName}', '\${dcAmount}');">취소</div>`;
 			
@@ -556,6 +566,7 @@
 		function applyCouponDc(couponDcPrice) {
 			let totalOriginalProductPrice = parseInt($.trim($("#totalOriginalPrices").text().replace(" 원", "").replace(/,/g, "")));
 			let totalProductDcPrice = parseInt($.trim($("#totalDCPrices").text().replace(" 원", "").replace(/,/g, "")));
+			
 			$("#totalDCPrices").text((totalProductDcPrice + couponDcPrice).toLocaleString('ko-KR') + " 원");
 			$(".totalPrice").text((totalOriginalProductPrice - (totalProductDcPrice + couponDcPrice) + 2500).toLocaleString('ko-KR') + " 원");
 			console.log("=============totalPrice 계산하는 곳=============")
@@ -793,7 +804,7 @@
 		    $("#deliveryAddressHidden").val(mainDeliveryAddress);
 		    $("#deliveryName").val(mainDeliveryName);
 		    
-		    showOrderModal("기본 배송지가 입력되었습니다.");
+		    showOrderModal("기본 배송지가 <br/> 입력되었습니다.");
 		}
 		
 		function useCouponCode() {
@@ -1136,7 +1147,21 @@
 									<div class="row align-items-center product-list">
 										<div class="col-lg-1 col-md-1 col-12">
 											<a href="/product/jewelry/detail?productNo=${orderProduct.product_no }">
-												<img class="productImage" src="${empty orderProduct.image_url ? '/resources/images/noP_image.png' : orderProduct.image_url}" alt="productImage">
+											
+										<c:choose>
+											<c:when test="${empty orderProduct.image_url}">
+												<img class="productImage" src="/resources/images/noP_image.png" alt="productImage" onerror="this.src='/resources/images/noP_image.png';">
+											</c:when>
+											<c:otherwise>
+												<c:if test="${fn:contains(orderProduct.image_url, 'Main')}">
+													<img class="productImage" src="/resources/product/${orderProduct.image_url}" alt="productImage" onerror="this.src='/resources/images/noP_image.png';">
+												</c:if>
+												<c:if test="${fn:contains(orderProduct.image_url, 'https')}">
+													<img class="productImage" src="${orderProduct.image_url}" alt="productImage" onerror="this.src='/resources/images/noP_image.png';">
+												</c:if>
+											</c:otherwise>
+										</c:choose>
+										
 											</a>
 										</div>
 										<div class="col-lg-5 col-md-5 col-12">
@@ -1707,7 +1732,7 @@
 								</div>
 								<div class="total-price shipping">
 									<p class="value">총 배송비</p>
-									<p class="price" id="deliveryCost">2500 원</p>
+									<p class="price" id="deliveryCost">2,500 원</p>
 								</div>
 							</div>
 
@@ -1752,7 +1777,7 @@
 								</div>
 								<div class="total-price shipping">
 									<p class="value">총 배송비</p>
-									<p class="price">2500 원</p>
+									<p class="price">2,500 원</p>
 								</div>
 							</div>
 
@@ -1895,11 +1920,11 @@
 	  
 	  function showOrderModal(message) {
 		  $("#orderModal").modal("show");
-			$("#orderModal .modal-text").text(message);
+			$("#orderModal .modal-text").html(message);
 			
 			setTimeout(function() {
 			$('#orderModal').modal('hide');
-			}, 750);
+			}, 1500);
  	  }
 	  
 	  let selectedPaymentMethod = 'CARD';
@@ -1944,17 +1969,17 @@
             }
             
 			if (!validateData(phoneNumber)) {
-				showOrderModal("핸드폰 번호를 입력해주세요.");
+				showOrderModal("핸드폰 번호를 <br/> 입력해주세요.");
             	return;
 			}
 			
 			if (!validateData(email)) {
-				showOrderModal("이메일을 입력해주세요.");
+				showOrderModal("이메일을 <br/> 입력해주세요.");
             	return;
             }
             
             if (!validateEmail(email)) {
-            	showOrderModal("유효하지 않은 이메일입니다.");
+            	showOrderModal("유효하지 않은 <br/> 이메일입니다.");
             	return;
             }
             
@@ -1964,12 +1989,12 @@
             }
             
             if (!validateData(deliveryAddress.split("/")[2])) {
-            	showOrderModal("상세주소를 입력해주세요.");
+            	showOrderModal("상세주소를 <br/> 입력해주세요.");
             	return;
             }
             
             if (!validateData(paymentType)) {
-            	showOrderModal("결제 수단을 선택해주세요.");
+            	showOrderModal("결제 수단을 <br/> 선택해주세요.");
             	return;
             }
             
