@@ -26,8 +26,14 @@
 .levelImg {
 	width: 30px;
 	border-radius: 10px;
-	margin-bottom: 5px;
 }
+
+.top-end {
+	display:flex !important;
+	justify-content: center !important;
+	align-items: center;
+}
+
 </style>
 </head>
 <body>
@@ -37,13 +43,13 @@
 		<div class="topbar">
 			<div class="container" id="test">
 				<div class="row align-items-center">
-					<div class="col-lg-4 col-md-4 col-12">
+					<div class="col-lg-2 col-md-2 col-12">
 						<div class="top-left"></div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-12">
+					<div class="col-lg-2 col-md-2 col-12">
 						<div class="top-middle"></div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-12">
+					<div class="col-lg-8 col-md-8 col-12">
 						<div class="top-end">
 							<!-- 로그인 안됬을 때 -->
 							<c:if test="${empty sessionScope.loginMember }">
@@ -71,6 +77,8 @@
 									<c:if test="${sessionScope.loginMember.member_level == 4}">
 										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/diamond.png"></a>
 									</c:if>
+								</div>
+								<div style="color:#FFFFFF;">
 									${sessionScope.loginMember.member_name } 님
 								</div>
 								<ul class="user-login">
