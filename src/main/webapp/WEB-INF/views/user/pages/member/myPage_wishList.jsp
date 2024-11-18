@@ -233,40 +233,51 @@ function toggleHeart(element, product_no) {
         }
     });
 }
-
 function addCart(productNo) {
-	
-	console.log(productNo);
-	
 	$.ajax({
-	    url: '/addCartItem',
-	    type: 'POST',
-	    data: {
-	    	productNo : productNo
-	    	},
-	    dataType: 'json',
-	    success: function(data) {
-	        console.log(data);
-	    },
-	    error: function() {
-	    },
-	    complete: function(data) {
-	    	if (data.status == 200) {
-	            // 모달을 보여주기
-	            $('#myModal').modal('show');
-
-	            // 확인 버튼 클릭 시 장바구니 페이지로 이동
-	            $('#goCart').off('click').on('click', function() {
-	                location.href = "/cart";
-	            });
-	            
-	            $('#keepProduct').off('click').on('click', function() {
-	                location.reload();
-	            });
-	        } else if (data.responseText == 401) {
-	            alert("잘못된 접근입니다.");
-	        }
-	    }
+		url: '/addCartItem',
+		type: 'POST',
+		data: {
+			productNo : productNo
+		},
+		dataType: 'json',
+		success: function(data) {
+		},
+		error: function() {
+		},
+		complete: function(data) {
+			if (data.status == 200) {
+				$('#myModal').modal('show');
+				
+				// 헤더의 장바구니 수량 최신화
+				cartCountUpdate();
+				
+				// 확인 버튼 클릭 시 장바구니 페이지로 이동
+				$('#goCart').off('click').on('click', function() {
+					location.href = "/cart";
+				});
+				
+				$('#keepProduct').off('click').on('click', function() {
+					$('#myModal').modal('hide');
+				});
+			}
+		}
+	});
+}
+function cartCountUpdate() {
+	$.ajax({
+		url: '/cartCountUpdate',
+		type: 'POST',
+		dataType: 'json',
+		success: function(data) {
+			if (data !== undefined) {
+				$('.cart-items .total-items').text(data);
+			}
+		},
+		error: function(data) {
+		},
+		complete: function(data) {
+		}
 	});
 }
 </script>

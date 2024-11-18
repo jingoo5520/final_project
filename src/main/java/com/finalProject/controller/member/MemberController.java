@@ -218,7 +218,7 @@ public class MemberController {
 						e.printStackTrace();
 					}
 				}
-				result = "redirect:/";
+				result = "redirect:/?signUp=success";
 			} else {
 				System.out.println("insert실패");
 			}

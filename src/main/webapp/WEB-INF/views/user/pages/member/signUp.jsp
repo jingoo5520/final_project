@@ -299,15 +299,6 @@
 	</div>
 
 	<!-- 모달 -->
-	<div id="modalcontainer">
-		<div class="modalBody">
-			<span class="close" onclick="closeModal();">&times;</span>
-			<br>
-			<h2 id="modalTitle">제목</h2>
-			<p id="modalText">내용</p>
-		</div>
-	</div>
-
 	<jsp:include page="memberModal.jsp"></jsp:include>
 
 	<!-- End Account Register Area -->

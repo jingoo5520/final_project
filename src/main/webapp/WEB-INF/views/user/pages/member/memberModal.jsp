@@ -8,84 +8,59 @@
 <meta charset="EUC-KR">
 <title>modal</title>
 <style type="text/css">
-.modal-content .modal-header {
-	margin: 0;
-	height: 65px;
-	border: none !important;
+/* 모달 */
+#modalcontainer {
+	display: none; /* 기본적으로 숨김 */
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgb(0, 0, 0);
+	background-color: rgba(0, 0, 0, 0.4); /* 배경 색상 */
 }
 
-.modal-content .modal-body {
-	height: 100px;
-	border: none !important;
+.modalBody {
+	border-radius: 30px;
+	background-color: #fff;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 700px;
+	background-color: #fff;
 }
 
-.modal-content .modal-body .modal-text {
-	height: 20px;
+.close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.addressName {
+	display: none;
+}
+
+#modalTitle {
 	text-align: center;
-	font-weight: bold;
-	font-size: 16px;
-	color: rgb(34, 34, 34);
-	display: block;
+	margin: 20px;
 }
 
-.modal-content .modal-footer {
-	height: 60px;
-	padding: 0;
-	display: flex;
-	justify-content: space-between !important;
-	margin: 0 !important;
-}
-
-.modal-content .modal-footer #keepProduct {
-	width: 248px;
-	height: 60px;
-	font-size: 18px;
-	border: none;
-	border-bottom: 1px solid rgb(136, 136, 136);
-	font-weight: bold;
-	margin: 0;
-}
-
-.modal-content .modal-footer #goCart {
-	width: 248px;
-	height: 60px;
-	font-size: 18px;
-	border: none;
-	border-bottom: 1px solid rgb(136, 136, 136);
-	background-color: #807E6F;
-	color: #FFFFFF;
-	font-weight: bold;
-	margin: 0;
+#modalText {
+	margin: 50px 100px 50px 100px;
 }
 </style>
 
 </head>
 <body>
-	<!-- The Modal -->
-	<div class="modal fade" id="myModal">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-				</div>
-
-				<!-- Modal body -->
-				<div class="modal-body">
-					
-					<p class="modalText"></p>
-				</div>
-
-				<!-- Modal footer -->
-				<div class="modal-footer">
-					<button type="button" id="keepProduct" data-bs-dismiss="modal">상품
-						계속보기</button>
-					<button type="button" id="goCart" data-bs-dismiss="modal">장바구니
-						가기</button>
-				</div>
-
-			</div>
+	<!-- 모달 -->
+	<div id="modalcontainer">
+		<div class="modalBody">
+			<span class="close" onclick="closeModal();">&times;</span> <br>
+			<h2 id="modalTitle">제목</h2>
+			<p id="modalText">내용</p>
 		</div>
 	</div>
 </body>

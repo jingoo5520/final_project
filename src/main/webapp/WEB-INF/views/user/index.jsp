@@ -165,6 +165,10 @@
 			</div>
 		</div>
 	</section>
+	
+	<!-- 모달 -->
+	<jsp:include page="pages/member/memberModal.jsp"></jsp:include>
+	
 	<!-- End Trending Product Area -->
 
 	<jsp:include page="pages/footer.jsp"></jsp:include>
@@ -251,6 +255,18 @@
 
             // index에서 topbar가 display none되지 않도록 처리
             $("#test").css("display", "block");
+            
+         // 모달 열기
+        	function openModal(title, text) {
+        		$("#modalcontainer").css("display", "block");
+        		$("#modalTitle").text(title);
+        		$("#modalText").html(text);
+        	}
+        	
+        	// 모달 닫기
+        	function closeModal() {
+        		$("#modalcontainer").css("display", "none");
+        	}
         </script>
 </body>
 </html>
