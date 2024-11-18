@@ -11,6 +11,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.admin.CancelCountDTO;
+import com.finalProject.model.admin.CancelRevenueDTO;
 import com.finalProject.model.admin.GenderCountDTO;
 import com.finalProject.model.admin.LevelCountDTO;
 import com.finalProject.model.admin.RevenueDTO;
@@ -122,4 +123,29 @@ public class AdminDAOImpl implements AdminDAO {
 		// TODO Auto-generated method stub
 		return ses.selectList(ns);
 	}
+
+	@Override
+	public List<String> refundsCancel() {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns + "refundsCancel");
+	}
+
+	@Override
+	public List<CancelRevenueDTO> selectTotalCancelRevenues(List<Integer> list) {
+
+		return ses.selectList(ns + "selectTotalCancelRevenues", list);
+	}
+
+	@Override
+	public int getCancelCnt() {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getCancelCnt");
+	}
+
+	@Override
+	public int getRefundCnt() {
+		// TODO Auto-generated method stub
+		return ses.selectOne(ns + "getRefundCnt");
+	}
+
 }

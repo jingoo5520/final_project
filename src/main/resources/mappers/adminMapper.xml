@@ -146,41 +146,81 @@
 		op.product_no = pr.product_no
 		join categories c on pr.product_category
 		= c.category_no
-		WHERE DATE_FORMAT(p.pay_date, '%Y-%m') = #{selectedMonth}
+		WHERE DATE_FORMAT(p.pay_date, '%Y-%m') =
+		#{selectedMonth}
 		group by pr.product_category
 	</select>
 
-<!-- 특정 달 카테고리별 총 판매 량 가져오기 -->
-	<select id="selectCancelSales" parameterType="java.util.List" resultType="com.finalProject.model.admin.CancelCountDTO" >
-     SELECT c.category_name, SUM(op.order_count) AS count
-    FROM cancels can
-    JOIN order_products op ON can.order_product_no = op.orderproduct_no
-    JOIN products p ON op.product_no = p.product_no
-    JOIN categories c ON p.product_category = c.category_no
-    <if test="list != null and list.size() > 0">
-    WHERE can.cancel_no IN
-    </if>
-      <foreach item="cancel" collection="list" open="(" separator="," close=")">
-        #{cancel}
-    </foreach>
-    GROUP BY c.category_name
+	<!-- 특정 달 카테고리별 총 판매 량 가져오기 -->
+	<select id="selectCancelSales" parameterType="java.util.List"
+		resultType="com.finalProject.model.admin.CancelCountDTO">
+		SELECT c.category_name, SUM(op.order_count) AS count
+		FROM cancels can
+		JOIN order_products op ON can.order_product_no = op.orderproduct_no
+		JOIN products p ON op.product_no = p.product_no
+		JOIN categories c ON
+		p.product_category = c.category_no
+		<if test="list != null and list.size() > 0">
+			WHERE can.cancel_no IN
+		</if>
+		<foreach item="cancel" collection="list" open="("
+			separator="," close=")">
+			#{cancel}
+		</foreach>
+		GROUP BY c.category_name
 	</select>
 
 	<!-- 카테고리 별 총 취소량 가져오기 -->
-	<select id="selectCancelByMonth" resultType="com.finalProject.model.admin.CancelCountDTO" >
-	   
-     SELECT c.category_name, SUM(op.order_count) AS count
-    FROM cancels can
-    JOIN order_products op ON can.order_product_no = op.orderproduct_no
-    JOIN products p ON op.product_no = p.product_no
-    JOIN categories c ON p.product_category = c.category_no
-    GROUP BY c.category_name;	
+	<select id="selectCancelByMonth"
+		resultType="com.finalProject.model.admin.CancelCountDTO">
+
+		SELECT c.category_name, SUM(op.order_count) AS count
+		FROM
+		cancels can
+		JOIN order_products op ON can.order_product_no =
+		op.orderproduct_no
+		JOIN products p ON op.product_no = p.product_no
+		JOIN
+		categories c ON p.product_category = c.category_no
+		GROUP BY
+		c.category_name;
 	</select>
 	<!-- 특정 달의 취소번호 가져오기 -->
 	<select id="CategoryCancelByDateCnt" resultType="String">
-	SELECT cancel_no
-    FROM refunds
-    WHERE DATE_FORMAT(refund_receive_date, '%Y-%m') = #{selectedMonth}
+		SELECT cancel_no
+		FROM refunds
+		WHERE DATE_FORMAT(refund_receive_date, '%Y-%m') =
+		#{selectedMonth}
+	</select>
+	<select id="refundsCancel" resultType="String">
+		select cancel_no from
+		refunds
+	</select>
+	<!-- 특정달 혹은 전체달의 취소 가격량 가져오기 -->
+	<select id="selectTotalCancelRevenues"
+		resultType="com.finalProject.model.admin.CancelRevenueDTO">
+		SELECT c.category_name as category_name, SUM(op.paid_amount) AS
+		revenue
+		FROM cancels can
+		JOIN order_products op ON can.order_product_no
+		= op.orderproduct_no
+		JOIN products p ON op.product_no = p.product_no
+		JOIN categories c ON p.product_category = c.category_no
+		<if test="list != null and list.size() > 0">
+			WHERE can.cancel_no IN
+		</if>
+		<foreach item="cancel" collection="list" open="("
+			separator="," close=")">
+			#{cancel}
+		</foreach>
+		group by p.product_category
 	</select>
 
+	<select id="getCancelCnt" resultType="int">
+		select count(*) from
+		cancels where cancel_type = 'cancel' and cancel_status= '취소 요청'
+	</select>
+	<select id="getRefundCnt" resultType="int">
+		select count(*) from cancels where cancel_type = 'return' and cancel_status = '취소 요청'
+	</select>
 </mapper>
