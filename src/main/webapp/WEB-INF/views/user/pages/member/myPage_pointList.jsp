@@ -152,11 +152,19 @@
 		let output = "";
 		
 		for (let i = 0; i < pointList.length ; i++) {
-			output += `<li class="list-group-item earnedPointInfo">
-					   		<div class="earnedPoint">+\${pointList[i].point.toLocaleString('ko-KR')}</div>
-					   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
-							<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
-					   </li>`;
+			if (pointList[i].point > 0) {
+				output += `<li class="list-group-item earnedPointInfo">
+						   		<div class="earnedPoint plus">+\${pointList[i].point.toLocaleString('ko-KR')}</div>
+						   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
+								<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
+						   </li>`;
+			} else {
+				output += `<li class="list-group-item earnedPointInfo">
+			   		<div class="earnedPoint minus">-\${pointList[i].point.toLocaleString('ko-KR')}</div>
+			   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
+					<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
+			   </li>`;
+			}
 		}
 		
 		$(".earnedPointUl").html(output);
@@ -316,8 +324,12 @@
 		padding: 0 10px;
 	}
 	
-	.earnedPoint {
+	.earnedPoint.plus {
 		color: #0DCAF0;
+	}
+	
+	.earnedPoint.minus {
+		color: #FD5A67;
 	}
 	
 	.usedPoint {
