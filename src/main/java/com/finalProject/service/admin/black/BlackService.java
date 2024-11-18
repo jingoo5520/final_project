@@ -13,4 +13,6 @@ public interface BlackService {
 
 	boolean blackMember(Map<String, List<String>> map) throws Exception;
 
+	boolean blackCancelMember(String memberId);
+
 }

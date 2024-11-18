@@ -129,7 +129,7 @@
 									let discountAmount = document
 											.getElementById('discountAmountContainer').value
 											.trim();
-
+									console.log(discountType);
 									if (discountType === 'P') {
 										if (discountAmount === ''
 												|| isNaN(discountAmount)
@@ -142,6 +142,9 @@
 															'<span class="error-message" style="color: red;">입력 가능한 할인율(0-100%)을 입력해 주세요.</span>');
 											isValid = false;
 										}
+									}
+									if(discountType === 'N') {
+										$(discountAmount).val(0);
 									}
 									if ($('#dropdownValue').val().trim() === '') {
 										$('#productShow')
@@ -240,7 +243,7 @@
 														</td>
 														<td>
 															<div class="form-check d-flex justify-content-center">
-																<input class="form-check-input dc_type" type="radio" id="defaultCheck3" name="product_dc_type" value="N" onclick="toggleDiscountInput()" checked="checked">
+																<input class="form-check-input dc_type" type="radio" id="defaultCheck3" name="product_dc_type" value="N" onclick="toggleDiscountInput()">
 															</div>
 														</td>
 													</tr>
@@ -310,10 +313,10 @@
 												<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="productShow">공개 상태 여부</button>
 												<ul class="dropdown-menu">
 													<li>
-														<button class="dropdown-item" type="button" value="yes" onclick="selectOption('Y', 'Yes')">Yes</button>
+														<button class="dropdown-item" type="button" value="yes" onclick="selectOption('N', 'Yes')">Yes</button>
 													</li>
 													<li>
-														<button class="dropdown-item" type="button" value="no" onclick="selectOption('N', 'no')">no</button>
+														<button class="dropdown-item" type="button" value="no" onclick="selectOption('Y', 'no')">no</button>
 													</li>
 												</ul>
 							

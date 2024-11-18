@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeTypeStatus.NoticeType;
 import com.finalProject.model.admin.notices.NoticeVO;
+import com.finalProject.model.admin.notices.PagingInfoNotice;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,6 +65,26 @@ public class UserNoticeDAOImpl implements UserNoticeDAO {
         params.put("pagingSize", pagingSize);
         params.put("startRowIndex", startRowIndex);
         return ses.selectList(ns + "getAllEvents", params);
+	}
+
+	@Override
+	public int getTotalNoticeCnt() throws Exception {
+		return ses.selectOne(ns + "selectNoticeCnt");
+	}
+
+	@Override
+	public List<NoticeDTO> selectNoticeList(PagingInfoNotice pi) throws Exception {
+		return ses.selectList(ns + "selectNoticeList", pi);
+	}
+
+	@Override
+	public int getTotalEventCnt() throws Exception {
+		return ses.selectOne(ns + "selectEventCnt");
+	}
+
+	@Override
+	public List<NoticeDTO> selectEventList(PagingInfoNotice pi) throws Exception {
+		return ses.selectList(ns + "selectEventList", pi);
 	}
 
 //	@Override
