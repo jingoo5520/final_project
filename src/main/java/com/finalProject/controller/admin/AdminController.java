@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.management.RuntimeErrorException;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-
+	
 	@Inject
 	AdminService aService;
 
@@ -45,6 +46,7 @@ public class AdminController {
 	@GetMapping("/getStatisticData")
 	@ResponseBody
 	public Map<String, Object> getStatisticData() {
+		
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		try {

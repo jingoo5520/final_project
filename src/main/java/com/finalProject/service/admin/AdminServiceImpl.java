@@ -91,7 +91,7 @@ public class AdminServiceImpl implements AdminService {
 
 		// 카테고리별 판매량 가져오기
 		List<SaleCountDTO> saleCountDTOList = aDao.selectTotalSales();
-
+		List<CancelCountDTO> cancelCountDToList = aDao.selectTotalCancel();
 		// 카테고리별 매출 가져오기
 		List<RevenueDTO> revenueDTOList = aDao.selectTotalRevenues();
 
@@ -107,6 +107,7 @@ public class AdminServiceImpl implements AdminService {
 		data.put("revenueGrowthRate", revenueGrowthRate);
 		data.put("regGrowthRate", regGrowthRate);
 		data.put("saleCountDTOList", saleCountDTOList);
+		data.put("cancelCountDToList", cancelCountDToList);
 		data.put("revenueDTOList", revenueDTOList);
 
 		return data;
@@ -136,13 +137,17 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public List<CancelCountDTO> getCancelByMonth(String selectedMonth) {
 		List<Integer> list = new ArrayList<>();
+		List<CancelCountDTO> nullList = new ArrayList<>();
 		if (!selectedMonth.equals("") && !selectedMonth.equals(null)) {
 			List<String> cancelNos = aDao.CategoryCancelByDate(selectedMonth);
 			System.out.println(cancelNos);
 			list = cancelNos.stream().flatMap(cancel -> Arrays.stream(cancel.split(","))).map(Integer::valueOf)
 					.collect(Collectors.toList());
+			if(list.size() <= 0) {
+				return nullList;
+			}
 		}
-		System.out.println(list.toString());
+		
 		if (selectedMonth.equals("")) {
 
 			return aDao.selectTotalCancel();
