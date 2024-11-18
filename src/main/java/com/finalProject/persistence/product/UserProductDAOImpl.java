@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ProductDetailReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -84,16 +85,20 @@ public class UserProductDAOImpl implements UserProductDAO {
     }
 
 	@Override
-	public List<ReviewDetailDTO> selectReview(int productNo) throws Exception {
-	    List<ReviewDetailDTO> reviews = ses.selectList(ns + "selectReview", productNo);
-	    return reviews;
+	public List<ProductDetailReviewDTO> selectReview(int productNo, int offset, int limit) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("product_no", productNo);
+		map.put("offset", offset);
+		map.put("limit", limit);
+	   
+	    return ses.selectList(ns + "selectReview", map);
 	}
 
-	@Override
-	public List<String> selectReviewImg(int productNo) throws Exception {
-		System.out.println("pDao" + productNo);
-	    return ses.selectList(ns + "selectReviewImg", productNo);
-	}
+//	@Override
+//	public List<String> selectReviewImg(int productNo) throws Exception {
+//		System.out.println("pDao" + productNo);
+//	    return ses.selectList(ns + "selectReviewImg", productNo);
+//	}
 
 	@Override
 	public int selectCountReviewProduct(int productNo) throws Exception {
