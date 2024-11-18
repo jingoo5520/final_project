@@ -142,7 +142,7 @@ public class inquiryController {
 
 		data = iService.getInquiryList(new PagingInfoNewDTO(pageNo, pagingSize, pageCntPerBlock), memberId);
 
-		throw new Exception("Forced exception for testing ControllerAdvice");
+		return data;
 	}
 
 	// 주문 상품 리스트 가져오기

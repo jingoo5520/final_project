@@ -126,7 +126,6 @@ public class CartController {
 						for (String cartItem : cookieCartItems) {
 							int productNoOfCookie = Integer.parseInt(cartItem.split(":")[0]);
 							int quantityOfCookie = Integer.parseInt(cartItem.split(":")[1]);
-							System.out.println("productNoOfCookie" + productNoOfCookie);
 							CookieCartDTO cookieCartDTO = cService.getProductInfoOfCookieCart(productNoOfCookie);
 							
 							CookieCartVO cookieCartVO = new CookieCartVO().builder()
@@ -141,8 +140,6 @@ public class CartController {
 									.build();
 							
 							cookieCartList.add(cookieCartVO);
-							
-							System.out.println(cookieCartVO.toString());
 						}
 					}
 				}
@@ -222,7 +219,6 @@ public class CartController {
 		productNos.add(productNo);
 		
 		if (loginMember != null) {
-			
 			if (removeProduct(loginMember, productNos, cMap) == 0) {
 				return result = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 			}
@@ -230,8 +226,6 @@ public class CartController {
 			return result = new ResponseEntity<String>(HttpStatus.OK);
 			
 		} else {
-			System.out.println("cart : 로그인 안함");
-			
 			removeProductOfCookie(productNos, response, cookies);
 			
 			return result = new ResponseEntity<String>(HttpStatus.OK);
@@ -247,7 +241,6 @@ public class CartController {
         Map<String, Object> cMap = new HashMap<>();
 
 		if (loginMember != null) {
-			
 			if (removeProduct(loginMember, productNos, cMap) == 0) {
 				return result = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 			}

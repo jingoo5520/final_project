@@ -82,9 +82,21 @@ public class MemberController {
 	private PointService pService;
 
 	@RequestMapping(value = "/viewLogin") // "/member/viewLogin" 로그인 페이지로 이동
-	public String viewLogin() {
+	public String viewLogin(HttpServletRequest request, HttpServletResponse response) {
+		String result = "/user/pages/member/login";
 		System.out.println("로그인 페이지로 이동");
-		return "/user/pages/member/login";
+		HttpSession ses = request.getSession();
+		System.out.println("로그인 상태 : " + ses.getAttribute("loginMember"));
+		if(ses.getAttribute("loginMember")!=null) { // 로그인 상태로 로그인페이지로 접근하려고 하면 인덱스로 되돌려보냄
+//			result = "/user/index";
+			try {
+				response.sendRedirect("/");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST) // 로그인 요청시 동작
@@ -244,6 +256,7 @@ public class MemberController {
 	@RequestMapping(value = "/logout")
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession ses = request.getSession();
+		ses.removeAttribute("blackReason");
 		ses.removeAttribute("loginMember");
 		ses.removeAttribute("rememberPath");
 		ses.removeAttribute("auth");
@@ -303,17 +316,8 @@ public class MemberController {
 	// 마이페이지 (포인트 내역)
 	@RequestMapping(value = "/myPage/pointList")
 	public String myPage_pointList(HttpServletRequest request) {
-		System.out.println("마이페이지로 이동");
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_pointList";
-	}
-	
-	// 마이페이지 (쿠폰 내역)
-	@RequestMapping(value = "/myPage/couponList")
-	public String myPage_couponList(HttpServletRequest request) {
-		System.out.println("마이페이지로 이동");
-		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
-		return "/user/pages/member/myPage_couponList";
 	}
 	
 	// 마이페이지 (회원의 포인트 양 조회)
@@ -334,7 +338,7 @@ public class MemberController {
 		return resultMap;
 	}
 	
-	// 마이페이지 (회원의 포인트 양 조회)
+	// 마이페이지 (회원의 포인트 페이지 정보 조회)
 	@PostMapping("/myPage/getPointPagingInfo")
 	@ResponseBody
 	public Map<String, Object> getPointPagingInfo(@RequestBody String pointType, HttpSession session) {
@@ -353,7 +357,7 @@ public class MemberController {
 		return resultMap;
 	}
 	
-	// 마이페이지 (회원의 포인트 양 조회)
+	// 마이페이지 (회원의 포인트 적립내역 조회)
 	@PostMapping("/myPage/getEarnedPointList")
 	@ResponseBody
 	public Map<String, Object> getEarnedPointList(@RequestParam int pageNo, HttpSession session) {
@@ -372,7 +376,7 @@ public class MemberController {
 	}
 	
 	
-	// 마이페이지 (회원의 포인트 양 조회)
+	// 마이페이지 (회원의 포인트 사용내역 조회)
 	@PostMapping("/myPage/getUsedPointList")
 	@ResponseBody
 	public Map<String, Object> getUsedPointList(@RequestParam int pageNo, HttpSession session) {
@@ -390,6 +394,12 @@ public class MemberController {
 		return resultMap;
 	}
 	
+	// 마이페이지 (쿠폰 내역)
+	@RequestMapping(value = "/myPage/couponList")
+	public String myPage_couponList(HttpServletRequest request) {
+		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
+		return "/user/pages/member/myPage_couponList";
+	}
 	
 	// 마이페이지 (사용가능한 쿠폰 조회)
 	@GetMapping("/myPage/getPaidCouponList")
@@ -433,7 +443,6 @@ public class MemberController {
 	// 마이페이지 (배송지 관리)
 	@RequestMapping(value = "/myPage/manageDelivery")
 	public String myPage_manageAddresses(HttpServletRequest request) {
-		System.out.println("마이페이지로 이동");
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		return "/user/pages/member/myPage_manageDelivery";
 	}
@@ -441,7 +450,6 @@ public class MemberController {
 	// 마이페이지 (배송지 추가)
 	@RequestMapping(value = "/myPage/addDeliveryPage")
 	public String myPage_addDelivery(HttpServletRequest request, HttpSession session, Model model) {
-		System.out.println("배송지 추가 페이지로 이동");
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		model.addAttribute("memberInfo", loginMember);
@@ -449,9 +457,8 @@ public class MemberController {
 	}
 	
 	// 마이페이지 (배송지 수정)
-	@RequestMapping(value = "/mypage/modifyDelivery")
+	@RequestMapping(value = "/myPage/modifyDelivery")
 	public String myPage_modifyDelivery(@RequestParam("deliveryNo") int deliveryNo, @RequestParam("isMain") String isMain, HttpServletRequest request, HttpSession session, Model model) {
-		System.out.println("배송지 추가 페이지로 이동");
 		new RememberPath().rememberPath(request); // 호출한 페이지 주소 저장.
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
 		model.addAttribute("memberInfo", loginMember);
@@ -710,6 +717,7 @@ public class MemberController {
 		try {
 			// 회원 탈퇴 성공시
 			if (memberService.withDrawMember(member_id)) {
+				ses.removeAttribute("blackReason");
 				json = new ResponseData("success", "탈퇴 완료");
 				Cookie cookie = new Cookie("al", ""); // 쿠키객체 생성
 				cookie.setMaxAge(0); // 쿠키 유효기간 설정(삭제를 위해 0초로 설정)

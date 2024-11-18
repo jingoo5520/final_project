@@ -66,25 +66,35 @@
 
 					formData.forEach(function(item) {
 						// date(string) to Timestamp
-						if (item.name == 'birthday_start'
-								|| item.name == 'birthday_end') {
-
+						if (item.name == 'birthday_start') {
 							if (item.value == '') {
 								item.value = 19000101;
 							} else {
-								
 								item.value =  parseInt(item.value.replaceAll("-", ''));
-								
 							}
 						}
+						
+						if(item.name == 'birthday_end'){
+							if (item.value == '') {
+								item.value = new Date().toISOString().substring(0, 10); 
+							} 
+							item.value =  parseInt(item.value.replaceAll("-", ''));
+						}
 
-						if (item.name == 'reg_date_start'
-								|| item.name == 'reg_date_end') {
+						if (item.name == 'reg_date_start') {
 							if (item.value == '') {
 								item.value += "1900-01-01 00:00:00";
 							} else {
 								item.value += " 00:00:00";
 							}
+						}
+						
+						if(item.name == 'reg_date_end') {
+							if (item.value == '') {
+								item.value = new Date().toISOString().substring(0, 10);
+							}
+							
+							item.value += " 23:59:59";
 						}
 						
 					});
@@ -422,6 +432,10 @@
 			success : function(data) {
 				console.log(data);
 				$('#couponPayModal').modal('hide');
+				checkedMemberIdList = [];
+				console.log(checkedMemberIdList);
+				showMemberList(pageNo);
+				
 			},
 			error : function(error) {
 				console.log(error);
@@ -663,7 +677,7 @@ table tr:not(#noDataTableBody) {
 
 						<!-- 쿠폰 지급 버튼 -->
 						<div id="payCouponBtnSapce">
-							<button id="payCouponAllBtn" type="button" class="btn btn-outline-primary mt-4 me-1" data-bs-toggle="modal" data-bs-target="#couponPayModal" onclick="openPayCouponModal('all')" >전체 지급</button>
+							<button id="payCouponAllBtn" type="button" class="btn btn-outline-primary mt-4 me-1" data-bs-toggle="modal" data-bs-target="#couponPayModal" onclick="openPayCouponModal('all')">전체 지급</button>
 							<button id="payCouponBtn" type="button" class="btn btn-outline-primary mt-4" data-bs-toggle="modal" data-bs-target="#couponPayModal" onclick="openPayCouponModal()" disabled>쿠폰 지급</button>
 						</div>
 						<!-- / 쿠폰 지급 버튼 -->

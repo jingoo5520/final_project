@@ -68,8 +68,7 @@
                                 <ul>
                                     <li><a href="/serviceCenter/notice">공지사항</a></li>
                                     <li><a href="/event">이벤트</a></li>
-                                    <li><a href="javascript:void(0)">이용약관</a></li>
-                                    <li><a href="javascript:void(0)">고객센터</a></li>
+                                    <li><a href="/serviceCenter/inquiries">고객센터</a></li>
                                 </ul>
                             </div>
                             <!-- End Single Widget -->
@@ -79,11 +78,17 @@
                         	<div class="single-footer f-link">
                                 <h3>Members</h3>
                                 <ul>
-                                    <li><a href="javascript:void(0)">회원가입</a></li>
-                                    <li><a href="javascript:void(0)">로그인</a></li>
-                                    <li><a href="javascript:void(0)">멤버쉽 혜택</a></li>
-                                    <li><a href="javascript:void(0)">카테고리</a></li>
-                                    <li><a href="javascript:void(0)">장바구니</a></li>
+                                	<c:if test="${empty sessionScope.loginMember }">
+                                    	<li><a href="/member/viewSignUp">회원가입</a></li>
+                                   		<li><a href="/member/viewLogin">로그인</a></li>
+                                    </c:if>
+                                    <c:if test="${not empty sessionScope.loginMember }">
+                                    	<li><a href="${pageContext.request.contextPath}/member/myPage/viewOrder">내 정보</a></li>
+										<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
+                                    </c:if>
+                                    <li><a href="/serviceCenter/memberships">멤버쉽 혜택</a></li>
+                                    <li><a href="/product/jewelry/all">카테고리</a></li>
+                                    <li><a href="/cart">장바구니</a></li>
                                 </ul>
                             </div>
                             <!-- End Single Widget -->
@@ -93,11 +98,11 @@
                             <div class="single-footer f-link">
                                 <h3>Information</h3>
                                 <ul>
-                                    <li><a href="javascript:void(0)">기능명세서</a></li>
-                                    <li><a href="javascript:void(0)">테이블명세서</a></li>
-                                    <li><a href="javascript:void(0)">Notion</a></li>
-                                    <li><a href="javascript:void(0)">Site Map</a></li>
-                                    <li><a href="javascript:void(0)">Git Hub</a></li>
+                                    <li><a href="https://docs.google.com/spreadsheets/d/1ULEzyom9b-teEy3ERGJSTtn1C1u6tFI2_f3Zmhp_PYA/edit?gid=488089020#gid=488089020">기능명세서</a></li>
+                                    <li><a href="https://docs.google.com/spreadsheets/d/1TqMi5rk0uO-Az_MNDS0bLJajiCx10kAMmpXf07ObsY4/edit?gid=1351357681#gid=1351357681">테이블명세서</a></li>
+                                    <li><a href="https://www.notion.so/2-111b8702aaa180cbac60c0dc4504a9b9">Notion</a></li>
+                                    <li><a href="https://app.diagrams.net/#G1IaZH6wb7uZ0rK2KA8L1gTRMWu3-IZ7Xa#%7B%22pageId%22%3A%22PABAss9pXgwyKsPXD-XM%22%7D">Site Map</a></li>
+                                    <li><a href="https://github.com/jingoo5520/final_project">Git Hub</a></li>
                                 </ul>
                             </div>
                             <!-- End Single Widget -->

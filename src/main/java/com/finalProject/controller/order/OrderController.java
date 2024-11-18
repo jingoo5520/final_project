@@ -56,6 +56,8 @@ public class OrderController {
 	public String orderPage(HttpSession session, Model model) { // 함수 오버로딩
 		System.out.println("/order GET 요청 들어감");
 		String productInfos = (String) session.getAttribute("productInfos");
+		System.out.println("비회원으로 주문하기 링크에 의한 order 페이지 GET 요청 중");
+		System.out.println("productInfos : " + productInfos);
 		addOrderInfoToModel(productInfos, session, model);
 		return "/user/pages/order/order";
 	}
@@ -142,9 +144,6 @@ public class OrderController {
 
 			if (paymentRequest.getSaveDeliveryType().contains("saveDelivery")) {
 				// 배송지 저장
-				System.out.println("배송지 저장 탭임");
-				System.out.println(deliveryVO.toString());
-
 				try {
 					memberService.saveDelivery(deliveryVO);
 				} catch (Exception e) {
@@ -154,22 +153,14 @@ public class OrderController {
 
 			if (paymentRequest.getSaveDeliveryType().contains("saveAddress")) {
 				// 회원 정보 주소 수정
-				System.out.println("회원 주소 정보 수정 탭임");
-				System.out.println(deliveryVO.toString());
 
 				try {
-					if (memberService.updateAddress(deliveryVO)) {
-						System.out.println("회원 정보 수정 완료");
-					} else {
-						System.out.println("수정 안됨");
-					}
+					memberService.updateAddress(deliveryVO);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-		} else {
-			System.out.println("동작하면 안돼.");
 		}
 
 		// paymentRequest 객체를 사용하여 결제 처리 로직을 구현
@@ -229,7 +220,6 @@ public class OrderController {
 
 		try {
 			couponList = memberService.getCouponList(memberId, currentTime);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -542,7 +532,6 @@ public class OrderController {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body(resultMap);
 		}
-
 	}
 	
 	
@@ -569,7 +558,7 @@ public class OrderController {
 				cancelAmount);
 		return ResponseEntity.ok(resultMap);
 	}
-
+	
 	@PostMapping("/order/KakaoPayCancel")
 	public ResponseEntity<Map<String, String>> cancelKaKaoPay(
 			@RequestBody Map<String, String> requestMap
@@ -601,12 +590,21 @@ public class OrderController {
 		return orderService.getOrderListOfNonMember(name, phoneNumber, email);
 	}
 	
-	@PostMapping("/order/session")
+	@PostMapping("/order/session/requestByNonMember")
 	@ResponseBody
 	public void getSessionState(
 			HttpSession session,
 			HttpServletRequest request) {
+		// requestByNonMember를 "True"로 설정하면 Authinterceptor에서 logininterceptor로 보내지 않는다.
+		// 따라서 login 페이지가 보여지지 않고 원하는 페이지로 바로 이동이 가능하다
 		session.setAttribute("requestByNonMember", request.getParameter("requestByNonMember"));
+	}
+	
+	@GetMapping("/order/orderPageOfNonMember")
+	public void getOrderPageOfNonMember() {
+		// working...
+		// TODO : 세션의 requestByNonMember
+		
 	}
 	
 	@GetMapping("/cancelAPItest")

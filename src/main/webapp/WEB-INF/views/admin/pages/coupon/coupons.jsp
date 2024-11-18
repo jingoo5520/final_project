@@ -232,7 +232,7 @@
 								</td>`
 							+ '</tr>';
 				});
-
+				console.log(listOutput);
 				$('#couponTableBody').html(listOutput);
 				
 				if(data.pi.pageNo == 1){

@@ -8,8 +8,7 @@
 	<!-- 로그인 -->
 	<select id="login" resultType="LoginDTO">
 		select * from members where
-		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256) and
-		member_status = 'active'
+		member_id = #{member_id} and member_pwd = sha2(#{member_pwd}, 256)
 	</select>
 
 	<!-- id, email, phone_number 중복 체크 -->
@@ -201,11 +200,13 @@
 		left join coupon_used u
 		on u.coupon_code = p.coupon_code and
 		u.member_id = #{memberId}
-		where (p.member = #{memberId} or p.member =
-		'all')
-		and #{currentTime} &gt;= p.pay_date and #{currentTime} &lt;
-		p.expire_date
+		join members m
+		on m.member_id = #{memberId} 
+		where (p.member = #{memberId} or p.member = 'all')
+		and #{currentTime} &gt;= p.pay_date 
+		and #{currentTime} &lt; p.expire_date
 		and u.coupon_code is null
+		and p.pay_date &gt;= m.reg_date
 	</select>
 
 	<!-- naver_id로 회원 조회(네이버 로그인) -->
@@ -240,16 +241,20 @@
 		delete from delivery_addrs where delivery_no =
 		#{deliveryNo}
 	</delete>
-	
-	<select id="selectUsedCouponList" resultType="com.finalProject.model.UsedCouponDTO">
-		select c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount, c.coupon_dc_rate, 
-			   p.member, u.use_date 
-			   from coupons c 
-			   inner join coupon_paid p 
-			   on c.coupon_no = p.coupon_no 
-			   inner join coupon_used u 
-			   on u.coupon_code = p.coupon_code 
-			   where u.member_id = #{memberId}
+
+	<select id="selectUsedCouponList"
+		resultType="com.finalProject.model.UsedCouponDTO">
+		select c.coupon_name, c.coupon_dc_type, c.coupon_dc_amount,
+		c.coupon_dc_rate,
+		p.member, u.use_date
+		from coupons c
+		inner join
+		coupon_paid p
+		on c.coupon_no = p.coupon_no
+		inner join coupon_used u
+		on
+		u.coupon_code = p.coupon_code
+		where u.member_id = #{memberId}
 	</select>
 	
 	<select id="selectRecentCouponList" resultType="com.finalProject.model.RecentCouponDTO">
@@ -263,37 +268,53 @@
 			   u.use_date 
 			   from coupons c 
 			   inner join coupon_paid p 
-			   on c.coupon_no = p.coupon_no and p.pay_date > DATE_SUB(NOW(), INTERVAL 3 MONTH) 
-			   left join coupon_used u on p.coupon_code = u.coupon_code and u.member_id = #{memberId} 
-			   where p.member = 'All' or p.member = #{memberId}
+			   on c.coupon_no = p.coupon_no 
+			   and p.pay_date &gt; DATE_SUB(NOW(), INTERVAL 3 MONTH) 
+			   left join coupon_used u 
+			   on p.coupon_code = u.coupon_code 
+			   and u.member_id = #{memberId} 
+			   inner join members m
+			   on m.member_id = #{memberId}
+			   where (p.member = 'All' or p.member = #{memberId}) 
+			   and p.pay_date &gt;= m.reg_date 
 	</select>
-	
-	<select id="selectMemberPoint" resultType="com.finalProject.model.MemberPointDTO">
-		select IFNULL(m.member_point,0) as member_point, IFNULL(sum(u.use_point),0) as use_point 
-		from members m, point_used u 
+
+	<select id="selectMemberPoint"
+		resultType="com.finalProject.model.MemberPointDTO">
+		select IFNULL(m.member_point,0) as member_point,
+		IFNULL(sum(u.use_point),0) as use_point
+		from members m, point_used u
 		where m.member_id = #{memberId} and u.member_id = #{memberId}
 	</select>
-	
+
 	<select id="selectCntOfEarnedPoint" resultType="Integer">
-		select count(*) from point_earned where member_id = #{memberId}
+		select count(*)
+		from point_earned where member_id = #{memberId}
 	</select>
-	
+
 	<select id="selectCntOfUsedPoint" resultType="Integer">
-		select count(*) from point_used where member_id = #{memberId} and use_point != 0
+		select count(*)
+		from point_used where member_id = #{memberId} and use_point != 0
 	</select>
-	
-	<select id="selectEarnedPointListByPageNo" resultType="com.finalProject.model.PointDTO">
-		select e.earned_point as point, e.point_earned_date as pointRecordDate, i.point_reason as pointPaidReason 
-		from point_earned e 
-		join point_infos i on e.point_code = i.point_code 
-		where member_id = #{memberId} 
+
+	<select id="selectEarnedPointListByPageNo"
+		resultType="com.finalProject.model.PointDTO">
+		select e.earned_point as point, e.point_earned_date as
+		pointRecordDate, i.point_reason as pointPaidReason
+		from point_earned e
+		join point_infos i on e.point_code = i.point_code
+		where member_id =
+		#{memberId}
 		order by e.point_earned_date DESC limit 10 offset #{offset}
 	</select>
-	
-	<select id="selectUsedPointListByPageNo" resultType="com.finalProject.model.PointDTO">
-		select use_point as point, point_used_date as pointRecordDate 
-		from point_used 
-		where member_id = #{memberId} and use_point != 0 
+
+	<select id="selectUsedPointListByPageNo"
+		resultType="com.finalProject.model.PointDTO">
+		select use_point as point, point_used_date as
+		pointRecordDate
+		from point_used
+		where member_id = #{memberId} and
+		use_point != 0
 		order by point_used_date DESC limit 10 offset #{offset}
 	</select>
 
@@ -317,7 +338,7 @@
 		INNER JOIN
 		orders o ON o.order_id = p.order_id
 		WHERE o.orderer_id = #{member_id}
-		AND p.pay_date > DATE_SUB(NOW(), INTERVAL 12 MONTH)
+		AND p.pay_date &gt; DATE_SUB(NOW(), INTERVAL 12 MONTH)
 	</select>
 
 	<!-- 회원 등급 업데이트 -->
@@ -341,5 +362,11 @@
 		#{nickname},
 		5000)
 	</update>
+
+	<!-- 회원 블랙정보 받기(로그인) -->
+	<select id="getMemberBlackInfo" resultType="BlackInfoDTO">
+		select * from blacks
+		b where member_id = #{member_id}
+	</select>
 
 </mapper>
