@@ -6,6 +6,7 @@ import java.util.Map;
 import com.finalProject.model.admin.order.AdminCancleVO;
 import com.finalProject.model.admin.order.AdminGetCancel;
 import com.finalProject.model.admin.order.AdminPaymentVO;
+import com.finalProject.model.admin.order.AdminSearchRefundDTO;
 import com.finalProject.model.admin.order.CancelSearchDTO;
 import com.finalProject.model.admin.order.ModifyCancelStatusDTO;
 import com.finalProject.model.admin.product.adminPagingInfoDTO;
@@ -23,5 +24,9 @@ public interface OrdersService {
 	int RestractByCancelNo(String cancelNo);
 
 	boolean modifyCancelStatus(ModifyCancelStatusDTO modifyCancelStatusDTO);
+
+	Map<String, Object> getAllrefund(adminPagingInfoDTO dto) throws Exception;
+
+	Map<String, Object> getSearchRefundFilter(AdminSearchRefundDTO searchDto, adminPagingInfoDTO pagingDto);
 
 }

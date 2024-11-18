@@ -47,6 +47,17 @@
 <head>
 <script>
 let data;
+function showToast(title, content) {
+	$('#toastTitle').text(title); // 토스트 메시지 제목
+    $('#toastBody').text(content); // 토스트 메시지 내용
+    
+    var toastElement = $('#toastMessage');
+    toastElement.removeClass('hide').addClass('show');
+	$("#modalToggle").modal('hide'); // 모달이름
+	 setTimeout(function() {
+		 toastElement.hide();
+       }, 2000);
+} 
 	function showCancelList(pageNo) {
 		console.log(pageNo);
 		let pagingSize =10;
@@ -87,25 +98,17 @@ let data;
 			    
 
 		        $.each(data.CancelList, function(index, cancel) {
-		        	 let checkBoxHtml = '';
-		          /*       if (member.member_status != 'black') {
-		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" \${checkedMemberIdList.includes(member.member_id) ? "checked" : ""}/>`;
-		                } else {
-		                    checkBoxHtml = `<input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="\${member.member_id}" disabled/>`; // 블랙 멤버는 체크박스를 비활성화
-		                }
-*/
+	
 					let isDisabled = (cancel.cancel_status === '취소 완료' || cancel.cancel_status === '취소 철회') ? 'disabled' : '';
-		            const formattedDate = new Date(cancel.cancel_apply_date).toISOString().slice(0, 10);
-		            /* <input name="checkMember" class="form-check-input memberCheckBox" type="checkbox" value="'+member.member_id+'"' + 
-	                    (checkedMemberIdList.includes(member.member_id) ? "checked" : "") + '/> */
+		          
 		            output += '<tr>' +
 		                
-		                '<td>' + cancel.cancel_no + '</td>' +
-		                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
+		                '<td>' + cancel.cancel_no + '</td>' +      
 		                '<td>' + cancel.order_product_no + '</td>' +
-		                '<td>' + formattedDate + '</td>' +
-		                '<td>' + cancel.cancel_complete_date + '</td>' +
-		                '<td>' + cancel.cancel_retract_date + '</td>' +
+		                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
+		                '<td>' + (cancel.cancel_apply_date ? new Date(cancel.cancel_apply_date).toLocaleString() : ' ') + '</td>' +
+		                '<td>' + (cancel.cancel_complete_date ? new Date(cancel.cancel_complete_date).toLocaleString() : ' ') + '</td>' +
+		                '<td>' + (cancel.cancel_retract_date ? new Date(cancel.cancel_retract_date).toLocaleString() : ' ') +'</td>' +
 		                '<td>' + cancel.cancel_type + '</td>' +
 		                '<td>' + cancel.cancel_status + '</td>' +			          
 		                '<td><div class="mt-3">' +
@@ -179,8 +182,8 @@ let data;
 	                            cancelListContainer += 
 	                                '<tr>' +
 	                                    '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-	                                    '<td>' + e.order_id + '</td>' +
 	                                    '<td class="modalOrderProductNo">' + e.order_product_no + '</td>' +
+	                                    '<td>' + e.order_id + '</td>' +
 	                                    '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
 	                                    '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
 	                                    '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -208,7 +211,7 @@ let data;
 
 	                        // 모달에 새 리스트를 삽입
 	                        $("#cancelListContainer").html(cancelListContainer);
-
+	                      
 	                        // 모달 다시 열기
 	                        $("#modalToggle2").modal('show');
 	                    },
@@ -247,8 +250,8 @@ let data;
 		                            cancelListContainer += 
 		                                '<tr>' +
 		                                    '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-		                                    '<td>' + e.order_id + '</td>' +
 		                                    '<td class="modalOrderProductNo">' + e.order_product_no + '</td>' +
+		                                    '<td>' + e.order_id + '</td>' +
 		                                    '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
 		                                    '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
 		                                    '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -276,7 +279,15 @@ let data;
 
 		                        // 모달에 새 리스트를 삽입
 		                        $("#ListContainer").html(cancelListContainer);
-
+		                        $('#toastTitle').text("철회 완료"); // 토스트 메시지 제목
+		                        $('#toastBody').text("철회가 성공했습니다~"); // 토스트 메시지 내용
+		                        
+		                        var toastElement = $('#toastMessage');
+		                        toastElement.removeClass('hide').addClass('show');
+		     
+		                    	 setTimeout(function() {
+		                    		 toastElement.hide();
+		                           }, 2000);
 		                        // 모달 다시 열기
 		                        $("#modifyCancel").modal('show');
 		                    },
@@ -301,7 +312,7 @@ let data;
 		            cancelType: cancelType,
 		            assigned_point : assigned_point
 		        };
-		        
+		        console.log(data);
 		        $.ajax({
 		            url: '/admin/order/modifyStatus',
 		            type: 'POST',
@@ -317,7 +328,7 @@ let data;
 		        });
 		    }
 
-		function tossCancelRequest(paymentKey, cancelReason, amount = null,cancelList,paymentNo,cancelType,assigned_point) {
+		function tossCancelRequest(paymentKey, cancelReason, amount = 0, cancelList, paymentNo, cancelType, assigned_point) {
 			let encodedSecretKey = null
 			let cancelResponse = null
 			
@@ -365,6 +376,7 @@ let data;
 				 error: function(xhr, status, error) {
 				   console.error(`Error: , `);
 				   console.error(xhr.responseText);
+				   showToast("상품 환불","실패하였습니다");
 				 }
 			});
 			return cancelResponse
@@ -392,6 +404,7 @@ let data;
 					error: function(xhr, status, error) {
 						console.error(`Error: , `);
 						console.error(xhr.responseText);
+						showToast("상품 환불","실패하였습니다");
 					}
 				});
 				return JSON.parse(response)
@@ -418,6 +431,7 @@ let data;
 					error: function(xhr, status, error) {
 						console.error(`Error: , `);
 						console.error(xhr.responseText);
+						showToast("상품 환불","실패하였습니다");
 					}
 				});
 				return JSON.parse(response)
@@ -458,9 +472,9 @@ let data;
 				            cancelList.forEach(function (e) {
 				                cancelListContainer += 
 				                    '<tr>' +
-				                        '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-				                        '<td>' + e.order_id + '</td>' +
+				                        '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +              
 				                        '<td class = "modalOrderProductNo">' + e.order_product_no + '</td>' +
+				                        '<td>' + e.order_id + '</td>' +
 				                        '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
 				                        '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
 				                        '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -501,14 +515,24 @@ let data;
 				            	list: orderProductList
 				            }),
 				            success: function(data) {
-				            
 				            	console.log(typeof data.paid_amount);
 				            	console.log(typeof data.payment_module_key);
 				                console.log(data);
+				                $('#toastTitle').text("환불이 성공!"); // 토스트 메시지 제목
+				                $('#toastBody').text("환불 완료 되었습니다"); // 토스트 메시지 내용
+				                
+				                var toastElement = $('#toastMessage');
+				                toastElement.removeClass('hide').addClass('show');
+				            	 setTimeout(function() {
+				            		 toastElement.hide();
+				            		 $("#modifyCancel").modal('hide'); // 모달이름
+				                   }, 2000);
+				            	
 				                let canelReason = data.cancel_reason.replace(" ", "").trim();
 				                console.log(canelReason);
+				                
 				                  if(data.payment_method == 'T') {
-				                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount = null,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
+				                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount, cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 				                } else if (data.payment_method == 'K') {
 				                	kakaopayCancelRequest(data.payment_module_key, data.canelReason, data.paid_amount,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 				                } else if (data.payment_method == 'N') {
@@ -585,8 +609,9 @@ let data;
                 cancelListContainer += 
                     '<tr>' +
                         '<td class = "modalCancelNo">' + e.cancel_no + '</td>' +
-                        '<td>' + e.order_id + '</td>' +
+                       
                         '<td class = "modalOrderProductNo">' + e.order_product_no + '</td>' +
+                        '<td>' + e.order_id + '</td>' +
                         '<td>' + new Date(e.cancel_apply_date).toLocaleString() + '</td>' +
                         '<td>' + (e.cancel_complete_date ? new Date(e.cancel_complete_date).toLocaleString() : '없음') + '</td>' +
                         '<td>' + (e.cancel_retract_date ? new Date(e.cancel_retract_date).toLocaleString() : '없음') + '</td>' +
@@ -627,17 +652,24 @@ let data;
 		            	list: orderProductList
 		            }),
 		            success: function(data) {
-		            	console.log(typeof data.paid_amount);
-		            	console.log(typeof data.payment_module_key);
+		            	$('#toastTitle').text("환불 성공!"); // 토스트 메시지 제목
+		                $('#toastBody').text("환불이 완료되었습니다"); // 토스트 메시지 내용
 		                console.log(data);
+		                var toastElement = $('#toastMessage');
+		                toastElement.removeClass('hide').addClass('show');
+		            	$("#modalToggle2").modal('hide'); // 모달이름
+		            	 setTimeout(function() {
+		            		 toastElement.hide();
+		                   }, 2000);
+		            	
 		                let canelReason = data.cancel_reason.replace(" ", "").trim();
 		                console.log(canelReason);
 		                 if(data.payment_method == 'T') {
-		                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount = null,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
+		                	tossCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount ,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 		                } else if (data.payment_method == 'K') {
-		                	kakaopayCancelRequest(data.payment_module_key, canelReason, data.paid_amount,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
+		                	kakaopayCancelRequest(data.payment_module_key, canelReason, data.paid_amount, cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 		                } else if (data.payment_method == 'N') {
-		                	naverpayCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount,cancelList,data.payment_no,data.cancel_type,data.assigned_point);
+		                	naverpayCancelRequest(data.payment_module_key, data.cancel_reason, data.paid_amount, cancelList,data.payment_no,data.cancel_type,data.assigned_point);
 		                }  
 		            },
 		            error: function(error) {
@@ -680,15 +712,16 @@ let data;
 			        	
  						let isDisabled = (cancel.cancel_status === '취소 완료' || cancel.cancel_status === '취소 철회') ? 'disabled' : '';
 			            const formattedDate = new Date(cancel.cancel_apply_date).toISOString().slice(0, 10);
-			            
+			       
+			        
 			            output += '<tr>' +
 			             
 			                '<td>' + cancel.cancel_no + '</td>' +
-			                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
 			                '<td>' + cancel.order_product_no + '</td>' +
+			                '<td id="cancelOrderId">' + cancel.order_id + '</td>' +
 			                '<td>' + formattedDate + '</td>' +
-			                '<td>' + cancel.cancel_complete_date + '</td>' +
-			                '<td>' + cancel.cancel_retract_date + '</td>' +
+			                '<td>' + (cancel.cancel_complete_date ? new Date(cancel.cancel_complete_date).toLocaleString() : ' ') + '</td>' +
+			                '<td>' + (cancel.cancel_retract_date ? new Date(cancel.cancel_retract_date).toLocaleString() : ' ') +'</td>' +
 			                '<td>' + cancel.cancel_type + '</td>' +
 			                '<td>' + cancel.cancel_status + '</td>' +
 			                '<td>' + cancel.cancel_reason + '</td>' +
@@ -1046,6 +1079,15 @@ let data;
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="bs-toast toast toast-placement-ex m-2 fade bg-secondary top-0 end-0 hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000" id="toastMessage">
+				<div class="toast-header">
+					<i class="bx bx-bell me-2"></i>
+					<div class="me-auto fw-semibold" id="toastTitle"></div>
+					<small></small>
+					<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+				</div>
+				<div class="toast-body" id="toastBody"></div>
 			</div>
 			<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
 			<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
