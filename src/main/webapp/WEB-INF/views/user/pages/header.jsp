@@ -140,6 +140,7 @@
 							</button>
 							<div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
 								<ul id="nav" class="navbar-nav ms-auto">
+									<li class="nav-item"><a href="/product/jewelry/all" class="${currentCategory == 'all' ? 'active' : ''}">All</a>
 									<li class="nav-item"><a href="/product/jewelry?category=196" class="${param.category == '196' ? 'active' : ''}">Nacklace</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=195" class="${param.category == '195' ? 'active' : ''}">Earring</a></li>
 									<li class="nav-item"><a href="/product/jewelry?category=203" class="${param.category == '203' ? 'active' : ''}">Piercing</a></li>
