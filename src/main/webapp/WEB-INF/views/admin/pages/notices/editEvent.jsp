@@ -86,7 +86,7 @@
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="editEvent" value="editEvent" />
+				<jsp:param name="pageName" value="event" />
 
 			</jsp:include>
 
