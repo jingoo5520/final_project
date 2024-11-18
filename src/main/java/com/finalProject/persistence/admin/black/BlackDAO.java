@@ -23,4 +23,8 @@ public interface BlackDAO {
 
 	void insertBlackMembers(BlackInsertDTO dto);
 
+	int blackCancelMember(String memberId);
+
+	int deleteBlackMember(String memberId);
+
 }

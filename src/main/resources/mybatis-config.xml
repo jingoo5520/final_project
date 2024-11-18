@@ -15,6 +15,7 @@
 		<typeAlias type="com.finalProject.model.admin.notices.BannerVO" alias="BannerVO" />
 		<typeAlias type="com.finalProject.model.review.ReviewDTO" alias="ReviewDTO" />
 		<typeAlias type="com.finalProject.model.review.ReviewDetailDTO" alias="ReviewDetailDTO" />
+		<typeAlias type="com.finalProject.model.review.ProductDetailReviewDTO" alias="ProductDetailReviewDTO" />
 		<typeAlias type="com.finalProject.model.review.PointEarnedDTO" alias="PointEarnedDTO" />
 
 		

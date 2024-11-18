@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.finalProject.model.product.PagingInfo;
 import com.finalProject.model.product.ProductDTO;
+import com.finalProject.model.review.ProductDetailReviewDTO;
 import com.finalProject.model.review.ReviewDetailDTO;
 
 public interface UserProductService {
@@ -32,11 +33,13 @@ public interface UserProductService {
     List<ProductDTO> searchProducts(String search, Integer category, PagingInfo pagingInfo, String sortOrder) throws Exception;
 
     // 상품 리뷰 조회
-    List<ReviewDetailDTO> getReviewDetail(int productNo) throws Exception;
+	List<ProductDetailReviewDTO> getReviewDetail(int productNo, int offset, int limit) throws Exception;
 
     // 상품 리뷰 이미지 출력
-    List<String> getReviewImgs(int productNo) throws Exception;
+//    List<String> getReviewImgs(int productNo) throws Exception;
 
     // 상품에 대한 리뷰 개수
 	int countReview(int productNo) throws Exception;
+
+
 }

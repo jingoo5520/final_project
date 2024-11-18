@@ -1,12 +1,15 @@
 package com.finalProject.service.admin.notices;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.finalProject.model.admin.notices.NoticeDTO;
-import com.finalProject.model.admin.notices.NoticeTypeStatus.NoticeType;
+import com.finalProject.model.admin.notices.PagingInfoNotice;
+import com.finalProject.model.admin.notices.PagingInfoNoticeDTO;
 import com.finalProject.persistence.admin.notices.UserNoticeDAO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +23,29 @@ public class UserNoticeServiceImpl implements UserNoticeService {
 
 
     @Override
-    public List<NoticeDTO> getNoticesByType(NoticeType noticeType) throws Exception {
-        log.info("Fetching notices of type: {}", noticeType);
-        List<NoticeDTO> notices = unDAO.getNoticesByType(noticeType);
-        log.info("Notices fetched: {} items", notices.size()); // 리스트 개수 로깅
-        
-        if (notices == null || notices.isEmpty()) {
-            log.warn("No notices found for type: {}", noticeType);
-        }
-        
-        return notices;
+    public Map<String, Object> getAllNotices(PagingInfoNoticeDTO pDto) throws Exception {
+    	log.info("UserNoticeServiceImpl!!!");
+
+		PagingInfoNotice pi = new PagingInfoNotice(pDto);
+
+		// setter 호출
+		pi.setTotalDataCnt(unDAO.getTotalNoticeCnt());
+
+		pi.setTotalPageCnt();
+		pi.setStartRowIndex();
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBloack();
+		pi.setEndPageNoCurBlock();
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<NoticeDTO> list = unDAO.selectNoticeList(pi);
+
+		result.put("pi", pi);
+		result.put("list", list);
+
+		return result;
     }
     
     @Override
@@ -47,16 +63,29 @@ public class UserNoticeServiceImpl implements UserNoticeService {
     }
 
     @Override
-    public List<NoticeDTO> getEventsByType(NoticeType noticeType) throws Exception {
-        log.info("Fetching events of type: {}", noticeType);
-        List<NoticeDTO> events = unDAO.getEventsByType(noticeType);
-        log.info("Events fetched: {} items", events.size()); // 리스트 개수 로깅
-        
-        if (events == null || events.isEmpty()) {
-            log.warn("No events found for type: {}", noticeType);
-        }
-        
-        return events;
+    public Map<String, Object> getAllEvents(PagingInfoNoticeDTO pDto) throws Exception {
+    	log.info("EventServiceImpl!!!");
+
+		PagingInfoNotice pi = new PagingInfoNotice(pDto);
+
+			// setter 호출
+			pi.setTotalDataCnt(unDAO.getTotalEventCnt());
+
+			pi.setTotalPageCnt();
+			pi.setStartRowIndex();
+
+			// 페이징 블럭
+			pi.setPageBlockNoCurPage();
+			pi.setStartPageNoCurBloack();
+			pi.setEndPageNoCurBlock();
+
+			Map<String, Object> result = new HashMap<String, Object>();
+			List<NoticeDTO> list = unDAO.selectEventList(pi);
+
+			result.put("pi", pi);
+			result.put("list", list);
+
+			return result;
     }
 
     @Override
@@ -79,13 +108,55 @@ public class UserNoticeServiceImpl implements UserNoticeService {
 	}
 
 	@Override
-	public List<NoticeDTO> getAllNotices(int pagingSize, int startRowIndex) throws Exception {
-		return unDAO.getALLNotices(pagingSize, startRowIndex);
+	public Map<String, Object> getUserNoticeList(PagingInfoNoticeDTO pDto) throws Exception {
+		log.info("NoticeServiceImpl!!!");
+
+		PagingInfoNotice pi = new PagingInfoNotice(pDto);
+
+		// setter 호출
+		pi.setTotalDataCnt(unDAO.getTotalNoticeCnt());
+
+		pi.setTotalPageCnt();
+		pi.setStartRowIndex();
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBloack();
+		pi.setEndPageNoCurBlock();
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<NoticeDTO> list = unDAO.selectNoticeList(pi);
+
+		result.put("pi", pi);
+		result.put("list", list);
+
+		return result;
 	}
 
 	@Override
-	public List<NoticeDTO> getAllEvents(int pagingSize, int startRowIndex) throws Exception {
-		return unDAO.getAllEvents(pagingSize, startRowIndex);
+	public Map<String, Object> getUserEventList(PagingInfoNoticeDTO pDto) throws Exception {
+		log.info("EventServiceImpl!!!");
+
+		PagingInfoNotice pi = new PagingInfoNotice(pDto);
+
+			// setter 호출
+			pi.setTotalDataCnt(unDAO.getTotalEventCnt());
+
+			pi.setTotalPageCnt();
+			pi.setStartRowIndex();
+
+			// 페이징 블럭
+			pi.setPageBlockNoCurPage();
+			pi.setStartPageNoCurBloack();
+			pi.setEndPageNoCurBlock();
+
+			Map<String, Object> result = new HashMap<String, Object>();
+			List<NoticeDTO> list = unDAO.selectEventList(pi);
+
+			result.put("pi", pi);
+			result.put("list", list);
+
+			return result;
 	}
 
 //	@Override

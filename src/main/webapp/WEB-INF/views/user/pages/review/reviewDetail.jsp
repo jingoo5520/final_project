@@ -40,7 +40,7 @@
                             return f.name === file.name
                         })) {
                         fileList.push(file);
-                        console.log(fileList);
+//                         console.log(fileList);
                     }
                 });
 
@@ -53,14 +53,14 @@
 
                 for (let i = 0; i < fileList.length; i++) {
                     if (fileList[i].name == parentLi.text().trim()) {
-                        console.log(fileList[i] + "삭제완료");
+//                         console.log(fileList[i] + "삭제완료");
                         fileList.splice(i, 1);
                         parentLi.remove();
                         break;
                     }
                 }
 
-                console.log(fileList);
+//                 console.log(fileList);
                 showFiles();
             })
 
@@ -113,11 +113,11 @@
                 contentType: false,
                 data: formData,
                 success: function(data) {
-                    console.log(data);
+//                     console.log(data);
                     location.href = "/review/writtenByReview";
                 },
                 error: function(error) {
-                    console.log("다메다메");
+//                     console.log("다메다메");
                     console.log(error);
                 }
             });
@@ -173,7 +173,7 @@
                 let selectedValue = $(this).data("value");
                 $("#reviewScore").val(selectedValue); // 선택한 별점 값을 숨겨진 input에 설정
 
-                console.log("선택한 별점 값:", selectedValue); // 콘솔에 별점 값 출력
+//                 console.log("선택한 별점 값:", selectedValue); // 콘솔에 별점 값 출력
                 // 선택한 별점까지 스타일 적용
                 $(".star").each(function() {
                     let starValue = $(this).data("value");
@@ -312,11 +312,9 @@
             <div class="row">
 
                 <!-- sideBar -->
-                <jsp:include page="/WEB-INF/views/user/pages/serviceCenterSideBar.jsp">
-
-                    <jsp:param name="pageName" value="inquiries" />
-
-                </jsp:include>
+					<jsp:include page="/WEB-INF/views/user/pages/myPageSideBar.jsp">
+						<jsp:param name="pageName" value="manageDelivery" />
+					</jsp:include>
                 <!-- / sideBar -->
 
                 <div class="col-lg-9 col-12">

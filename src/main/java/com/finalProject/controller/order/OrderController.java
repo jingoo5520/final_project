@@ -144,9 +144,6 @@ public class OrderController {
 
 			if (paymentRequest.getSaveDeliveryType().contains("saveDelivery")) {
 				// 배송지 저장
-				System.out.println("배송지 저장 탭임");
-				System.out.println(deliveryVO.toString());
-
 				try {
 					memberService.saveDelivery(deliveryVO);
 				} catch (Exception e) {
@@ -156,22 +153,14 @@ public class OrderController {
 
 			if (paymentRequest.getSaveDeliveryType().contains("saveAddress")) {
 				// 회원 정보 주소 수정
-				System.out.println("회원 주소 정보 수정 탭임");
-				System.out.println(deliveryVO.toString());
 
 				try {
-					if (memberService.updateAddress(deliveryVO)) {
-						System.out.println("회원 정보 수정 완료");
-					} else {
-						System.out.println("수정 안됨");
-					}
+					memberService.updateAddress(deliveryVO);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-		} else {
-			System.out.println("동작하면 안돼.");
 		}
 
 		// paymentRequest 객체를 사용하여 결제 처리 로직을 구현
@@ -231,7 +220,6 @@ public class OrderController {
 
 		try {
 			couponList = memberService.getCouponList(memberId, currentTime);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -83,10 +83,9 @@
 		resultType="com.finalProject.model.admin.order.AdminPaymentVO">
 		SELECT
 		o.payment_module_key AS payment_module_key,
-		c.cancel_reason AS
-		cancel_reason,
-		SUM(op.paid_amount) AS paid_amount,
-		SUM(op.assigned_point) AS assigned_point,
+		c.cancel_reason AS cancel_reason,
+		SUM(DISTINCT op.paid_amount) AS paid_amount,
+		SUM(DISTINCT op.assigned_point) AS assigned_point,
 		c.cancel_type AS cancel_type,
 		p.payment_method AS payment_method,
 		p.payment_id AS payment_no
@@ -95,11 +94,9 @@
 		JOIN
 		orders o ON c.order_id = o.order_id
 		JOIN
-		order_products op
-		ON c.order_product_no = op.orderproduct_no
+		order_products op ON c.order_product_no = op.orderproduct_no
 		JOIN
-		payments p ON c.order_id
-		= p.order_id
+		payments p ON c.order_id = p.order_id
 		<if test="list != null and list.size() > 0">
 			WHERE c.order_product_no IN
 			<foreach item="orderProductNo" collection="list" open="("
@@ -171,14 +168,14 @@
 		#{usePoint} where member_id =#{member_id}
 	</update>
 	<delete id="deleteUseCoupon">
-		DELETE FROM coupon_used WHERE coupon_no =
+		DELETE FROM coupon_used WHERE coupon_use_no =
 		#{coupon_no}
 	</delete>
 	<select id="memberLevelPoint" resultType="float">
 		SELECT distinct
 		l.level_point FROM orders o JOIN members m ON
 		o.orderer_id = m.member_id JOIN levels l ON m.member_level =
-		l.level_no WHERE o.order_id = #{orderId}
+		l.level_no WHERE o.orderer_id = #{orderId}
 	</select>
 	<insert id="restractPoint">
 		insert into
@@ -194,5 +191,53 @@
 		SELECT m.member_id from members m JOIN orders o ON
 		o.orderer_id = m.member_id WHERE order_id =
 		#{orderId}
+	</select>
+	<select id="getAllRefund" resultType="com.finalProject.model.admin.order.AdminRefundVO">
+		select * from refunds 
+		limit #{startRowIndex} , #{viewPostCntPerPage}
+	</select>
+	<select id="getCountAllRefund" resultType="int">
+		select count(*) from refunds;
+	</select>
+		<select id="getSearchRefundTotalPostCnt" resultType="int">
+		SELECT COUNT(*) from refunds
+		<where>
+			<if test="refund_type != null and refund_type.size() > 0">
+				and refund_type in
+				<foreach item="type" collection="refund_type" open="("
+					separator="," close=")">
+					#{type}
+				</foreach>
+			</if>
+			
+			<if
+				test="refund_start_date != null and refund_start_date != ''">
+				AND refund_receive_date &gt;= #{refund_start_date}
+			</if>
+			<if
+				test="refund_end_date != null and refund_end_date != ''">
+				AND refund_receive_date &lt;= #{refund_end_date}
+			</if>
+		</where>
+	</select>
+	<select id="getSearchRefundFilter" resultType="com.finalProject.model.admin.order.AdminRefundVO">
+		select * from refunds where 1=1
+		<if test="refund_type != null and refund_type.size() > 0">
+			and refund_type in
+			<foreach item="type" collection="refund_type" open="("
+				separator="," close=")">
+				#{type}
+			</foreach>
+		</if>
+		<if
+			test="refund_start_date != null and refund_start_date != ''">
+			AND refund_receive_date &gt;= #{refund_start_date}
+		</if>
+		<if
+			test="refund_end_date != null and refund_end_date != ''">
+			AND refund_receive_date &lt;= #{refund_end_date}
+		</if>
+		order by refund_no desc
+		limit #{startRowIndex},#{viewPostCntPerPage}
 	</select>
 </mapper>

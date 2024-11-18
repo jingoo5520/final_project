@@ -60,6 +60,7 @@
 <section class="product-grids section">
 <div class="container mt-3">
   <div class="row">
+  <tbody id="eventTableBody">
     <c:choose>
       <c:when test="${not empty events}">
         <c:forEach var="event" items="${events}">
@@ -84,50 +85,46 @@
       <c:otherwise>
         <div class="col-12">
           <div class="alert alert-warning" role="alert">등록된 이벤트가 없습니다.</div>
-        </div>
+  		</div>
       </c:otherwise>
     </c:choose>
-  </div>
+  </tbody>
 </div>
-                        <!-- 페이지네이션 -->
-                        <div class="pagination center">
-                            <ul class="pagination-list d-flex justify-content-center">
-                                <c:choose>
-                                    <c:when test="${inquiryData.pi.pageNo == 1}">
-                                        <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
-                                    </c:otherwise>
-                                </c:choose>
-
-                                <c:forEach var="i" begin="${inquiryData.pi.startPageNoCurBloack}" end="${inquiryData.pi.endPageNoCurBlock}">
-                                    <c:choose>
-                                        <c:when test="${inquiryData.pi.pageNo == i}">
-                                            <li class="active"><a href="javascript:void(0)">${i}</a></li>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <li><a href="javascript:void(0)" onclick="showInquiryList(${i})">${i}</a></li>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:forEach>
-
-                                <c:choose>
-                                    <c:when test="${inquiryData.pi.pageNo == inquiryData.pi.totalPageCnt}">
-                                        <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li><a href="javascript:void(0)" onclick="showInquiryList(${inquiryData.pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                            </ul>
-                        </div>
-                </div>
-              </div>
-		 </div>
-		 </div>
-            </div>
-            </section>
+<div class="pagination center">
+    <ul class="pagination-list d-flex justify-content-center">
+    <!-- 이전 페이지 버튼 -->
+        <c:choose>
+            <c:when test="${pi.pageNo == 1}">
+                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-left"></i></a></li>
+            </c:when>
+            <c:otherwise>
+                <li><a href="javascript:void(0)" onclick="showUserEventList(${pi.pageNo - 1})"><i class="lni lni-chevron-left"></i></a></li>
+            </c:otherwise>
+        </c:choose>
+<!-- 페이지 번호 출력 -->
+        <c:forEach var="i" begin="${pi.startPageNoCurBlock}" end="${pi.endPageNoCurBlock}">
+            <c:choose>
+                <c:when test="${pi.pageNo == i}">
+                    <li class="active"><a href="javascript:void(0)">${i}</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li><a href="javascript:void(0)" onclick="showUserEventList(${i})">${i}</a></li>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+<!-- 다음 페이지 버튼 -->
+        <c:choose>
+            <c:when test="${pi.pageNo == pi.totalPageCnt}">
+                <li class="disabled"><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
+            </c:when>
+            <c:otherwise>
+                <li><a href="javascript:void(0)" onclick="showUserEventList(${pi.pageNo + 1})"><i class="lni lni-chevron-right"></i></a></li>
+            </c:otherwise>
+        </c:choose>
+    </ul>
+</div>
+</div>
+</section>
 
     <!-- Start Breadcrumbs -->
     <jsp:include page="../footer.jsp"></jsp:include>
@@ -142,5 +139,112 @@
     <script src="/resources/assets/user/js/glightbox.min.js"></script>
     <script src="/resources/assets/user/js/main.js"></script>
 </body>
+<script type="text/javascript">
+function showUserEventList(pageNo, pagingSize) {
+    $.ajax({
+        url: "/event/getEvents",
+        type: "GET",
+        dataType : 'json',
+        data: {
+        	pageNo : pageNo
+        	},
+        success: function(response) {
+            // 이벤트 목록 업데이트
+            console.log(response);
+            
+            let eventList = '';
+            $.each(response.list, function(index, event){
+                let imgSrc = event.thumbnail_image 
+                ? `${event.thumbnail_image}` 
+                : "/resources/images/noP_image.png";  // 기본 이미지
+                // 이벤트 카드 HTML 구성
+                eventList += `
+                    <div id="eventList-row-${event.notice_no}" class="col-md-4 mb-4">
+                        <div class="card" style="width: 400px;">
+                            <a href="/eventDetail/${event.notice_no}">
+                                <img class="card-img-top" src="${event.thumbnail_image}" alt="${event.notice_title} 이미지">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">${event.notice_title}</h5>
+                                <p class="card-text">${event.notice_description || "설명이 없습니다."}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            console.log(response.list[0]);
+            console.log(eventList);
+            
+            $("#eventTableBody").html(eventList);
+            // 페이지네이션 업데이트
+            updatePagination(response.pi);
+        },
+        error: function() {
+            alert("이벤트 목록을 가져오는 데 실패했습니다.");
+        }
+    });
+}
 
+function updatePagination(pi) {
+    // 페이지네이션 업데이트 처리
+	let pagination = '';
+	
+	// 이전 버튼
+	if (pi.pageNo > 1) {
+	    pagination += `
+	        <li class="page-item prev">
+	            <a class="page-link" href="javascript:void(0);" onclick="showUserEventList('${pi.pageNo - 1}', '${pi.viewDataCntPerPage}')">
+	                <i class="lni lni-chevron-left"></i>
+	            </a>
+	        </li>`;
+	} else {
+	    pagination += `
+	        <li class="page-item prev disabled">
+	            <a class="page-link" href="javascript:void(0);">
+	                <i class="lni lni-chevron-left"></i>
+	            </a>
+	        </li>`;
+	}
+	
+	// 페이지 번호
+	for (let i = pi.startPageNoCurBlock; i <= pi.endPageNoCurBlock; i++) {
+	    if (pi.pageNo === i) {
+	        pagination += `
+	            <li class="page-item active">
+	                <a class="page-link" href="javascript:void(0);">${i}</a>
+	            </li>`;
+	    } else {
+	        pagination += `
+	            <li class="page-item">
+	                <a class="page-link" href="javascript:void(0);" onclick="showUserEventList('${i}', '${pi.viewDataCntPerPage}')">${i}</a>
+	            </li>`;
+	    }
+	}
+	
+	// 다음 버튼
+	if (pi.pageNo < pi.totalPageCnt) {
+	    pagination += `
+	        <li class="page-item next">
+	            <a class="page-link" href="javascript:void(0);" onclick="showUserEventList('${pi.pageNo + 1}', '${pi.viewDataCntPerPage}')">
+	                <i class="lni lni-chevron-right"></i>
+	            </a>
+	        </li>`;
+	} else {
+	    pagination += `
+	        <li class="page-item next disabled">
+	            <a class="page-link" href="javascript:void(0);">
+	                <i class="lni lni-chevron-right"></i>
+	            </a>
+	        </li>`;
+	}
+    console.log(pi.pageNo);
+    console.log(pi.startPageNoCurBlock);
+    console.log(pi.endPageNoCurBlock);
+    console.log(pi.totalPageCnt);
+    
+    // 페이지네이션 HTML을 .pagination에 삽입
+    $(".pagination-list").html(pagination);
+}
+
+</script>
 </html>

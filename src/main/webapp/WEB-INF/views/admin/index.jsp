@@ -391,8 +391,7 @@
 			},
 			success : function(data) {
 				console.log(data);
-				drawSaleAndRevenueGragh(data, "sale");
-
+				drawSaleAndRevenueGragh2(data.sales, "sale",data.cancels);
 			},
 			error : function(error) {
 				console.log(error);
@@ -761,7 +760,150 @@
 		}
 	  }
 	}
-	
+	function drawSaleAndRevenueGragh2(saleList, saleType, cancelList) {
+	    let categories = [];
+	    let saleSeries = [];
+	    let cancelSeries = [];
+	    let chart;
+	    let totalSale = 0;
+	    let totalCancel = 0;
+
+	    // 판매량 데이터 처리
+	    if (saleType === "sale") {
+	        chart = document.querySelector('#totalSaleChart'); // 차트 요소
+	        saleList.forEach(function(item) {
+	            categories.push(item.category_name);
+	            saleSeries.push(item.count);
+	            totalSale += item.count;
+	        });
+	        $("#totalSaleCnt").text(totalSale);
+	    }
+
+	    // 취소량 데이터 처리
+	    cancelList.forEach(function(item) {
+	        cancelSeries.push(item.count);
+	        totalCancel += item.count;
+	    });
+	    $("#totalCancelCnt").text(totalCancel.toLocaleString());
+
+	    const totalChartEl = chart;
+	    const totalChartOptions = {
+	        series: [
+	            {
+	                name: "Sale Volume",
+	                data: saleSeries
+	            },
+	            {
+	                name: "Cancel Volume",
+	                data: cancelSeries
+	            }
+	        ],
+	        chart: {
+	            height: 300,
+	            stacked: false,  // stacked를 false로 설정하여 나란히 표시되게 함
+	            type: 'bar',
+	            toolbar: { show: false }
+	        },
+	        plotOptions: {
+	            bar: {
+	                horizontal: false,
+	                columnWidth: '45%', // 각 막대의 너비를 조정하여 나란히 보이게 함
+	                borderRadius: 12,
+	                startingShape: 'rounded',
+	                endingShape: 'rounded'
+	            }
+	        },
+	        colors: ['#007bff', '#dc3545'],  // 파란색(판매량)과 빨간색(취소량) 설정
+	        dataLabels: {
+	            enabled: false
+	        },
+	        stroke: {
+	            curve: 'smooth',
+	            width: 6,
+	            lineCap: 'round',
+	            colors: ['#007bff', '#dc3545']
+	        },
+	        legend: {
+	            show: true,
+	            horizontalAlign: 'left',
+	            position: 'top',
+	            markers: {
+	                height: 8,
+	                width: 8,
+	                radius: 12,
+	                offsetX: -3
+	            },
+	            labels: {
+	                colors: '#6c757d'
+	            },
+	            itemMargin: {
+	                horizontal: 10
+	            }
+	        },
+	        grid: {
+	            borderColor: '#e0e0e0',
+	            padding: {
+	                top: 0,
+	                bottom: -8,
+	                left: 20,
+	                right: 20
+	            }
+	        },
+	        xaxis: {
+	            categories: categories,
+	            labels: {
+	                style: {
+	                    fontSize: '13px',
+	                    colors: '#6c757d'
+	                }
+	            },
+	            axisTicks: {
+	                show: false
+	            },
+	            axisBorder: {
+	                show: false
+	            }
+	        },
+	        yaxis: {
+	            labels: {
+	                style: {
+	                    fontSize: '13px',
+	                    colors: '#6c757d'
+	                }
+	            }
+	        }
+	    };
+
+	    // 차트 업데이트 혹은 최초 렌더링 처리
+	    if (typeof totalChartEl !== undefined && totalChartEl !== null) {
+	        // 이미 차트가 그려졌다면 업데이트
+	        if (isDrawedSaleGragh) {
+	            totalSaleChart.updateSeries([
+	                {
+	                    name: "Sale Volume",
+	                    data: saleSeries
+	                },
+	                {
+	                    name: "Cancel Volume",
+	                    data: cancelSeries
+	                }
+	            ]);
+	            totalSaleChart.updateOptions({
+	                xaxis: {
+	                    categories: categories
+	                }
+	            });
+	        } else {
+	            // 차트가 처음 생성되는 경우
+	            totalSaleChart = new ApexCharts(totalChartEl, totalChartOptions);
+	            totalSaleChart.render();
+	            isDrawedSaleGragh = true;
+	        }
+	    }
+	}
+
+
+
 </script>
 </head>
 <style>
@@ -960,7 +1102,8 @@
 												</div>
 												<span class="fw-semibold d-block mb-1">Total Sales volume</span>
 												<h3 id="totalSaleCnt" class="card-title mb-2"></h3>
-
+												<span class="fw-semibold d-block mb-1">Total cancels volume</span>
+												<h3 id="totalCancelCnt" class="card-title mb-2"></h3>
 												<span class="fw-semibold d-block mt-4">Select Month</span>
 												<div class="col align-items-center">
 													<div class="form-check-inline">

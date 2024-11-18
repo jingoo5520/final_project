@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
+import com.finalProject.model.admin.CancelCountDTO;
 import com.finalProject.model.admin.RevenueDTO;
 import com.finalProject.model.admin.SaleCountDTO;
 
@@ -20,4 +21,7 @@ public interface AdminService {
 
 	// 특정 달의 매출 가져오기
 	List<RevenueDTO> getRevenuesByMonth(String selectedMonth) throws Exception;
+
+	// 특정 달의 취소 수 가져오기 추가
+	List<CancelCountDTO> getCancelByMonth(String selectedMonth);
 }

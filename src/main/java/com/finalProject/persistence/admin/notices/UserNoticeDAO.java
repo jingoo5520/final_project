@@ -5,6 +5,7 @@ import java.util.List;
 import com.finalProject.model.admin.notices.NoticeDTO;
 import com.finalProject.model.admin.notices.NoticeTypeStatus.NoticeType;
 import com.finalProject.model.admin.notices.NoticeVO;
+import com.finalProject.model.admin.notices.PagingInfoNotice;
 
 public interface UserNoticeDAO {
 
@@ -25,6 +26,14 @@ public interface UserNoticeDAO {
 	List<NoticeDTO> getALLNotices(int pagingSize, int startRowIndex) throws Exception;
 
 	List<NoticeDTO> getAllEvents(int pagingSize, int startRowIndex) throws Exception;
+
+	int getTotalNoticeCnt() throws Exception;
+
+	List<NoticeDTO> selectNoticeList(PagingInfoNotice pi) throws Exception;
+
+	int getTotalEventCnt() throws Exception;
+
+	List<NoticeDTO> selectEventList(PagingInfoNotice pi) throws Exception;
 
 //	List<NoticeDTO> getNoticesByType(String string) throws Exception;
 	
