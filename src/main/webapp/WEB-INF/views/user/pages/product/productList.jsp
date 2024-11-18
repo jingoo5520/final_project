@@ -320,6 +320,10 @@
 											<div class="single-product">
 												<div class="product-image">
 
+
+
+
+
 													<a href="/product/jewelry/detail?productNo=${product.product_no}"> 
 														<c:if test="${fn:startsWith(product.image_url, 'https://')}">
 															<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
@@ -328,6 +332,10 @@
 															<img src="/resources/product/${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
 														</c:if>
 													</a>
+													
+													
+													
+													
 
 													<div class="button buttonArea">
 														<c:set var="result" value="false" />
