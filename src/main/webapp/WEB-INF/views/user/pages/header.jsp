@@ -49,10 +49,8 @@
 									<i class="lni lni-user"></i> 로그인하세요.
 								</div>
 								<ul class="user-login">
-									<li><a
-										href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
-									<li><a
-										href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+									<li><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
 									<li><a href="/serviceCenter/notice">고객센터</a></li>
 								</ul>
 							</c:if>
@@ -127,7 +125,9 @@
 						<!-- Start Navbar -->
 						<nav class="navbar navbar-expand-lg">
 							<button class="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-								<span class="toggler-icon"></span> <span class="toggler-icon"></span> <span class="toggler-icon"></span>
+								<span class="toggler-icon"></span>
+								<span class="toggler-icon"></span>
+								<span class="toggler-icon"></span>
 							</button>
 							<div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
 								<ul id="nav" class="navbar-nav ms-auto">
