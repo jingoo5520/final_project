@@ -94,6 +94,10 @@
 		justify-content: space-between !important;
 		margin:0 !important;
 	}
+	
+	.exceeded {
+		color: red;
+	}
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -186,7 +190,7 @@
 			
 				<!-- Modal body -->
 				<div class="modal-body">
-				<p class="modal-text">변경처리할 상품을 선택하십시오.</p>
+				<p class="modal-text"></p>
 				</div>
 			
 				<!-- Modal footer 
