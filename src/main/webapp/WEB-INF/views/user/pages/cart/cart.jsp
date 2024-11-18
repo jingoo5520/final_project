@@ -488,6 +488,7 @@ input[type="checkbox"]:hover {
 	width: 450px;
 }
 
+
 </style>
 
 <body>

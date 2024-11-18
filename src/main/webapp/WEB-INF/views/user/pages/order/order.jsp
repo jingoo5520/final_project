@@ -68,7 +68,7 @@
 
 			$(".dcPrice").each(function() {
 				let productDcPriceText = parseInt($.trim($(this).text().replace(" 원", "").replace(/,/g, "")));
-				totalProductDcPrice += productDcPriceText;
+				totalProductDcPrice += (Math.floor(productDcPriceText / 10) * 10);
 				console.log("totalProductDcPrice에 더해지는 값 :" + productDcPriceText)
 			});
 			
