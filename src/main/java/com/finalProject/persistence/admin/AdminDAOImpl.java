@@ -116,4 +116,10 @@ public class AdminDAOImpl implements AdminDAO {
 
 		return ses.selectList(ns + "CategoryCancelByDateCnt", selectedMonth);
 	}
+
+	@Override
+	public List<CancelCountDTO> selectTotalCancelCnt() {
+		// TODO Auto-generated method stub
+		return ses.selectList(ns);
+	}
 }

@@ -14,7 +14,6 @@
 <!-- ========================= CSS here ========================= -->
 <link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
@@ -50,9 +49,11 @@
 									<i class="lni lni-user"></i> 로그인하세요.
 								</div>
 								<ul class="user-login">
-									<li><a href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
-									<li><a href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
-									<li><a href="/serviceCenter/inquiries">고객센터</a></li>
+									<li><a
+										href="${pageContext.request.contextPath}/member/viewLogin">로그인</a></li>
+									<li><a
+										href="${pageContext.request.contextPath}/member/viewSignUp">회원가입</a></li>
+									<li><a href="/serviceCenter/notice">고객센터</a></li>
 								</ul>
 							</c:if>
 							<!-- 로그인 됬을 때 -->

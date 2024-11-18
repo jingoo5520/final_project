@@ -110,8 +110,8 @@
 				<c:forEach var="banner" items="${subBannerList}">
 					<div class="col-md-6 col-12">
 						<!-- Start Single Category -->
-						<div class="single-category" style="height: 350px">
-							<img src="${banner.thumbnail_image}" width="100%" height="100%" style="object-fit: cover;">
+						<div class="single-category" style="width: 100%; height: 350px">
+							<img src="${banner.thumbnail_image}" style="width:100% !important; height:100%; object-fit: cover;">
 						</div>
 						<!-- End Single Category -->
 					</div>
@@ -140,9 +140,7 @@
 						<div class="single-product">
 							<div class="product-image" style="height: 300px;">
 								<img src="${product.image_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 100%; object-fit: cover;" />
-								<div class="button buttonArea">
-									<a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a> <a href="product-details.html" class="btn"><i class="lni lni-cart"></i></a>
-								</div>
+								
 							</div>
 							<div class="product-info">
 								<span class="category">${product.category_name }</span>
