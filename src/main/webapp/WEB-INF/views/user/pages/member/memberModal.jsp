@@ -12,7 +12,7 @@
 #modalcontainer {
 	display: none; /* 기본적으로 숨김 */
 	position: fixed;
-	z-index: 1;
+	z-index: 1050; /* 헤더보다 우선하여 보이도록 설정 */
 	left: 0;
 	top: 0;
 	width: 100%;
@@ -50,6 +50,11 @@
 
 #modalText {
 	margin: 50px 100px 50px 100px;
+}
+
+.modalLink {
+	text-align: center;
+	font-size: 18px;
 }
 </style>
 

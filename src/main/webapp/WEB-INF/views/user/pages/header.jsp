@@ -26,6 +26,7 @@
 .levelImg {
 	width: 30px;
 	border-radius: 10px;
+	margin-bottom: 5px;
 }
 </style>
 </head>
@@ -59,16 +60,16 @@
 							<c:if test="${not empty sessionScope.loginMember }">
 								<div class="user">
 									<c:if test="${sessionScope.loginMember.member_level == 1}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/bronze.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/bronze.png"></a>
 									</c:if>
 									<c:if test="${sessionScope.loginMember.member_level == 2}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/silver.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/silver.png"></a>
 									</c:if>
 									<c:if test="${sessionScope.loginMember.member_level == 3}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/gold.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/gold.png"></a>
 									</c:if>
 									<c:if test="${sessionScope.loginMember.member_level == 4}">
-										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/dia.PNG"></a>
+										<a href="${pageContext.request.contextPath}/member/myPage/viewOrder"><img class="levelImg" alt="" src="/resources/images/diamond.png"></a>
 									</c:if>
 									${sessionScope.loginMember.member_name } 님
 								</div>
