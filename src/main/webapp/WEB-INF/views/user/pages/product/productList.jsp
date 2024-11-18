@@ -171,11 +171,30 @@
 	height: 100%;
 	object-fit: cover;
 }
+
+.buttonArea {
+	display: flex;
+	flex-direction: row;
+	position: inherit;
+	width: 50% !important;
+	justify-content: space-between;
+}
+
+.buttonArea .btn {
+	display: flex !important;
+	flex-direction: row !important;
+	justify-content: center !important;
+}
+
+.btn i {
+	margin: 0 !important;
+}
 </style>
 <body>
 	<jsp:include page="../header.jsp">
 		<jsp:param name="categoryName" value="${products[0].category_name}" />
 	</jsp:include>
+
 
 	<!-- Preloader -->
 	<div class="preloader">
@@ -301,10 +320,16 @@
 											<div class="single-product">
 												<div class="product-image">
 
-													<a href="/product/jewelry/detail?productNo=${product.product_no}"> <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
+													<a href="/product/jewelry/detail?productNo=${product.product_no}"> 
+														<c:if test="${fn:startsWith(product.image_url, 'https://')}">
+															<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
+														</c:if> 
+														<c:if test="${!fn:startsWith(product.image_url, 'https://')}">
+															<img src="/resources/product/${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
+														</c:if>
 													</a>
 
-													<div class="button" style="position: absolute; bottom: 10px; left: 90px;">
+													<div class="button buttonArea">
 														<c:set var="result" value="false" />
 														<c:forEach var="wishItem" items="${wishList }">
 															<c:if test="${wishItem == product.product_no}">
@@ -327,9 +352,6 @@
 															<a href="${pageContext.request.contextPath}/member/viewLogin" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-heart"></i>
 															</a>
 														</c:if>
-													</div>
-
-													<div class="button" style="position: absolute; bottom: 10px; right: 140px;">
 														<a onclick="addCart(${product.product_no})" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-cart"></i>
 														</a>
 													</div>

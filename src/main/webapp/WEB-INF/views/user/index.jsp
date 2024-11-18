@@ -158,11 +158,10 @@
 								</div>
 							</div>
 						</div>
-						<!-- End Single Product -->
 					</div>
 				</c:forEach>
-				<!-- End Single Product -->
 			</div>
+			
 		</div>
 	</section>
 	<!-- End Trending Product Area -->
