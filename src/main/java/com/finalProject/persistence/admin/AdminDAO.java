@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import com.finalProject.model.admin.CancelCountDTO;
+import com.finalProject.model.admin.CancelRevenueDTO;
 import com.finalProject.model.admin.GenderCountDTO;
 import com.finalProject.model.admin.LevelCountDTO;
 import com.finalProject.model.admin.RevenueDTO;
@@ -53,11 +54,19 @@ public interface AdminDAO {
 	List<String> CategoryCancelByDate(String selectedMonth);
 
 	// 특정 달의 취소량 가져오기 추가
-	List<CancelCountDTO> selectTotalCancel();
+	List<CancelCountDTO> selectTotalCancel() throws Exception;
 
 	// 특정 달의 취소금액 가져오기 추가
-	List<CancelCountDTO> selectTotalByMonth(List<Integer> list);
+	List<CancelCountDTO> selectTotalByMonth(List<Integer> list) throws Exception;
 
-	List<CancelCountDTO> selectTotalCancelCnt();
+	List<CancelCountDTO> selectTotalCancelCnt() throws Exception;
+
+	List<String> refundsCancel() throws Exception;
+
+	List<CancelRevenueDTO> selectTotalCancelRevenues(List<Integer> list) throws Exception;
+
+	int getCancelCnt() throws Exception;
+
+	int getRefundCnt() throws Exception;
 
 }
