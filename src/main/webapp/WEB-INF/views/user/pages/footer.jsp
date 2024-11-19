@@ -101,7 +101,7 @@
                                     <li><a href="https://docs.google.com/spreadsheets/d/1ULEzyom9b-teEy3ERGJSTtn1C1u6tFI2_f3Zmhp_PYA/edit?gid=488089020#gid=488089020">기능명세서</a></li>
                                     <li><a href="https://docs.google.com/spreadsheets/d/1TqMi5rk0uO-Az_MNDS0bLJajiCx10kAMmpXf07ObsY4/edit?gid=1351357681#gid=1351357681">테이블명세서</a></li>
                                     <li><a href="https://www.notion.so/2-111b8702aaa180cbac60c0dc4504a9b9">Notion</a></li>
-                                    <li><a href="https://app.diagrams.net/#G1IaZH6wb7uZ0rK2KA8L1gTRMWu3-IZ7Xa#%7B%22pageId%22%3A%22PABAss9pXgwyKsPXD-XM%22%7D">Site Map</a></li>
+                                    <li><a href="https://app.diagrams.net/#G1DC2MAYNjGgyQx5aA0wegAu6TrnZgy5oG#%7B%22pageId%22%3A%222c0d36ab-eaac-3732-788b-9136903baeff%22%7D">Site Map</a></li>
                                     <li><a href="https://github.com/jingoo5520/final_project">Git Hub</a></li>
                                 </ul>
                             </div>
