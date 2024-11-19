@@ -78,7 +78,7 @@
 									</c:if>
 								</div>
 								<div style="color:#FFFFFF;">
-									${sessionScope.loginMember.member_name } 님
+									${sessionScope.loginMember.nickname } 님
 								</div>
 								<ul class="user-login">
 									<li><a href="${pageContext.request.contextPath}/member/myPage/viewOrder">내 정보</a></li>
