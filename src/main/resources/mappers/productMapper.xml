@@ -6,35 +6,41 @@
    <!-- 쿼리문 -->
 <!-- 생성일에 따른 모든 상품 나열 -->
 <select id="selectProductsByPage" parameterType="map" resultType="ProductDTO">
-    select p.product_no, 
-           p.product_name, 
-           p.product_price, 
-           p.product_category, 
-           p.dc_rate, 
-           p.product_dc_type, 
-           p.product_sell_count,
-           max(pi.image_url) as image_url, 
-           c.category_name, 
-           avg(r.review_score) as average_score 
-    from products p
-    left join product_images pi on p.product_no = pi.product_no
-    join categories c on p.product_category = c.category_no 
-    left join reviews r on p.product_no = r.product_no 
-    where p.product_delete = 'N'
-    group by p.product_no, 
-             p.product_name, 
-             p.product_price, 
-             p.product_category, 
-             c.category_name
-    order by p.product_reg_date desc
-    limit #{limit} offset #{offset}
+select p.product_no, 
+       p.product_name, 
+       p.product_price, 
+       p.product_category, 
+       p.dc_rate, 
+       p.product_dc_type, 
+       p.product_sell_count,
+       pi.image_type,
+       max(pi.image_url) as image_url, 
+       c.category_name, 
+       avg(r.review_score) as average_score 
+from products p
+left join (
+    select product_no, image_url, image_type
+    from product_images
+    where image_type = 'M' -- M인 이미지만 선택
+) pi on p.product_no = pi.product_no
+join categories c on p.product_category = c.category_no 
+left join reviews r on p.product_no = r.product_no 
+where p.product_show = 'N'
+group by p.product_no, 
+         p.product_name, 
+         p.product_price, 
+         p.product_category, 
+         c.category_name
+order by p.product_reg_date desc
+limit #{limit} offset #{offset}
+
 </select>
 
 	
 	<select id="selectProductCount" resultType="int">
 	        select count(*) 
 		    from products 
-		    where product_delete = 'N'
+		    where product_show = 'N'
 		    <if test="category != null">
 		        and category = #{category}
 		    </if>
@@ -48,7 +54,7 @@
 <!--     left join product_images pi on p.product_no = pi.product_no -->
 <!--     join categories c on p.product_category = c.category_no -->
 <!--     left join reviews r on p.product_no = r.product_no  -->
-<!--     where p.product_delete = 'N' -->
+<!--     where p.product_show = 'N' -->
 <!--     <if test="category != null"> -->
 <!--         and p.product_category = #{category}  카테고리 번호로 필터 -->
 <!--     </if> -->
@@ -83,66 +89,71 @@
 <!-- </select> -->
 
 <select id="selectProductsByCategoryAndPage" parameterType="map" resultType="ProductDTO">
-    select 
-        p.product_no, 
-        p.product_name, 
-        p.product_price, 
-        p.product_category, 
-        p.dc_rate, 
-        p.product_dc_type, 
-        p.product_sell_count,
-        max(pi.image_url) as image_url, 
-        c.category_name, 
-        avg(r.review_score) as average_score, <!-- 별점 평균 -->
-        count(r.review_no) as review_count  <!-- 리뷰 개수 -->
-    from 
-        products p
-    left join 
-        product_images pi on p.product_no = pi.product_no
-    join 
-        categories c on p.product_category = c.category_no
-    left join 
-        reviews r on p.product_no = r.product_no 
-    where 
-        p.product_delete = 'N'
-        <if test="category != null">
-            and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
-        </if>
-    group by 
-        p.product_no, 
-        p.product_name, 
-        p.product_price, 
-        p.product_category, 
-        c.category_name
-    <choose>
-        <when test="sortOrder == 'new'">
-            order by p.product_reg_date desc  <!-- 신상품순 -->
-        </when>
-        <when test="sortOrder == 'popular'">
-            order by p.product_sell_count desc  <!-- 인기상품순 -->
-        </when>
-        <when test="sortOrder == 'lowPrice'">
-            order by 
-            CASE 
-                WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
-                ELSE p.product_price
-            END asc  <!-- 낮은가격순 -->
-        </when>
-        <when test="sortOrder == 'highPrice'">
-            order by 
-            CASE 
-                WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
-                ELSE p.product_price
-            END desc  <!-- 높은가격순 -->
-        </when>
-        <when test="sortOrder == 'manyReview'">
-            order by review_count desc  <!-- 리뷰많은순 -->
-        </when>
-        <otherwise>
-            order by p.product_reg_date desc  <!-- 기본: 신상품순 -->
-        </otherwise>
-    </choose>
-    limit #{limit} offset #{offset}
+select 
+    p.product_no, 
+    p.product_name, 
+    p.product_price, 
+    p.product_category, 
+    p.dc_rate, 
+    p.product_dc_type, 
+    p.product_sell_count,
+    pi.image_type,
+    max(pi.image_url) as image_url, 
+    c.category_name, 
+    avg(r.review_score) as average_score, 
+    count(r.review_no) as review_count 
+from 
+    products p
+left join 
+    (select product_no, image_url, image_type 
+     from product_images 
+     where image_type = 'M') pi 
+    on p.product_no = pi.product_no
+join 
+    categories c on p.product_category = c.category_no
+left join 
+    reviews r on p.product_no = r.product_no 
+where 
+    p.product_show = 'N'
+    <if test="category != null">
+        and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
+    </if>
+group by 
+    p.product_no, 
+    p.product_name, 
+    p.product_price, 
+    p.product_category, 
+    c.category_name
+<choose>
+    <when test="sortOrder == 'new'">
+        order by p.product_reg_date desc  <!-- 신상품순 -->
+    </when>
+    <when test="sortOrder == 'popular'">
+        order by p.product_sell_count desc  <!-- 인기상품순 -->
+    </when>
+    <when test="sortOrder == 'lowPrice'">
+        order by 
+        CASE 
+            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+            ELSE p.product_price
+        END asc  <!-- 낮은가격순 -->
+    </when>
+    <when test="sortOrder == 'highPrice'">
+        order by 
+        CASE 
+            WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+            ELSE p.product_price
+        END desc  <!-- 높은가격순 -->
+    </when>
+    <when test="sortOrder == 'manyReview'">
+        order by review_count desc  <!-- 리뷰많은순 -->
+    </when>
+    <otherwise>
+        order by p.product_reg_date desc  <!-- 기본: 신상품순 -->
+    </otherwise>
+</choose>
+limit #{limit} offset #{offset}
+
 </select>
 
 
@@ -151,7 +162,7 @@
 	<select id="selectProductCountByCategory" parameterType="int" resultType="int">
 	    select count(*) 
 	    from products p
-	    where p.product_delete = 'N'
+	    where p.product_show = 'N'
 	    <if test="category != null">
 	        and p.product_category = #{category}  <!-- 카테고리 번호로 필터 -->
 	    </if>
@@ -180,74 +191,79 @@
     FROM 
         products p
     WHERE 
-        p.product_delete = 'N'
+        p.product_show = 'N'
         AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search}, '%'))
         AND (#{category} IS NULL OR p.product_category = #{category})
 </select>
 
 <select id="searchProducts" parameterType="map" resultType="ProductDTO">
-    SELECT 
-        p.product_no, 
-        p.product_name, 
-        p.product_price, 
-        p.product_category, 
-        p.dc_rate, 
-        p.product_dc_type, 
-        p.product_sell_count,
-        COALESCE(MAX(pi.image_url), '/resources/images/noP_image.png') AS image_url, 
-        c.category_name, 
-        AVG(r.review_score) AS average_score,  <!-- 평균 별점 -->
-        COUNT(r.review_no) AS review_count   <!-- 리뷰 개수 -->
-    FROM 
-        products p
-    LEFT JOIN 
-        product_images pi ON p.product_no = pi.product_no
-    JOIN 
-        categories c ON p.product_category = c.category_no 
-    LEFT JOIN 
-        reviews r ON p.product_no = r.product_no 
-    WHERE 
-        p.product_delete = 'N'
-        AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search}, '%'))
-        AND (#{category} IS NULL OR p.product_category = #{category})
-    GROUP BY 
-        p.product_no, 
-        p.product_name, 
-        p.product_price, 
-        p.product_category, 
-        p.dc_rate, 
-        p.product_dc_type, 
-        p.product_sell_count, 
-        c.category_name
-    ORDER BY 
-        <choose>
-            <when test="'new'.equals(sortOrder)">
-                p.product_reg_date DESC
-            </when>
-            <when test="'popular'.equals(sortOrder)">
-                p.product_sell_count DESC
-            </when>
-            <when test="'lowPrice'.equals(sortOrder)">
-                CASE 
-                    WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
-                    ELSE p.product_price
-                END ASC
-            </when>
-            <when test="'highPrice'.equals(sortOrder)">
-                CASE 
-                    WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
-                    ELSE p.product_price
-                END DESC
-            </when>
-            <when test="'manyReview'.equals(sortOrder)"> <!-- 리뷰 많은 순 추가 -->
-                review_count DESC
-            </when>
-            <otherwise>
-                p.product_reg_date DESC
-            </otherwise>
-        </choose>
-    LIMIT 
-        #{limit} OFFSET #{offset}
+SELECT 
+    p.product_no, 
+    p.product_name, 
+    p.product_price, 
+    p.product_category, 
+    p.dc_rate, 
+    p.product_dc_type, 
+    p.product_sell_count,
+    pi.image_type,
+    COALESCE(MAX(pi.image_url), '/resources/images/noP_image.png') AS image_url, 
+    c.category_name, 
+    AVG(r.review_score) AS average_score,  
+    COUNT(r.review_no) AS review_count  
+FROM 
+    products p
+LEFT JOIN 
+    (SELECT product_no, image_url, image_type 
+     FROM product_images 
+     WHERE image_type = 'M') pi 
+    ON p.product_no = pi.product_no
+JOIN 
+    categories c ON p.product_category = c.category_no 
+LEFT JOIN 
+    reviews r ON p.product_no = r.product_no 
+WHERE 
+    p.product_show = 'N'
+    AND (#{search} IS NULL OR p.product_name LIKE CONCAT('%', #{search}, '%'))
+    AND (#{category} IS NULL OR p.product_category = #{category})
+GROUP BY 
+    p.product_no, 
+    p.product_name, 
+    p.product_price, 
+    p.product_category, 
+    p.dc_rate, 
+    p.product_dc_type, 
+    p.product_sell_count, 
+    c.category_name
+ORDER BY 
+    <choose>
+        <when test="'new'.equals(sortOrder)">
+            p.product_reg_date DESC
+        </when>
+        <when test="'popular'.equals(sortOrder)">
+            p.product_sell_count DESC
+        </when>
+        <when test="'lowPrice'.equals(sortOrder)">
+            CASE 
+                WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+                ELSE p.product_price
+            END ASC
+        </when>
+        <when test="'highPrice'.equals(sortOrder)">
+            CASE 
+                WHEN p.product_dc_type = 'P' THEN (p.product_price * (1 - p.dc_rate))
+                ELSE p.product_price
+            END DESC
+        </when>
+        <when test="'manyReview'.equals(sortOrder)"> <!-- 리뷰 많은 순 추가 -->
+            review_count DESC
+        </when>
+        <otherwise>
+            p.product_reg_date DESC
+        </otherwise>
+    </choose>
+LIMIT 
+    #{limit} OFFSET #{offset}
+
 </select>
 
 
@@ -278,37 +294,6 @@
     <result property="nickname" column="nickname" />
     <result property="reviewImgs" column="review_imgs" />
 </resultMap>
-
-
-<!-- <select id="selectReview" parameterType="map" resultMap="ReviewWithImagesMap"> -->
-<!-- SELECT   -->
-<!--     r.review_no, -->
-<!--     r.member_id, -->
-<!--     r.review_title, -->
-<!--     r.review_content, -->
-<!--     r.register_date, -->
-<!--     r.review_ref, -->
-<!--     r.review_score, -->
-<!--     m.nickname, -->
-<!--     ri.image_url -->
-<!-- FROM  -->
-<!--     reviews r -->
-<!-- JOIN  -->
-<!--     members m ON r.member_id = m.member_id -->
-<!-- LEFT JOIN  -->
-<!--     review_images ri ON r.review_no = ri.review_no -->
-<!-- WHERE  -->
-<!--     r.product_no = #{product_no} -->
-<!--     AND r.review_show = 'S' -->
-<!--     AND (r.review_ref IS NULL OR  -->
-<!--          (r.review_ref IS NOT NULL AND  -->
-<!--           (SELECT review_show FROM reviews WHERE review_no = r.review_ref) = 'S')) -->
-<!-- ORDER BY  -->
-<!--     CASE WHEN r.review_ref IS NULL THEN r.review_no ELSE r.review_ref END DESC,   -->
-<!--     r.review_ref IS NOT NULL,                                                     -->
-<!--     r.register_date ASC -->
-<!--     LIMIT #{offset}, #{limit} -->
-<!-- </select> -->
 
 <select id="selectReview" parameterType="map" resultMap="ReviewWithImagesMap">
 SELECT  
@@ -349,7 +334,6 @@ ORDER BY
     r.review_ref IS NOT NULL,                                                    
     r.register_date ASC
 LIMIT #{offset}, #{limit}
-
 </select>
 
 

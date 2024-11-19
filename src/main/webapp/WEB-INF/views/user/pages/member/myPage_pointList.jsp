@@ -90,17 +90,17 @@
 		if (totalPage > 1) {
 			if (pageNo == 1) {
 				output = `<div id="\${pointType}_pageDown" class="pages disabled">이전</div>`;
-				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo} / \${totalPage}</div>`;
 				output += `<div id="\${pointType}_pageUp" class="pages active" onclick="get\${pointType}PointList(\${pageNo + 1})">다음</div>`;
 				$("#pagination").html(output);
 			} else if (pageNo == totalPage) {
 				output = `<div id="\${pointType}_pageDown" class="pages active" onclick="get\${pointType}PointList(\${pageNo - 1})">이전</div>`;
-				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo} / \${totalPage}</div>`;
 				output += `<div id="\${pointType}_pageUp" class="pages disabled">다음</div>`;
 				$("#pagination").html(output);
 			} else {
 				output = `<div id="\${pointType}_pageDown" class="pages active" onclick="get\${pointType}PointList(\${pageNo - 1})">이전</div>`;
-				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo}</div>`;
+				output += `<div id="\${pointType}_page" class="pages active disabled">\${pageNo} / \${totalPage}</div>`;
 				output += `<div id="\${pointType}_pageUp" class="pages active" onclick="get\${pointType}PointList(\${pageNo + 1})">다음</div>`;
 				$("#pagination").html(output);
 			}
@@ -152,11 +152,19 @@
 		let output = "";
 		
 		for (let i = 0; i < pointList.length ; i++) {
-			output += `<li class="list-group-item earnedPointInfo">
-					   		<div class="earnedPoint">+\${pointList[i].point.toLocaleString('ko-KR')}</div>
-					   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
-							<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
-					   </li>`;
+			if (pointList[i].point > 0) {
+				output += `<li class="list-group-item earnedPointInfo">
+						   		<div class="earnedPoint plus">+\${pointList[i].point.toLocaleString('ko-KR')}</div>
+						   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
+								<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
+						   </li>`;
+			} else {
+				output += `<li class="list-group-item earnedPointInfo">
+			   		<div class="earnedPoint minus">-\${pointList[i].point.toLocaleString('ko-KR')}</div>
+			   		<div class="earnedReason">\${pointList[i].pointPaidReason}</div>
+					<div class="earnedDate">\${pointList[i].pointRecordDate.substring(0, 10)}</div>
+			   </li>`;
+			}
 		}
 		
 		$(".earnedPointUl").html(output);
@@ -180,7 +188,9 @@
 </head>
 
 <style>
-	
+	#earned_page,#used_page {
+		width: 60px;
+	}
 
 	.tab-content {
 		max-width: 800px;
@@ -314,8 +324,12 @@
 		padding: 0 10px;
 	}
 	
-	.earnedPoint {
+	.earnedPoint.plus {
 		color: #0DCAF0;
+	}
+	
+	.earnedPoint.minus {
+		color: #FD5A67;
 	}
 	
 	.usedPoint {

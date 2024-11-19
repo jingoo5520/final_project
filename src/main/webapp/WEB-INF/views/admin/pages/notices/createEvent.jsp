@@ -89,7 +89,7 @@
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="createEvent" value="createEvent" />
+				<jsp:param name="pageName" value="event" />
 
 			</jsp:include>
 
@@ -136,9 +136,9 @@
                       
                       <div class="input-group">
 				        <div class="input-group-text">
-				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="N" aria-label="공지" required id="noticeType1" onchange="changeForm(this.value)"/>공지</div>
+				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="N" aria-label="공지" required id="noticeType1" onchange="changeForm(this.value)" disabled/>공지</div>
 						<div class="input-group-text">
-				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" checked required id="noticeType2" onchange="changeForm(this.value)" disabled />이벤트</div>
+				          <input class="form-check-input mt-0" type="radio" name="noticeType" value="E" aria-label="이벤트" checked required id="noticeType2" onchange="changeForm(this.value)"/>이벤트</div>
 				      </div>
 					<div class="mb-3">
 					    <label for="eventStartDate" class="form-label">이벤트 시작 날짜</label>
@@ -148,7 +148,7 @@
 					    <label for="eventEndDate" class="form-label">이벤트 종료 날짜</label>
 					    <input type="datetime-local" class="form-control" id="eventEndDate" name="eventEndDate">
 					</div>
-                      <div class="inpt-group" id="summerSize">u
+                      <div class="inpt-group" id="summerSize">
                         <div id="summernote" aria-label="With textarea" placeholder="내용을 입력하세요"></div>
                       </div>
                       <input type="hidden" name="noticeContent" id="eventContentInput" />
@@ -413,6 +413,26 @@
             };
             reader.readAsDataURL(event.target.files[0]);
         });
+        
+//         // 폼 제출 전에 날짜 형식을 'yyyy-MM-dd HH:mm:ss'로 변환
+//         document.querySelector('form').addEventListener('submit', function (event) {
+//             // 이벤트 시작 날짜 변환
+//             let eventStartDate = document.getElementById('eventStartDate').value;
+//             if (eventStartDate) {
+//                 // 'T'를 공백으로 바꿔서 'yyyy-MM-dd HH:mm:ss' 형식으로 변환
+//                 eventStartDate = eventStartDate.replace('T', ' ') + ":00"; // 초를 00으로 설정
+//                 document.getElementById('eventStartDate').value = eventStartDate;
+//             }
+
+//             // 이벤트 종료 날짜 변환
+//             let eventEndDate = document.getElementById('eventEndDate').value;
+//             if (eventEndDate) {
+//                 // 'T'를 공백으로 바꿔서 'yyyy-MM-dd HH:mm:ss' 형식으로 변환
+//                 eventEndDate = eventEndDate.replace('T', ' ') + ":00"; // 초를 00으로 설정
+//                 document.getElementById('eventEndDate').value = eventEndDate;
+//             }
+//         }); 
+        
     });
 </script>
   </body>

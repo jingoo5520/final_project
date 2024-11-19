@@ -105,6 +105,10 @@ public class PController {
 		model.addAttribute("couplingCount", couplingCount);
 		model.addAttribute("pendantCount", pendantCount);
 		model.addAttribute("otherCount", otherCount);
+		
+		model.addAttribute("currentCategory", category == null ? "all" : category.toString());
+
+		System.out.println(category == null ? "all" : category.toString());
 
 		return "/user/pages/product/productList"; // jsp 페이지로 반환
 	}
@@ -176,7 +180,7 @@ public class PController {
 		model.addAttribute("endPage", endPage);
 		model.addAttribute("hasPrevBlock", currentBlock > 1);
 		model.addAttribute("hasNextBlock", endPage < totalPages);
-
+		model.addAttribute("currentCategory", category == null ? "all" : category.toString());
 //		System.out.println("카테고리별 상품 수 : " + totalProducts);
 		return "/user/pages/product/productList"; // JSP 페이지로 반환
 	}
@@ -293,6 +297,7 @@ public class PController {
 		model.addAttribute("currentPage", pagingInfo.getCurrentPage()); // 현재 페이지 추가
 		model.addAttribute("hasPrevBlock", pagingInfo.hasPrevBlock()); // 이전 페이지 추가
 		model.addAttribute("hasNextBlock", pagingInfo.hasNextBlock()); // 다음 페이지 추가
+		model.addAttribute("currentCategory", category == null ? "all" : category.toString());
 
 //		System.out.println("검색 : " + totalPostCnt);
 

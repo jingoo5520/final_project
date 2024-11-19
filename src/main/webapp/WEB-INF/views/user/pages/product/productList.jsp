@@ -104,32 +104,16 @@
 			type: 'POST',
 			dataType: 'json',
 			success: function(data) {
-// 				console.log(data);
 				if (data !== undefined) {
 					$('.cart-items .total-items').text(data);
 				}
 			},
 			error: function(data) {
-				console.error("장바구니 개수 업데이트 실패");
-// 				console.log(data);
 			},
 			complete: function(data) {
 			}
 		});
 	}
-	
-	document.addEventListener("DOMContentLoaded", function() {
-		// 현재 URL
-		const currentUrl = window.location.href;
-
-		// 모든 카테고리 링크에 대해 검사
-		document.querySelectorAll(".category-link").forEach(function(link) {
-			if (currentUrl === link.href) {
-				// URL이 일치할 경우 active 클래스를 추가
-				link.classList.add("active");
-			}
-		});
-	});
 </script>
 <style>
 .active {
@@ -171,11 +155,30 @@
 	height: 100%;
 	object-fit: cover;
 }
+
+.buttonArea {
+	display: flex;
+	flex-direction: row;
+	position: inherit;
+	width: 50% !important;
+	justify-content: space-between;
+}
+
+.buttonArea .btn {
+	display: flex !important;
+	flex-direction: row !important;
+	justify-content: center !important;
+}
+
+.btn i {
+	margin: 0 !important;
+}
 </style>
 <body>
 	<jsp:include page="../header.jsp">
 		<jsp:param name="categoryName" value="${products[0].category_name}" />
 	</jsp:include>
+
 
 	<!-- Preloader -->
 	<div class="preloader">
@@ -235,15 +238,15 @@
 						<!-- Start Single Widget -->
 						<div class="single-widget">
 							<ul class="list">
-								<li><a href="/product/jewelry?category=196" class="category-link">NACKLACE <span>(${necklaceCount})</span></a></li>
-								<li><a href="/product/jewelry?category=195" class="category-link">EARRING <span>(${earringCount})</span></a></li>
-								<li><a href="/product/jewelry?category=203" class="category-link">PIERCING <span>(${piercingCount})</span></a></li>
-								<li><a href="/product/jewelry?category=197" class="category-link">BANGLE <span>(${bangleCount})</span></a></li>
-								<li><a href="/product/jewelry?category=201" class="category-link">ANKLET <span>(${ankletCount})</span></a></li>
-								<li><a href="/product/jewelry?category=198" class="category-link">RING <span>(${ringCount})</span></a></li>
-								<li><a href="/product/jewelry?category=200" class="category-link">COUPLING <span>(${couplingCount})</span></a></li>
-								<li><a href="/product/jewelry?category=202" class="category-link">PENDANT <span>(${pendantCount})</span></a></li>
-								<li><a href="/product/jewelry?category=204" class="category-link">기타 <span>(${otherCount})</span></a></li>
+								<li><a href="/product/jewelry?category=196" class="category-link ${param.category == '196' ? 'active' : ''}">NACKLACE <span>(${necklaceCount})</span></a></li>
+								<li><a href="/product/jewelry?category=195" class="category-link ${param.category == '195' ? 'active' : ''}">EARRING <span>(${earringCount})</span></a></li>
+								<li><a href="/product/jewelry?category=203" class="category-link ${param.category == '203' ? 'active' : ''}">PIERCING <span>(${piercingCount})</span></a></li>
+								<li><a href="/product/jewelry?category=197" class="category-link ${param.category == '197' ? 'active' : ''}">BANGLE <span>(${bangleCount})</span></a></li>
+								<li><a href="/product/jewelry?category=201" class="category-link ${param.category == '201' ? 'active' : ''}">ANKLET <span>(${ankletCount})</span></a></li>
+								<li><a href="/product/jewelry?category=198" class="category-link ${param.category == '198' ? 'active' : ''}">RING <span>(${ringCount})</span></a></li>
+								<li><a href="/product/jewelry?category=200" class="category-link ${param.category == '200' ? 'active' : ''}">COUPLING <span>(${couplingCount})</span></a></li>
+								<li><a href="/product/jewelry?category=202" class="category-link ${param.category == '202' ? 'active' : ''}">PENDANT <span>(${pendantCount})</span></a></li>
+								<li><a href="/product/jewelry?category=204" class="category-link ${param.category == '204' ? 'active' : ''}">기타 <span>(${otherCount})</span></a></li>
 							</ul>
 						</div>
 						<!-- End Single Widget -->
@@ -301,10 +304,24 @@
 											<div class="single-product">
 												<div class="product-image">
 
-													<a href="/product/jewelry/detail?productNo=${product.product_no}"> <img src="${empty product.image_url ? '/resources/images/noP_image.png' : product.image_url}" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
-													</a>
 
-													<div class="button" style="position: absolute; bottom: 10px; left: 90px;">
+
+
+
+													<a href="/product/jewelry/detail?productNo=${product.product_no}"> 
+														<c:if test="${fn:startsWith(product.image_url, 'https://')}">
+															<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
+														</c:if> 
+														<c:if test="${!fn:startsWith(product.image_url, 'https://')}">
+															<img src="/resources/product/${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" alt="${product.product_name}" style="height: 100%; object-fit: cover;">
+														</c:if>
+													</a>
+													
+													
+													
+													
+
+													<div class="button buttonArea">
 														<c:set var="result" value="false" />
 														<c:forEach var="wishItem" items="${wishList }">
 															<c:if test="${wishItem == product.product_no}">
@@ -327,9 +344,6 @@
 															<a href="${pageContext.request.contextPath}/member/viewLogin" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-heart"></i>
 															</a>
 														</c:if>
-													</div>
-
-													<div class="button" style="position: absolute; bottom: 10px; right: 140px;">
 														<a onclick="addCart(${product.product_no})" class="btn" style="display: inline-flex; align-items: center; justify-content: center; width: 100px; height: 40px; font-size: 14px;"> <i class="lni lni-cart"></i>
 														</a>
 													</div>

@@ -33,7 +33,7 @@
 
 			<!-- Menu -->
             <jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
-                <jsp:param name="viewNotice" value="viewNotice" />
+                <jsp:param name="pageName" value="notice" />
             </jsp:include>
 		<!-- / Menu -->
 

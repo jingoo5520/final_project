@@ -87,7 +87,7 @@
 
 			<jsp:include page="/WEB-INF/views/admin/components/sideBar.jsp">
 
-				<jsp:param name="createNotice" value="createNotice" />
+				<jsp:param name="pageName" value="notice" />
 
 			</jsp:include>
 

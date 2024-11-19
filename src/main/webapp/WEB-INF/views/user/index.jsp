@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
@@ -9,16 +10,21 @@
 <title>ELOLIA</title>
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="shortcut icon" type="image/x-icon" href="/resources/assets/user/images/logo/favicon.png" />
+<link rel="shortcut icon" type="image/x-icon"
+	href="/resources/assets/user/images/logo/favicon.png" />
 
 <!-- ========================= CSS here ========================= -->
-<link rel="stylesheet" href="/resources/assets/user/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/LineIcons.3.0.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/LineIcons.3.0.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/tiny-slider.css" />
-<link rel="stylesheet" href="/resources/assets/user/css/glightbox.min.css" />
+<link rel="stylesheet"
+	href="/resources/assets/user/css/glightbox.min.css" />
 <link rel="stylesheet" href="/resources/assets/user/css/main.css" />
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <style>
 .title a {
@@ -62,8 +68,7 @@
 	<div class="preloader">
 		<div class="preloader-inner">
 			<div class="preloader-icon">
-				<span></span>
-				<span></span>
+				<span></span> <span></span>
 			</div>
 		</div>
 	</div>
@@ -82,7 +87,8 @@
 							<!-- Start Single Slider -->
 							<c:forEach var="banner" items="${mainBannerList}">
 								<div class="single-slider">
-									<img src="${banner.banner_image}" width="100%" height="500px" style="object-fit: cover; object-position: center;">
+									<img src="${banner.banner_image}" width="100%" height="500px"
+										style="object-fit: cover; object-position: center;">
 								</div>
 							</c:forEach>
 							<!-- End Single Slider -->
@@ -111,7 +117,8 @@
 					<div class="col-md-6 col-12">
 						<!-- Start Single Category -->
 						<div class="single-category" style="width: 100%; height: 350px">
-							<img src="${banner.thumbnail_image}" style="width:100% !important; height:100%; object-fit: cover;">
+							<img src="${banner.thumbnail_image}"
+								style="width: 100% !important; height: 100%; object-fit: cover;">
 						</div>
 						<!-- End Single Category -->
 					</div>
@@ -139,30 +146,39 @@
 						<!-- Start Single Product -->
 						<div class="single-product">
 							<div class="product-image" style="height: 300px;">
-								<img src="${product.image_url }" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" style="height: 100%; object-fit: cover;" />
-								
+								<img src="${product.image_url }"
+									onerror="this.onerror=null; this.src='/resources/images/noP_image.png';"
+									style="height: 100%; object-fit: cover;" />
+								<div class="button buttonArea">
+									<a href="product-details.html" class="btn"><i
+										class="lni lni-cart"></i></a> <a href="product-details.html"
+										class="btn"><i class="lni lni-cart"></i></a>
+								</div>
 							</div>
 							<div class="product-info">
 								<span class="category">${product.category_name }</span>
 								<h4 class="title">
-									<a href="/product/jewelry/detail?productNo=${product.product_no }">${product.product_name }</a>
+									<a
+										href="/product/jewelry/detail?productNo=${product.product_no }">${product.product_name }</a>
 								</h4>
 
 								<div class="price">
-									<span>
-										<fmt:formatNumber value="${product.product_price}" pattern="#,###" />
-										원
+									<span> <fmt:formatNumber
+											value="${product.product_price}" pattern="#,###" /> 원
 									</span>
 								</div>
 							</div>
 						</div>
-						<!-- End Single Product -->
 					</div>
 				</c:forEach>
-				<!-- End Single Product -->
 			</div>
+			
 		</div>
 	</section>
+
+	<!-- 모달 -->
+	<jsp:include page="pages/member/memberModal.jsp"></jsp:include>
+
 	<!-- End Trending Product Area -->
 
 	<jsp:include page="pages/footer.jsp"></jsp:include>
@@ -249,6 +265,44 @@
 
             // index에서 topbar가 display none되지 않도록 처리
             $("#test").css("display", "block");
+        </script>
+	<script type="text/javascript"> /* 모달 js */
+	
+	$(function () {
+		let title = "${modalTitle}";
+		let text = "${modalText}";
+		if(title) {
+			openModal(title, text);
+		}
+		
+		title = "${sessionScope.simpleSignUp}";
+		text = "";
+		if(title) {
+			openModal(title, text);
+		}
+		$.ajax({
+			url: "/member/removeSession",
+			type: "GET",
+			success: function () {
+			},
+			error: function () {
+			},
+			complete: function () {
+			},
+		});
+	});
+	
+	// 모달 열기
+	function openModal(title, text) {
+		$("#modalcontainer").css("display", "block");
+		$("#modalTitle").text(title);
+		$("#modalText").html(text);
+	}
+	
+	// 모달 닫기
+	function closeModal() {
+		$("#modalcontainer").css("display", "none");
+	}
         </script>
 </body>
 </html>

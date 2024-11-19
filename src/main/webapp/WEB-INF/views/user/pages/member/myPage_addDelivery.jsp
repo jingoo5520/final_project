@@ -24,11 +24,11 @@
 <script>
 function showDeliveryModal(message) {
 	$("#deliveryModal").modal("show");
-	$("#deliveryModal .modal-text").text(message);
+	$("#deliveryModal .modal-text").html(message);
 	
 	setTimeout(function() {
 		$('#deliveryModal').modal('hide');
-	}, 750);
+	}, 1500);
 }
 
 </script>
@@ -239,10 +239,18 @@ function showDeliveryModal(message) {
 				                <input type="text" class="col-md-10 col-lg-10 col-12" id="detailAddressNew" placeholder="상세주소">
 				            </div>
 				            <div class="form-check">
-				                <div id="saveDeliveryDiv">
-				                    <input type="checkbox" class="form-check-input" id="saveDeliveryCheck">
-				                    <label for="saveDeliveryCheck">기본배송지로 저장</label>
-				                </div>
+				            	<c:if test="${empty setMain or setMain != 'main'}">
+					                <div id="saveDeliveryDiv">
+					                    <input type="checkbox" class="form-check-input" id="saveDeliveryCheck">
+					                    <label for="saveDeliveryCheck">기본배송지로 저장</label>
+					                </div>
+				                </c:if>
+				                <c:if test="${not empty setMain and setMain == 'main'}">
+					                <div id="saveDeliveryDiv">
+					                    <input type="checkbox" class="form-check-input" id="saveDeliveryCheck" checked onclick="return false;"/>
+					                    <label for="saveDeliveryCheck">기본배송지로 저장</label>
+					                </div>
+				                </c:if>
 				                <div id="saveAddressDiv">
 				                    <input type="checkbox" class="form-check-input" id="saveAddressCheck">
 				                    <label for="saveAddressCheck">회원정보 주소로 저장</label>

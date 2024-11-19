@@ -32,11 +32,11 @@ public class UserNoticeController {
 
     // 공지사항 목록 조회
     @GetMapping("/serviceCenter/notice")
-    public String showUserNoticePage(Model model) {
+    public String showUserNoticePage(@RequestParam(defaultValue = "1") int pageNo, Model model) {
 		Map<String, Object> data = new HashMap<String, Object>();
 
         try {
-            data = userNoticeService.getAllNotices(new PagingInfoNoticeDTO(1, 10, 5)); // 공지사항 조회
+            data = userNoticeService.getAllNotices(new PagingInfoNoticeDTO(pageNo, 10, 5)); // 공지사항 조회
             model.addAttribute("notices", data.get("list"));
 			model.addAttribute("pi", data.get("pi"));
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public class UserNoticeController {
 		Map<String, Object> data = new HashMap<String, Object>();
 		
 		try {
-			data = userNoticeService.getAllEvents(new PagingInfoNoticeDTO(pageNo, 10, 5)); // 공지사항 조회
+			data = userNoticeService.getAllEvents(new PagingInfoNoticeDTO(pageNo, 9, 5)); // 공지사항 조회
 			System.out.println("Returned data: " + data);
 			
 	        // LocalDateTime 포맷팅
