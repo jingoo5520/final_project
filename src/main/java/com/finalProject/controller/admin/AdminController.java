@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.management.RuntimeErrorException;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.finalProject.model.admin.CancelCountDTO;
+import com.finalProject.model.admin.CancelRevenueDTO;
 import com.finalProject.model.admin.RevenueDTO;
 import com.finalProject.model.admin.SaleCountDTO;
 import com.finalProject.service.admin.AdminService;
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-	
+
 	@Inject
 	AdminService aService;
 
@@ -46,7 +46,7 @@ public class AdminController {
 	@GetMapping("/getStatisticData")
 	@ResponseBody
 	public Map<String, Object> getStatisticData() {
-		
+
 		Map<String, Object> data = new HashMap<String, Object>();
 
 		try {
@@ -99,16 +99,22 @@ public class AdminController {
 	// 특정 달의 카테고리별 매출 가져오기
 	@GetMapping("/getRevenuesByMonth")
 	@ResponseBody
-	public List<RevenueDTO> getRevenuesByMonth(@RequestParam("month") String selectedMonth) {
+	public Map<String, Object> getRevenuesByMonth(@RequestParam("month") String selectedMonth) {
 		List<RevenueDTO> data = null;
-
+		List<CancelRevenueDTO> data2 = null;
+		Map<String, Object> responseMap = new HashMap<>();
 		try {
 			data = aService.getRevenuesByMonth(selectedMonth);
+			data2 = aService.getRevenueCancelByMonth(selectedMonth);
+			System.out.println(data);
+			System.out.println(data2);
+			responseMap.put("revenue", data);
+			responseMap.put("cancelRevenue", data2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return data;
+		return responseMap;
 	}
 
 }

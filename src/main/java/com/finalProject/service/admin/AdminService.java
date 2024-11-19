@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.finalProject.model.admin.CancelCountDTO;
+import com.finalProject.model.admin.CancelRevenueDTO;
 import com.finalProject.model.admin.RevenueDTO;
 import com.finalProject.model.admin.SaleCountDTO;
 
@@ -23,5 +24,8 @@ public interface AdminService {
 	List<RevenueDTO> getRevenuesByMonth(String selectedMonth) throws Exception;
 
 	// 특정 달의 취소 수 가져오기 추가
-	List<CancelCountDTO> getCancelByMonth(String selectedMonth);
+	List<CancelCountDTO> getCancelByMonth(String selectedMonth) throws Exception;
+
+	// 특정 달의 취소 가격 가져오기
+	List<CancelRevenueDTO> getRevenueCancelByMonth(String selectedMonth) throws Exception;
 }

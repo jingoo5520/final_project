@@ -2,35 +2,49 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/resources/assets/admin/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr"
+	data-theme="theme-default" data-assets-path="/resources/assets/admin/"
+	data-template="vertical-menu-template-free">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-<title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+<title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin
+	Template - Pro</title>
 
 <meta name="description" content="" />
 
 <!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="/resources/assets/admin/img/favicon/favicon.ico" />
+<link rel="icon" type="image/x-icon"
+	href="/resources/assets/admin/img/favicon/favicon.ico" />
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+	rel="stylesheet" />
 
 <!-- Icons. Uncomment required icon fonts -->
-<link rel="stylesheet" href="/resources/assets/admin/vendor/fonts/boxicons.css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/fonts/boxicons.css" />
 
 <!-- Core CSS -->
-<link rel="stylesheet" href="/resources/assets/admin/vendor/css/core.css" class="template-customizer-core-css" />
-<link rel="stylesheet" href="/resources/assets/admin/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/css/core.css"
+	class="template-customizer-core-css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/css/theme-default.css"
+	class="template-customizer-theme-css" />
 <link rel="stylesheet" href="/resources/assets/admin/css/demo.css" />
 
 <!-- Vendors CSS -->
-<link rel="stylesheet" href="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
-<link rel="stylesheet" href="/resources/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
+<link rel="stylesheet"
+	href="/resources/assets/admin/vendor/libs/apex-charts/apex-charts.css" />
 
 <!-- Page CSS -->
 
@@ -71,13 +85,23 @@
 
             function setData(data) {
                 setOverView(data);
+                setCancelRefund(data.cancelReplyCount, data.refundReplyCount);
                 setNumberOfMembers(data.memberCnt, data.memberGrowthRate.toFixed(2));
                 setNumberOfMembersByGender(data.memberCnt, data.genderList);
                 setNumberOfMembersByLevel(data.memberCnt, data.levelList);
                 setSaleData(data.saleCountDTOList, data.cancelCountDToList);
-                setRevenueData(data.revenueDTOList);
+                setRevenueData(data.revenueDTOList, data.cancelRevenueDTOList);
             }
-
+			function setCancelRefund(cancelCount, refundCount) {
+				$("#waitCancelReply").text(cancelCount);
+				if(cancelCount == 0 || cancelCount == null) {
+					$("#waitCancelReply").text('요청이 없습니다');
+				} 
+				$("#waitRefundReply").text(refundCount);
+				if(refundCount == 0 || refundCount == null) {
+					$("#waitRefundReply").text('요청이 없습니다');
+				} 
+			}
             // SetOverview
             function setOverView(data) {
                 let regGrowthRate = data.regGrowthRate.toFixed(2);
@@ -202,8 +226,9 @@
             	drawSaleAndCancelGragh(saleList, cancelList);
             }
 
-            function setRevenueData(list) {
-                drawRevenueGragh(list);
+            function setRevenueData(list,cancelList) {
+                drawRevenueGragh(list,cancelList);
+               
                 console.log(list);
             }
 
@@ -389,7 +414,7 @@
                     },
                     success: function (data) {
                         console.log(data);
-                        drawRevenueGragh(data);
+                        drawRevenueGragh(data.revenue, data.cancelRevenue);
                     },
                     error: function (error) {
                         console.log(error);
@@ -398,21 +423,41 @@
             }
 
             // 매출 그래프 그리기
-            function drawRevenueGragh(list) {
+            function drawRevenueGragh(list,cancelList) {
                 let categories = [];
                 let series = [];
                 let chart;
-
                 let totalRevenue = 0;
+                let totalRevenueCancel = 0;
+
+                const cancelRevenueMap = new Map();
+                let cancelCategories = [];
+       
+                let cancelSeries = [];
+    
+     
 
                 list.forEach(function (item) {
                     categories.push(item.category_name);
                     series.push(item.revenue);
                     totalRevenue += item.revenue;
                 });
+                
+                cancelList.forEach(function (item) {
+                	cancelRevenueMap.set(item.category_name, item.revenue);
+                	totalRevenueCancel += item.revenue;
+                });
 
+                // Sale 카테고리와 비교하여 취소 데이터 추가
+                categories.forEach(function (category) {
+                    if (cancelRevenueMap.has(category)) {
+                        cancelSeries.push(-1 * cancelRevenueMap.get(category)); // 취소량 반영 (음수 처리)
+                    } else {
+                        cancelSeries.push(0); // 없는 경우 0 추가
+                    }
+                });
                 $("#totalRevenue").text(totalRevenue.toLocaleString());
-
+				$("#totalCancelRevenue").text(totalRevenueCancel.toLocaleString());
                 const totalRevenueChartEl = document.querySelector("#totalRevenueChart"),
                     totalRevenueChartOptions = {
                         series: [
@@ -420,17 +465,21 @@
                                 name: "amount",
                                 data: series,
                             },
+                            {
+                                name: "Cancel amount",
+                                data: cancelSeries,
+                            },
                         ],
                         chart: {
                             height: 300,
-                            stacked: false,
+                            stacked: true,
                             type: "bar",
                             toolbar: { show: false },
                         },
                         plotOptions: {
                             bar: {
                                 horizontal: false,
-                                columnWidth: "33%",
+                                columnWidth: "50%",
                                 borderRadius: 12,
                                 startingShape: "rounded",
                                 endingShape: "rounded",
@@ -835,9 +884,13 @@
 
 			<div class="layout-page">
 				<!-- Navbar -->
-				<nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
-					<div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-						<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
+				<nav
+					class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+					id="layout-navbar">
+					<div
+						class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+						<a class="nav-item nav-link px-0 me-xl-4"
+							href="javascript:void(0)"> <i class="bx bx-menu bx-sm"></i>
 						</a>
 					</div>
 				</nav>
@@ -853,12 +906,15 @@
 							<div class="col-lg-3 col-md-6 col-6 mb-4">
 								<div class="card">
 									<div class="card-body">
-										<div class="card-title d-flex align-items-start justify-content-between">
+										<div
+											class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/member_icon.png" alt="chart success" class="rounded" />
+												<img src="/resources/assets/admin/img/icons/member_icon.png"
+													alt="chart success" class="rounded" />
 											</div>
 										</div>
-										<span class="fw-semibold d-block mb-1">Register members today </span>
+										<span class="fw-semibold d-block mb-1">Register members
+											today </span>
 										<h3 id="todayRegMemberCnt" class="card-title mb-2"></h3>
 										<div id="regGrowthRate"></div>
 									</div>
@@ -867,9 +923,11 @@
 							<div class="col-lg-3 col-md-6 col-6 mb-4">
 								<div class="card">
 									<div class="card-body">
-										<div class="card-title d-flex align-items-start justify-content-between">
+										<div
+											class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded" />
+												<img src="/resources/assets/admin/img/icons/sale_icon.png"
+													alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Sale count today</span>
@@ -881,9 +939,12 @@
 							<div class="col-lg-3 col-md-6 col-6 mb-4">
 								<div class="card">
 									<div class="card-body">
-										<div class="card-title d-flex align-items-start justify-content-between">
+										<div
+											class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded" />
+												<img
+													src="/resources/assets/admin/img/icons/revenue_icon.png"
+													alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Revenue today</span>
@@ -895,13 +956,46 @@
 							<div class="col-lg-3 col-md-6 col-6 mb-4">
 								<div class="card">
 									<div class="card-body">
-										<div class="card-title d-flex align-items-start justify-content-between">
+										<div
+											class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/inquiry_icon.png" alt="chart success" class="rounded" />
+												<img
+													src="/resources/assets/admin/img/icons/inquiry_icon.png"
+													alt="chart success" class="rounded" />
 											</div>
 										</div>
 										<span class="fw-semibold d-block mb-1">Wait Inquiries</span>
 										<h3 id="waitInquiryCnt" class="card-title mb-2"></h3>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div
+											class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/cancel_icon.png"
+													alt="chart success" class="rounded" />
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">취소 요청 대기수</span>
+										<h3 id="waitCancelReply" class="card-title mb-2"></h3>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6 col-6 mb-4">
+								<div class="card">
+									<div class="card-body">
+										<div
+											class="card-title d-flex align-items-start justify-content-between">
+											<div class="avatar flex-shrink-0">
+												<img src="/resources/assets/admin/img/icons/refund_icon.png"
+													alt="chart success" class="rounded" />
+											</div>
+										</div>
+										<span class="fw-semibold d-block mb-1">반품 요청 대기수</span>
+										<h3 id="waitRefundReply" class="card-title mb-2"></h3>
 									</div>
 								</div>
 							</div>
@@ -911,29 +1005,39 @@
 							<div class="col-lg-6 col-md-12 col-12 mb-4">
 								<div class="card h-100">
 									<div class="card-body">
-										<div class="card-title d-flex align-items-start justify-content-between">
+										<div
+											class="card-title d-flex align-items-start justify-content-between">
 											<div class="avatar flex-shrink-0">
-												<img src="/resources/assets/admin/img/icons/members_icon.png" alt="chart success" class="rounded" />
+												<img
+													src="/resources/assets/admin/img/icons/members_icon.png"
+													alt="chart success" class="rounded" />
 											</div>
 										</div>
-										<span class="fw-semibold d-block mb-1">Number of Members</span>
-										<h3 id="memberTotalCnt" class="card-title mb-2"></h3>
-										<small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
-										<span class="fw-semibold d-block mt-4">Register date range</span>
+										<span class="fw-semibold d-block mb-1">Number of
+											Members</span>
+										<h3 id="memberTotalCnt" class="card-title mb-2"></h3> <small
+											class="text-success fw-semibold"><i
+											class="bx bx-up-arrow-alt"></i> <span id="memberGrowthRate"></span></small>
+										<span class="fw-semibold d-block mt-4">Register date
+											range</span>
 										<div class="col align-items-center">
 											<div class="form-check-inline">
-												<input id="regDate_start" class="form-control regDate" type="date" value="" id="" />
+												<input id="regDate_start" class="form-control regDate"
+													type="date" value="" id="" />
 											</div>
 											<div class="form-check-inline">
 												<span class="mx-2">-</span>
 											</div>
 											<div class="form-check-inline">
-												<input id="regDate_end" class="form-control regDate" type="date" value="" id="" />
+												<input id="regDate_end" class="form-control regDate"
+													type="date" value="" id="" />
 											</div>
-											<button id="" type="button" class="btn btn-outline-primary" onclick="selectRangedMemberRegCnt()">확인</button>
+											<button id="" type="button" class="btn btn-outline-primary"
+												onclick="selectRangedMemberRegCnt()">확인</button>
 										</div>
 
-										<span class="fw-semibold d-block mt-2 mb-1">Number of Registered Members</span>
+										<span class="fw-semibold d-block mt-2 mb-1">Number of
+											Registered Members</span>
 										<h3 id="memberRegCnt" class="card-title mb-2"></h3>
 									</div>
 								</div>
@@ -942,13 +1046,15 @@
 							<!-- Number of members by gender -->
 							<div class="col-12 col-md-6 col-lg-3 order-0 mb-4">
 								<div class="card">
-									<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+									<div
+										class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
 										<div class="card-title mb-0">
 											<h5 class="m-0 me-2">Number of members by gender</h5>
 										</div>
 									</div>
 									<div class="card-body">
-										<div class="d-flex justify-content-center align-items-center mb-3">
+										<div
+											class="d-flex justify-content-center align-items-center mb-3">
 											<!-- <div class="d-flex flex-column align-items-center gap-1">
 											<h2 id="memberTotalCnt2" class="mb-2"></h2>
 											<span>Total Members</span>
@@ -964,13 +1070,15 @@
 							<!-- Number of members by level -->
 							<div class="col-12 col-md-6 col-lg-3 order-0 mb-4">
 								<div class="card h-100">
-									<div class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
+									<div
+										class="card-header d-flex align-items-center justify-content-between pb-0 mb-2">
 										<div class="card-title mb-0">
 											<h5 class="m-0 me-2">Number of members by level</h5>
 										</div>
 									</div>
 									<div class="card-body">
-										<div class="d-flex justify-content-center align-items-center mb-3">
+										<div
+											class="d-flex justify-content-center align-items-center mb-3">
 											<!-- <div class="d-flex flex-column align-items-center gap-1">
 											<h2 id="memberTotalCnt2" class="mb-2"></h2>
 											<span>Total Members</span>
@@ -989,21 +1097,27 @@
 									<div class="row row-bordered g-0">
 										<div class="col-md-12">
 											<div class="card-body">
-												<div class="card-title d-flex align-items-start justify-content-between">
+												<div
+													class="card-title d-flex align-items-start justify-content-between">
 													<div class="avatar flex-shrink-0">
-														<img src="/resources/assets/admin/img/icons/sale_icon.png" alt="chart success" class="rounded" />
+														<img src="/resources/assets/admin/img/icons/sale_icon.png"
+															alt="chart success" class="rounded" />
 													</div>
 												</div>
-												<span class="fw-semibold d-block mb-1">Total Sales volume</span>
-												<h3 id="totalSaleCnt" class="card-title mb-2"></h3>
-												<span class="fw-semibold d-block mb-1">Total cancels volume</span>
-												<h3 id="totalCancelCnt" class="card-title mb-2"></h3>
-												<span class="fw-semibold d-block mt-4">Select Month</span>
+												<span class="fw-semibold d-block mb-1">Total Sales
+													volume</span>
+												<h3 id="totalSaleCnt" class="card-title mb-2"></h3> <span
+													class="fw-semibold d-block mb-1">Total cancels
+													volume</span>
+												<h3 id="totalCancelCnt" class="card-title mb-2"></h3> <span
+													class="fw-semibold d-block mt-4">Select Month</span>
 												<div class="col align-items-center">
 													<div class="form-check-inline">
-														<input id="selectMonthOfSale" class="form-control regDate" type="month" value="" id="" />
+														<input id="selectMonthOfSale" class="form-control regDate"
+															type="month" value="" id="" />
 													</div>
-													<button id="" type="button" class="btn btn-outline-primary" onclick="getSalesByMonth()">확인</button>
+													<button id="" type="button" class="btn btn-outline-primary"
+														onclick="getSalesByMonth()">확인</button>
 												</div>
 											</div>
 											<!-- <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5> -->
@@ -1017,20 +1131,26 @@
 									<div class="row row-bordered g-0">
 										<div class="col-md-12">
 											<div class="card-body">
-												<div class="card-title d-flex align-items-start justify-content-between">
+												<div
+													class="card-title d-flex align-items-start justify-content-between">
 													<div class="avatar flex-shrink-0">
-														<img src="/resources/assets/admin/img/icons/revenue_icon.png" alt="chart success" class="rounded" />
+														<img
+															src="/resources/assets/admin/img/icons/revenue_icon.png"
+															alt="chart success" class="rounded" />
 													</div>
 												</div>
 												<span class="fw-semibold d-block mb-1">Total Revenue</span>
-												<h3 id="totalRevenue" class="card-title mb-2"></h3>
-
-												<span class="fw-semibold d-block mt-4">Select Month</span>
+												<h3 id="totalRevenue" class="card-title mb-2"></h3> <span
+													class="fw-semibold d-block mb-1">Total Revenue</span>
+												<h3 id="totalCancelRevenue" class="card-title mb-2"></h3> <span
+													class="fw-semibold d-block mt-4">Select Month</span>
 												<div class="col align-items-center">
 													<div class="form-check-inline">
-														<input id="selectMonthOfRevenue" class="form-control regDate" type="month" value="" id="" />
+														<input id="selectMonthOfRevenue"
+															class="form-control regDate" type="month" value="" id="" />
 													</div>
-													<button id="" type="button" class="btn btn-outline-primary" onclick="getRevenueByMonth()">확인</button>
+													<button id="" type="button" class="btn btn-outline-primary"
+														onclick="getRevenueByMonth()">확인</button>
 												</div>
 											</div>
 											<!-- <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5> -->
@@ -1047,16 +1167,25 @@
 
 				<!-- Footer -->
 				<footer class="content-footer footer bg-footer-theme">
-					<div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+					<div
+						class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
 						<div class="mb-2 mb-md-0">
 							©
 							<script>
                                     document.write(new Date().getFullYear());
                                 </script>
-							, made with ❤️ by <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+							, made with ❤️ by <a href="https://themeselection.com"
+								target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
 						</div>
 						<div>
-							<a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a> <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a> <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-4">Documentation</a> <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank" class="footer-link me-4">Support</a>
+							<a href="https://themeselection.com/license/"
+								class="footer-link me-4" target="_blank">License</a> <a
+								href="https://themeselection.com/" target="_blank"
+								class="footer-link me-4">More Themes</a> <a
+								href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
+								target="_blank" class="footer-link me-4">Documentation</a> <a
+								href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
+								target="_blank" class="footer-link me-4">Support</a>
 						</div>
 					</div>
 				</footer>
@@ -1078,13 +1207,15 @@
 	<script src="/resources/assets/admin/vendor/libs/jquery/jquery.js"></script>
 	<script src="/resources/assets/admin/vendor/libs/popper/popper.js"></script>
 	<script src="/resources/assets/admin/vendor/js/bootstrap.js"></script>
-	<script src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+	<script
+		src="/resources/assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
 	<script src="/resources/assets/admin/vendor/js/menu.js"></script>
 	<!-- endbuild -->
 
 	<!-- Vendors JS -->
-	<script src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
+	<script
+		src="/resources/assets/admin/vendor/libs/apex-charts/apexcharts.js"></script>
 
 	<!-- Main JS -->
 	<script src="/resources/assets/admin/js/main.js"></script>
