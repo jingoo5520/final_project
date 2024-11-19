@@ -33,24 +33,6 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	@Override
-	public List<CartDTO> getCartList(int cartNo) {
-				
-		List<CartDTO> cartItems = cDAO.selectCartItems(cartNo);
-		
-		return cartItems;
-	}
-
-	@Override
-	public int applyQuantity(Map<String, Object> cMap) {
-		return cDAO.updateQuantity(cMap);
-	}
-
-	@Override
-	public int removeCartItem(Map<String, Object> cMap) {
-		return cDAO.deleteCartItem(cMap);
-	}
-
-	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public void addCartIteminNewList(String memberId, int productNo, int quantity) {
 		
@@ -82,6 +64,24 @@ public class CartServiceImpl implements CartService {
 			cDAO.insertCartItem(cMap);
 		}
 		
+	}
+	
+	@Override
+	public List<CartDTO> getCartList(int cartNo) {
+				
+		List<CartDTO> cartItems = cDAO.selectCartItems(cartNo);
+		
+		return cartItems;
+	}
+
+	@Override
+	public int applyQuantity(Map<String, Object> cMap) {
+		return cDAO.updateQuantity(cMap);
+	}
+
+	@Override
+	public int removeCartItem(Map<String, Object> cMap) {
+		return cDAO.deleteCartItem(cMap);
 	}
 	
 	private Map<String, Object> mappingData(int cartNo, int productNo, int quantity) {

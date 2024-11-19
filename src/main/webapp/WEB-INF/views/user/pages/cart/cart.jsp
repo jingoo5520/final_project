@@ -113,6 +113,40 @@ $(document).ready(function() {
 		const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
 	    $(".checkedProductCount").text(checkedCount + "개");
 	    
+	    let productNoId = 0;
+	    
+	    let totalCheckedPrice = 0;
+	    let totalCheckedDcPrice = 0;
+	    let totalCheckedPoint = 0;
+	    
+	    $('input[type="checkbox"].checkProduct:checked').each(function() {
+	        productNoId = parseInt(this.id);
+	        
+	        console.log($('#' + productNoId + '_productDCPrice').text());
+	        
+	        totalCheckedPrice += parseInt($.trim($('#' + productNoId + '_productPrice').text().replace(" 원", "").replace(/,/g, "")));
+	        if ($('#' + productNoId + '_productDCPrice').text() == "0") {
+	        	totalCheckedDcPrice += 0;
+	        } else {
+		        totalCheckedDcPrice += parseInt($.trim($('#' + productNoId + '_productPrice').text().replace(" 원", "").replace(/,/g, ""))) - parseInt($.trim($('#' + productNoId + '_productDCPrice').text().replace(" 원", "").replace(/,/g, "")));
+		        console.log(parseInt($.trim($('#' + productNoId + '_productPrice').text().replace(" 원", "").replace(/,/g, ""))) - parseInt($.trim($('#' + productNoId + '_productDCPrice').text().replace(" 원", "").replace(/,/g, ""))));
+		        
+	        }
+	        if ($('#' + productNoId + '_point').text() == "0") {
+	        	totalCheckedPoint += 0;
+	        } else {
+		        totalCheckedPoint += parseInt($.trim($('#' + productNoId + '_point').text().replace(" P", "").replace(/,/g, "")));
+	        }
+	        console.log("totalCheckedPrice" + totalCheckedPrice);
+	        console.log("totalCheckedDcPrice" + totalCheckedDcPrice);
+	        console.log("totalCheckedPoint" + totalCheckedPoint);
+	        
+	        $(".totalPrice").text(totalCheckedPrice.toLocaleString() + " 원");
+	        $(".dcProduct").text(totalCheckedDcPrice.toLocaleString() + " 원");
+	        $(".totalPay").text((totalCheckedPrice - totalCheckedDcPrice).toLocaleString() + " 원");
+	        $(".totalPoint").text(totalCheckedPoint.toLocaleString() + " P");
+	    });
+	    
 	    if (productCount == checkedCount) {
 			$('#allProductChecked').prop("checked", true);
 		} else {
@@ -621,7 +655,7 @@ input[type="checkbox"]:hover {
 										</div>
 										<c:if test="${not empty levelInfo }">
 											<div class="col-lg-2 col-md-2 col-12">
-												<p class="productPoint">
+												<p class="productPoint" id="${item.product_no }_point">
 													<fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate - levelInfo.level_dc) * levelInfo.level_point}" type="number" pattern="#,###" />P
 												</p>
 												<p class="product-des">
@@ -637,7 +671,7 @@ input[type="checkbox"]:hover {
 										</c:if>
 										<div class="col-lg-3 col-md-2 col-12 row">
 											<div class="col-lg-6 col-md-6 col-12">
-												<p class="productPrice">
+												<p class="productPrice" id="${item.product_no }_productPrice">
 													<fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원
 												</p>
 											</div>
@@ -645,13 +679,13 @@ input[type="checkbox"]:hover {
 												<div class="col-lg-6 col-md-6 col-12">
 													<c:if test="${item.product_dc_type == 'P'}">
 														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-														<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
 														<p class="product-des"><span><em>상품 할인율:</em> ${Math.round( (item.dc_rate) * 100) } %</span></p>
 														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count * (1 - item.dc_rate)} </span>
 													</c:if>
 													
 													<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
-														<p class="productDCPrice">0</p>
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice">0</p>
 														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count} </span>
 													</c:if>
 												</div>
@@ -660,7 +694,7 @@ input[type="checkbox"]:hover {
 												<div class="col-lg-6 col-md-6 col-12">
 													<c:if test="${item.product_dc_type == 'P'}">
 														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-														<p class="productDCPrice">
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice">
 															<span>
 																<fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate - levelInfo.level_dc)}" type="number" pattern="#,###" /> 원
 															</span>
@@ -671,7 +705,7 @@ input[type="checkbox"]:hover {
 													</c:if>
 													<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
 														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-														<p class="productDCPrice">
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice">
 															<span>
 																<fmt:formatNumber value="${item.product_price * item.product_count * (1 - levelInfo.level_dc)}" type="number" pattern="#,###" /> 원
 															</span>
@@ -741,24 +775,24 @@ input[type="checkbox"]:hover {
 										</div>
 										<c:if test="${empty levelInfo }">
 											<div class="col-lg-2 col-md-3 col-12">
-												<p>0</p>
+												<p id="${item.product_no }_point">0</p>
 											</div>
 										</c:if>
 										<div class="col-lg-3 col-md-2 col-12 row">
 											<div class="col-lg-6 col-md-6 col-12">
-												<p class="productPrice">
+												<p class="productPrice" id="${item.product_no }_productPrice">
 													<fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원
 												</p>
 											</div>
 											<div class="col-lg-6 col-md-6 col-12">
 												<c:if test="${item.product_dc_type == 'P'}">
 													<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
+													<p class="productDCPrice" id="${item.product_no }_productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
 													<p class="product-des"><span><em>상품 할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
 													<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count * (1 - item.dc_rate)} </span>
 												</c:if>
 												<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
-													<p class="productDCPrice">0</p>
+													<p class="productDCPrice" id="${item.product_no }_productDCPrice">0</p>
 													<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count} </span>
 												</c:if>
 											</div>

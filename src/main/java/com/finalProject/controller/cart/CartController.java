@@ -161,7 +161,8 @@ public class CartController {
 	
 	
 	@PostMapping("/updateQuantity")
-	public  ResponseEntity<String> updateQuantity(@RequestParam("productNo") int productNo, @RequestParam("quantity") int quantity, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+	public  ResponseEntity<String> updateQuantity(@RequestParam("productNo") int productNo, @RequestParam("quantity") int quantity, 
+			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		ResponseEntity<String> result = null;
 		Cookie[] cookies = request.getCookies();
 		LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
@@ -234,7 +235,8 @@ public class CartController {
 	}
 	
 	@PostMapping("/removeCheckedItems")
-    public ResponseEntity<String> removeCheckedItems(@RequestBody List<Integer> productNos, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> removeCheckedItems(@RequestBody List<Integer> productNos, 
+    		HttpSession session, HttpServletRequest request, HttpServletResponse response) {
         ResponseEntity<String> result = null;
         Cookie[] cookies = request.getCookies();
         LoginDTO loginMember = (LoginDTO) session.getAttribute("loginMember");
@@ -307,7 +309,9 @@ public class CartController {
 	}
 
 	@PostMapping("/addCartItem")
-	public ResponseEntity<String> addCartItem(@RequestParam("productNo") int productNo, @RequestParam(value = "quantity", required = false, defaultValue = "1") int quantity, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<String> addCartItem(@RequestParam("productNo") int productNo, 
+			@RequestParam(value = "quantity", required = false, defaultValue = "1") int quantity, 
+			HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		ResponseEntity<String> result = null;
 		
 		Cookie[] cookies = request.getCookies();
