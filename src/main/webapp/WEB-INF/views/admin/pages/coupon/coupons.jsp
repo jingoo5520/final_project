@@ -178,9 +178,9 @@
 			valid = true;
 		}
 
-		if ($('#couponTypeBtn').text() == '할인률' && $('#couponDc').val() > 99) {
+		if ($('#couponTypeBtn').text() == '할인률' && ($('#couponDc').val() > 99) || $('#couponDc').val() < 0) {
 			valid = false;
-			$('#couponDcErrorTag').html("할인률은 99를 넘길 수 없습니다.");
+			$('#couponDcErrorTag').html("할인률은 0 ~ 99 까지 입력 가능합니다.");
 			$('#couponDcErrorTag').css("color", "red");
 			$('#couponDc').css("border-color", "red");
 		}

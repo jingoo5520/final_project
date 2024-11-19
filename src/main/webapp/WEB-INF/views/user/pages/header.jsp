@@ -83,7 +83,7 @@
 								<ul class="user-login">
 									<li><a href="${pageContext.request.contextPath}/member/myPage/viewOrder">내 정보</a></li>
 									<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
-									<li><a href="/serviceCenter/inquiries">고객센터</a></li>
+									<li><a href="/serviceCenter/notice">고객센터</a></li>
 								</ul>
 							</c:if>
 						</div>
