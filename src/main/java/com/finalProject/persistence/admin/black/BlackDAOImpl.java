@@ -57,8 +57,8 @@ public class BlackDAOImpl implements BlackDAO {
 	}
 
 	@Override
-	public void insertBlackMembers(BlackInsertDTO dto) {
-		ses.insert(ns + "insertBlack", dto);
+	public void insertBlackMembers(Map<String, Object> map) {
+		ses.insert(ns + "insertBlack", map);
 	}
 
 	@Override

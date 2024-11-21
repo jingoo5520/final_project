@@ -12,8 +12,7 @@
 		from products p
 		join categories c on p.product_category = c.category_no
 		join product_images i on p.product_no = i.product_no
-		where p.product_delete = 'N'
-		and p.product_show = 'N'
+		where p.product_show = 'N'
 		and i.image_type = 'M'
 		order by p.product_reg_date desc
 		limit #{count}

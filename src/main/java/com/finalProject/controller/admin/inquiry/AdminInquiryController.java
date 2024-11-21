@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.finalProject.model.LoginDTO;
 import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
 import com.finalProject.model.admin.inquiry.InquiryReplyDTO;
 import com.finalProject.model.admin.inquiry.InquirySearchFilterDTO;
@@ -104,14 +106,14 @@ public class AdminInquiryController {
 			HttpServletRequest request) {
 		String result = "";
 
-//		HttpSession ses = request.getSession();
-//		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
-//		String memberId = loginDTO.getMember_id();
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
+		String memberId = loginDTO.getMember_id();
 
 		System.out.println("reply: " + inquiryReplyNo);
 
 		InquiryReplyDTO dto = InquiryReplyDTO.builder().inquiry_reply_no(inquiryReplyNo).inquiry_no(inquiryNo)
-				.reply_content(replyContent).admin_id("jingoo5520").build();
+				.reply_content(replyContent).admin_id(memberId).build();
 
 		System.out.println(dto);
 

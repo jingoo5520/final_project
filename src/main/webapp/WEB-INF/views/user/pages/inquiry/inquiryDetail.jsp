@@ -205,7 +205,7 @@ textarea {
 										<label>주문 상품</label>
 										<div class="select-items">
 											<div class="form-input form">
-												<input id="" value="${inquiryDetail.product_name}" type="text" placeholder="문의 제목을 입력하세요." readOnly>
+												<input id="" value="${inquiryDetail.product_name}" type="text" readOnly>
 											</div>
 										</div>
 									</div>

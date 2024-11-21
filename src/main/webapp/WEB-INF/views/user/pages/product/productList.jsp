@@ -295,7 +295,7 @@
 									<div class="col-12">
 										<c:if test="${noResult}">
 											<div style="background-color: #f0f0f0; text-align: center; color: #333; padding: 15px; border-radius: 5px;">
-												<span>검색 결과가... 앙 없어띠 다시 한 번 검색해봐 ~ </span><br /> <img src="/resources/images/noResult.jpeg" alt="No Results" style="margin-top: 15px; width: auto; height: auto; max-width: 100%;" />
+												<span>검색 결과가 없습니다. 다시 검색해주세요.</span><br /> <img src="/resources/images/noResult.jpg" alt="No Results" style="margin-top: 15px; width: auto; height: auto; max-width: 100%;" />
 											</div>
 										</c:if>
 									</div>
@@ -303,11 +303,6 @@
 										<div class="col-lg-4 col-md-6 col-12">
 											<div class="single-product">
 												<div class="product-image">
-
-
-
-
-
 													<a href="/product/jewelry/detail?productNo=${product.product_no}"> 
 														<c:if test="${fn:startsWith(product.image_url, 'https://')}">
 															<img src="${product.image_url}" onerror="this.onerror=null; this.src='/resources/images/noP_image.png';" alt="${product.product_name}" style="height: 100%; object-fit: cover;">

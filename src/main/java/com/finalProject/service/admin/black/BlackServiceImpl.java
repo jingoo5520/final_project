@@ -90,24 +90,30 @@ public class BlackServiceImpl implements BlackService {
 		return map;
 	}
 
-	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public boolean blackMember(Map<String, List<String>> map) throws Exception {
-		int updateCount = bDAO.blackMember(map);
 
-		List<String> list = map.get("MemberIdList");
-		System.out.println(list);
-		BlackInsertDTO dto = new BlackInsertDTO(list, "jingoo5520", "愿�由ъ옄 痍⑥냼");
-		if (updateCount >= 1) {
+	   @Override
+	   @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	   public boolean blackMember(Map<String, List<String>> map) throws Exception {
+	      int updateCount = bDAO.blackMember(map);
+	      Map<String, Object> maps = new HashMap<String, Object>();
+	      List<String> list = map.get("MemberIdList");
+	      System.out.println(list);
 
-			bDAO.insertBlackMembers(dto);
-		}
-		if (updateCount < map.size()) {
-			throw new Exception("fail");
+	      if (updateCount >= 1) {
+	         for (int i = 0; i < map.size(); i++) {
+	            maps.put("reason", "관리자 블랙");
+	            maps.put("admin", "admin1");
+	            maps.put("member", list.get(i));
+	            bDAO.insertBlackMembers(maps);
+	         }
 
-		}
-		return true;
-	}
+	      }
+	      if (updateCount < map.size()) {
+	         throw new Exception("fail");
+
+	      }
+	      return true;
+	   } 
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

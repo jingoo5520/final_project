@@ -238,9 +238,9 @@ public class OrderDAOImpl implements OrderDAO {
 	
 	@Override
 	public boolean updateUserLevel(String orderId) {
-		if (ses.update(ns + "updateUserLevel", orderId) != 1) {
-			return false;
-		}
+//		if (ses.update(ns + "updateUserLevel", orderId) != 1) {
+//			return false;
+//		}
 		return true;
 	}
 	

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.finalProject.model.admin.coupon.PagingInfoNewDTO;
+import com.finalProject.model.LoginDTO;
 import com.finalProject.model.admin.review.ReviewReplyDTO;
 import com.finalProject.model.admin.review.ReviewSearchFilterDTO;
 import com.finalProject.service.admin.review.AdminReviewService;
@@ -79,13 +80,13 @@ public class adminReviewController {
 			HttpServletRequest request) {
 		String result = "";
 
-//		HttpSession ses = request.getSession();
-//		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
-//		String memberId = loginDTO.getMember_id();
+		HttpSession ses = request.getSession();
+		LoginDTO loginDTO = (LoginDTO) ses.getAttribute("loginMember");
+		String memberId = loginDTO.getMember_id();
 
 		String replyTitle = "[Re] " + reviewTitle;
 
-		ReviewReplyDTO dto = ReviewReplyDTO.builder().product_no(productNo).member_id("jingoo5520")
+		ReviewReplyDTO dto = ReviewReplyDTO.builder().product_no(productNo).member_id(memberId)
 				.review_no(reviewReplyNo).review_ref(reviewNo).review_title(replyTitle).review_content(replyContent)
 				.build();
 

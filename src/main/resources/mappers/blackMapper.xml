@@ -116,13 +116,10 @@
 			#{member}
 		</foreach>
 	</update>
-	<insert id="insertBlack"
-		parameterType="com.finalProject.model.admin.black.BlackInsertDTO">
-		<foreach item="member" collection="memberIdList" separator=";">
-			insert into blacks(member_id,black_reason,admin_id)
-			values(#{member},#{blackReason},#{loginMember})
-		</foreach>
-	</insert>
+	<insert id="insertBlack">
+         insert into blacks(member_id,black_reason,admin_id)
+         values(#{member},#{reason},#{admin})
+   </insert>
 	
 	<delete id="deleteBlackMember">
 		delete from blacks where member_id = #{memberId}

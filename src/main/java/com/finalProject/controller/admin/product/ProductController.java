@@ -183,7 +183,12 @@ public class ProductController {
 		map.put("product_dc_type", psd.getProduct_dc_type());
 		map.put("product_name", '%' + psd.getProduct_name() + '%');
 		map.put("reg_date_start", psd.getReg_date_start());
-		map.put("reg_date_end", psd.getReg_date_end() + " 23:59:59");
+		if (psd.getReg_date_end() != null && psd.getReg_date_end() != "") {
+			map.put("reg_date_end", psd.getReg_date_end() + " 23:59:59");
+		} else {
+			map.put("reg_date_end", psd.getReg_date_end());
+		}
+
 		map.put("searchType", psd.getSearchType());
 		System.out.println(psd.getProduct_dc_type());
 		System.out.println(psd.getProduct_name());

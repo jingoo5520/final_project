@@ -33,7 +33,7 @@
 			value="org.mariadb.jdbc.Driver">
 		</property>
 		<property name="url"
-			value="jdbc:mariadb://aabbcc1121.cafe24.com:3306/aabbcc1121?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true">
+			value="jdbc:mariadb://localhost:3306/aabbcc1121?serverTimezone=Asia/Seoul&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true">
 		</property>
 		<property name="username" value="aabbcc1121"></property>
 		<property name="password" value="Abc123!!"></property>

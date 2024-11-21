@@ -24,6 +24,7 @@ public class FileProcess {
 		String saveFilePath = makePath(realPath);
 
 		for (MultipartFile file : files) {
+			
 			String newFileName = "";
 
 			if (checkFileExist(saveFilePath, file.getOriginalFilename())) {
@@ -33,23 +34,20 @@ public class FileProcess {
 			}
 
 			byte[] upfile = file.getBytes();
-			String fileName = file.getOriginalFilename();
 			File fileToSave = new File(saveFilePath + File.separator + newFileName);
 			FileUtils.writeByteArrayToFile(fileToSave, upfile);
 			String fullPath = saveFilePath + File.separator + newFileName;
 
-			System.out.println("upfile: " + upfile);
-			System.out.println("fileName: " + fileName);
-			System.out.println("fullPath: " + fullPath);
-
-			int index = fullPath.indexOf("\\resources\\inquiryImages");
+			System.out.println("fileseperator: " + File.separator);
+			
+			int index = fullPath.indexOf(File.separator + "resources" + File.separator + "inquiryImages");
 			String uri = fullPath.substring(index);
-			System.out.println();
 
 			InquiryImgDTO imgDTO = InquiryImgDTO.builder().inquiry_image_uri(uri).inquiry_image_name(newFileName)
 					.inquiry_image_original_name(file.getOriginalFilename()).build();
 
 			list.add(imgDTO);
+			
 		}
 
 		return list;

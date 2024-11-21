@@ -39,7 +39,9 @@ public class ImageUploadController {
                               @RequestParam("noticeType") String noticeType,
                               HttpServletRequest request) throws IOException {
 
-    	String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath("/resources/eventImages/");
+    	
+    	
+    	String BASE_UPLOAD_DIR = request.getSession().getServletContext().getRealPath(File.separator + "resources" + File.separator + "eventImages" + File.separator);
         // noticeType이 N이면 NoticeType.N, E이면 NoticeType.E로 처리
         NoticeTypeStatus.NoticeType typeEnum = "N".equals(noticeType) 
                                                   ? NoticeTypeStatus.NoticeType.N 

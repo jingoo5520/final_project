@@ -21,7 +21,7 @@ public interface BlackDAO {
 
 	int blackMember(Map<String, List<String>> map);
 
-	void insertBlackMembers(BlackInsertDTO dto);
+	void insertBlackMembers(Map<String, Object> maps);
 
 	int blackCancelMember(String memberId);
 

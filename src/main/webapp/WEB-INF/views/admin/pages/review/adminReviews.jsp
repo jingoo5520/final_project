@@ -102,7 +102,7 @@
 				let paginationOutput = '';
 				let noDataTableBody = `<tr id="noDataTableBody">
 			        <td colspan="100%" class="text-center p-3">
-		            	<div class="d-flex justify-content-center">검색된 문의가 없습니다.</div>
+		            	<div class="d-flex justify-content-center">검색된 리뷰가 없습니다.</div>
 			        </td>
 			    </tr>`;
 	

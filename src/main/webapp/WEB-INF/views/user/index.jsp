@@ -149,11 +149,6 @@
 								<img src="${product.image_url }"
 									onerror="this.onerror=null; this.src='/resources/images/noP_image.png';"
 									style="height: 100%; object-fit: cover;" />
-								<div class="button buttonArea">
-									<a href="product-details.html" class="btn"><i
-										class="lni lni-cart"></i></a> <a href="product-details.html"
-										class="btn"><i class="lni lni-cart"></i></a>
-								</div>
 							</div>
 							<div class="product-info">
 								<span class="category">${product.category_name }</span>

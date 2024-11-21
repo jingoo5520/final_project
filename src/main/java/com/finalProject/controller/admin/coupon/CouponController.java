@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.management.RuntimeErrorException;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -113,7 +114,6 @@ public class CouponController {
 	@ResponseBody
 	public ResponseEntity<String> createCoupon(@RequestBody CouponDTO couponDTO) {
 		String result = "";
-
 		try {
 			cService.createCoupon(couponDTO);
 			result = "success";
@@ -121,7 +121,7 @@ public class CouponController {
 			result = "duplicated";
 		} catch (Exception e) {
 			result = "fail";
-			e.printStackTrace();
+			throw new RuntimeErrorException(null, "이름이 중복됬습니다.");
 		}
 
 		return new ResponseEntity<String>(result, HttpStatus.OK);

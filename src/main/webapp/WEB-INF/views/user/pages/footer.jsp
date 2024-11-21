@@ -51,12 +51,12 @@
                             <!-- Single Widget -->
                             <div class="single-footer f-contact">
                                 <h3>Get In Touch With Us</h3>
-                                <p class="phone">Phone: (+82) 010-3909-9844</p>
+                                <p class="phone">Phone: (+82) 010-0000-0000</p>
                                 <ul>
                                     <li><span>Monday-Friday: </span> 9:30 - 18:30</li>
                                 </ul>
                                 <p class="mail">
-                                    <a href="mailto:yngwoo3731@naver.com">yngwoo3731@naver.com</a>
+                                    <a href="mailto:teamproject2@abc.com">teamproject2@abc.com</a>
                                 </p>
                             </div>
                             <!-- End Single Widget -->

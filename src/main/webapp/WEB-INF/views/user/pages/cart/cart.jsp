@@ -36,8 +36,108 @@ $(document).ready(function() {
 	if (successMessage) {
 		showCartModal(successMessage);
 	}
-	
 	let productCount = $("div.cart-single-list").length;
+	
+	makeCalResult();
+	
+	const checkedCount = $('input[type="checkbox"].checkProduct').length;
+    $(".checkedProductCount").text(checkedCount + "개");
+    
+    if (checkedCount <= 0) {
+    	if ($("#removeChecked").hasClass("active-remove")) {
+    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
+        }
+    } else {
+    	if ($("#removeChecked").hasClass("disabled-remove")) {
+    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
+        }
+    }
+	
+	$('input[type="checkbox"].checkProduct').change(function() {
+		const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
+	    $(".checkedProductCount").text(checkedCount + "개");
+	    
+	    let productNoId = 0;
+	    
+	    let totalCheckedPrice = 0;
+	    let totalCheckedDcPrice = 0;
+	    let totalCheckedPoint = 0;
+	    
+	    $('input[type="checkbox"].checkProduct:checked').each(function() {
+	        productNoId = parseInt(this.id);
+	        
+	        console.log($('#' + productNoId + '_productDCPrice').text());
+	        
+	        totalCheckedPrice += parseInt($.trim($('#' + productNoId + '_productPrice').text().replace(" 원", "").replace(/,/g, "")));
+	        if ($('#' + productNoId + '_productDCPrice').text() == "0" || $('#' + productNoId + '_productDCPrice').text() == "") {
+	        	totalCheckedDcPrice += 0;
+	        } else {
+		        totalCheckedDcPrice += parseInt($.trim($('#' + productNoId + '_productPrice').text().replace(" 원", "").replace(/,/g, ""))) - parseInt($.trim($('#' + productNoId + '_productDCPrice').text().replace(" 원", "").replace(/,/g, "")));
+		        console.log(parseInt($.trim($('#' + productNoId + '_productPrice').text().replace(" 원", "").replace(/,/g, ""))) - parseInt($.trim($('#' + productNoId + '_productDCPrice').text().replace(" 원", "").replace(/,/g, ""))));
+		        
+	        }
+	        if ($('#' + productNoId + '_point').text() == "0") {
+	        	totalCheckedPoint += 0;
+	        } else {
+		        totalCheckedPoint += parseInt($.trim($('#' + productNoId + '_point').text().replace(" P", "").replace(/,/g, "")));
+	        }
+	        console.log("totalCheckedPrice" + totalCheckedPrice);
+	        console.log("totalCheckedDcPrice" + totalCheckedDcPrice);
+	        console.log("totalCheckedPoint" + totalCheckedPoint);
+	        
+	        $(".totalPrice").text(totalCheckedPrice.toLocaleString() + " 원");
+	        $(".dcProduct").text(totalCheckedDcPrice.toLocaleString() + " 원");
+	        $(".totalPay").text((totalCheckedPrice - totalCheckedDcPrice).toLocaleString() + " 원");
+	        $(".totalPoint").text(totalCheckedPoint.toLocaleString() + " P");
+	    });
+	    
+	    if (productCount == checkedCount) {
+			$('#allProductChecked').prop("checked", true);
+		} else {
+			$('#allProductChecked').prop("checked", false);
+		}
+	    
+	    if (checkedCount <= 0) {
+	    	$(".totalPrice").text("0 원");
+	        $(".dcProduct").text("0 원");
+	        $(".totalPay").text("0 원");
+	        $(".totalPoint").text("0 P");
+	        
+	    	if ($("#removeChecked").hasClass("active-remove")) {
+	    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
+	        }
+	    } else {
+	    	if ($("#removeChecked").hasClass("disabled-remove")) {
+	    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
+	        }
+	    }
+	    
+    });
+	
+	$("#allProductChecked").change(function() {
+        if ($(this).prop("checked")) {
+            $("input[type='checkbox'].checkProduct").prop("checked", true);
+            if ($("#removeChecked").hasClass("disabled-remove")) {
+	    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
+	        }
+    		makeCalResult();
+        } else {
+            $("input[type='checkbox'].checkProduct").prop("checked", false);
+            if ($("#removeChecked").hasClass("active-remove")) {
+	    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
+	        }
+            $(".totalPrice").text("0 원");
+	        $(".dcProduct").text("0 원");
+	        $(".totalPay").text("0 원");
+	        $(".totalPoint").text("0 P");
+        }
+        const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
+	    $(".checkedProductCount").text(checkedCount + "개");
+    });
+	
+});
+
+function makeCalResult() {
 	let totalPrices = 0;
 	let totalPoints = 0;
 	
@@ -62,6 +162,7 @@ $(document).ready(function() {
 	
 	if(levelInfo) {
 		levelDC = parseFloat("${levelInfo.level_dc }");
+		console.log("levelDC" + levelDC);
 	}
 	
 	let levelDCPrice = 0;
@@ -69,85 +170,33 @@ $(document).ready(function() {
 	if (levelDC != 0) {
 		levelDCPrice = totalPrices * levelDC;
 		// 최소단위 10원으로 변경
-		levelDCPrice =  Math.floor(levelDCPrice / 10) * 10
+		levelDCPrice =  Math.floor(levelDCPrice / 10) * 10;
+		
+		console.log("levelDCPrice" + levelDCPrice);
 	} else {
 		levelDCPrice = 0;
 	}
-	
-	$(".dcLevel").text(levelDCPrice.toLocaleString() + " 원");
 	
 	let productDCPrice = 0;
 	
 	$(".cart-single-list").each(function() {
 		let currentElement = $(this);
-		let discountedPrice = parseInt($.trim(currentElement.find(".hiddenDiscoutedPrice").text()))
+		let discountedPrice = parseInt($.trim(currentElement.find(".hiddenDiscoutedPrice").text()));
 		let productPrice = parseInt($.trim(currentElement.find(".productPrice").text().replace(" 원", "").replace(/,/g, "")));
 
 		if (discountedPrice != 0) {
 			productDCPrice += productPrice - discountedPrice;
 		}
 		// 최소단위 10원으로 변경
-		productDCPrice = Math.floor(productDCPrice / 10) * 10
+		productDCPrice = Math.floor(productDCPrice / 10) * 10;
 	});
 	
-	$(".dcProduct").text(productDCPrice.toLocaleString() + " 원");
+	$(".dcProduct").text((levelDCPrice + productDCPrice).toLocaleString() + " 원");
 	
 	let totalPay = totalPrices - levelDCPrice - productDCPrice;
 	
 	$(".totalPay").text(totalPay.toLocaleString() + " 원");
-	
-	const checkedCount = $('input[type="checkbox"].checkProduct').length;
-    $(".checkedProductCount").text(checkedCount + "개");
-    
-    if (checkedCount <= 0) {
-    	if ($("#removeChecked").hasClass("active-remove")) {
-    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
-        }
-    } else {
-    	if ($("#removeChecked").hasClass("disabled-remove")) {
-    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
-        }
-    }
-	
-	$('input[type="checkbox"].checkProduct').change(function() {
-		const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
-	    $(".checkedProductCount").text(checkedCount + "개");
-	    
-	    if (productCount == checkedCount) {
-			$('#allProductChecked').prop("checked", true);
-		} else {
-			$('#allProductChecked').prop("checked", false);
-		}
-	    
-	    if (checkedCount <= 0) {
-	    	if ($("#removeChecked").hasClass("active-remove")) {
-	    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
-	        }
-	    } else {
-	    	if ($("#removeChecked").hasClass("disabled-remove")) {
-	    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
-	        }
-	    }
-	    
-    });
-	
-	$("#allProductChecked").change(function() {
-        if ($(this).prop("checked")) {
-            $("input[type='checkbox'].checkProduct").prop("checked", true);
-            if ($("#removeChecked").hasClass("disabled-remove")) {
-	    		$("#removeChecked").removeClass("disabled-remove").addClass("active-remove");
-	        }
-        } else {
-            $("input[type='checkbox'].checkProduct").prop("checked", false);
-            if ($("#removeChecked").hasClass("active-remove")) {
-	    		$("#removeChecked").removeClass("active-remove").addClass("disabled-remove");
-	        }
-        }
-        const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
-	    $(".checkedProductCount").text(checkedCount + "개");
-    });
-	
-});
+} 
 
 function countUp(productNo) {
 	let quantity = parseInt($("#"+productNo + "_quantity").text());
@@ -282,7 +331,14 @@ function checkedOrder() {
 	let quantity = 0;
 	
 	let checkboxes = $('input[type="checkbox"].checkProduct');
-    
+	
+	const checkedCount = $('input[type="checkbox"].checkProduct:checked').length;
+	
+	if (checkedCount == 0) {
+		showCartModal("체크된 상품이 없습니다.");
+		return;
+	}
+	
     for (let i = 0; i < checkboxes.length; i++) {
         let checkbox = checkboxes[i];
         if (checkbox.checked) {
@@ -619,9 +675,9 @@ input[type="checkbox"]:hover {
 											<button class="btn countApply"
 												onclick="applyQuantity(${item.product_no });">변경</button>
 										</div>
-										<c:if test="${not empty levelInfo }">
+										<c:if test="${not empty levelInfo}">
 											<div class="col-lg-2 col-md-2 col-12">
-												<p class="productPoint">
+												<p class="productPoint" id="${item.product_no }_point">
 													<fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate - levelInfo.level_dc) * levelInfo.level_point}" type="number" pattern="#,###" />P
 												</p>
 												<p class="product-des">
@@ -632,35 +688,35 @@ input[type="checkbox"]:hover {
 										</c:if>
 										<c:if test="${empty levelInfo }">
 											<div class="col-lg-2 col-md-2 col-12">
-												<p class="price">0</p>
+												<p class="price">0 P</p>
 											</div>
 										</c:if>
 										<div class="col-lg-3 col-md-2 col-12 row">
 											<div class="col-lg-6 col-md-6 col-12">
-												<p class="productPrice">
+												<p class="productPrice" id="${item.product_no }_productPrice">
 													<fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원
 												</p>
 											</div>
-											<c:if test="${empty levelInfo }">
+											<c:if test="${empty levelInfo or levelInfo.level_dc == 0}">
 												<div class="col-lg-6 col-md-6 col-12">
 													<c:if test="${item.product_dc_type == 'P'}">
 														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-														<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
 														<p class="product-des"><span><em>상품 할인율:</em> ${Math.round( (item.dc_rate) * 100) } %</span></p>
 														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count * (1 - item.dc_rate)} </span>
 													</c:if>
 													
 													<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
-														<p class="productDCPrice">0</p>
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice"></p>
 														<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count} </span>
 													</c:if>
 												</div>
 											</c:if>
-											<c:if test="${not empty levelInfo }">
+											<c:if test="${not empty levelInfo and levelInfo.level_dc > 0}">
 												<div class="col-lg-6 col-md-6 col-12">
 													<c:if test="${item.product_dc_type == 'P'}">
 														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-														<p class="productDCPrice">
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice">
 															<span>
 																<fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate - levelInfo.level_dc)}" type="number" pattern="#,###" /> 원
 															</span>
@@ -671,7 +727,7 @@ input[type="checkbox"]:hover {
 													</c:if>
 													<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
 														<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-														<p class="productDCPrice">
+														<p class="productDCPrice" id="${item.product_no }_productDCPrice">
 															<span>
 																<fmt:formatNumber value="${item.product_price * item.product_count * (1 - levelInfo.level_dc)}" type="number" pattern="#,###" /> 원
 															</span>
@@ -741,24 +797,24 @@ input[type="checkbox"]:hover {
 										</div>
 										<c:if test="${empty levelInfo }">
 											<div class="col-lg-2 col-md-3 col-12">
-												<p>0</p>
+												<p id="${item.product_no }_point">0</p>
 											</div>
 										</c:if>
 										<div class="col-lg-3 col-md-2 col-12 row">
 											<div class="col-lg-6 col-md-6 col-12">
-												<p class="productPrice">
+												<p class="productPrice" id="${item.product_no }_productPrice">
 													<fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원
 												</p>
 											</div>
 											<div class="col-lg-6 col-md-6 col-12">
 												<c:if test="${item.product_dc_type == 'P'}">
 													<p><em><del><fmt:formatNumber value="${item.product_price * item.product_count}" type="number" pattern="#,###" /> 원</del></em></p>
-													<p class="productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
+													<p class="productDCPrice" id="${item.product_no }_productDCPrice"><span><fmt:formatNumber value="${item.product_price * item.product_count * (1 - item.dc_rate)}" type="number" pattern="#,###" /> 원</span></p>
 													<p class="product-des"><span><em>상품 할인율:</em> ${Math.round(item.dc_rate * 100) } %</span></p>
 													<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count * (1 - item.dc_rate)} </span>
 												</c:if>
 												<c:if test="${empty item.product_dc_type or item.product_dc_type == 'N'}">
-													<p class="productDCPrice">0</p>
+													<p class="productDCPrice" id="${item.product_no }_productDCPrice"></p>
 													<span style="display: none;" class="hiddenDiscoutedPrice"> ${item.product_price * item.product_count} </span>
 												</c:if>
 											</div>
@@ -809,8 +865,7 @@ input[type="checkbox"]:hover {
 				<div class="right">
 					<ul>
 						<li><b>총 상품금액</b><span class="totalPrice">0</span></li>
-						<li><b>상품 할인금액</b><span class="dcProduct">0</span></li>
-						<li><b>등급 할인금액</b><span class="dcLevel"></span></li>
+						<li><b>총 할인금액</b><span class="dcProduct">0</span></li>
 						<li class="last"><b>총 결제금액</b><span class="totalPay">0</span></li>
 						<li><b>총 적립예정포인트</b><span class="totalPoint">0</span></li>
 					</ul>

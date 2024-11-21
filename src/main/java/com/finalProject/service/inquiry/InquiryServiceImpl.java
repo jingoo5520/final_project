@@ -1,5 +1,6 @@
 package com.finalProject.service.inquiry;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,7 @@ public class InquiryServiceImpl implements InquiryService {
 
 		List<InquiryImgDTO> list = null;
 
-		String realPath = request.getSession().getServletContext().getRealPath("/resources/inquiryImages");
+		String realPath = request.getSession().getServletContext().getRealPath(File.separator + "resources" + File.separator + "inquiryImages");
 
 		result = iDao.insertInquiry(inquiryDetailDTO);
 
